@@ -1,0 +1,12 @@
+{
+  "skill_name": "{{NAME}}",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "(realistic task prompt for this skill)",
+      "expected_output": "(description of the expected result)",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

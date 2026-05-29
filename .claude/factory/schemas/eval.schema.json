@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://praxis/schemas/eval.schema.json",
+  "title": "Skill evals",
+  "description": "Schema for both trigger-evals and output-evals JSON files.",
+  "oneOf": [
+    {
+      "title": "Trigger evals",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["query", "should_trigger"],
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A realistic user query."
+          },
+          "should_trigger": {
+            "type": "boolean",
+            "description": "True if the skill's description should route this query to it."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional rationale for why this is a positive or negative case."
+          }
+        }
+      }
+    },
+    {
+      "title": "Output evals",
+      "type": "object",
+      "required": ["skill_name", "evals"],
+      "additionalProperties": false,
+      "properties": {
+        "skill_name": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]{1,64}$"
+        },
+        "evals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "prompt"],
+            "additionalProperties": true,
+            "properties": {
+              "id": { "type": ["integer", "string"] },
+              "eval_name": { "type": "string" },
+              "prompt": { "type": "string", "minLength": 1 },
+              "expected_output": { "type": "string" },
+              "files": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "assertions": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    { "type": "string" },
+                    {
+                      "type": "object",
+                      "required": ["text"],
+                      "additionalProperties": true,
+                      "properties": {
+                        "text": { "type": "string", "minLength": 1 }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+name: Validate skills
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate all skills
+        run: |
+          shopt -s nullglob
+          fail=0
+          for d in .claude/skills/*/ dist/*/; do
+            [ -d "$d" ] || continue
+            echo "::group::Validating $d"
+            if ! python .claude/factory/validators/validate_skill.py "$d"; then
+              fail=1
+            fi
+            echo "::endgroup::"
+          done
+          if [ "$fail" -ne 0 ]; then
+            echo "::error::One or more skills failed validation."
+            exit 1
+          fi
+
+      - name: Generator smoke test (determinism)
+        run: |
+          python .claude/skills/skill-creator/scripts/create_skill.py \
+            --name ci-smoke-test \
+            --tier 1 \
+            --description "CI smoke test skill. Use when verifying the factory toolchain in continuous integration." \
+            --purpose "Verify the generator and validator are functioning in CI." \
+            --out /tmp/ci-smoke-1 --force
+          python .claude/skills/skill-creator/scripts/create_skill.py \
+            --name ci-smoke-test \
+            --tier 1 \
+            --description "CI smoke test skill. Use when verifying the factory toolchain in continuous integration." \
+            --purpose "Verify the generator and validator are functioning in CI." \
+            --out /tmp/ci-smoke-2 --force
+          diff -r /tmp/ci-smoke-1 /tmp/ci-smoke-2
+          python .claude/factory/validators/validate_skill.py /tmp/ci-smoke-1
+          test ! -e /tmp/ci-smoke-1/command.md
+
+      - name: Catalog is up to date
+        run: python .claude/factory/scripts/build_catalog.py --check
+
+      - name: Integrations are up to date
+        run: python integrations/scripts/build_integrations.py --check
+
+      - name: JSON schema sanity
+        run: |
+          python -c "import json; json.load(open('.claude/factory/schemas/skill.schema.json'))"
+          python -c "import json; json.load(open('.claude/factory/schemas/eval.schema.json'))"

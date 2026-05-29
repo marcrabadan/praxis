@@ -1,0 +1,6 @@
+[
+  { "query": "(realistic user query that should trigger this skill)", "should_trigger": true },
+  { "query": "(another should-trigger query, phrased differently)", "should_trigger": true },
+  { "query": "(near-miss query that should NOT trigger this skill)", "should_trigger": false },
+  { "query": "(another should-not-trigger near-miss)", "should_trigger": false }
+]

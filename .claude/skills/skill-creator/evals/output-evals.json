@@ -1,0 +1,45 @@
+{
+  "skill_name": "skill-creator",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "tier-1-naming-rule",
+      "prompt": "I want a skill that reminds the agent to use kebab-case for all new file names in our frontend repo. It should trigger when someone is creating or renaming files in src/. No code generation, just a reminder.",
+      "expected_output": "A Tier-1 skill folder at dist/kebab-case-filenames/ (or similar slug) containing only SKILL.md with a trigger-rich description naming kebab-case, file naming, and renaming files; a 'When to use' section listing realistic triggers; a 'When not to use' section that excludes content files like docs/markdown; a 'Behavior' section explaining the rule in one short paragraph.",
+      "files": [],
+      "assertions": [
+        { "text": "Output folder contains SKILL.md and no other directories." },
+        { "text": "SKILL.md frontmatter has a 'name' matching ^[a-z0-9-]{1,64}$." },
+        { "text": "SKILL.md description includes the words 'kebab-case' or 'naming' or 'rename'." },
+        { "text": "validators/validate_skill.py exits 0 on the produced folder." }
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "tier-3-design-review",
+      "prompt": "We need a skill that guides a multi-step design review: structure, tokens, components, accessibility, and a final summary. Knowledge lives in our existing design-system-rules.md. Should auto-trigger when someone asks for a 'design review' or mentions 'review my Figma'.",
+      "expected_output": "A Tier-3 skill folder containing SKILL.md, references/ (with at least rules.md referencing the existing design-system-rules.md), and workflows/ (default.md, plus one or more variant files matching the named review steps). SKILL.md description mentions design review, Figma review, design audit.",
+      "files": [],
+      "assertions": [
+        { "text": "Output folder contains references/ and workflows/ directories." },
+        { "text": "workflows/ contains at least one file with a numbered procedure of 3 or more steps." },
+        { "text": "SKILL.md description mentions both 'design review' and a Figma-related trigger phrase." },
+        { "text": "validators/validate_skill.py exits 0 on the produced folder." }
+      ]
+    },
+    {
+      "id": 3,
+      "eval_name": "tier-4-tokens-to-css",
+      "prompt": "Build a skill that converts a JSON token export (in Figma's design-tokens format) to a CSS variables file. It should validate the input against a schema and warn on unknown token types. Triggers on phrases like 'export figma tokens to css', 'turn tokens.json into variables', etc.",
+      "expected_output": "A Tier-4 skill folder with SKILL.md, references/, workflows/ (generate.md and validate.md or similar), scripts/ (generate.py and validate.py with real argparse and structured exit codes — NOT placeholder bodies), and evals/ (trigger-evals.json with at least one positive and one negative case, plus output-evals.json).",
+      "files": [],
+      "assertions": [
+        { "text": "Output folder contains scripts/ and evals/ directories." },
+        { "text": "scripts/generate.py and scripts/validate.py both use argparse and have exit codes documented in their docstrings." },
+        { "text": "evals/trigger-evals.json contains both positive and negative cases." },
+        { "text": "SKILL.md references ai/implementation-principles.md or restates the relevant principles." },
+        { "text": "validators/validate_skill.py exits 0 on the produced folder." }
+      ]
+    }
+  ]
+}

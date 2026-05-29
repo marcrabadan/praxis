@@ -1,0 +1,1 @@
+../../.claude/commands/validate-skills.md

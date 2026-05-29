@@ -1,0 +1,72 @@
+[
+  {
+    "query": "I want to make a skill that enforces our team's commit message format",
+    "should_trigger": true,
+    "notes": "Direct create-skill request."
+  },
+  {
+    "query": "can you turn this checklist into a reusable skill? https://wiki.example.com/code-review-checklist",
+    "should_trigger": true,
+    "notes": "Turn-a-workflow-into-a-skill request."
+  },
+  {
+    "query": "i have a bunch of rules for how we write microcopy, lets package those up as something the agent can apply automatically",
+    "should_trigger": true,
+    "notes": "Knowledge-skill creation phrased casually, without the word 'skill' at the start."
+  },
+  {
+    "query": "review my SKILL.md and tell me whats wrong with the description",
+    "should_trigger": true,
+    "notes": "Review variant — handled by review-skill workflow."
+  },
+  {
+    "query": "what tier should this go in? attaching the folder",
+    "should_trigger": true,
+    "notes": "Classify-tier variant."
+  },
+  {
+    "query": "scaffold a new skill folder for this and tell me which tier it should be",
+    "should_trigger": true,
+    "notes": "Scaffold + classify variant."
+  },
+  {
+    "query": "the description on figma-token-exporter is too vague, can you rewrite it?",
+    "should_trigger": true,
+    "notes": "Description-optimization variant of review-skill."
+  },
+  {
+    "query": "lets add some eval cases for the figma-token-exporter skill",
+    "should_trigger": true,
+    "notes": "Evaluate variant."
+  },
+  {
+    "query": "what's the difference between a tier 2 and tier 3 skill?",
+    "should_trigger": false,
+    "notes": "Conceptual question — should be answered from ai/skill-tiering.md, not by invoking the creator."
+  },
+  {
+    "query": "run my code-review skill on this PR",
+    "should_trigger": false,
+    "notes": "User wants to USE a skill, not create one. Near-miss on the word 'skill'."
+  },
+  {
+    "query": "create a python script that exports figma tokens to css",
+    "should_trigger": false,
+    "notes": "Near-miss — they want a script, not a skill. If they later say 'make this a skill', then trigger."
+  },
+  {
+    "query": "what skills do I have installed?",
+    "should_trigger": false,
+    "notes": "Inventory question, not a creation request."
+  },
+  {
+    "query": "review this PR for me",
+    "should_trigger": false,
+    "notes": "Review near-miss — they want code review, not skill review."
+  },
+  {
+    "query": "can you help me design a new feature for our checkout flow",
+    "should_trigger": false,
+    "notes": "Uses 'design' but for product work, not for a skill."
+  }
+]

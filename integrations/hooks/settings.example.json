@@ -1,0 +1,29 @@
+{
+  "// description": "Local Claude Code hooks that wire praxis into the dev flow. Copy the `hooks` block into a CONSUMING repo's .claude/settings.json (or merge it in). Opt-in: praxis ships this as a template and does not enable it on itself.",
+
+  "// PreToolUse.git-commit": "Before a commit lands, remind the author to run /review-changes. A nudge, not a gate — it never blocks the commit.",
+
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "grep -Eq '^[[:space:]]*git[[:space:]]+commit' <<< \"$CLAUDE_TOOL_INPUT_COMMAND\" && echo '💡 praxis: run /review-changes on your diff before pushing — catches bad practices early and explains the why.' >&2; exit 0"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git diff --quiet 2>/dev/null || echo '💡 praxis: you have uncommitted changes. /review-changes will review them by routing to the developer / qa / architect experts.' >&2; exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}

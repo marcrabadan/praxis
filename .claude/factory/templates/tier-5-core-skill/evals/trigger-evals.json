@@ -1,0 +1,4 @@
+[
+  { "query": "(should-trigger query)", "should_trigger": true },
+  { "query": "(should-not-trigger near-miss)", "should_trigger": false }
+]

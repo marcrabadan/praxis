@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://praxis/schemas/skill.schema.json",
+  "title": "Skill frontmatter",
+  "description": "Schema for the YAML frontmatter at the top of a skill's SKILL.md file.",
+  "type": "object",
+  "required": ["name", "description"],
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{1,64}$",
+      "description": "Lowercase, hyphen-separated identifier. Max 64 characters."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "description": "Third-person, trigger-rich description. Must include both WHAT the skill does and WHEN to use it."
+    },
+    "disable-model-invocation": {
+      "type": "boolean",
+      "description": "Optional. If true, the skill only loads when explicitly named (/<name> or read by tool). Default behavior (omitted) is auto-trigger from ambient context."
+    },
+    "compatibility": {
+      "type": "object",
+      "description": "Optional. Declares required tools, dependencies, or target agents.",
+      "additionalProperties": true
+    },
+    "tier": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Optional. Declares the skill's tier per ai/skill-tiering.md. The folder shape must match the declared tier."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Optional but recommended. Semantic version of the skill (MAJOR.MINOR.PATCH). Bump on every shipped change so consumers can track updates."
+    }
+  }
+}

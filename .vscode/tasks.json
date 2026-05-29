@@ -1,0 +1,100 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "skills: validate one",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        ".claude/factory/validators/validate_skill.py",
+        "${input:skillPath}"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "skills: validate all",
+      "type": "shell",
+      "command": "make",
+      "args": [
+        "validate-all"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "skills: validate skill-creator",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        ".claude/factory/validators/validate_skill.py",
+        ".claude/skills/skill-creator"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "skills: create new",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        ".claude/skills/skill-creator/scripts/create_skill.py",
+        "--name", "${input:skillName}",
+        "--tier", "${input:skillTier}",
+        "--description", "${input:skillDescription}",
+        "--out", "dist/${input:skillName}"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "skills: smoke-test",
+      "type": "shell",
+      "command": "make",
+      "args": [
+        "smoke-test"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "skillPath",
+      "type": "promptString",
+      "description": "Path to the skill folder (e.g. .claude/skills/skill-creator or dist/my-skill)"
+    },
+    {
+      "id": "skillName",
+      "type": "promptString",
+      "description": "Skill slug (lowercase, hyphens, max 64 chars)"
+    },
+    {
+      "id": "skillTier",
+      "type": "pickString",
+      "description": "Tier",
+      "options": ["1", "2", "3", "4", "5"],
+      "default": "2"
+    },
+    {
+      "id": "skillDescription",
+      "type": "promptString",
+      "description": "Trigger-rich description. Should include WHAT and WHEN."
+    }
+  ]
+}
