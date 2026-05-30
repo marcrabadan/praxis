@@ -2,7 +2,7 @@
 
 # praxis for OpenAI Codex
 
-The six praxis SDLC experts and their workflows, re-expressed for Codex (`AGENTS.md` + in-repo persona guides + `~/.codex/prompts`).
+The praxis SDLC experts and their workflows, re-expressed for Codex (`AGENTS.md` + in-repo persona guides + `~/.codex/prompts`).
 
 ## Install
 
@@ -21,5 +21,5 @@ cp integrations/codex/prompts/*.md ~/.codex/prompts/
 
 ## Use
 
-- Type `/praxis-architect`, `/praxis-developer`, `/praxis-qa`, `/praxis-analyst`, `/praxis-product`, `/praxis-devops`. Each adopts the persona from `.praxis/<role>.md` and uses `$ARGUMENTS` as the request.
+- Type `/praxis-architect`, `/praxis-developer`, `/praxis-qa`, `/praxis-analyst`, `/praxis-product`, `/praxis-devops`, `/praxis-security`, `/praxis-security-architect`. Each adopts the persona from `.praxis/<role>.md` and uses `$ARGUMENTS` as the request.
 - Workflows: `/praxis-new-feature`, `/praxis-review-changes`.

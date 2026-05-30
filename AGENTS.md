@@ -31,7 +31,7 @@ When deciding whether to split a workflow into its own top-level skill, read [.c
 
 Skills are **Claude Code native**: each lives at `.claude/skills/<name>/SKILL.md` and Claude Code discovers it automatically from its frontmatter (no `command.md`, no installers). Invoke a skill by describing the task or by typing `/<name>`.
 
-Alongside the meta-skill, the repo ships six **SDLC expert skills** — one per role in the software delivery lifecycle:
+Alongside the meta-skill, the repo ships eight **SDLC expert skills** — one per role in the software delivery lifecycle:
 
 - [.claude/skills/business-analyst/](.claude/skills/business-analyst/) — requirements, user stories, acceptance criteria.
 - [.claude/skills/product-owner/](.claude/skills/product-owner/) — backlog, prioritization, roadmap, OKRs.
@@ -39,8 +39,10 @@ Alongside the meta-skill, the repo ships six **SDLC expert skills** — one per 
 - [.claude/skills/developer/](.claude/skills/developer/) — clean code, testing, PR hygiene, refactoring.
 - [.claude/skills/qa-engineer/](.claude/skills/qa-engineer/) — test strategy, test design, bug reports.
 - [.claude/skills/devops-engineer/](.claude/skills/devops-engineer/) — CI/CD, IaC, observability, releases.
+- [.claude/skills/security-engineer/](.claude/skills/security-engineer/) — threat modeling, OWASP Top 10, authn/authz, secrets, crypto, SAST/DAST/SCA, CVSS triage.
+- [.claude/skills/cybersecurity-architect/](.claude/skills/cybersecurity-architect/) — zero trust, IAM, segmentation, data protection, key management, control frameworks, compliance, risk.
 
-Each SDLC expert also has a short **slash command** under [.claude/commands/](.claude/commands/) for addressing it directly — `/architect`, `/developer`, `/qa`, `/analyst`, `/product`, `/devops` — e.g. `/architect how do I avoid this race condition?`. Each command loads its matching skill and answers in that persona. `/new-feature <idea>` orchestrates all six in lifecycle order within one conversation (no subagents) to produce a consolidated plan. `/review-changes` routes the current diff to the relevant experts and returns severity-tagged, didactic findings; opt-in CI and local-hook templates in [integrations/](integrations/README.md) trigger it automatically on PRs and before pushing.
+Each SDLC expert also has a short **slash command** under [.claude/commands/](.claude/commands/) for addressing it directly — `/architect`, `/developer`, `/qa`, `/analyst`, `/product`, `/devops`, `/security`, `/security-architect` — e.g. `/architect how do I avoid this race condition?`. Each command loads its matching skill and answers in that persona. `/new-feature <idea>` orchestrates the core six (BA → PO → architect → developer → QA → devops) in lifecycle order within one conversation (no subagents) to produce a consolidated plan; the two security experts are consulted on demand and via `/review-changes`. `/review-changes` routes the current diff to the relevant experts (including the security experts) and returns severity-tagged, didactic findings; opt-in CI and local-hook templates in [integrations/](integrations/README.md) trigger it automatically on PRs and before pushing.
 
 Do not invent a new top-level skill when an existing workflow in `skill-creator` covers the use case.
 
@@ -51,7 +53,7 @@ Do not invent a new top-level skill when an existing workflow in `skill-creator`
 - **Skills are Claude Code native.** A skill is a `SKILL.md` with `name` + `description` frontmatter under `.claude/skills/<name>/`. There is no `command.md` and no installer — Claude Code discovers the skill from its frontmatter.
 - **Use deterministic validators where possible.** Do not ask an LLM to count files or check JSON shape — call [.claude/factory/validators/validate_skill.py](.claude/factory/validators/validate_skill.py) instead.
 - **Prefer existing templates** in [.claude/factory/templates/](.claude/factory/templates/) over inventing folder structure. The generator script at `.claude/skills/skill-creator/scripts/create_skill.py` is the canonical way to produce a scaffold; it emits `SKILL.md` plus the tier-appropriate folders.
-- **Where new skills land:** by default at `dist/<skill-name>/` (scratch). Promote to `.claude/skills/<skill-name>/` once the skill is intended as a shared, factory-owned asset that the org keeps and iterates on (the meta-skill `skill-creator` and the six SDLC expert skills already live there).
+- **Where new skills land:** by default at `dist/<skill-name>/` (scratch). Promote to `.claude/skills/<skill-name>/` once the skill is intended as a shared, factory-owned asset that the org keeps and iterates on (the meta-skill `skill-creator` and the eight SDLC expert skills already live there).
 - **Document assumptions and unresolved questions** in the produced skill's `skill-brief.md`.
 - **Do not overbuild.** Avoid speculative complexity, fake evals, or subagents where a checklist would do.
 - **No production app code** in this repo. Code-producing skills should emit examples, fixtures, scripts, or patches.
@@ -62,13 +64,14 @@ Do not invent a new top-level skill when an existing workflow in `skill-creator`
 praxis/
 ├─ AGENTS.md, CLAUDE.md, README.md, SKILLS.md
 ├─ .claude-plugin/     # marketplace.json (lists the praxis + skill-factory plugins)
-├─ plugin-praxis/      # plugin shell: symlinks to the 6 experts + their commands
+├─ plugin-praxis/      # plugin shell: symlinks to the 8 experts + their commands
 ├─ plugin-skill-factory/ # plugin shell: symlinks to skill-creator + factory + /validate-skills
 ├─ .claude/            # the real files (source of truth; used when this repo is the workspace)
 │  ├─ skills/          # factory-owned Claude Code skills (discovered automatically)
 │  │  ├─ skill-creator/   # the meta-skill — the pattern for creating new skills
 │  │  ├─ business-analyst/   product-owner/   software-architect/
-│  │  └─ developer/          qa-engineer/     devops-engineer/
+│  │  ├─ developer/          qa-engineer/     devops-engineer/
+│  │  └─ security-engineer/  cybersecurity-architect/
 │  ├─ commands/        # slash commands (/architect, /new-feature, …)
 │  └─ factory/         # all skill-authoring tooling + doctrine
 │     ├─ ai/           # global doctrine (operating model, tiering, routing, principles)
@@ -93,7 +96,7 @@ To load everything into a **different** project, the repo is a Claude Code **plu
 
 ```text
 /plugin marketplace add marcrabadan/praxis
-/plugin install praxis@praxis          # the six SDLC experts + /new-feature
+/plugin install praxis@praxis          # the eight SDLC experts + /new-feature
 /plugin install skill-factory@praxis   # optional: author your own skills
 ```
 

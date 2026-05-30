@@ -32,7 +32,7 @@ This repo (`praxis`). The system that creates, improves, evaluates, and packages
 
 ## Factory-owned skill
 
-A skill that lives inside `.claude/skills/` in this repo and supports the factory itself or is a shared org asset. Currently: `skill-creator` (the meta-skill, includes interview workflows) and the six SDLC expert skills (`business-analyst`, `product-owner`, `software-architect`, `developer`, `qa-engineer`, `devops-engineer`).
+A skill that lives inside `.claude/skills/` in this repo and supports the factory itself or is a shared org asset. Currently: `skill-creator` (the meta-skill, includes interview workflows) and the eight SDLC expert skills (`business-analyst`, `product-owner`, `software-architect`, `developer`, `qa-engineer`, `devops-engineer`, `security-engineer`, `cybersecurity-architect`).
 
 ## Produced skill
 

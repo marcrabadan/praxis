@@ -50,6 +50,8 @@ EXPERTS: dict[str, str] = {
     "developer": "Developer",
     "qa-engineer": "QA Engineer",
     "devops-engineer": "DevOps Engineer",
+    "security-engineer": "Security Engineer",
+    "cybersecurity-architect": "Cybersecurity Architect",
 }
 
 # single-persona command -> skill folder
@@ -60,6 +62,8 @@ COMMAND_PERSONA: dict[str, str] = {
     "developer": "developer",
     "qa": "qa-engineer",
     "devops": "devops-engineer",
+    "security": "security-engineer",
+    "security-architect": "cybersecurity-architect",
 }
 
 # multi-persona workflows (no single owning skill)
@@ -208,10 +212,11 @@ def _cursor() -> dict[str, str]:
     # always-applied doctrine bridge
     out["cursor/.cursor/rules/praxis.mdc"] = (
         "---\n"
-        "description: praxis SDLC experts — six personas (Business Analyst, "
-        "Product Owner, Software Architect, Developer, QA, DevOps) plus the "
-        "review and new-feature workflows. Reach for the matching praxis-* rule "
-        "when a task fits a role.\n"
+        "description: praxis SDLC experts — personas (Business Analyst, "
+        "Product Owner, Software Architect, Developer, QA, DevOps, Security "
+        "Engineer, Cybersecurity Architect) plus the review and new-feature "
+        "workflows. Reach for the matching praxis-* rule when a task fits a "
+        "role.\n"
         "alwaysApply: true\n"
         "---\n\n"
         f"{BANNER}\n\n"
@@ -222,8 +227,10 @@ def _cursor() -> dict[str, str]:
         "rule (auto-attached when relevant) and you can also invoke it explicitly "
         "with the matching command under `.cursor/commands/`.\n\n"
         f"{_roster_table()}\n\n"
-        "`/new-feature` runs all six in lifecycle order; `/review-changes` routes "
-        "the current diff to the relevant personas with severity-tagged findings.\n"
+        "`/new-feature` runs the core six (BA → PO → Architect → Developer → QA "
+        "→ DevOps) in lifecycle order; `/review-changes` routes the current diff "
+        "to the relevant personas (including the security experts) with "
+        "severity-tagged findings.\n"
     )
 
     # persona rules (Agent Requested: description-gated auto-attach)
@@ -322,7 +329,7 @@ def _cursor_readme() -> str:
     return (
         f"{BANNER}\n\n"
         "# praxis for Cursor\n\n"
-        "The six praxis SDLC experts and their workflows, re-expressed as Cursor "
+        "The praxis SDLC experts and their workflows, re-expressed as Cursor "
         "**project rules** and **commands**.\n\n"
         "## Install\n\n"
         "Copy the `.cursor/` directory into your project root (merge if you "
@@ -337,9 +344,10 @@ def _cursor_readme() -> str:
         "your request matches it. `praxis.mdc` is always applied and tells the "
         "agent when to reach for each persona.\n"
         "- **Invoke explicitly** with a command: `/architect`, `/developer`, "
-        "`/qa`, `/analyst`, `/product`, `/devops`.\n"
-        "- **Workflows:** `/new-feature` runs all six in order; `/review-changes` "
-        "reviews the current diff.\n"
+        "`/qa`, `/analyst`, `/product`, `/devops`, `/security`, "
+        "`/security-architect`.\n"
+        "- **Workflows:** `/new-feature` runs the core six in order; "
+        "`/review-changes` reviews the current diff.\n"
     )
 
 
@@ -347,7 +355,7 @@ def _codex_readme() -> str:
     return (
         f"{BANNER}\n\n"
         "# praxis for OpenAI Codex\n\n"
-        "The six praxis SDLC experts and their workflows, re-expressed for Codex "
+        "The praxis SDLC experts and their workflows, re-expressed for Codex "
         "(`AGENTS.md` + in-repo persona guides + `~/.codex/prompts`).\n\n"
         "## Install\n\n"
         "1. Codex reads `AGENTS.md` natively. Append `AGENTS.praxis.md` to your "
@@ -362,7 +370,8 @@ def _codex_readme() -> str:
         "```\n\n"
         "## Use\n\n"
         "- Type `/praxis-architect`, `/praxis-developer`, `/praxis-qa`, "
-        "`/praxis-analyst`, `/praxis-product`, `/praxis-devops`. Each adopts the "
+        "`/praxis-analyst`, `/praxis-product`, `/praxis-devops`, "
+        "`/praxis-security`, `/praxis-security-architect`. Each adopts the "
         "persona from `.praxis/<role>.md` and uses `$ARGUMENTS` as the request.\n"
         "- Workflows: `/praxis-new-feature`, `/praxis-review-changes`.\n"
     )
@@ -372,7 +381,7 @@ def _intellij_readme() -> str:
     return (
         f"{BANNER}\n\n"
         "# praxis for IntelliJ (JetBrains AI Assistant & Junie)\n\n"
-        "The six praxis SDLC experts and their workflows, re-expressed as Junie "
+        "The praxis SDLC experts and their workflows, re-expressed as Junie "
         "guidelines + persona guides + reusable prompts.\n\n"
         "## Install\n\n"
         "Copy the `.junie/` directory into your project root:\n\n"

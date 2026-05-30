@@ -5,7 +5,7 @@
 It has two parts:
 
 1. **`skill-creator`** — the meta-skill that *is the pattern for creating new skills*. Use it to scaffold, review, classify, and validate any new skill.
-2. **Six SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer), each built with that pattern.
+2. **Eight SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect), each built with that pattern.
 
 If you are a **PM, designer, or stakeholder** — read from the top. If you are a **developer writing or shipping a skill** — skip to the [Developer guide](#developer-guide).
 
@@ -65,16 +65,18 @@ Each SDLC expert has a short slash command so you can address it directly with a
 | `/analyst` | Business Analyst | `/analyst turn this idea into user stories with acceptance criteria` |
 | `/product` | Product Owner | `/product how should I prioritize these five backlog items?` |
 | `/devops` | DevOps Engineer | `/devops is this service ready to ship to production?` |
+| `/security` | Security Engineer | `/security threat-model this upload endpoint and find the vulns` |
+| `/security-architect` | Cybersecurity Architect | `/security-architect design the IAM and segmentation for this platform` |
 
 Each command loads its matching skill and answers in that persona. You can also just describe what you want and Claude will load the right expert on its own. Command definitions live in [.claude/commands/](.claude/commands/).
 
-To run a feature through **all six experts** in lifecycle order — BA → PO → architect → developer → QA → devops, each building on the last — use `/new-feature <idea or PRD>`. It produces one consolidated plan (requirements, prioritized increments, design decisions, implementation plan, test strategy, rollout). It runs in a single conversation so context carries across phases; it does not spawn subagents.
+To run a feature through the **core six experts** in lifecycle order — BA → PO → architect → developer → QA → devops, each building on the last — use `/new-feature <idea or PRD>`. It produces one consolidated plan (requirements, prioritized increments, design decisions, implementation plan, test strategy, rollout). It runs in a single conversation so context carries across phases; it does not spawn subagents. The two security experts (`/security`, `/security-architect`) sit alongside the lifecycle — consult them on demand for any security-significant work, and `/review-changes` brings them in automatically when a diff warrants it.
 
 ## Wiring the experts into your workflow
 
 Consulting an expert is *pull* — you have to remember to ask. To **catch bad practices at the moment they happen**, wire the experts into your dev flow so they show up on their own:
 
-- **`/review-changes`** reviews the current diff, routes to only the relevant experts (developer / qa / architect / devops), and returns **severity-tagged, didactic** findings — each says *what* the bad practice is, *why* it matters, and *how* to fix it. A junior learns from it; a senior skims by severity; an architect sees the team's standards enforced.
+- **`/review-changes`** reviews the current diff, routes to only the relevant experts (developer / qa / architect / devops / security / security-architect), and returns **severity-tagged, didactic** findings — each says *what* the bad practice is, *why* it matters, and *how* to fix it. A junior learns from it; a senior skims by severity; an architect sees the team's standards enforced.
 - Make it **automatic**: a GitHub Action runs it on every PR, and a local hook nudges you before you push. Both are opt-in templates in [`integrations/`](integrations/README.md).
 - **Use the same experts in other agents.** The personas and workflows are also generated for **Cursor**, **IntelliJ** (JetBrains AI Assistant & Junie), and **OpenAI Codex**, each in that tool's native format — see [`integrations/`](integrations/README.md#3-other-agents-cursor-intellij-openai-codex). All three read `AGENTS.md` natively for repo-wide doctrine.
 
@@ -87,7 +89,7 @@ The pattern for creating new skills. You describe what you want; it runs a guide
 - **General-purpose interview** — the one-question-at-a-time workflow works for scoping *any* objective, not only skills.
 - **Iteration capture (a learning loop)** — when you correct its output ("actually, always do X"), it asks whether to record that as a durable rule for the skill or a meta-rule for the factory (`learned-rules.md`), so the same correction is never needed twice.
 
-### The six SDLC expert skills (Tier 2)
+### The eight SDLC expert skills (Tier 2)
 
 Each makes Claude act as that role's expert, with practices and a review checklist:
 
@@ -99,6 +101,8 @@ Each makes Claude act as that role's expert, with practices and a review checkli
 | `developer` | Developer | Clean code, TDD/test pyramid, commit & PR hygiene, safe refactoring, security basics, review etiquette. |
 | `qa-engineer` | QA Engineer | Test strategy, test-design techniques, bug reports, risk-based & regression testing, release readiness. |
 | `devops-engineer` | DevOps Engineer | CI/CD, IaC, containers/K8s, deployment strategies, observability/SLOs, incident response, DORA. |
+| `security-engineer` | Security Engineer | Threat modeling (STRIDE), OWASP Top 10, authn/authz, secrets, crypto, SAST/DAST/SCA, supply chain, CVSS triage. |
+| `cybersecurity-architect` | Cybersecurity Architect | Zero trust, defense in depth, IAM/identity, segmentation, data protection, key management, NIST/ISO/CIS, compliance, risk. |
 
 ---
 
@@ -117,11 +121,11 @@ The repo is published as a **Claude Code plugin marketplace** with two plugins. 
 
 ```text
 /plugin marketplace add marcrabadan/praxis
-/plugin install praxis@praxis          # the six SDLC experts + /new-feature
+/plugin install praxis@praxis          # the eight SDLC experts + /new-feature
 /plugin install skill-factory@praxis   # optional: author your own skills
 ```
 
-- **`praxis`** — the on-demand SDLC team: the six expert skills, their per-expert commands, and the `/new-feature` orchestrator. Fully self-contained, so it works anywhere.
+- **`praxis`** — the on-demand SDLC team: the eight expert skills, their per-expert commands, and the `/new-feature` orchestrator. Fully self-contained, so it works anywhere.
 - **`skill-factory`** — the `skill-creator` meta-skill, `/validate-skills`, and the factory tooling, for teams that want to author their own skills.
 
 As plugins, commands are namespaced under the plugin name — e.g. `/praxis:architect`, `/praxis:new-feature`, `/skill-factory:validate-skills`. (One doctrine file in `skill-factory` links back to this repo's `AGENTS.md`, which only resolves with `praxis` open as a workspace — harmless when installed elsewhere.)
@@ -192,10 +196,10 @@ praxis/
 ├─ .github/workflows/     # CI: validates every skill on push / PR
 ├─ SKILLS.md              # generated catalog of skills + commands (make catalog)
 ├─ .claude-plugin/        # marketplace.json (lists the praxis + skill-factory plugins)
-├─ plugin-praxis/         # plugin: symlinks to the 6 experts + their commands
+├─ plugin-praxis/         # plugin: symlinks to the 8 experts + their commands
 ├─ plugin-skill-factory/  # plugin: symlinks to skill-creator + factory + /validate-skills
 ├─ .claude/               # the real source of truth (used when this repo is the workspace)
-│  ├─ skills/             # skill-creator (meta) + the six SDLC expert skills
+│  ├─ skills/             # skill-creator (meta) + the eight SDLC expert skills
 │  ├─ commands/           # /architect, /developer, …, /new-feature, /validate-skills
 │  └─ factory/            # all skill-authoring tooling + doctrine
 │     ├─ ai/              # operating model, tiering, routing, principles, promotion policy, glossary

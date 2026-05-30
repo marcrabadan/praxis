@@ -2,7 +2,7 @@
 
 # praxis for Cursor
 
-The six praxis SDLC experts and their workflows, re-expressed as Cursor **project rules** and **commands**.
+The praxis SDLC experts and their workflows, re-expressed as Cursor **project rules** and **commands**.
 
 ## Install
 
@@ -16,5 +16,5 @@ cp AGENTS.md <your-repo>/      # optional: Cursor reads AGENTS.md natively
 ## Use
 
 - **Personas auto-attach.** Each expert is a description-gated rule (`praxis-business-analyst`, …); Cursor pulls in the relevant one when your request matches it. `praxis.mdc` is always applied and tells the agent when to reach for each persona.
-- **Invoke explicitly** with a command: `/architect`, `/developer`, `/qa`, `/analyst`, `/product`, `/devops`.
-- **Workflows:** `/new-feature` runs all six in order; `/review-changes` reviews the current diff.
+- **Invoke explicitly** with a command: `/architect`, `/developer`, `/qa`, `/analyst`, `/product`, `/devops`, `/security`, `/security-architect`.
+- **Workflows:** `/new-feature` runs the core six in order; `/review-changes` reviews the current diff.
