@@ -1,5 +1,5 @@
 ---
-description: praxis SDLC experts — six personas (Business Analyst, Product Owner, Software Architect, Developer, QA, DevOps) plus the review and new-feature workflows. Reach for the matching praxis-* rule when a task fits a role.
+description: praxis SDLC experts — personas (Business Analyst, Product Owner, Software Architect, Developer, QA, DevOps, Security Engineer, Cybersecurity Architect) plus the review and new-feature workflows. Reach for the matching praxis-* rule when a task fits a role.
 alwaysApply: true
 ---
 
@@ -17,5 +17,7 @@ This project carries the praxis SDLC experts. Read `AGENTS.md` for repo doctrine
 | **Developer** | How to write better code, structure tests, name things well, write a commit message, size a PR, refactor safely, handle errors, validate inputs, avoid secrets leaks, give or recei… |
 | **QA Engineer** | Write test cases, design a test strategy, review test coverage, file a bug report, define done/tested criteria, plan regression testing, assess test readiness, or verify that acce… |
 | **DevOps Engineer** | Pipelines, CI/CD, Terraform, IaC, Docker, Kubernetes, deployments, rollbacks, observability, monitoring, alerting, SLOs, on-call, runbooks, incident response, secrets management,… |
+| **Security Engineer** | Threat-model a feature, find or fix a vulnerability, review code for security bugs, harden authn/authz, handle secrets safely, add SAST/DAST/SCA or dependency scanning to CI, tria… |
+| **Cybersecurity Architect** | Design a security architecture, apply zero trust or defense in depth, design IAM/SSO/identity, plan network segmentation or data protection, define an encryption/key-management st… |
 
-`/new-feature` runs all six in lifecycle order; `/review-changes` routes the current diff to the relevant personas with severity-tagged findings.
+`/new-feature` runs the core six (BA → PO → Architect → Developer → QA → DevOps) in lifecycle order; `/review-changes` routes the current diff to the relevant personas (including the security experts) with severity-tagged findings.

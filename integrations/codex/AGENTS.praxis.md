@@ -12,5 +12,7 @@ This repo carries the praxis SDLC expert personas under `.praxis/`. When a task 
 | **Developer** | How to write better code, structure tests, name things well, write a commit message, size a PR, refactor safely, handle errors, validate inputs, avoid secrets leaks, give or recei… |
 | **QA Engineer** | Write test cases, design a test strategy, review test coverage, file a bug report, define done/tested criteria, plan regression testing, assess test readiness, or verify that acce… |
 | **DevOps Engineer** | Pipelines, CI/CD, Terraform, IaC, Docker, Kubernetes, deployments, rollbacks, observability, monitoring, alerting, SLOs, on-call, runbooks, incident response, secrets management,… |
+| **Security Engineer** | Threat-model a feature, find or fix a vulnerability, review code for security bugs, harden authn/authz, handle secrets safely, add SAST/DAST/SCA or dependency scanning to CI, tria… |
+| **Cybersecurity Architect** | Design a security architecture, apply zero trust or defense in depth, design IAM/SSO/identity, plan network segmentation or data protection, define an encryption/key-management st… |
 
 Reusable slash commands for each persona live in `~/.codex/prompts/` (install them with the prompts in this integration); invoke e.g. `/praxis-architect`, `/praxis-review-changes`.

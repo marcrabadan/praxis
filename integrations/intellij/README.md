@@ -2,7 +2,7 @@
 
 # praxis for IntelliJ (JetBrains AI Assistant & Junie)
 
-The six praxis SDLC experts and their workflows, re-expressed as Junie guidelines + persona guides + reusable prompts.
+The praxis SDLC experts and their workflows, re-expressed as Junie guidelines + persona guides + reusable prompts.
 
 ## Install
 

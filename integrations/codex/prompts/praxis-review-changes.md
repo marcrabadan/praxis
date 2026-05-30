@@ -29,6 +29,8 @@ Pick **only** the experts the diff actually warrants (do not run all of them by 
 | Public interfaces, module boundaries, new dependencies, data models, cross-cutting/performance/security-significant decisions | **Software Architect** |
 | Tests, or code that lacks tests it should have | **QA Engineer** |
 | CI/CD, IaC, Dockerfiles, deploy/release config, observability | **DevOps Engineer** |
+| Authentication/authorization, input handling, crypto, secrets, dependencies, or any code with an abuse/vulnerability risk | **Security Engineer** |
+| Trust boundaries, identity/data-protection design, segmentation, encryption strategy, or compliance-significant architecture | **Cybersecurity Architect** |
 | Requirements/acceptance behavior that the diff seems to contradict | **Business Analyst** |
 
 Always run the Developer checklist on code changes as the baseline. Add others by the table above.

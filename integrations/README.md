@@ -1,6 +1,6 @@
 # Wiring praxis into your dev flow
 
-The six SDLC experts are most useful when they reach the code **at the moment a mistake is
+The praxis SDLC experts are most useful when they reach the code **at the moment a mistake is
 made** — not only when someone remembers to ask. This is the gap these integrations close:
 they move the experts from *pull* (you invoke them) to *push* (they show up automatically),
 so juniors catch bad practices they didn't know to look for, seniors get a low-friction
@@ -12,7 +12,7 @@ itself ships these as templates and does not enable them on its own CI.
 ## The reviewer: `/review-changes`
 
 The behaviour everything below triggers. It reads the current diff, routes to only the
-relevant experts (developer / qa / architect / devops), and returns **severity-tagged,
+relevant experts (developer / qa / architect / devops / security / security-architect), and returns **severity-tagged,
 didactic** findings — each one says *what* the bad practice is, *why* it matters, and *how*
 to fix it. Run it by hand any time:
 
@@ -49,14 +49,14 @@ your repo's `.claude/settings.json` (merge it if the file already exists).
 
 ## 3. Other agents: Cursor, IntelliJ, OpenAI Codex
 
-The six experts and the `/new-feature` + `/review-changes` workflows are **Claude Code
+The eight experts and the `/new-feature` + `/review-changes` workflows are **Claude Code
 native** (`.claude/skills/`, `.claude/commands/`). To use the *same* personas from another
 agentic IDE, this repo ships generated, copy-in integrations — one per tool — each in that
 tool's native format and location:
 
 | Tool | Folder | What it ships |
 | ---- | ------ | ------------- |
-| **Cursor** | [`cursor/`](cursor/) | `.cursor/rules/*.mdc` (the six personas as auto-attaching rules + an always-on roster) and `.cursor/commands/*.md` (`/architect`, `/review-changes`, …) |
+| **Cursor** | [`cursor/`](cursor/) | `.cursor/rules/*.mdc` (the eight personas as auto-attaching rules + an always-on roster) and `.cursor/commands/*.md` (`/architect`, `/security`, `/review-changes`, …) |
 | **OpenAI Codex** | [`codex/`](codex/) | `AGENTS.praxis.md` (roster for `AGENTS.md`), `.praxis/*.md` (in-repo persona guides) and `prompts/*.md` for `~/.codex/prompts/` (`/praxis-architect`, …) |
 | **IntelliJ** (JetBrains AI Assistant & Junie) | [`intellij/`](intellij/) | `.junie/guidelines.md` + `.junie/praxis/*.md` (persona guides) and `prompts/*.md` (ready-to-paste prompt snippets) |
 
