@@ -13,6 +13,10 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- Three frontend SDLC expert skills: `ux-ui-engineer`, `frontend-architect`,
+  and `frontend-engineer` (Tier 2), each with `practices.md` and `checklist.md`
+  references, a per-expert slash command (`/ux`, `/frontend-architect`,
+  `/frontend`), plugin symlinks, and `/review-changes` routing.
 - `LICENSE` (Apache-2.0) and `NOTICE`, making the project open source.
 - `SECURITY.md` with a private vulnerability-reporting process.
 - `CHANGELOG.md` (this file) and a documented versioning scheme.

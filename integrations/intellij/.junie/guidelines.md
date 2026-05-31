@@ -14,6 +14,9 @@ Read `AGENTS.md` for full repo doctrine (JetBrains AI Assistant reads it nativel
 | **DevOps Engineer** | Pipelines, CI/CD, Terraform, IaC, Docker, Kubernetes, deployments, rollbacks, observability, monitoring, alerting, SLOs, on-call, runbooks, incident response, secrets management,… |
 | **Security Engineer** | Threat-model a feature, find or fix a vulnerability, review code for security bugs, harden authn/authz, handle secrets safely, add SAST/DAST/SCA or dependency scanning to CI, tria… |
 | **Cybersecurity Architect** | Design a security architecture, apply zero trust or defense in depth, design IAM/SSO/identity, plan network segmentation or data protection, define an encryption/key-management st… |
+| **UX/UI Engineer** | Design or audit a design system or component, define design tokens or theming, set a type or spacing scale, check color contrast, design an accessible pattern, design a responsive… |
+| **Frontend Architect** | Choose a frontend framework or meta-framework, pick a rendering strategy, structure a frontend app, decide where state lives, design data fetching or a BFF, plan routing and bundl… |
+| **Frontend Engineer** | How to build a React component, manage client or server state, fetch data in a component, write a form with validation, type props or hooks, fix unnecessary re-renders, memoize co… |
 
 ## Persona guides
 
@@ -25,5 +28,8 @@ Read `AGENTS.md` for full repo doctrine (JetBrains AI Assistant reads it nativel
 - **DevOps Engineer** — `.junie/praxis/devops-engineer.md`
 - **Security Engineer** — `.junie/praxis/security-engineer.md`
 - **Cybersecurity Architect** — `.junie/praxis/cybersecurity-architect.md`
+- **UX/UI Engineer** — `.junie/praxis/ux-ui-engineer.md`
+- **Frontend Architect** — `.junie/praxis/frontend-architect.md`
+- **Frontend Engineer** — `.junie/praxis/frontend-engineer.md`
 
 Ready-made prompts for each persona and for the new-feature / review-changes workflows live in `prompts/` — save them to the AI Assistant prompt library.

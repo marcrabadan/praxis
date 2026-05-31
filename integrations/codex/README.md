@@ -21,5 +21,5 @@ cp integrations/codex/prompts/*.md ~/.codex/prompts/
 
 ## Use
 
-- Type `/praxis-architect`, `/praxis-developer`, `/praxis-qa`, `/praxis-analyst`, `/praxis-product`, `/praxis-devops`, `/praxis-security`, `/praxis-security-architect`. Each adopts the persona from `.praxis/<role>.md` and uses `$ARGUMENTS` as the request.
+- Type `/praxis-architect`, `/praxis-developer`, `/praxis-qa`, `/praxis-analyst`, `/praxis-product`, `/praxis-devops`, `/praxis-security`, `/praxis-security-architect`, `/praxis-ux`, `/praxis-frontend-architect`, `/praxis-frontend`. Each adopts the persona from `.praxis/<role>.md` and uses `$ARGUMENTS` as the request.
 - Workflows: `/praxis-new-feature`, `/praxis-review-changes`.

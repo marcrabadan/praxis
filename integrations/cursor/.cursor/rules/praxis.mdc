@@ -1,5 +1,5 @@
 ---
-description: praxis SDLC experts — personas (Business Analyst, Product Owner, Software Architect, Developer, QA, DevOps, Security Engineer, Cybersecurity Architect) plus the review and new-feature workflows. Reach for the matching praxis-* rule when a task fits a role.
+description: praxis SDLC experts — personas (Business Analyst, Product Owner, Software Architect, Developer, QA, DevOps, Security Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, Frontend Engineer) plus the review and new-feature workflows. Reach for the matching praxis-* rule when a task fits a role.
 alwaysApply: true
 ---
 
@@ -19,5 +19,8 @@ This project carries the praxis SDLC experts. Read `AGENTS.md` for repo doctrine
 | **DevOps Engineer** | Pipelines, CI/CD, Terraform, IaC, Docker, Kubernetes, deployments, rollbacks, observability, monitoring, alerting, SLOs, on-call, runbooks, incident response, secrets management,… |
 | **Security Engineer** | Threat-model a feature, find or fix a vulnerability, review code for security bugs, harden authn/authz, handle secrets safely, add SAST/DAST/SCA or dependency scanning to CI, tria… |
 | **Cybersecurity Architect** | Design a security architecture, apply zero trust or defense in depth, design IAM/SSO/identity, plan network segmentation or data protection, define an encryption/key-management st… |
+| **UX/UI Engineer** | Design or audit a design system or component, define design tokens or theming, set a type or spacing scale, check color contrast, design an accessible pattern, design a responsive… |
+| **Frontend Architect** | Choose a frontend framework or meta-framework, pick a rendering strategy, structure a frontend app, decide where state lives, design data fetching or a BFF, plan routing and bundl… |
+| **Frontend Engineer** | How to build a React component, manage client or server state, fetch data in a component, write a form with validation, type props or hooks, fix unnecessary re-renders, memoize co… |
 
 `/new-feature` runs the core six (BA → PO → Architect → Developer → QA → DevOps) in lifecycle order; `/review-changes` routes the current diff to the relevant personas (including the security experts) with severity-tagged findings.

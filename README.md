@@ -5,7 +5,7 @@
 It has two parts:
 
 1. **`skill-creator`** — the meta-skill that *is the pattern for creating new skills*. Use it to scaffold, review, classify, and validate any new skill.
-2. **Eight SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect), each built with that pattern.
+2. **Eleven SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, Frontend Engineer), each built with that pattern.
 
 If you are a **PM, designer, or stakeholder** — read from the top. If you are a **developer writing or shipping a skill** — skip to the [Developer guide](#developer-guide).
 
@@ -67,6 +67,9 @@ Each SDLC expert has a short slash command so you can address it directly with a
 | `/devops` | DevOps Engineer | `/devops is this service ready to ship to production?` |
 | `/security` | Security Engineer | `/security threat-model this upload endpoint and find the vulns` |
 | `/security-architect` | Cybersecurity Architect | `/security-architect design the IAM and segmentation for this platform` |
+| `/ux` | UX/UI Engineer | `/ux check the contrast and focus states on this form` |
+| `/frontend-architect` | Frontend Architect | `/frontend-architect SSR or SSG for this catalog, and where should state live?` |
+| `/frontend` | Frontend Engineer | `/frontend why does this list re-render on every keystroke?` |
 
 Each command loads its matching skill and answers in that persona. You can also just describe what you want and Claude will load the right expert on its own. Command definitions live in [.claude/commands/](.claude/commands/).
 
@@ -89,7 +92,7 @@ The pattern for creating new skills. You describe what you want; it runs a guide
 - **General-purpose interview** — the one-question-at-a-time workflow works for scoping *any* objective, not only skills.
 - **Iteration capture (a learning loop)** — when you correct its output ("actually, always do X"), it asks whether to record that as a durable rule for the skill or a meta-rule for the factory (`learned-rules.md`), so the same correction is never needed twice.
 
-### The eight SDLC expert skills (Tier 2)
+### The eleven SDLC expert skills (Tier 2)
 
 Each makes Claude act as that role's expert, with practices and a review checklist:
 
@@ -103,6 +106,9 @@ Each makes Claude act as that role's expert, with practices and a review checkli
 | `devops-engineer` | DevOps Engineer | CI/CD, IaC, containers/K8s, deployment strategies, observability/SLOs, incident response, DORA. |
 | `security-engineer` | Security Engineer | Threat modeling (STRIDE), OWASP Top 10, authn/authz, secrets, crypto, SAST/DAST/SCA, supply chain, CVSS triage. |
 | `cybersecurity-architect` | Cybersecurity Architect | Zero trust, defense in depth, IAM/identity, segmentation, data protection, key management, NIST/ISO/CIS, compliance, risk. |
+| `ux-ui-engineer` | UX/UI Engineer | Design systems & tokens, visual & interaction design, accessibility (WCAG 2.2 AA), responsive layout, usability heuristics, UX writing, design handoff. |
+| `frontend-architect` | Frontend Architect | Framework & rendering strategy (SSR/SSG/ISR/RSC), state/data/routing architecture, build & bundling, micro-frontends, design-system architecture, Core Web Vitals. |
+| `frontend-engineer` | Frontend Engineer | Component implementation, state & data wiring, forms, styling, frontend TypeScript, re-render/performance, accessibility implementation, component/E2E testing. |
 
 ---
 
@@ -121,11 +127,11 @@ The repo is published as a **Claude Code plugin marketplace** with two plugins. 
 
 ```text
 /plugin marketplace add marcrabadan/praxis
-/plugin install praxis@praxis          # the eight SDLC experts + /new-feature
+/plugin install praxis@praxis          # the eleven SDLC experts + /new-feature
 /plugin install skill-factory@praxis   # optional: author your own skills
 ```
 
-- **`praxis`** — the on-demand SDLC team: the eight expert skills, their per-expert commands, and the `/new-feature` orchestrator. Fully self-contained, so it works anywhere.
+- **`praxis`** — the on-demand SDLC team: the eleven expert skills, their per-expert commands, and the `/new-feature` orchestrator. Fully self-contained, so it works anywhere.
 - **`skill-factory`** — the `skill-creator` meta-skill, `/validate-skills`, and the factory tooling, for teams that want to author their own skills.
 
 As plugins, commands are namespaced under the plugin name — e.g. `/praxis:architect`, `/praxis:new-feature`, `/skill-factory:validate-skills`. (One doctrine file in `skill-factory` links back to this repo's `AGENTS.md`, which only resolves with `praxis` open as a workspace — harmless when installed elsewhere.)
@@ -196,10 +202,10 @@ praxis/
 ├─ .github/workflows/     # CI: validates every skill on push / PR
 ├─ SKILLS.md              # generated catalog of skills + commands (make catalog)
 ├─ .claude-plugin/        # marketplace.json (lists the praxis + skill-factory plugins)
-├─ plugin-praxis/         # plugin: symlinks to the 8 experts + their commands
+├─ plugin-praxis/         # plugin: symlinks to the 11 experts + their commands
 ├─ plugin-skill-factory/  # plugin: symlinks to skill-creator + factory + /validate-skills
 ├─ .claude/               # the real source of truth (used when this repo is the workspace)
-│  ├─ skills/             # skill-creator (meta) + the eight SDLC expert skills
+│  ├─ skills/             # skill-creator (meta) + the eleven SDLC expert skills
 │  ├─ commands/           # /architect, /developer, …, /new-feature, /validate-skills
 │  └─ factory/            # all skill-authoring tooling + doctrine
 │     ├─ ai/              # operating model, tiering, routing, principles, promotion policy, glossary

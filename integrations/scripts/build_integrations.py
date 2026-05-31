@@ -52,6 +52,9 @@ EXPERTS: dict[str, str] = {
     "devops-engineer": "DevOps Engineer",
     "security-engineer": "Security Engineer",
     "cybersecurity-architect": "Cybersecurity Architect",
+    "ux-ui-engineer": "UX/UI Engineer",
+    "frontend-architect": "Frontend Architect",
+    "frontend-engineer": "Frontend Engineer",
 }
 
 # single-persona command -> skill folder
@@ -64,6 +67,9 @@ COMMAND_PERSONA: dict[str, str] = {
     "devops": "devops-engineer",
     "security": "security-engineer",
     "security-architect": "cybersecurity-architect",
+    "ux": "ux-ui-engineer",
+    "frontend-architect": "frontend-architect",
+    "frontend": "frontend-engineer",
 }
 
 # multi-persona workflows (no single owning skill)
@@ -214,9 +220,9 @@ def _cursor() -> dict[str, str]:
         "---\n"
         "description: praxis SDLC experts — personas (Business Analyst, "
         "Product Owner, Software Architect, Developer, QA, DevOps, Security "
-        "Engineer, Cybersecurity Architect) plus the review and new-feature "
-        "workflows. Reach for the matching praxis-* rule when a task fits a "
-        "role.\n"
+        "Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, "
+        "Frontend Engineer) plus the review and new-feature workflows. Reach for "
+        "the matching praxis-* rule when a task fits a role.\n"
         "alwaysApply: true\n"
         "---\n\n"
         f"{BANNER}\n\n"
@@ -345,7 +351,7 @@ def _cursor_readme() -> str:
         "agent when to reach for each persona.\n"
         "- **Invoke explicitly** with a command: `/architect`, `/developer`, "
         "`/qa`, `/analyst`, `/product`, `/devops`, `/security`, "
-        "`/security-architect`.\n"
+        "`/security-architect`, `/ux`, `/frontend-architect`, `/frontend`.\n"
         "- **Workflows:** `/new-feature` runs the core six in order; "
         "`/review-changes` reviews the current diff.\n"
     )
@@ -371,7 +377,8 @@ def _codex_readme() -> str:
         "## Use\n\n"
         "- Type `/praxis-architect`, `/praxis-developer`, `/praxis-qa`, "
         "`/praxis-analyst`, `/praxis-product`, `/praxis-devops`, "
-        "`/praxis-security`, `/praxis-security-architect`. Each adopts the "
+        "`/praxis-security`, `/praxis-security-architect`, `/praxis-ux`, "
+        "`/praxis-frontend-architect`, `/praxis-frontend`. Each adopts the "
         "persona from `.praxis/<role>.md` and uses `$ARGUMENTS` as the request.\n"
         "- Workflows: `/praxis-new-feature`, `/praxis-review-changes`.\n"
     )
