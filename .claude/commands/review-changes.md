@@ -34,6 +34,9 @@ Pick **only** the experts the diff actually warrants (do not run all of them by 
 | CI/CD, IaC, Dockerfiles, deploy/release config, observability | **`devops-engineer`** |
 | Authentication/authorization, input handling, crypto, secrets, dependencies, or any code with an abuse/vulnerability risk | **`security-engineer`** |
 | Trust boundaries, identity/data-protection design, segmentation, encryption strategy, or compliance-significant architecture | **`cybersecurity-architect`** |
+| Frontend framework/rendering/state/routing/build architecture, design-system structure, or Core Web Vitals budgets | **`frontend-architect`** |
+| UI components, hooks, client/server state, forms, styling, frontend TypeScript, re-render/performance, accessibility implementation, or component/E2E tests | **`frontend-engineer`** |
+| Design tokens, visual/interaction design, accessibility criteria (WCAG), responsive layout, usability, UX writing, or design fidelity | **`ux-ui-engineer`** |
 | Requirements/acceptance behavior that the diff seems to contradict | **`business-analyst`** |
 
 Always run the `developer` checklist on code changes as the baseline. Add others by the table above.
