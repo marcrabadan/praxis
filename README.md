@@ -231,4 +231,13 @@ What exists today is strong at **creating** skills. The gaps below are what stan
 
 ## License
 
-Internal — adapt the license to your needs before distributing.
+Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for
+attribution and [CHANGELOG.md](CHANGELOG.md) for the release history.
+
+## Versioning
+
+This project follows [Semantic Versioning](https://semver.org/). The two
+distributable plugins each carry a `version` in their
+`.claude-plugin/plugin.json` (mirrored in `.claude-plugin/marketplace.json`),
+and the repository as a whole is tagged `vX.Y.Z` at each release. Changes are
+recorded in [CHANGELOG.md](CHANGELOG.md).
