@@ -7,7 +7,7 @@ It has two parts:
 1. **`skill-creator`** — the meta-skill that *is the pattern for creating new skills*. Use it to scaffold, review, classify, and validate any new skill.
 2. **Eleven SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, Frontend Engineer), each built with that pattern.
 
-If you are a **PM, designer, or stakeholder** — read from the top. If you are a **developer writing or shipping a skill** — skip to the [Developer guide](#developer-guide).
+**Just want to use it?** Jump to [Install & integrate](#install--integrate) for Claude Code, Cursor, IntelliJ, and Codex. **Want to see the output first?** Browse [`examples/`](examples/README.md) for sample transcripts. Otherwise: **PMs, designers, stakeholders** read from the top; **developers writing or shipping a skill** skip to the [Developer guide](#developer-guide).
 
 ---
 
@@ -16,6 +16,79 @@ If you are a **PM, designer, or stakeholder** — read from the top. If you are 
 `praxis` is a **factory for Claude Code skills**. A "skill" is a small package of instructions that teaches Claude Code how to do one specific thing your team's way — act as a particular SDLC expert, follow a review checklist, write requirements, design an architecture, and so on.
 
 Every time someone teaches Claude a useful pattern, that knowledge is captured **once** here and becomes available to everyone. It is **not** a product repo — it holds the instructions Claude uses *when working on* product repos, not the products themselves.
+
+## Install & integrate
+
+Pick the path that matches how you work. The experts are **Claude Code native**; the same personas are also generated for **Cursor**, **IntelliJ**, and **OpenAI Codex** so you can use them from those tools too.
+
+**Prerequisites:** [Claude Code](https://docs.claude.com/en/docs/claude-code) for the primary path. Python 3 is only needed if you want to *author* skills with the factory tooling (the validators use the standard library — no extra packages to install).
+
+### Claude Code — use it inside this repo (zero install)
+
+Open `praxis` as your workspace and every skill under `.claude/skills/` is discovered automatically from its frontmatter. Just describe the task or type a slash command:
+
+```text
+/architect SSR or SSG for this catalog, and where should state live?
+/new-feature add saved-payment-methods to checkout
+/review-changes
+```
+
+### Claude Code — install into another project (plugin marketplace)
+
+To pull the experts into a *different* repo, `praxis` ships as a Claude Code **plugin marketplace** with two plugins. Run this from inside the target project:
+
+```text
+/plugin marketplace add marcrabadan/praxis
+/plugin install praxis@praxis          # the eleven SDLC experts + /new-feature + /review-changes
+/plugin install skill-factory@praxis   # optional: author your own skills (skill-creator + /validate-skills)
+```
+
+As plugins, commands are namespaced under the plugin name — `/praxis:architect`, `/praxis:new-feature`, `/skill-factory:validate-skills`, and so on.
+
+Want just **one** skill, with no plugin? Copy the folder, or use the export target from inside this repo:
+
+```bash
+make export SKILL=software-architect TO=../my-product-repo   # → ../my-product-repo/.claude/skills/software-architect
+# or by hand, including for user-wide scope:
+cp -R .claude/skills/software-architect ~/.claude/skills/
+```
+
+### Cursor
+
+The eleven experts ship as Cursor **project rules** (auto-attaching) plus **commands**. Copy the generated `.cursor/` directory into your project root:
+
+```bash
+cp -R integrations/cursor/.cursor <your-repo>/
+cp AGENTS.md <your-repo>/        # optional: Cursor reads AGENTS.md natively
+```
+
+Personas auto-attach when your request matches them; invoke one explicitly with `/architect`, `/developer`, `/security`, `/frontend`, … or run `/new-feature` and `/review-changes`. Details: [`integrations/cursor/`](integrations/cursor/README.md).
+
+### IntelliJ (JetBrains AI Assistant & Junie)
+
+Ships as Junie guidelines + persona guides + ready-to-paste prompts. Copy the generated `.junie/` directory into your project root:
+
+```bash
+cp -R integrations/intellij/.junie <your-repo>/
+cp AGENTS.md <your-repo>/        # JetBrains AI Assistant reads AGENTS.md natively
+```
+
+Then ask Junie or the AI Assistant to *act as the praxis Software Architect* (or any role). IntelliJ has no repo-level slash commands, so the snippets in [`integrations/intellij/prompts/`](integrations/intellij/prompts/) are one-per-persona prompts you can save to the AI Assistant prompt library. Details: [`integrations/intellij/`](integrations/intellij/README.md).
+
+### OpenAI Codex
+
+```bash
+# 1. Codex reads AGENTS.md natively — append the roster (or copy praxis's AGENTS.md):
+cat integrations/codex/AGENTS.praxis.md >> <your-repo>/AGENTS.md
+# 2. ship the persona guides with your code:
+cp -R integrations/codex/.praxis <your-repo>/
+# 3. install the slash commands:
+cp integrations/codex/prompts/*.md ~/.codex/prompts/
+```
+
+Then type `/praxis-architect`, `/praxis-security`, `/praxis-new-feature`, … Details: [`integrations/codex/`](integrations/codex/README.md).
+
+> The `cursor/`, `intellij/`, and `codex/` files are **generated** from the canonical Claude Code skills (`make integrations`) so they never drift — don't edit them by hand. See [`integrations/`](integrations/README.md) for the full wiring, including automatic PR review (CI) and a local pre-push nudge.
 
 ## What is a "skill"?
 
@@ -75,6 +148,18 @@ Each command loads its matching skill and answers in that persona. You can also 
 
 To run a feature through the **core six experts** in lifecycle order — BA → PO → architect → developer → QA → devops, each building on the last — use `/new-feature <idea or PRD>`. It produces one consolidated plan (requirements, prioritized increments, design decisions, implementation plan, test strategy, rollout). It runs in a single conversation so context carries across phases; it does not spawn subagents. The two security experts (`/security`, `/security-architect`) sit alongside the lifecycle — consult them on demand for any security-significant work, and `/review-changes` brings them in automatically when a diff warrants it.
 
+### See it in action
+
+Sample transcripts — the prompt you type and a representative response — live in [`examples/`](examples/README.md). Most follow one running feature (saved payment methods at checkout) so you can watch it move through requirements, architecture, build, and review:
+
+| Sample | Shows |
+| ------ | ----- |
+| [new-feature.md](examples/new-feature.md) | `/new-feature` → the core six's consolidated plan |
+| [architect-adr.md](examples/architect-adr.md) | `/architect` → a decision captured as an ADR |
+| [analyst-user-stories.md](examples/analyst-user-stories.md) | `/analyst` → INVEST stories + Gherkin acceptance criteria |
+| [review-changes.md](examples/review-changes.md) | `/review-changes` → severity-tagged, didactic findings |
+| [security-threat-model.md](examples/security-threat-model.md) | `/security` → a STRIDE threat model with mitigations |
+
 ## Wiring the experts into your workflow
 
 Consulting an expert is *pull* — you have to remember to ask. To **catch bad practices at the moment they happen**, wire the experts into your dev flow so they show up on their own:
@@ -123,30 +208,11 @@ Each makes Claude act as that role's expert, with practices and a review checkli
 
 ### Using these skills in another project
 
-The repo is published as a **Claude Code plugin marketplace** with two plugins. From inside the target project:
-
-```text
-/plugin marketplace add marcrabadan/praxis
-/plugin install praxis@praxis          # the eleven SDLC experts + /new-feature
-/plugin install skill-factory@praxis   # optional: author your own skills
-```
+See [Install & integrate](#install--integrate) above for the plugin, single-skill copy, and Cursor / IntelliJ / Codex paths. A few notes for maintainers:
 
 - **`praxis`** — the on-demand SDLC team: the eleven expert skills, their per-expert commands, and the `/new-feature` orchestrator. Fully self-contained, so it works anywhere.
-- **`skill-factory`** — the `skill-creator` meta-skill, `/validate-skills`, and the factory tooling, for teams that want to author their own skills.
-
-As plugins, commands are namespaced under the plugin name — e.g. `/praxis:architect`, `/praxis:new-feature`, `/skill-factory:validate-skills`. (One doctrine file in `skill-factory` links back to this repo's `AGENTS.md`, which only resolves with `praxis` open as a workspace — harmless when installed elsewhere.)
-
-Prefer a plain folder copy (no plugin), or want just one skill? Use the export target or copy by hand:
-
-```bash
-# from this repo: copy one skill into a sibling product repo
-make export SKILL=software-architect TO=../my-product-repo
-
-# or by hand
-cp -R .claude/skills/software-architect ../my-product-repo/.claude/skills/
-```
-
-Use `~/.claude/skills/` instead of a repo path for user-wide availability. Every skill carries a `version` (semver) in its frontmatter, so a consuming repo can tell when its copy is behind. Keep authoring and iteration inside `praxis`, since the factory depends on `.claude/factory/ai/`, `.claude/factory/templates/`, and `.claude/factory/validators/`.
+- **`skill-factory`** — the `skill-creator` meta-skill, `/validate-skills`, and the factory tooling, for teams that want to author their own skills. (One doctrine file links back to this repo's `AGENTS.md`, which only resolves with `praxis` open as a workspace — harmless when installed elsewhere.)
+- Every skill carries a `version` (semver) in its frontmatter, so a consuming repo can tell when its copy is behind. Keep authoring and iteration inside `praxis`, since the factory depends on `.claude/factory/ai/`, `.claude/factory/templates/`, and `.claude/factory/validators/`.
 
 ### The catalog
 
@@ -201,6 +267,7 @@ praxis/
 ├─ .vscode/tasks.json     # equivalent tasks for VS Code
 ├─ .github/workflows/     # CI: validates every skill on push / PR
 ├─ SKILLS.md              # generated catalog of skills + commands (make catalog)
+├─ examples/              # sample transcripts — what each expert/command produces
 ├─ .claude-plugin/        # marketplace.json (lists the praxis + skill-factory plugins)
 ├─ plugin-praxis/         # plugin: symlinks to the 11 experts + their commands
 ├─ plugin-skill-factory/  # plugin: symlinks to skill-creator + factory + /validate-skills
