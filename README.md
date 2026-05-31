@@ -7,7 +7,7 @@ It has two parts:
 1. **`skill-creator`** — the meta-skill that *is the pattern for creating new skills*. Use it to scaffold, review, classify, and validate any new skill.
 2. **Eleven SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, Frontend Engineer), each built with that pattern.
 
-**Just want to use it?** Jump to [Install & integrate](#install--integrate) for Claude Code, Cursor, IntelliJ, and Codex. Otherwise: **PMs, designers, stakeholders** read from the top; **developers writing or shipping a skill** skip to the [Developer guide](#developer-guide).
+**Just want to use it?** Jump to [Install & integrate](#install--integrate) for Claude Code, Cursor, IntelliJ, and Codex. **Want to see the output first?** Browse [`examples/`](examples/README.md) for sample transcripts. Otherwise: **PMs, designers, stakeholders** read from the top; **developers writing or shipping a skill** skip to the [Developer guide](#developer-guide).
 
 ---
 
@@ -148,6 +148,18 @@ Each command loads its matching skill and answers in that persona. You can also 
 
 To run a feature through the **core six experts** in lifecycle order — BA → PO → architect → developer → QA → devops, each building on the last — use `/new-feature <idea or PRD>`. It produces one consolidated plan (requirements, prioritized increments, design decisions, implementation plan, test strategy, rollout). It runs in a single conversation so context carries across phases; it does not spawn subagents. The two security experts (`/security`, `/security-architect`) sit alongside the lifecycle — consult them on demand for any security-significant work, and `/review-changes` brings them in automatically when a diff warrants it.
 
+### See it in action
+
+Sample transcripts — the prompt you type and a representative response — live in [`examples/`](examples/README.md). Most follow one running feature (saved payment methods at checkout) so you can watch it move through requirements, architecture, build, and review:
+
+| Sample | Shows |
+| ------ | ----- |
+| [new-feature.md](examples/new-feature.md) | `/new-feature` → the core six's consolidated plan |
+| [architect-adr.md](examples/architect-adr.md) | `/architect` → a decision captured as an ADR |
+| [analyst-user-stories.md](examples/analyst-user-stories.md) | `/analyst` → INVEST stories + Gherkin acceptance criteria |
+| [review-changes.md](examples/review-changes.md) | `/review-changes` → severity-tagged, didactic findings |
+| [security-threat-model.md](examples/security-threat-model.md) | `/security` → a STRIDE threat model with mitigations |
+
 ## Wiring the experts into your workflow
 
 Consulting an expert is *pull* — you have to remember to ask. To **catch bad practices at the moment they happen**, wire the experts into your dev flow so they show up on their own:
@@ -255,6 +267,7 @@ praxis/
 ├─ .vscode/tasks.json     # equivalent tasks for VS Code
 ├─ .github/workflows/     # CI: validates every skill on push / PR
 ├─ SKILLS.md              # generated catalog of skills + commands (make catalog)
+├─ examples/              # sample transcripts — what each expert/command produces
 ├─ .claude-plugin/        # marketplace.json (lists the praxis + skill-factory plugins)
 ├─ plugin-praxis/         # plugin: symlinks to the 11 experts + their commands
 ├─ plugin-skill-factory/  # plugin: symlinks to skill-creator + factory + /validate-skills
