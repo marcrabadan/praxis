@@ -13,6 +13,13 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- `data-engineer` skill (Tier 2) — a **Data Engineer** SDLC expert covering the
+  full data platform: batch & streaming pipelines (ETL/ELT, CDC), warehouse/lake/
+  lakehouse and dimensional modeling, orchestration (dbt/Airflow/Dagster), data
+  quality & contracts, lineage & governance, partitioning, and DataOps & cost.
+  Ships `references/practices.md`, a data-product `references/checklist.md`, a
+  `/data` slash command, plugin symlinks, and Cursor/IntelliJ/Codex integrations.
+  This brings the roster to twelve SDLC experts.
 - `memory` skill (Tier 4) — a versioned **memory ledger** that records plans,
   decisions, implementations, and artifacts under `.praxis/memory/` (committed
   to git), each with a `pending → accepted | rejected | rolled-back` lifecycle.

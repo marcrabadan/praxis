@@ -8,6 +8,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | ----- | ------- | ---- | ----------- |
 | `business-analyst` | 1.0.0 | 2 | Acts as a Business Analyst SDLC expert to elicit, structure, and validate requirements. Writes user stories with INVEST criteria and Gherkin acceptance criteri… |
 | `cybersecurity-architect` | 1.0.0 | 2 | Adopts the Cybersecurity Architect persona to design and review security architecture at the system and organization level — zero-trust and defense-in-depth de… |
+| `data-engineer` | 1.0.0 | 2 | Acts as a Data Engineer SDLC expert covering the full data platform — batch and streaming pipelines (ETL/ELT, CDC, Kafka/Flink/Spark), data modeling (dimension… |
 | `developer` | 1.0.0 | 2 | Acts as a Software Developer / Engineer SDLC expert covering clean code, SOLID/DRY/YAGNI principles, TDD and the test pyramid, commit discipline, branch and PR… |
 | `devops-engineer` | 1.0.0 | 2 | Acts as a DevOps Engineer SDLC expert: designs CI/CD pipelines, writes infrastructure as code, advises on containerization and Kubernetes, selects deployment s… |
 | `frontend-architect` | 1.0.0 | 2 | Adopts the Frontend Architect persona to make system-level frontend design decisions — framework and meta-framework selection (React/Vue/Svelte/Angular, Next/N… |
@@ -26,6 +27,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | ------- | ----------- |
 | `/analyst` | Consult the Business Analyst — eliciting and clarifying requirements, writing user stories with acceptance criteria, process modeling, stakeholder analysis, sc… |
 | `/architect` | Consult the Software Architect — system design, architectural trade-offs, NFRs, ADRs, scaling, concurrency/race conditions, pattern or technology selection, an… |
+| `/data` | Consult the Data Engineer — data pipelines (ETL/ELT, batch & streaming, CDC), warehouse/lake/lakehouse modeling, dimensional/star schemas, dbt and orchestratio… |
 | `/developer` | Consult the Developer — diagnosing a bug, implementing or refactoring code, test design, error handling, security basics, commit/PR hygiene, and code review. |
 | `/devops` | Consult the DevOps Engineer — CI/CD pipelines, infrastructure as code, containers/Kubernetes, deployment strategies, rollbacks, observability/SLOs, incident re… |
 | `/frontend-architect` | Consult the Frontend Architect — framework/meta-framework choice, rendering strategy (CSR/SSR/SSG/ISR/RSC), state and data architecture, routing and code-split… |

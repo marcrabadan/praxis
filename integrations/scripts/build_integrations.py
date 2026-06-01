@@ -55,6 +55,7 @@ EXPERTS: dict[str, str] = {
     "ux-ui-engineer": "UX/UI Engineer",
     "frontend-architect": "Frontend Architect",
     "frontend-engineer": "Frontend Engineer",
+    "data-engineer": "Data Engineer",
 }
 
 # single-persona command -> skill folder
@@ -70,6 +71,7 @@ COMMAND_PERSONA: dict[str, str] = {
     "ux": "ux-ui-engineer",
     "frontend-architect": "frontend-architect",
     "frontend": "frontend-engineer",
+    "data": "data-engineer",
 }
 
 # multi-persona workflows (no single owning skill)

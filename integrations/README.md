@@ -68,14 +68,14 @@ ledger any time with `/memory` (`list`, `accept`, `reject`, `rollback`).
 
 ## 4. Other agents: Cursor, IntelliJ, OpenAI Codex
 
-The eleven experts and the `/new-feature` + `/review-changes` workflows are **Claude Code
+The twelve experts and the `/new-feature` + `/review-changes` workflows are **Claude Code
 native** (`.claude/skills/`, `.claude/commands/`). To use the *same* personas from another
 agentic IDE, this repo ships generated, copy-in integrations — one per tool — each in that
 tool's native format and location:
 
 | Tool | Folder | What it ships |
 | ---- | ------ | ------------- |
-| **Cursor** | [`cursor/`](cursor/) | `.cursor/rules/*.mdc` (the eleven personas as auto-attaching rules + an always-on roster) and `.cursor/commands/*.md` (`/architect`, `/security`, `/frontend`, `/review-changes`, …) |
+| **Cursor** | [`cursor/`](cursor/) | `.cursor/rules/*.mdc` (the twelve personas as auto-attaching rules + an always-on roster) and `.cursor/commands/*.md` (`/architect`, `/security`, `/frontend`, `/review-changes`, …) |
 | **OpenAI Codex** | [`codex/`](codex/) | `AGENTS.praxis.md` (roster for `AGENTS.md`), `.praxis/*.md` (in-repo persona guides) and `prompts/*.md` for `~/.codex/prompts/` (`/praxis-architect`, …) |
 | **IntelliJ** (JetBrains AI Assistant & Junie) | [`intellij/`](intellij/) | `.junie/guidelines.md` + `.junie/praxis/*.md` (persona guides) and `prompts/*.md` (ready-to-paste prompt snippets) |
 
