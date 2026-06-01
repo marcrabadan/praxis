@@ -16,6 +16,7 @@ Entry lifecycle:  pending -> accepted | rejected | rolled-back  (and superseded)
 
 Usage:
     python ledger.py init
+    python ledger.py bootstrap [--brief]
     python ledger.py log --type decision --title "Use hexagonal ports" \
         --source /architect --tags arch,adr --body "We chose ... because ..."
     python ledger.py snapshot --source /new-feature --title "Auth slice 1"
@@ -243,6 +244,99 @@ def _ensure_structure() -> Path:
 def cmd_init(_args) -> int:
     base = _ensure_structure()
     print(f"memory ledger ready at {base}")
+    return 0
+
+
+# --------------------------------------------------------------------------- #
+# bootstrap — prime an empty ledger from the repo's existing context
+# --------------------------------------------------------------------------- #
+# Durable-context docs worth seeding the ledger from, looked for at the repo
+# root. Curated and bounded so the scan stays deterministic, fast, and free of
+# noise. The agent reads these and decides what is worth recording — the script
+# only points at the raw material, it never writes entries itself.
+_CONTEXT_FILES = (
+    "AGENTS.md", "CLAUDE.md", "README.md", "ARCHITECTURE.md",
+    "CONTRIBUTING.md", "SECURITY.md", "CHANGELOG.md", "ADR.md",
+)
+# directories that conventionally hold architecture decision records
+_ADR_DIRS = ("docs/adr", "docs/decisions", "doc/adr", "adr", "decisions")
+
+
+def _context_docs(root: Path) -> list[str]:
+    """Repo-relative paths of durable-context docs present in the repo."""
+    found: list[str] = []
+    for name in _CONTEXT_FILES:
+        if (root / name).is_file():
+            found.append(name)
+    for d in _ADR_DIRS:
+        p = root / d
+        if p.is_dir():
+            for f in sorted(p.glob("*.md")):
+                found.append(str(f.relative_to(root)))
+    return found
+
+
+def _git_summary() -> tuple[int, list[str]]:
+    """Total commit count and the most recent few, for orienting the seed."""
+    count_res = _git("rev-list", "--count", "HEAD")
+    try:
+        count = int(count_res.stdout.strip()) if count_res.returncode == 0 else 0
+    except ValueError:
+        count = 0
+    log_res = _git("log", "--oneline", "--no-decorate", "-n", "15")
+    recent = log_res.stdout.splitlines() if log_res.returncode == 0 else []
+    return count, recent
+
+
+def cmd_bootstrap(args) -> int:
+    _ensure_structure()
+    rows = _read_index()
+    n = len(rows)
+    n_pending = sum(1 for r in rows if r.get("status") == "pending")
+
+    if args.brief:
+        # Hook/context form: one concise line so the agent knows whether the
+        # ledger needs seeding or already carries a record. Pending entries are
+        # surfaced separately by `pending --brief`.
+        if n == 0:
+            print("[praxis memory] ledger is empty — run `/memory init` to seed it "
+                  "from this repo's context (AGENTS.md, ADRs, git history).")
+        else:
+            print(f"[praxis memory] {n} entr{'y' if n == 1 else 'ies'} on record "
+                  f"({n_pending} pending). `/memory` to review or seed more.")
+        return 0
+
+    root = repo_root()
+    docs = _context_docs(root)
+    commits, recent = _git_summary()
+
+    print(f"Praxis memory bootstrap — {root}")
+    print(f"  ledger: {n} existing entr{'y' if n == 1 else 'ies'} "
+          f"({n_pending} pending)")
+    print("")
+    if docs:
+        print("Candidate context to seed from (durable docs found in the repo):")
+        for d in docs:
+            print(f"  - {d}")
+    else:
+        print("No standard context docs found (AGENTS.md, README.md, docs/adr/…).")
+    print("")
+    if commits:
+        print(f"Git history: {commits} commit{'s' if commits != 1 else ''}; most recent:")
+        for line in recent:
+            print(f"  {line}")
+    else:
+        print("Git history: none yet.")
+    print("")
+    if n == 0:
+        print("Ledger is empty. Read the docs above and the git history, then record "
+              "the project's already-made decisions, architecture, and active plans "
+              "as `pending` entries (`ledger.py log --source /memory ...`). See "
+              "workflows/bootstrap.md. One rich entry per durable decision; don't "
+              "duplicate what a single file already states, and never record secrets.")
+    else:
+        print("Ledger already has entries — review with `/memory` before seeding more "
+              "so you don't duplicate what's recorded.")
     return 0
 
 
@@ -526,6 +620,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("init", help="Create the ledger directory structure.").set_defaults(func=cmd_init)
+
+    bs = sub.add_parser("bootstrap", help="Init + report the repo's existing context to seed an empty ledger from.")
+    bs.add_argument("--brief", action="store_true", help="compact output for hooks/context")
+    bs.set_defaults(func=cmd_bootstrap)
 
     lg = sub.add_parser("log", help="Append an entry (plan/decision/artifact/...).")
     lg.add_argument("--type", required=True, help=f"one of: {', '.join(TYPES)}")
