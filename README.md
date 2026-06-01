@@ -207,11 +207,13 @@ Each makes Claude act as that role's expert, with practices and a review checkli
 The experts produce plans, decisions, and code — `memory` makes that output **stick**. It's a versioned ledger, committed to git under `.praxis/memory/`, so the record survives across sessions, machines, and the next person to open the repo.
 
 - **What it stores:** `plan`, `decision` (mini-ADRs), `implementation`, `artifact`, `test-strategy`, `rollout`, and `note` entries — each with provenance (which command/skill produced it) and a lifecycle: **`pending → accepted | rejected | rolled-back`** (plus `superseded`).
+- **Seed it once with `/memory init`:** the bootstrap flow primes an empty ledger from the repo's existing context — `AGENTS.md`, ADRs, architecture docs, and git history — so memory reflects the project from day one instead of only what happens after adoption. (Claude Code has no on-install hook; this is the explicit one-time seed, and the SessionStart hook nudges you to run it whenever the ledger is empty.)
 - **Rollback:** implementation entries are captured as a `snapshot` that stores a reverse-appliable patch, so a change can be undone — with a safe dry-run — even sessions later.
-- **Drive it with `/memory`:** `list`, `pending`, `show <id>`, `accept <id>`, `reject <id>`, `rollback <id>`, `status`. Everything goes through a deterministic, stdlib-only CLI (`.claude/skills/memory/scripts/ledger.py`) — never hand-edit the ledger.
-- **Make it automatic:** an opt-in hook ([`integrations/hooks/memory.settings.example.json`](integrations/hooks/memory.settings.example.json)) surfaces pending entries at **SessionStart** and snapshots uncommitted changes on **Stop**. Paired with the *“leave a record”* rule in [`AGENTS.md`](AGENTS.md), the hook captures *what* changed while the experts record *why*. `/new-feature` and `/review-changes` already log their artifacts.
+- **Drive it with `/memory`:** `init`, `list`, `pending`, `show <id>`, `accept <id>`, `reject <id>`, `rollback <id>`, `status`. Everything goes through a deterministic, stdlib-only CLI (`.claude/skills/memory/scripts/ledger.py`) — never hand-edit the ledger.
+- **Make it automatic:** an opt-in hook ([`integrations/hooks/memory.settings.example.json`](integrations/hooks/memory.settings.example.json)) ensures the ledger exists, nudges you to seed it when empty, surfaces pending entries at **SessionStart**, and snapshots uncommitted changes on **Stop**. Paired with the *“leave a record”* rule in [`AGENTS.md`](AGENTS.md), the hook captures *what* changed while the experts record *why*. `/new-feature` and `/review-changes` already log their artifacts.
 
 ```text
+/memory init                 # seed the ledger from the repo's existing context
 /memory                      # status + what's still pending
 /memory accept 20260601-153012-9af3
 /memory rollback 20260601-153012-9af3   # dry-run first, reverts the working tree

@@ -15,9 +15,14 @@ This skill ships both halves; the hook is opt-in per consuming repo.
 
 2. **Hook (harness-enforced, mechanical capture).** The template at
    `integrations/hooks/memory.settings.example.json` wires:
-   - **SessionStart** → `ledger.py init` + `ledger.py pending --brief`. Every
-     session begins by ensuring the ledger exists and surfacing what's still
-     pending, injected into context so nothing is forgotten between sessions.
+   - **SessionStart** → `ledger.py init` + `ledger.py bootstrap --brief` +
+     `ledger.py pending --brief`. Every session begins by ensuring the ledger
+     exists, then orienting the session: `bootstrap --brief` prints one line —
+     when the ledger is empty it suggests running `/memory init` to seed memory
+     from the repo's existing context (the closest thing Claude Code offers to an
+     on-install step), otherwise it reports how much is on record — and
+     `pending --brief` surfaces entries still awaiting accept/reject. All injected
+     into context so nothing is forgotten between sessions.
    - **Stop** → `ledger.py snapshot --source auto`. When the agent finishes a
      turn with uncommitted changes, it captures a de-duplicated, rollback-able
      snapshot automatically — so even unrecorded implementations can be undone.
@@ -38,6 +43,13 @@ into the repo's `.claude/settings.json` (merge if it already has hooks), and mak
 sure `.claude/skills/memory/` is present (via the `praxis` plugin or
 `make export SKILL=memory TO=<repo>`). praxis ships this as a template and does
 not enable it on itself.
+
+**Seed it once after adopting praxis.** Claude Code has no true "on plugin
+install" hook, so the one-time seed is an explicit `/memory init` (the
+`bootstrap` workflow). It primes the ledger from the repo's existing context —
+`AGENTS.md`, ADRs, architecture docs, and git history — so memory reflects the
+project from day one instead of only what happens after install. The SessionStart
+hook nudges you to run it whenever it finds the ledger empty.
 
 ## Tuning
 

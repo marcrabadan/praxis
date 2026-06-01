@@ -42,6 +42,8 @@ Entry types: `plan`, `decision`, `implementation`, `artifact`, `test-strategy`,
 ## When to use
 
 - "Remember / save / log this decision (plan, design, result)."
+- "Initialize / bootstrap / seed memory" → prime an empty ledger from the repo's
+  existing context (`/memory init`). Do this once when adopting praxis in a repo.
 - "What did we decide / build / plan for X?" → read the ledger.
 - "Show me what's pending." / "Accept this." / "Reject that."
 - "Roll back that change / undo what we just did."
@@ -61,6 +63,7 @@ Entry types: `plan`, `decision`, `implementation`, `artifact`, `test-strategy`,
 
 | Mode | File | When |
 |------|------|------|
+| Bootstrap | [workflows/bootstrap.md](workflows/bootstrap.md) | Prime an empty ledger from the repo's existing context (`/memory init`) |
 | Capture | [workflows/capture.md](workflows/capture.md) | Record a plan, decision, implementation, or artifact |
 | Review | [workflows/review.md](workflows/review.md) | List, inspect, and accept/reject pending entries |
 | Rollback | [workflows/rollback.md](workflows/rollback.md) | Undo a snapshotted implementation |
@@ -87,6 +90,7 @@ python .claude/skills/memory/scripts/ledger.py <command>
 | Command | Purpose |
 |---------|---------|
 | `init` | Create the ledger directory (idempotent) |
+| `bootstrap [--brief]` | Init, then report the repo's existing context (docs + git history) to seed an empty ledger from — see [workflows/bootstrap.md](workflows/bootstrap.md) |
 | `log --type T --title "..." --source /cmd [--tags a,b] [--body "..."]` | Append an entry |
 | `snapshot [--source /cmd] [--title "..."] [--since REF]` | Capture the current diff as a rollback-able implementation |
 | `list [--status pending] [--type decision] [--source /architect]` | List entries |

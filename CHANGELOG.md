@@ -13,6 +13,13 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- `memory` skill — a **bootstrap / `/memory init`** flow that primes an empty
+  ledger from the repo's existing context so memory reflects the project from day
+  one. Adds a deterministic `ledger.py bootstrap [--brief]` subcommand (init +
+  a report of durable-context docs — `AGENTS.md`, ADRs, architecture docs — and a
+  git-history summary; it never writes entries), a `workflows/bootstrap.md`
+  procedure, `/memory init` routing, and a SessionStart hook line that suggests
+  seeding when the ledger is empty (the closest thing to an on-install step).
 - `ml-ai-engineer` skill (Tier 2) — an **ML/AI Engineer** SDLC expert covering the
   full model lifecycle: problem framing & metric selection, ML-ready features
   (leakage, train/serve skew, feature stores), training & selection, rigorous
