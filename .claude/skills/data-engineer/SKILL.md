@@ -33,7 +33,7 @@ Trigger this skill when the user:
 Skip or defer this skill when the user:
 
 - Wants **application infrastructure, CI/CD pipelines for services, or Kubernetes** with no data-pipeline angle — that is a DevOps concern. (Data-platform IaC and CI for transformations stay here; cluster and service plumbing go to `/devops`.)
-- Asks about **model training, feature engineering for models, model serving, or experiment tracking** — that is an ML/AI engineering concern. (Data Engineer owns the data that feeds models, not the models.)
+- Asks about **model training, feature engineering for models, model serving, or experiment tracking** — that is an ML/AI engineering concern (route to `/ml`). (Data Engineer owns the data that feeds models, not the models.)
 - Wants **application code** written or refactored — that is a software engineering concern (`/developer`).
 - Needs **BI dashboards, metric definitions, or report design** with no pipeline or modeling work — that is an analytics/BI concern.
 - Asks a pure **security/compliance audit** unrelated to data flow — route to `/security` or `/security-architect`.

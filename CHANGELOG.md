@@ -13,6 +13,17 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- `ml-ai-engineer` skill (Tier 2) — an **ML/AI Engineer** SDLC expert covering the
+  full model lifecycle: problem framing & metric selection, ML-ready features
+  (leakage, train/serve skew, feature stores), training & selection, rigorous
+  evaluation, experiment tracking & reproducibility, serving & deployment
+  (batch/online, shadow/canary, A/B), MLOps, drift monitoring & retraining,
+  responsible AI (bias, fairness, explainability, privacy), and modern LLM/GenAI
+  engineering (RAG, prompting, fine-tuning, evals, guardrails, cost/latency).
+  Ships `references/practices.md`, a model production-readiness
+  `references/checklist.md`, an `/ml` slash command, plugin symlinks, and
+  Cursor/IntelliJ/Codex integrations. This brings the roster to thirteen SDLC
+  experts.
 - `data-engineer` skill (Tier 2) — a **Data Engineer** SDLC expert covering the
   full data platform: batch & streaming pipelines (ETL/ELT, CDC), warehouse/lake/
   lakehouse and dimensional modeling, orchestration (dbt/Airflow/Dagster), data

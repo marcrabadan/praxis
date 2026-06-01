@@ -31,7 +31,7 @@ When deciding whether to split a workflow into its own top-level skill, read [.c
 
 Skills are **Claude Code native**: each lives at `.claude/skills/<name>/SKILL.md` and Claude Code discovers it automatically from its frontmatter (no `command.md`, no installers). Invoke a skill by describing the task or by typing `/<name>`.
 
-Alongside the meta-skill, the repo ships twelve **SDLC expert skills** — one per role in the software delivery lifecycle:
+Alongside the meta-skill, the repo ships thirteen **SDLC expert skills** — one per role in the software delivery lifecycle:
 
 - [.claude/skills/business-analyst/](.claude/skills/business-analyst/) — requirements, user stories, acceptance criteria.
 - [.claude/skills/product-owner/](.claude/skills/product-owner/) — backlog, prioritization, roadmap, OKRs.
@@ -45,8 +45,9 @@ Alongside the meta-skill, the repo ships twelve **SDLC expert skills** — one p
 - [.claude/skills/frontend-architect/](.claude/skills/frontend-architect/) — framework & rendering strategy, state/data/routing architecture, build & bundling, design-system architecture, Core Web Vitals.
 - [.claude/skills/frontend-engineer/](.claude/skills/frontend-engineer/) — component implementation, state & data wiring, forms, styling, frontend TypeScript, performance, a11y implementation, testing.
 - [.claude/skills/data-engineer/](.claude/skills/data-engineer/) — data pipelines (ETL/ELT, batch & streaming, CDC), warehouse/lake/lakehouse modeling, dimensional/star schemas, orchestration (dbt/Airflow/Dagster), data quality & contracts, lineage & governance, DataOps & cost.
+- [.claude/skills/ml-ai-engineer/](.claude/skills/ml-ai-engineer/) — model lifecycle: problem framing & metrics, ML-ready features (leakage, train/serve skew, feature stores), training & evaluation, experiment tracking, serving & deployment (shadow/canary/A-B), MLOps, drift monitoring & retraining, responsible AI, and LLM/GenAI (RAG, prompting, fine-tuning, evals, guardrails).
 
-Each SDLC expert also has a short **slash command** under [.claude/commands/](.claude/commands/) for addressing it directly — `/architect`, `/developer`, `/qa`, `/analyst`, `/product`, `/devops`, `/security`, `/security-architect`, `/ux`, `/frontend-architect`, `/frontend`, `/data` — e.g. `/architect how do I avoid this race condition?`. Each command loads its matching skill and answers in that persona. `/new-feature <idea>` orchestrates the core six (BA → PO → architect → developer → QA → devops) in lifecycle order within one conversation (no subagents) to produce a consolidated plan; the security, frontend, and data experts are consulted on demand and via `/review-changes`. `/review-changes` routes the current diff to the relevant experts (including the security experts) and returns severity-tagged, didactic findings; opt-in CI and local-hook templates in [integrations/](integrations/README.md) trigger it automatically on PRs and before pushing.
+Each SDLC expert also has a short **slash command** under [.claude/commands/](.claude/commands/) for addressing it directly — `/architect`, `/developer`, `/qa`, `/analyst`, `/product`, `/devops`, `/security`, `/security-architect`, `/ux`, `/frontend-architect`, `/frontend`, `/data`, `/ml` — e.g. `/architect how do I avoid this race condition?`. Each command loads its matching skill and answers in that persona. `/new-feature <idea>` orchestrates the core six (BA → PO → architect → developer → QA → devops) in lifecycle order within one conversation (no subagents) to produce a consolidated plan; the security, frontend, data, and ML/AI experts are consulted on demand and via `/review-changes`. `/review-changes` routes the current diff to the relevant experts (including the security experts) and returns severity-tagged, didactic findings; opt-in CI and local-hook templates in [integrations/](integrations/README.md) trigger it automatically on PRs and before pushing.
 
 Beyond the SDLC roster, the repo ships one **utility skill**: [.claude/skills/memory/](.claude/skills/memory/) — the **memory ledger**. It records the plans, decisions, implementations, and artifacts the experts produce as durable, git-committed entries under `.praxis/memory/`, each with a `pending → accepted | rejected | rolled-back` lifecycle. Manage it with `/memory` (list, accept/reject, roll back) or let it run automatically via the opt-in hook in [integrations/hooks/memory.settings.example.json](integrations/hooks/memory.settings.example.json).
 
@@ -59,7 +60,7 @@ Do not invent a new top-level skill when an existing workflow in `skill-creator`
 - **Skills are Claude Code native.** A skill is a `SKILL.md` with `name` + `description` frontmatter under `.claude/skills/<name>/`. There is no `command.md` and no installer — Claude Code discovers the skill from its frontmatter.
 - **Use deterministic validators where possible.** Do not ask an LLM to count files or check JSON shape — call [.claude/factory/validators/validate_skill.py](.claude/factory/validators/validate_skill.py) instead.
 - **Prefer existing templates** in [.claude/factory/templates/](.claude/factory/templates/) over inventing folder structure. The generator script at `.claude/skills/skill-creator/scripts/create_skill.py` is the canonical way to produce a scaffold; it emits `SKILL.md` plus the tier-appropriate folders.
-- **Where new skills land:** by default at `dist/<skill-name>/` (scratch). Promote to `.claude/skills/<skill-name>/` once the skill is intended as a shared, factory-owned asset that the org keeps and iterates on (the meta-skill `skill-creator` and the twelve SDLC expert skills already live there).
+- **Where new skills land:** by default at `dist/<skill-name>/` (scratch). Promote to `.claude/skills/<skill-name>/` once the skill is intended as a shared, factory-owned asset that the org keeps and iterates on (the meta-skill `skill-creator` and the thirteen SDLC expert skills already live there).
 - **Document assumptions and unresolved questions** in the produced skill's `skill-brief.md`.
 - **Do not overbuild.** Avoid speculative complexity, fake evals, or subagents where a checklist would do.
 - **No production app code** in this repo. Code-producing skills should emit examples, fixtures, scripts, or patches.
@@ -80,7 +81,7 @@ praxis/
 │  │  ├─ developer/          qa-engineer/     devops-engineer/
 │  │  ├─ security-engineer/  cybersecurity-architect/
 │  │  ├─ ux-ui-engineer/     frontend-architect/   frontend-engineer/
-│  │  ├─ data-engineer/
+│  │  ├─ data-engineer/      ml-ai-engineer/
 │  │  └─ memory/          # utility skill — the versioned memory ledger
 │  ├─ commands/        # slash commands (/architect, /new-feature, …)
 │  └─ factory/         # all skill-authoring tooling + doctrine

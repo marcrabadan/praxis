@@ -23,5 +23,6 @@ This project carries the praxis SDLC experts. Read `AGENTS.md` for repo doctrine
 | **Frontend Architect** | Choose a frontend framework or meta-framework, pick a rendering strategy, structure a frontend app, decide where state lives, design data fetching or a BFF, plan routing and bundl… |
 | **Frontend Engineer** | How to build a React component, manage client or server state, fetch data in a component, write a form with validation, type props or hooks, fix unnecessary re-renders, memoize co… |
 | **Data Engineer** | Design or review a data pipeline, ETL/ELT, a warehouse or lake schema, a star/dimensional model, dbt models, an Airflow/Dagster DAG, streaming or CDC ingestion, data quality check… |
+| **ML/AI Engineer** | Frame an ML problem, pick a metric, engineer features, prevent leakage or train/serve skew, train or select a model, design an evaluation, set up experiment tracking, serve or dep… |
 
 `/new-feature` runs the core six (BA → PO → Architect → Developer → QA → DevOps) in lifecycle order; `/review-changes` routes the current diff to the relevant personas (including the security experts) with severity-tagged findings.
