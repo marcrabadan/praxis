@@ -162,6 +162,7 @@ Sample transcripts — the prompt you type and a representative response — liv
 | [analyst-user-stories.md](examples/analyst-user-stories.md) | `/analyst` → INVEST stories + Gherkin acceptance criteria |
 | [review-changes.md](examples/review-changes.md) | `/review-changes` → severity-tagged, didactic findings |
 | [security-threat-model.md](examples/security-threat-model.md) | `/security` → a STRIDE threat model with mitigations |
+| [ml-evaluation.md](examples/ml-evaluation.md) | `/ml` → leakage check, the right metric, and a safe rollout |
 
 ## Wiring the experts into your workflow
 
