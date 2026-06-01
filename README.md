@@ -24,16 +24,6 @@ Pick the path that matches how you work. The experts are **Claude Code native**;
 
 **Prerequisites:** [Claude Code](https://docs.claude.com/en/docs/claude-code) for the primary path. Python 3 is only needed if you want to *author* skills with the factory tooling (the validators use the standard library — no extra packages to install).
 
-### Claude Code — use it inside this repo (zero install)
-
-Open `praxis` as your workspace and every skill under `.claude/skills/` is discovered automatically from its frontmatter. Just describe the task or type a slash command:
-
-```text
-/architect SSR or SSG for this catalog, and where should state live?
-/new-feature add saved-payment-methods to checkout
-/review-changes
-```
-
 ### Claude Code — install into another project (plugin marketplace)
 
 To pull the experts into a *different* repo, `praxis` ships as a Claude Code **plugin marketplace** with two plugins. Run this from inside the target project:
