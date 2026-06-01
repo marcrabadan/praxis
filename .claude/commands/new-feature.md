@@ -41,3 +41,7 @@ Close with a consolidated summary the user can act on:
 - **Open questions / assumptions** gathered across all phases
 
 Keep each section concrete and short. The deliverable is a plan, not code — implement only when the user asks.
+
+## Record to memory
+
+Before ending, record the consolidated plan and the key architectural decisions to the memory ledger so they survive the session (use the `memory` skill). Prefer one `plan` entry for the consolidated output plus a `decision` entry per significant architectural call, each `--source /new-feature` and left `pending` for the user to accept. If the repo has no ledger yet, `python .claude/skills/memory/scripts/ledger.py init` creates one. Skip only if the user opted out of memory.

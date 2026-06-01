@@ -1,0 +1,13 @@
+[
+  { "query": "remember this decision: we chose Postgres over DynamoDB", "should_trigger": true },
+  { "query": "save the plan we just produced to memory", "should_trigger": true },
+  { "query": "what did we decide about the auth module last week?", "should_trigger": true },
+  { "query": "show me what's pending and let me accept the ones I like", "should_trigger": true },
+  { "query": "roll back the change we just made", "should_trigger": true },
+  { "query": "log this architecture decision record", "should_trigger": true },
+  { "query": "what's still awaiting a decision in the ledger?", "should_trigger": true },
+  { "query": "write a React component with a form", "should_trigger": false },
+  { "query": "what is the time complexity of quicksort?", "should_trigger": false },
+  { "query": "set up a hook that runs my tests on session start", "should_trigger": false },
+  { "query": "review my diff for security issues", "should_trigger": false }
+]

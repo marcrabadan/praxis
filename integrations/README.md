@@ -39,15 +39,34 @@ machine. A nudge, never a gate.
 Copy the `hooks` block from [`hooks/settings.example.json`](hooks/settings.example.json) into
 your repo's `.claude/settings.json` (merge it if the file already exists).
 
+## 3. Automatic memory ledger (hooks)
+
+Make the [`memory`](../.claude/skills/memory/) skill capture work automatically. The ledger
+records plans, decisions, implementations, and artifacts under `.praxis/memory/` (committed
+to git), each with a `pending → accepted | rejected | rolled-back` lifecycle, so the record
+survives across sessions and changes can be rolled back.
+
+1. Ensure the `memory` skill is present in your repo — install the `praxis` plugin, or
+   `make export SKILL=memory TO=<your-repo>`.
+2. Copy the `hooks` block from
+   [`hooks/memory.settings.example.json`](hooks/memory.settings.example.json) into your
+   repo's `.claude/settings.json` (merge if it already has hooks).
+
+It wires two harness-enforced behaviors: **SessionStart** surfaces still-pending entries into
+context, and **Stop** snapshots uncommitted changes as a rollback-able entry. Combine with the
+doctrine in `AGENTS.md` (which records the *why* of decisions) for full coverage. Manage the
+ledger any time with `/memory` (`list`, `accept`, `reject`, `rollback`).
+
 ## Which to use
 
 | Want… | Use |
 | ----- | --- |
 | Team-wide safety net, no local setup per dev | The **CI** action (1) |
-| Fast personal feedback before pushing | The **local hooks** (2) |
-| Both | Install both — they complement each other |
+| Fast personal feedback before pushing | The **local review hooks** (2) |
+| A durable, rollback-able record of decisions & changes | The **memory hooks** (3) |
+| Both review + memory | Install both hook blocks — they complement each other |
 
-## 3. Other agents: Cursor, IntelliJ, OpenAI Codex
+## 4. Other agents: Cursor, IntelliJ, OpenAI Codex
 
 The eleven experts and the `/new-feature` + `/review-changes` workflows are **Claude Code
 native** (`.claude/skills/`, `.claude/commands/`). To use the *same* personas from another

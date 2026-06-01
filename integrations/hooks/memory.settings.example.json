@@ -1,0 +1,30 @@
+{
+  "// description": "Opt-in Claude Code hooks that make the praxis memory ledger automatic. Copy the `hooks` block into a CONSUMING repo's .claude/settings.json (merge if it already has hooks). Requires the `memory` skill present at .claude/skills/memory/ (install the praxis plugin, or `make export SKILL=memory TO=<repo>`). praxis ships this as a template and does not enable it on itself.",
+
+  "// SessionStart": "Ensure the ledger exists and surface still-pending entries into context, so decisions awaiting accept/reject are never forgotten between sessions.",
+
+  "// Stop": "When a turn ends with uncommitted changes, capture a de-duplicated, rollback-able snapshot automatically. Combined with the doctrine in the memory skill (which records the WHY of decisions), this guarantees a durable record across every command and skill.",
+
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/skills/memory/scripts/ledger.py\" init >/dev/null 2>&1; python3 \"$CLAUDE_PROJECT_DIR/.claude/skills/memory/scripts/ledger.py\" pending --brief 2>/dev/null; exit 0"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/skills/memory/scripts/ledger.py\" snapshot --source auto 2>/dev/null | sed 's/^/💾 praxis memory: captured snapshot /;t;d' >&2; exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}
