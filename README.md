@@ -2,10 +2,11 @@
 
 **A shared library of Claude Code skills.** A repo where a team captures *how it does things* — processes, conventions, roles, taste — once, in a format Claude Code reads and applies consistently across every project.
 
-It has two parts:
+It has three parts:
 
 1. **`skill-creator`** — the meta-skill that *is the pattern for creating new skills*. Use it to scaffold, review, classify, and validate any new skill.
 2. **Eleven SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, Frontend Engineer), each built with that pattern.
+3. **`memory`** — a versioned *memory ledger* that records the plans, decisions, implementations, and artifacts the experts produce, each with a `pending → accepted | rejected | rolled-back` lifecycle, so the record survives across sessions and changes can be rolled back.
 
 **Just want to use it?** Jump to [Install & integrate](#install--integrate) for Claude Code, Cursor, IntelliJ, and Codex. **Want to see the output first?** Browse [`examples/`](examples/README.md) for sample transcripts. Otherwise: **PMs, designers, stakeholders** read from the top; **developers writing or shipping a skill** skip to the [Developer guide](#developer-guide).
 
@@ -166,7 +167,8 @@ Consulting an expert is *pull* — you have to remember to ask. To **catch bad p
 
 - **`/review-changes`** reviews the current diff, routes to only the relevant experts (developer / qa / architect / devops / security / security-architect), and returns **severity-tagged, didactic** findings — each says *what* the bad practice is, *why* it matters, and *how* to fix it. A junior learns from it; a senior skims by severity; an architect sees the team's standards enforced.
 - Make it **automatic**: a GitHub Action runs it on every PR, and a local hook nudges you before you push. Both are opt-in templates in [`integrations/`](integrations/README.md).
-- **Use the same experts in other agents.** The personas and workflows are also generated for **Cursor**, **IntelliJ** (JetBrains AI Assistant & Junie), and **OpenAI Codex**, each in that tool's native format — see [`integrations/`](integrations/README.md#3-other-agents-cursor-intellij-openai-codex). All three read `AGENTS.md` natively for repo-wide doctrine.
+- **Remember what you decided and built.** The `memory` ledger (`/memory`) records plans, decisions, and changes as durable, git-committed entries you can accept, reject, or roll back. An opt-in hook surfaces what's still pending at session start and snapshots changes when you stop — see [The memory ledger](#memory-tier-4--the-working-memory-ledger).
+- **Use the same experts in other agents.** The personas and workflows are also generated for **Cursor**, **IntelliJ** (JetBrains AI Assistant & Junie), and **OpenAI Codex**, each in that tool's native format — see [`integrations/`](integrations/README.md#4-other-agents-cursor-intellij-openai-codex). All three read `AGENTS.md` natively for repo-wide doctrine.
 
 ## The skills in this factory today
 
@@ -194,6 +196,21 @@ Each makes Claude act as that role's expert, with practices and a review checkli
 | `ux-ui-engineer` | UX/UI Engineer | Design systems & tokens, visual & interaction design, accessibility (WCAG 2.2 AA), responsive layout, usability heuristics, UX writing, design handoff. |
 | `frontend-architect` | Frontend Architect | Framework & rendering strategy (SSR/SSG/ISR/RSC), state/data/routing architecture, build & bundling, micro-frontends, design-system architecture, Core Web Vitals. |
 | `frontend-engineer` | Frontend Engineer | Component implementation, state & data wiring, forms, styling, frontend TypeScript, re-render/performance, accessibility implementation, component/E2E testing. |
+
+### `memory` (Tier 4 — the working-memory ledger)
+
+The experts produce plans, decisions, and code — `memory` makes that output **stick**. It's a versioned ledger, committed to git under `.praxis/memory/`, so the record survives across sessions, machines, and the next person to open the repo.
+
+- **What it stores:** `plan`, `decision` (mini-ADRs), `implementation`, `artifact`, `test-strategy`, `rollout`, and `note` entries — each with provenance (which command/skill produced it) and a lifecycle: **`pending → accepted | rejected | rolled-back`** (plus `superseded`).
+- **Rollback:** implementation entries are captured as a `snapshot` that stores a reverse-appliable patch, so a change can be undone — with a safe dry-run — even sessions later.
+- **Drive it with `/memory`:** `list`, `pending`, `show <id>`, `accept <id>`, `reject <id>`, `rollback <id>`, `status`. Everything goes through a deterministic, stdlib-only CLI (`.claude/skills/memory/scripts/ledger.py`) — never hand-edit the ledger.
+- **Make it automatic:** an opt-in hook ([`integrations/hooks/memory.settings.example.json`](integrations/hooks/memory.settings.example.json)) surfaces pending entries at **SessionStart** and snapshots uncommitted changes on **Stop**. Paired with the *“leave a record”* rule in [`AGENTS.md`](AGENTS.md), the hook captures *what* changed while the experts record *why*. `/new-feature` and `/review-changes` already log their artifacts.
+
+```text
+/memory                      # status + what's still pending
+/memory accept 20260601-153012-9af3
+/memory rollback 20260601-153012-9af3   # dry-run first, reverts the working tree
+```
 
 ---
 
@@ -269,11 +286,11 @@ praxis/
 ├─ SKILLS.md              # generated catalog of skills + commands (make catalog)
 ├─ examples/              # sample transcripts — what each expert/command produces
 ├─ .claude-plugin/        # marketplace.json (lists the praxis + skill-factory plugins)
-├─ plugin-praxis/         # plugin: symlinks to the 11 experts + their commands
+├─ plugin-praxis/         # plugin: symlinks to the 11 experts + memory + their commands
 ├─ plugin-skill-factory/  # plugin: symlinks to skill-creator + factory + /validate-skills
 ├─ .claude/               # the real source of truth (used when this repo is the workspace)
-│  ├─ skills/             # skill-creator (meta) + the eleven SDLC expert skills
-│  ├─ commands/           # /architect, /developer, …, /new-feature, /validate-skills
+│  ├─ skills/             # skill-creator (meta) + the eleven SDLC experts + memory
+│  ├─ commands/           # /architect, /developer, …, /new-feature, /memory, /validate-skills
 │  └─ factory/            # all skill-authoring tooling + doctrine
 │     ├─ ai/              # operating model, tiering, routing, principles, promotion policy, glossary
 │     ├─ templates/       # tier-1..5 scaffolds + eval template
