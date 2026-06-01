@@ -17,6 +17,7 @@ output *before* installing anything, and so new teammates can see the house styl
 | [analyst-user-stories.md](analyst-user-stories.md) | `/analyst` | A vague idea turned into INVEST user stories with Gherkin acceptance criteria. |
 | [review-changes.md](review-changes.md) | `/review-changes` | A diff reviewed into severity-tagged, didactic findings. |
 | [security-threat-model.md](security-threat-model.md) | `/security` | An endpoint threat-modeled with STRIDE and concrete mitigations. |
+| [ml-evaluation.md](ml-evaluation.md) | `/ml` | A fraud-scoring idea checked for data leakage, with the right metric and a safe rollout. |
 
 Most samples share one running feature — **saved payment methods at checkout** — so you can
 see the same problem move through requirements, architecture, build, and review.

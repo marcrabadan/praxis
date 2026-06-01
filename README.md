@@ -5,7 +5,7 @@
 It has three parts:
 
 1. **`skill-creator`** — the meta-skill that *is the pattern for creating new skills*. Use it to scaffold, review, classify, and validate any new skill.
-2. **Twelve SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, Frontend Engineer, Data Engineer), each built with that pattern.
+2. **Thirteen SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, Frontend Engineer, Data Engineer, ML/AI Engineer), each built with that pattern.
 3. **`memory`** — a versioned *memory ledger* that records the plans, decisions, implementations, and artifacts the experts produce, each with a `pending → accepted | rejected | rolled-back` lifecycle, so the record survives across sessions and changes can be rolled back.
 
 **Just want to use it?** Jump to [Install & integrate](#install--integrate) for Claude Code, Cursor, IntelliJ, and Codex. **Want to see the output first?** Browse [`examples/`](examples/README.md) for sample transcripts. Otherwise: **PMs, designers, stakeholders** read from the top; **developers writing or shipping a skill** skip to the [Developer guide](#developer-guide).
@@ -145,6 +145,7 @@ Each SDLC expert has a short slash command so you can address it directly with a
 | `/frontend-architect` | Frontend Architect | `/frontend-architect SSR or SSG for this catalog, and where should state live?` |
 | `/frontend` | Frontend Engineer | `/frontend why does this list re-render on every keystroke?` |
 | `/data` | Data Engineer | `/data design an idempotent incremental load for this orders pipeline` |
+| `/ml` | ML/AI Engineer | `/ml is there leakage in these features, and what metric should I optimize?` |
 
 Each command loads its matching skill and answers in that persona. You can also just describe what you want and Claude will load the right expert on its own. Command definitions live in [.claude/commands/](.claude/commands/).
 
@@ -161,6 +162,7 @@ Sample transcripts — the prompt you type and a representative response — liv
 | [analyst-user-stories.md](examples/analyst-user-stories.md) | `/analyst` → INVEST stories + Gherkin acceptance criteria |
 | [review-changes.md](examples/review-changes.md) | `/review-changes` → severity-tagged, didactic findings |
 | [security-threat-model.md](examples/security-threat-model.md) | `/security` → a STRIDE threat model with mitigations |
+| [ml-evaluation.md](examples/ml-evaluation.md) | `/ml` → leakage check, the right metric, and a safe rollout |
 
 ## Wiring the experts into your workflow
 
@@ -198,6 +200,7 @@ Each makes Claude act as that role's expert, with practices and a review checkli
 | `frontend-architect` | Frontend Architect | Framework & rendering strategy (SSR/SSG/ISR/RSC), state/data/routing architecture, build & bundling, micro-frontends, design-system architecture, Core Web Vitals. |
 | `frontend-engineer` | Frontend Engineer | Component implementation, state & data wiring, forms, styling, frontend TypeScript, re-render/performance, accessibility implementation, component/E2E testing. |
 | `data-engineer` | Data Engineer | Batch & streaming pipelines (ETL/ELT, CDC), warehouse/lake/lakehouse & dimensional modeling, orchestration (dbt/Airflow/Dagster), data quality & contracts, lineage & governance, partitioning, DataOps & cost. |
+| `ml-ai-engineer` | ML/AI Engineer | Problem framing & metrics, ML-ready features (leakage, train/serve skew, feature stores), training & evaluation, experiment tracking, serving & deployment (shadow/canary/A-B), MLOps, drift monitoring & retraining, responsible AI, LLM/GenAI (RAG, prompting, fine-tuning, evals, guardrails). |
 
 ### `memory` (Tier 4 — the working-memory ledger)
 

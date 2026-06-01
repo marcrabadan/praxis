@@ -1,0 +1,199 @@
+# ML/AI Engineering Practices
+
+Core ML/AI engineering practices across problem framing, data and features, model training and selection, evaluation, experiment tracking and reproducibility, serving and deployment, MLOps, monitoring and drift, responsible AI, and modern LLM/GenAI engineering. The unifying principle: a model must be **measurably better than a simple baseline at a real objective, reproducible, deployable within budget, monitored in production, and responsible** — sophistication that cannot be measured or maintained is a liability, not an asset.
+
+---
+
+## 1. Problem framing
+
+Most failed ML projects fail here, before a line of training code is written.
+
+### Is it even an ML problem?
+- ML earns its place when the mapping from input to output is **learnable from data, too complex to hand-write, and tolerant of being wrong sometimes**. If a handful of rules or a SQL query solves it, do that — it is cheaper, explainable, and has no training pipeline to maintain.
+- Tie every model to a **decision**. "Predict churn" is not a goal; "flag accounts a retention team will call this week" is. If no decision changes based on the prediction, the model is a science project.
+
+### Define the target precisely
+- Pin down the **label**: what exactly is predicted, at what grain, and where the ground truth comes from. Ambiguous or proxy labels (clicked ≠ satisfied) silently cap the ceiling of the whole system.
+- Decide the **prediction type**: classification, regression, ranking, recommendation, generation, anomaly detection. The framing determines the metric and the model family.
+- State the **cost structure** early: what does a false positive cost vs a false negative? An imbalanced cost (missing fraud vs a false alarm) changes the metric and the decision threshold far more than the model choice does.
+
+### Establish a baseline first
+- Always have a **baseline**: the majority class, the previous heuristic, last-value-carried-forward, or a simple logistic regression / gradient-boosted tree. The baseline is the bar; a model that cannot beat it is not worth its operational cost.
+- Define **"good enough to ship"** as a number tied to the product outcome, agreed before training. Without a threshold, evaluation becomes "the number went up" with no stopping rule.
+
+---
+
+## 2. Data for ML and feature engineering
+
+The model is mostly a reflection of its data. Garbage in, confidently-wrong out.
+
+### Data readiness
+- Confirm there is **enough labeled data** for the problem, that labels are **trustworthy** (measure label noise / inter-annotator agreement where humans label), and that the training distribution **matches what production will see**. A model trained on a distribution it will never encounter is a demo, not a product.
+- Understand **how the data was collected**. Selection bias, survivorship bias, and feedback loops (the model's own past decisions shaping new training data) are correctness bugs, not edge cases.
+
+### Leakage — the cardinal sin
+- **Data leakage** is any signal in training that will not be available (or will be different) at prediction time. It produces spectacular offline metrics and a model that collapses in production. Hunt for it relentlessly:
+  - **Target leakage**: a feature that is a proxy for, or computed after, the label (e.g. `account_closed_date` predicting churn).
+  - **Temporal leakage**: using future information to predict the past. Any feature must be computed from data available **strictly before** the prediction timestamp (point-in-time correctness).
+  - **Train/test contamination**: fitting scalers, encoders, imputers, or feature selection on the full dataset before splitting. Fit **only on train** and apply to validation/test, ideally inside a pipeline so it cannot leak.
+
+### Train/serve skew
+- **Train/serve skew** is when features are computed one way in training (batch SQL) and another way at serving (live code) — different logic, different defaults, different time windows. It silently degrades a model that evaluated perfectly. Share the transformation code or use a **feature store** that serves the same definition to both paths.
+
+### Feature engineering and feature stores
+- Encode appropriately: one-hot/target encoding for categoricals (target encoding needs careful cross-fold fitting to avoid leakage), scaling for distance/gradient-based models, sensible handling of high cardinality.
+- Be deliberate about **missing values**: impute with a fitted strategy and, where missingness is itself informative, add a missing-indicator. Do not let `fillna(0)` quietly create a meaningful-looking zero.
+- A **feature store** earns its place when features are reused across models or must be consistent between training and online serving. It provides point-in-time-correct training data and low-latency online lookups from one definition — the standard cure for train/serve skew.
+- Prefer **fewer, well-understood features** over hundreds of marginal ones. More features means more leakage surface, more drift to monitor, and more serving cost.
+
+---
+
+## 3. Model training and selection
+
+### Start simple, add complexity only against the baseline
+- Reach for a **linear/logistic model or gradient-boosted trees** (XGBoost/LightGBM) first for tabular data — they are strong, fast, and interpretable. Deep learning earns its place for unstructured data (text, images, audio, sequences) or when a simpler model has clearly plateaued below the bar.
+- Justify every step up in complexity with a measured gain that exceeds its cost in latency, infra, interpretability, and maintenance.
+
+### Overfitting and underfitting
+- **Diagnose from the gap** between training and validation performance: a large gap (great on train, poor on validation) is overfitting; poor on both is underfitting. Fix overfitting with more data, regularization, simpler models, or early stopping; fix underfitting with more capacity, better features, or longer training.
+- Use **regularization** (L1/L2, dropout, early stopping, max-depth/min-samples) deliberately, and tune it as a hyperparameter rather than guessing.
+
+### Class imbalance
+- For rare positives (fraud, defects, churn), accuracy is a trap — predicting "all negative" scores 99%. Use **PR-AUC, recall at a fixed precision, or F-beta**, and address imbalance with class weights, resampling, or threshold tuning. Resample **only the training fold**, never the validation/test sets.
+
+### Hyperparameter tuning
+- Tune against the **validation set / cross-validation**, never the test set. Use grid, random, or Bayesian search proportional to the payoff; for many models the defaults plus a small search are enough. **Every peek at the test set during tuning leaks** and inflates your reported number.
+
+---
+
+## 4. Evaluation and validation
+
+Evaluation is the heart of ML engineering. A model is only as trustworthy as the evaluation behind it.
+
+### Sound splits
+- Split into **train / validation / test**, and keep the test set untouched until the final assessment — it is the proxy for unseen data, and touching it repeatedly burns it.
+- For **temporal data, split by time** (train on the past, test on the future). A random split on time-series leaks the future into training and reports a number you will never see in production.
+- Watch for **grouped data**: rows from the same user/entity must not straddle the split, or the model memorizes the entity (group/stratified k-fold).
+- Use **cross-validation** when data is scarce, and the appropriate variant (stratified for imbalance, time-series CV for temporal data).
+
+### Pick the metric for the cost structure
+- Choose the metric from the **decision and its costs**, not by habit:
+  - Classification: precision/recall/F1 when classes or costs are imbalanced; ROC-AUC for ranking ability; **PR-AUC** when positives are rare; **calibration** (reliability curves, Brier score) when the probability itself is used downstream.
+  - Regression: MAE vs RMSE (RMSE punishes large errors more), MAPE when relative error matters, and check residuals for structure.
+  - Ranking/recsys: precision@k, recall@k, NDCG, MAP.
+- **Set the decision threshold deliberately** from the cost trade-off, not the default 0.5. The threshold is a product decision, not a model default.
+
+### Look past the single number
+- Report **slice / subgroup metrics**: an 0.90 overall AUC can hide an 0.55 on a segment that matters. Evaluate on the slices the business and fairness care about.
+- **Calibrate** when probabilities feed a decision (expected-value calculations, thresholds). A model can rank well yet output probabilities that are systematically wrong.
+- Connect the **offline metric to the online outcome**. Offline AUC is a proxy; the product cares about revenue, retention, or resolved tickets. Name the gap and, where possible, validate with an online A/B test.
+
+---
+
+## 5. Experiment tracking and reproducibility
+
+If you cannot reproduce a result, you do not have a result.
+
+- **Track every experiment**: parameters, data version, code version, metrics, and artifacts (MLflow, Weights & Biases, or equivalent). "The good model from last Tuesday" is not recoverable without this.
+- **Version the three things that determine a model**: code (git), data (snapshot/hash/DVC), and the model artifact itself (registry). A model is reproducible only when all three are pinned.
+- **Set seeds** and record them, and be aware of irreducible nondeterminism (GPU/parallelism); capture environment (dependencies, hardware) so a run can be recreated.
+- Promote models through a **model registry** with stages (staging → production → archived), lineage back to the data and code that produced them, and the evaluation that justified promotion.
+
+---
+
+## 6. Serving and deployment
+
+A trained model in a notebook delivers zero value. Deployment is where ML meets software engineering.
+
+### Choose the serving mode
+- **Batch / offline**: precompute predictions on a schedule, store them, serve from a table. Simplest and cheapest; use it whenever predictions do not need to be fresh-on-request (daily churn scores, nightly recommendations).
+- **Online / real-time**: a service returns a prediction per request within a latency budget. Use it when the input is only known at request time. Mind p99 latency, throughput, and feature-lookup cost.
+- **Streaming**: predictions on an event stream (fraud on each transaction). Inherits streaming's complexity — apply the same care as streaming data pipelines.
+
+### Deploy like software, plus model-specific guards
+- Roll out with the **DevOps deployment strategies** — but add ML-specific safety:
+  - **Shadow deployment**: run the new model alongside production on live traffic without acting on its output, to compare before committing.
+  - **Canary / gradual rollout**: send a small traffic slice to the new model, watch metrics, then ramp.
+  - **A/B test** to measure the **online business metric**, not just offline accuracy — the only proof the model actually helps.
+- Keep **rollback trivial**: previous model versions stay in the registry and can be re-promoted instantly when a new model misbehaves.
+- Guarantee **training/serving parity**: the exact preprocessing used in training runs at serving. Package the full pipeline (transforms + model), not just the model weights.
+
+---
+
+## 7. MLOps — engineering discipline for ML
+
+Treat ML systems as software with extra moving parts (data and models) that also change.
+
+### Pipelines and automation
+- Build **training and inference as automated, version-controlled pipelines**, not manual notebook runs. No production model is trained by hand and copied to a server.
+- Run **CI/CD for models**: test the pipeline code, validate the data schema, train, evaluate against the bar **as a gate**, and register the model only if it clears the threshold. A model that fails evaluation should not be promotable.
+- Automate **retraining** on a schedule or a trigger (drift detected, performance decayed), and validate every retrained model against the current production model before promotion. Automated retraining without an evaluation gate is automated regression.
+
+### Reproducible environments
+- Pin dependencies and capture the runtime; containerize training and serving so "works on my machine" is not part of the model's provenance.
+
+### The ML test pyramid
+- Test the **code** (unit/integration), the **data** (schema, distribution, expectations — see data engineering practices), and the **model** (does it beat baseline, does it meet the bar on slices, does behavior on known cases stay stable). A model with no behavioral tests regresses silently.
+
+---
+
+## 8. Monitoring and drift
+
+ML systems decay even when the code does not change, because the world changes. Deploying is the start, not the finish.
+
+### Monitor the model, not just the service
+- Beyond infra metrics (latency, errors, throughput), monitor **prediction quality**:
+  - **Data drift**: the input distribution shifts away from training (PSI, KL divergence, statistical tests on features). The world moved; the model did not.
+  - **Concept drift**: the relationship between inputs and the target changes (the meaning of the label shifts). Detectable as performance decay once labels arrive.
+  - **Prediction drift**: the output distribution shifts (suddenly 40% positive where it was 5%), an early warning even before labels land.
+  - **Performance decay**: the actual metric, computed once ground-truth labels arrive (often delayed).
+- Watch **train/serve skew in production** explicitly — log served feature values and compare to training distributions.
+
+### Close the loop
+- **Capture ground truth** wherever possible (delayed labels, human feedback, outcomes) to measure real performance, not just drift proxies.
+- Define **retraining triggers** (drift threshold breached, metric below bar, scheduled cadence) and alert a **named owner** — not a dashboard nobody opens.
+- Have an **incident response for models**: a model shipping bad predictions is an incident. Roll back to the last good version, assess blast radius (who acted on the bad predictions), and add the monitor or test that would have caught it.
+
+---
+
+## 9. Responsible AI
+
+Fairness, transparency, and privacy are engineering requirements, not a compliance afterthought.
+
+### Bias and fairness
+- Models inherit and can **amplify bias** in the training data. Evaluate performance and error rates **across protected/sensitive subgroups**, not just in aggregate, and pick a fairness criterion (demographic parity, equalized odds, equal opportunity) that fits the context — they trade off and cannot all hold at once.
+- A feature does not need to be a protected attribute to encode it (zip code proxies race; a model can discriminate via correlated features). Audit for proxy discrimination.
+
+### Explainability
+- Match the explanation to the stakes. **Interpretable models** (linear, shallow trees) where decisions must be justified (credit, hiring, health); **post-hoc explanations** (SHAP, permutation importance, partial dependence) for complex models. High-stakes decisions need a why, not just a score.
+
+### Privacy and documentation
+- Treat training data as **sensitive**: minimize PII, comply with consent and regulation (GDPR/CCPA), and remember models can **memorize and leak** training examples. Consider differential privacy or anonymization for sensitive data, and support deletion/right-to-be-forgotten.
+- Ship a **model card**: intended use, training data, evaluation including slices, known limitations, and ethical considerations. It is the model's spec sheet — for users, auditors, and the next engineer.
+
+---
+
+## 10. LLM / GenAI engineering
+
+Generative AI shifts the work from training models to **engineering systems around foundation models** — and makes evaluation harder and more important, not less.
+
+### Choose the lightest sufficient approach
+- Escalate deliberately, cheapest first:
+  1. **Prompt engineering** (clear instructions, few-shot examples, structured output, decomposition) — solves a surprising amount at near-zero marginal cost.
+  2. **Retrieval-augmented generation (RAG)** — when the model needs private, fresh, or large knowledge it was not trained on. Cheaper and more maintainable than fine-tuning for knowledge.
+  3. **Fine-tuning** — when you need a consistent format/behavior/tone that prompting cannot reliably produce, or to compress a large prompt. It teaches *behavior*, not facts; do not fine-tune to inject knowledge that RAG handles better.
+- Pick the **smallest/cheapest model that passes your evals**; reserve frontier models for the steps that need them. Cost and latency are product features.
+
+### RAG done well
+- Retrieval quality caps answer quality. Invest in **chunking** (semantically coherent, right-sized), **embeddings** (a model suited to the domain), a **vector store / index**, and often a **reranker** to put the best context first.
+- Mitigate **hallucination**: ground answers in retrieved context, instruct the model to say "I don't know" when context is insufficient, and **cite sources** so answers are verifiable. Measure groundedness/faithfulness, not just fluency.
+
+### Reliability around a stochastic core
+- Use **structured output** (JSON schema / tool calling) when downstream code consumes the result, and validate it — never parse free text you can constrain.
+- Add **guardrails**: input validation, output filtering, and defenses against **prompt injection** (treat retrieved/user content as untrusted; do not let it override system instructions). For agentic/tool-using systems, scope tools tightly and confirm irreversible actions.
+- Manage the context window and **cost/latency**: prompt caching, streaming, truncation/summarization strategies, and batching where possible.
+
+### Evaluation is the hard part
+- LLM systems need **evals as a first-class deliverable** — without them you are tuning prompts by vibes. Build a **representative eval set** of inputs with expected behaviors and run it as a **regression suite** on every prompt/model/RAG change.
+- Combine methods: **reference-based** metrics where there is ground truth, **LLM-as-judge** for open-ended quality (with a rubric, and validated against human judgment so the judge itself is trustworthy), and **human review** for the highest-stakes slices.
+- Measure what matters for the use case: **task success, groundedness/faithfulness, relevance, safety/toxicity, format adherence, latency, and cost** — and track them over time so a model or prompt change cannot silently regress quality.

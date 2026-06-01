@@ -18,5 +18,6 @@ This repo carries the praxis SDLC expert personas under `.praxis/`. When a task 
 | **Frontend Architect** | Choose a frontend framework or meta-framework, pick a rendering strategy, structure a frontend app, decide where state lives, design data fetching or a BFF, plan routing and bundl… |
 | **Frontend Engineer** | How to build a React component, manage client or server state, fetch data in a component, write a form with validation, type props or hooks, fix unnecessary re-renders, memoize co… |
 | **Data Engineer** | Design or review a data pipeline, ETL/ELT, a warehouse or lake schema, a star/dimensional model, dbt models, an Airflow/Dagster DAG, streaming or CDC ingestion, data quality check… |
+| **ML/AI Engineer** | Frame an ML problem, pick a metric, engineer features, prevent leakage or train/serve skew, train or select a model, design an evaluation, set up experiment tracking, serve or dep… |
 
 Reusable slash commands for each persona live in `~/.codex/prompts/` (install them with the prompts in this integration); invoke e.g. `/praxis-architect`, `/praxis-review-changes`.
