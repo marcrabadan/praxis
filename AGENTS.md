@@ -47,6 +47,8 @@ Alongside the meta-skill, the repo ships eleven **SDLC expert skills** — one p
 
 Each SDLC expert also has a short **slash command** under [.claude/commands/](.claude/commands/) for addressing it directly — `/architect`, `/developer`, `/qa`, `/analyst`, `/product`, `/devops`, `/security`, `/security-architect`, `/ux`, `/frontend-architect`, `/frontend` — e.g. `/architect how do I avoid this race condition?`. Each command loads its matching skill and answers in that persona. `/new-feature <idea>` orchestrates the core six (BA → PO → architect → developer → QA → devops) in lifecycle order within one conversation (no subagents) to produce a consolidated plan; the security and frontend experts are consulted on demand and via `/review-changes`. `/review-changes` routes the current diff to the relevant experts (including the security experts) and returns severity-tagged, didactic findings; opt-in CI and local-hook templates in [integrations/](integrations/README.md) trigger it automatically on PRs and before pushing.
 
+Beyond the SDLC roster, the repo ships one **utility skill**: [.claude/skills/memory/](.claude/skills/memory/) — the **memory ledger**. It records the plans, decisions, implementations, and artifacts the experts produce as durable, git-committed entries under `.praxis/memory/`, each with a `pending → accepted | rejected | rolled-back` lifecycle. Manage it with `/memory` (list, accept/reject, roll back) or let it run automatically via the opt-in hook in [integrations/hooks/memory.settings.example.json](integrations/hooks/memory.settings.example.json).
+
 Do not invent a new top-level skill when an existing workflow in `skill-creator` covers the use case.
 
 ## Global rules
@@ -60,6 +62,7 @@ Do not invent a new top-level skill when an existing workflow in `skill-creator`
 - **Document assumptions and unresolved questions** in the produced skill's `skill-brief.md`.
 - **Do not overbuild.** Avoid speculative complexity, fake evals, or subagents where a checklist would do.
 - **No production app code** in this repo. Code-producing skills should emit examples, fixtures, scripts, or patches.
+- **Leave a record.** When a command or skill produces a durable artifact — a plan, an architectural decision, a test strategy, a rollout plan, or a shipped change — record it in the [memory ledger](.claude/skills/memory/) before ending the turn (one rich entry per artifact), unless the user opted out. Decisions and plans go through `log`; on-disk changes through `snapshot` (so they can be rolled back). Never hand-edit `.praxis/memory/ledger.jsonl`; always use the CLI.
 
 ## Repo layout (high-level)
 
@@ -75,7 +78,8 @@ praxis/
 │  │  ├─ business-analyst/   product-owner/   software-architect/
 │  │  ├─ developer/          qa-engineer/     devops-engineer/
 │  │  ├─ security-engineer/  cybersecurity-architect/
-│  │  └─ ux-ui-engineer/     frontend-architect/   frontend-engineer/
+│  │  ├─ ux-ui-engineer/     frontend-architect/   frontend-engineer/
+│  │  └─ memory/          # utility skill — the versioned memory ledger
 │  ├─ commands/        # slash commands (/architect, /new-feature, …)
 │  └─ factory/         # all skill-authoring tooling + doctrine
 │     ├─ ai/           # global doctrine (operating model, tiering, routing, principles)

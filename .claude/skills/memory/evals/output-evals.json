@@ -1,0 +1,42 @@
+{
+  "evals": [
+    {
+      "name": "capture-decision",
+      "prompt": "Remember our decision: adopt hexagonal architecture for the payments service because it isolates the domain from the payment providers.",
+      "expect": [
+        "Calls ledger.py log with --type decision",
+        "Sets --source to the producing command/skill (or manual)",
+        "Body reads like a mini-ADR (context, decision, rationale, consequences)",
+        "Reports the new entry id and that it is pending"
+      ]
+    },
+    {
+      "name": "snapshot-implementation",
+      "prompt": "We just finished the login endpoint. Save it so we can undo it later.",
+      "expect": [
+        "Calls ledger.py snapshot rather than a plain log",
+        "Explains the change can be rolled back via the recorded patch",
+        "Returns the entry id"
+      ]
+    },
+    {
+      "name": "review-pending",
+      "prompt": "What's pending and let me accept the database one.",
+      "expect": [
+        "Lists pending entries via ledger.py pending/list",
+        "Only marks an entry accepted on explicit user intent",
+        "Confirms the new status after accepting"
+      ]
+    },
+    {
+      "name": "rollback-safety",
+      "prompt": "Roll back that implementation snapshot.",
+      "expect": [
+        "Runs a --dry-run before applying",
+        "Reverts the working tree only and does not commit",
+        "Tells the user to review git diff and commit",
+        "Stops and explains if the patch does not apply cleanly"
+      ]
+    }
+  ]
+}

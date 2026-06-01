@@ -12,6 +12,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `devops-engineer` | 1.0.0 | 2 | Acts as a DevOps Engineer SDLC expert: designs CI/CD pipelines, writes infrastructure as code, advises on containerization and Kubernetes, selects deployment s… |
 | `frontend-architect` | 1.0.0 | 2 | Adopts the Frontend Architect persona to make system-level frontend design decisions — framework and meta-framework selection (React/Vue/Svelte/Angular, Next/N… |
 | `frontend-engineer` | 1.0.0 | 2 | Acts as a Frontend Engineer SDLC expert covering component implementation and composition (presentational/container, compound components, custom hooks), state-… |
+| `memory` | 1.0.0 | 4 | Persist and manage the project's working memory — a versioned ledger of plans, decisions, implementations, and artifacts produced across the praxis SDLC expert… |
 | `product-owner` | 1.0.0 | 2 | Acts as a Product Owner SDLC expert: owns and orders the product backlog, writes and refines backlog items and epics, applies prioritization frameworks (MoSCoW… |
 | `qa-engineer` | 1.0.0 | 2 | Acts as a QA Engineer / Tester SDLC expert to design test strategies, write test cases, author bug reports, and assess release readiness. Applies the test auto… |
 | `security-engineer` | 1.0.0 | 2 | Acts as a Security Engineer / Application Security (AppSec) SDLC expert covering threat modeling (STRIDE), secure coding against the OWASP Top 10 and ASVS, SAS… |
@@ -29,6 +30,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `/devops` | Consult the DevOps Engineer — CI/CD pipelines, infrastructure as code, containers/Kubernetes, deployment strategies, rollbacks, observability/SLOs, incident re… |
 | `/frontend-architect` | Consult the Frontend Architect — framework/meta-framework choice, rendering strategy (CSR/SSR/SSG/ISR/RSC), state and data architecture, routing and code-split… |
 | `/frontend` | Consult the Frontend Engineer — building and composing components, client/server state, data fetching, forms, styling, frontend TypeScript, re-render/performan… |
+| `/memory` | Manage the project's working-memory ledger — record plans/decisions/implementations, review what's pending, accept or reject entries, and roll back a snapshott… |
 | `/new-feature` | Run a feature idea or PRD through the full SDLC, consulting each expert in order — Business Analyst, Product Owner, Software Architect, Developer, QA Engineer,… |
 | `/product` | Consult the Product Owner — backlog ordering, prioritization (MoSCoW/RICE/WSJF), sprint goals, Definition of Ready/Done, roadmapping, OKRs, story splitting, an… |
 | `/qa` | Consult the QA Engineer — test strategy, test-case design, edge cases, bug reports, regression and risk-based testing, coverage gaps, and release-quality asses… |

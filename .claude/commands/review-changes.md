@@ -63,3 +63,4 @@ End with a short **Verdict**: `Approve`, `Approve with nits`, or `Changes reques
 - This is a **review**, not an implementation. Propose fixes; apply them only if the user asks.
 - Stay within the diff and its immediate context; do not review or refactor unrelated code.
 - This differs from a generic code review by routing to **your team's** SDLC expert checklists and explaining the *why* so it doubles as on-the-job teaching.
+- **Memory:** if the review surfaces a durable decision (e.g. an agreed standard or an accepted risk), record it in the memory ledger via the `memory` skill (`--source /review-changes`). If you go on to apply fixes at the user's request, capture them with `snapshot` so they can be rolled back.

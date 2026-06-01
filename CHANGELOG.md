@@ -13,6 +13,15 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- `memory` skill (Tier 4) — a versioned **memory ledger** that records plans,
+  decisions, implementations, and artifacts under `.praxis/memory/` (committed
+  to git), each with a `pending → accepted | rejected | rolled-back` lifecycle.
+  Ships a deterministic `ledger.py` CLI (`log`, `snapshot`, `list`, `pending`,
+  `show`, `accept`, `reject`, `rollback`, `status`), a `/memory` slash command,
+  capture/review/rollback workflows, plugin symlinks, and an opt-in hook template
+  (`integrations/hooks/memory.settings.example.json`) that surfaces pending
+  entries at session start and snapshots changes on stop. `/new-feature` and
+  `/review-changes` now record their artifacts to the ledger.
 - Three frontend SDLC expert skills: `ux-ui-engineer`, `frontend-architect`,
   and `frontend-engineer` (Tier 2), each with `practices.md` and `checklist.md`
   references, a per-expert slash command (`/ux`, `/frontend-architect`,
