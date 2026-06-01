@@ -42,8 +42,16 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
+
+# git's well-known empty-tree object — used as the base when the repo has no
+# commits yet, so an initial snapshot still captures the untracked working tree.
+EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+# the ledger's own directory, excluded from snapshots so memory bookkeeping
+# never appears in (or de-dups against) a captured user change.
+MEMORY_EXCLUDE = ":(exclude,glob).praxis/memory/**"
 
 TYPES = ("plan", "decision", "implementation", "artifact", "test-strategy", "rollout", "note")
 STATUSES = ("pending", "accepted", "rejected", "rolled-back", "superseded")
@@ -53,13 +61,41 @@ OPEN_STATUSES = ("pending", "accepted")
 # --------------------------------------------------------------------------- #
 # Paths
 # --------------------------------------------------------------------------- #
-def _git(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess:
+def _git(*args: str, env: dict | None = None) -> subprocess.CompletedProcess:
     return subprocess.run(
         ["git", *args],
-        cwd=str(cwd) if cwd else None,
         capture_output=True,
         text=True,
+        env=env,
     )
+
+
+def _snapshot_diff(base_ref: str) -> tuple[str, list[str], str]:
+    """Capture the full working state versus ``base_ref`` as (patch, names, stat).
+
+    Includes **untracked** files and excludes the ledger's own directory. Uses a
+    throwaway git index (``GIT_INDEX_FILE``) so the real index is never touched:
+    we read ``base_ref`` into it, stage every working change (``add -A``) except
+    ``.praxis/memory/**``, then diff that index against ``base_ref``.
+    """
+    if base_ref == "HEAD" and _git("rev-parse", "--verify", "-q", "HEAD").returncode != 0:
+        base_ref = EMPTY_TREE
+
+    fd, idx = tempfile.mkstemp(prefix="praxis-snap-idx-")
+    os.close(fd)
+    env = dict(os.environ, GIT_INDEX_FILE=idx)
+    try:
+        _git("read-tree", base_ref, env=env)
+        _git("add", "-A", "--", ".", MEMORY_EXCLUDE, env=env)
+        patch = _git("diff", "--cached", base_ref, env=env).stdout
+        names = _git("diff", "--cached", "--name-only", base_ref, env=env).stdout.split()
+        stat = _git("diff", "--cached", "--stat", base_ref, env=env).stdout.strip()
+    finally:
+        try:
+            os.unlink(idx)
+        except OSError:
+            pass
+    return patch, names, stat
 
 
 def repo_root() -> Path:
@@ -265,7 +301,7 @@ def cmd_log(args) -> int:
 def cmd_snapshot(args) -> int:
     _ensure_structure()
     base_ref = args.since or "HEAD"
-    diff = _git("diff", base_ref).stdout
+    diff, names, stat = _snapshot_diff(base_ref)
     if not diff.strip():
         print("snapshot: no changes to capture")
         return 0
@@ -277,9 +313,7 @@ def cmd_snapshot(args) -> int:
             print(f"snapshot: already captured as {r['id']} (unchanged diff)")
             return 0
 
-    names = _git("diff", "--name-only", base_ref).stdout.split()
-    stat = _git("diff", "--stat", base_ref).stdout.strip()
-    base_sha = _git("rev-parse", "--short", base_ref).stdout.strip()
+    base_sha = _git("rev-parse", "--short", base_ref).stdout.strip() or base_ref[:7]
 
     entry_id = _new_id()
     _, _, _, patches = _paths()
