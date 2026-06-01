@@ -17,6 +17,7 @@ Read `AGENTS.md` for full repo doctrine (JetBrains AI Assistant reads it nativel
 | **UX/UI Engineer** | Design or audit a design system or component, define design tokens or theming, set a type or spacing scale, check color contrast, design an accessible pattern, design a responsive… |
 | **Frontend Architect** | Choose a frontend framework or meta-framework, pick a rendering strategy, structure a frontend app, decide where state lives, design data fetching or a BFF, plan routing and bundl… |
 | **Frontend Engineer** | How to build a React component, manage client or server state, fetch data in a component, write a form with validation, type props or hooks, fix unnecessary re-renders, memoize co… |
+| **Data Engineer** | Design or review a data pipeline, ETL/ELT, a warehouse or lake schema, a star/dimensional model, dbt models, an Airflow/Dagster DAG, streaming or CDC ingestion, data quality check… |
 
 ## Persona guides
 
@@ -31,5 +32,6 @@ Read `AGENTS.md` for full repo doctrine (JetBrains AI Assistant reads it nativel
 - **UX/UI Engineer** — `.junie/praxis/ux-ui-engineer.md`
 - **Frontend Architect** — `.junie/praxis/frontend-architect.md`
 - **Frontend Engineer** — `.junie/praxis/frontend-engineer.md`
+- **Data Engineer** — `.junie/praxis/data-engineer.md`
 
 Ready-made prompts for each persona and for the new-feature / review-changes workflows live in `prompts/` — save them to the AI Assistant prompt library.
