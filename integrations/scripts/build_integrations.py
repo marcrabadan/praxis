@@ -151,8 +151,8 @@ def _port_command(name: str, *, tool: str, persona_ref, personas_label: str) -> 
     else:
         # orchestration workflows: many personas, point at the set
         body = body.replace(
-            "Orchestrate the six SDLC expert skills",
-            "Orchestrate the six SDLC expert personas",
+            "Orchestrate the SDLC expert skills",
+            "Orchestrate the SDLC expert personas",
         )
         # `/new-feature` runs each phase in a Claude Code subagent; other tools
         # have no subagents, so collapse the whole "## Execution" block into a

@@ -3,7 +3,7 @@ description: Run a feature idea or PRD through the full SDLC, consulting each ex
 argument-hint: <the feature idea, PRD, or ticket>
 ---
 
-Orchestrate the six SDLC expert skills over the feature below, in lifecycle order. Each phase **builds on the output of the previous one**: every expert receives the artifacts produced before it.
+Orchestrate the SDLC expert skills over the feature below, in lifecycle order — the **core six** (Business Analyst → Product Owner → Software Architect → Developer → QA → DevOps) plus any specialist experts the feature warrants (see *Domain experts* below). Each phase **builds on the output of the previous one**: every expert receives the artifacts produced before it.
 
 The feature to work through:
 
