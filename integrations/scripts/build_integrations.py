@@ -154,15 +154,19 @@ def _port_command(name: str, *, tool: str, persona_ref, personas_label: str) -> 
             "Orchestrate the six SDLC expert skills",
             "Orchestrate the six SDLC expert personas",
         )
-        body = body.replace(
-            "Do not spawn subagents; load each skill in the main thread.",
-            "Keep it to one conversation; do not spawn subagents.",
-        )
-        body = body.replace(
-            "For each: load the named skill, use its `references/practices.md` "
-            "and `references/checklist.md`, and produce the listed artifact.",
-            f"For each: open the matching persona guide ({personas_label}), apply "
-            "its practices and checklist, and produce the listed artifact.",
+        # `/new-feature` runs each phase in a Claude Code subagent; other tools
+        # have no subagents, so collapse the whole "## Execution" block into a
+        # single-thread instruction that points at the bundled persona guides.
+        body = re.sub(
+            r"## Execution\n.*?(?=\n## Checkpoint)",
+            "## Execution\n\n"
+            "Work through the phases in order in **one conversation** — do not "
+            "spawn subagents; keep context flowing so each phase sees the prior "
+            f"artifacts. For each phase, open the matching persona guide "
+            f"({personas_label}), apply its practices, self-check against its "
+            "checklist, and produce the listed artifact.\n",
+            body,
+            flags=re.DOTALL,
         )
         body = body.replace(
             "Pick **only** the experts the diff actually warrants (do not run all "

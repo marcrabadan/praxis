@@ -3,7 +3,7 @@ description: Run a feature idea or PRD through the full SDLC, consulting each ex
 argument-hint: <the feature idea, PRD, or ticket>
 ---
 
-Orchestrate the six SDLC expert skills over the feature below, in lifecycle order. Each phase **builds on the output of the previous one** — keep all phases in this single conversation so context carries forward. Do not spawn subagents; load each skill in the main thread.
+Orchestrate the six SDLC expert skills over the feature below, in lifecycle order. Each phase **builds on the output of the previous one**: every expert receives the artifacts produced before it.
 
 The feature to work through:
 
@@ -11,11 +11,11 @@ $ARGUMENTS
 
 ## Phase 0 — Scope (gate)
 
-If the feature is underspecified (the problem, the target user, or the desired outcome is unclear), ask **2–3** clarifying questions with `AskUserQuestion` before starting. If it is clear enough, state your one-line understanding and proceed.
+Handle this yourself in the main conversation (subagents cannot talk to the user). If the feature is underspecified (the problem, the target user, or the desired outcome is unclear), ask **2–3** clarifying questions with `AskUserQuestion` before starting. If it is clear enough, state your one-line understanding and proceed.
 
 ## Phases
 
-Work through these in order. For each: load the named skill, use its `references/practices.md` and `references/checklist.md`, and produce the listed artifact. Carry every prior artifact forward as input.
+Each phase produces **one concise, structured artifact** that becomes the input to the phases after it and to the final summary.
 
 1. **Business Analyst** (`business-analyst`) — frame the problem and stakeholders; capture business/functional/non-functional requirements; write user stories (INVEST) with Gherkin acceptance criteria; flag ambiguities and open questions.
 2. **Product Owner** (`product-owner`) — slice into thin vertical increments, prioritize them (pick and justify a framework), define the sprint goal and the Definition of Ready/Done, and state the value/outcome being targeted.
@@ -23,6 +23,22 @@ Work through these in order. For each: load the named skill, use its `references
 4. **Developer** (`developer`) — turn the top-priority slice into a concrete implementation plan: components/files to touch, the test approach, and an ordered task list. Note assumptions; do not write production code unless asked.
 5. **QA Engineer** (`qa-engineer`) — derive a test strategy and the highest-value test cases (positive, negative, boundary) from the acceptance criteria; identify the riskiest areas and regression scope.
 6. **DevOps Engineer** (`devops-engineer`) — outline delivery and rollout (pipeline gates, deployment strategy, rollback), the observability/SLOs to add, and run the production-readiness checklist.
+
+## Execution
+
+Run each phase in its **own subagent** (the `Agent` tool, `subagent_type: general-purpose`) so each expert's doctrine loads in an isolated context and only its compact artifact returns to the main thread — the skill references never pile up here, and no phase re-reads another expert's full skill. In every subagent prompt:
+
+- tell it to **adopt the named skill** (e.g. invoke the `business-analyst` skill) and reason in that persona;
+- pass the feature plus **all prior artifacts** verbatim as its input;
+- have it draw on the skill's `references/practices.md` to produce the artifact, then **self-check against `references/checklist.md`** before returning (that checklist read stays inside the subagent, not here);
+- ask it to return **only** the structured artifact — no preamble — and to surface any blocking ambiguity as an explicit open question rather than guessing.
+
+Schedule by dependency, not by reflex:
+
+- Phases **1 → 2 → 3 → 4** are serial — each needs the previous artifact, so run them one subagent at a time.
+- Phases **5 (QA)** and **6 (DevOps)** both depend only on phases 1–4, not on each other — dispatch **both subagents in a single message** so they run in parallel.
+
+If a subagent returns a blocking open question, surface it to the user (or resolve it from context) before continuing.
 
 ## Checkpoint
 

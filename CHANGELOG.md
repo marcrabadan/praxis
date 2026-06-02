@@ -57,6 +57,18 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Changed
 
+- **`/new-feature` now runs each SDLC phase in its own subagent** instead of
+  loading all six expert skills into one growing conversation. Each expert's
+  doctrine (`SKILL.md` + `references/`) loads in an isolated context and only
+  its compact artifact returns to the main thread, so skill references no
+  longer accumulate or get re-read phase after phase. Phases draw on
+  `practices.md` to generate and self-check against `checklist.md` (instead of
+  eagerly loading both up front, which contradicted each skill's own "do not
+  load both" guidance). QA and DevOps — which depend only on the earlier
+  phases, not on each other — are dispatched in parallel. Net effect: far less
+  main-thread context and lower latency at the same quality. Ported Cursor /
+  Codex / IntelliJ integrations keep the single-thread behaviour (those tools
+  have no subagents). Bumps the `praxis` plugin to `1.1.0`.
 - Hardened the `validate` GitHub Actions workflow with a least-privilege
   `permissions: contents: read` block.
 - Updated the README License section to reflect the Apache-2.0 license.

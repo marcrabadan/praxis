@@ -1,7 +1,7 @@
 {
   "name": "praxis",
   "description": "An on-demand team of six SDLC experts for Claude Code — business analyst, product owner, software architect, developer, QA engineer, and DevOps engineer — plus a /new-feature orchestrator that runs an idea through all of them in lifecycle order. Use to consult one expert or run a whole feature end to end.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "praxis maintainers"
   },
