@@ -164,10 +164,15 @@ def _port_command(name: str, *, tool: str, persona_ref, personas_label: str) -> 
             "spawn subagents; keep context flowing so each phase sees the prior "
             f"artifacts. For each phase, open the matching persona guide "
             f"({personas_label}), apply its practices, self-check against its "
-            "checklist, and produce the listed artifact.\n",
+            "checklist, and produce the listed artifact. After the Architect "
+            "phase, add any conditional domain expert the feature warrants "
+            "(table above) before the QA, DevOps, and summary phases.\n",
             body,
             flags=re.DOTALL,
         )
+        # the scope-gate aside about subagents is Claude-only; drop it for
+        # single-thread tools.
+        body = body.replace(" (subagents cannot talk to the user)", "")
         body = body.replace(
             "Pick **only** the experts the diff actually warrants (do not run all "
             "of them by reflex). Load each chosen skill and apply its "

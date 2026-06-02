@@ -24,6 +24,22 @@ Each phase produces **one concise, structured artifact** that becomes the input 
 5. **QA Engineer** (`qa-engineer`) — derive a test strategy and the highest-value test cases (positive, negative, boundary) from the acceptance criteria; identify the riskiest areas and regression scope.
 6. **DevOps Engineer** (`devops-engineer`) — outline delivery and rollout (pipeline gates, deployment strategy, rollback), the observability/SLOs to add, and run the production-readiness checklist.
 
+### Domain experts (conditional)
+
+The core six are not enough when a feature has a strong specialist dimension. **After the Architect phase, judge from the feature and the design which — if any — of the domain experts below it warrants, and add each as an extra phase.** Do not run these by reflex; add an expert only when its column clearly applies.
+
+| If the feature involves… | Add |
+| ------------------------ | --- |
+| ML/AI, models, LLMs, inference, training, evaluation, RAG, prompting, guardrails | **`ml-ai-engineer`** |
+| Data pipelines (ETL/ELT, CDC, streaming), warehouse/lake modeling, dbt/orchestration, data quality | **`data-engineer`** |
+| Authentication/authorization, untrusted input, crypto, secrets, or any abuse/vulnerability surface | **`security-engineer`** |
+| Trust boundaries, identity/data-protection design, segmentation, encryption strategy, compliance-significant architecture | **`cybersecurity-architect`** |
+| Frontend framework/rendering/state/routing/build architecture, design-system structure, Core Web Vitals | **`frontend-architect`** |
+| UI components, client/server state, forms, styling, frontend TypeScript, performance, accessibility implementation | **`frontend-engineer`** |
+| Design tokens, visual/interaction design, WCAG criteria, responsive layout, usability, UX writing | **`ux-ui-engineer`** |
+
+Each added expert produces its own artifact (e.g. the ML/AI expert: metric & evaluation design, model/serving plan, guardrails, drift/retraining; the security expert: a STRIDE threat model + the top controls) that folds into the consolidated summary under its own heading.
+
 ## Execution
 
 Run each phase in its **own subagent** (the `Agent` tool, `subagent_type: general-purpose`) so each expert's doctrine loads in an isolated context and only its compact artifact returns to the main thread — the skill references never pile up here, and no phase re-reads another expert's full skill. In every subagent prompt:
@@ -36,7 +52,8 @@ Run each phase in its **own subagent** (the `Agent` tool, `subagent_type: genera
 Schedule by dependency, not by reflex:
 
 - Phases **1 → 2 → 3 → 4** are serial — each needs the previous artifact, so run them one subagent at a time.
-- Phases **5 (QA)** and **6 (DevOps)** both depend only on phases 1–4, not on each other — dispatch **both subagents in a single message** so they run in parallel.
+- After Phase 3, pick the **conditional domain experts** the feature warrants (table above).
+- Phases **5 (QA)**, **6 (DevOps)**, and **any warranted domain experts** depend only on phases 1–4, not on each other — dispatch **all of those subagents in a single message** so they run in parallel.
 
 If a subagent returns a blocking open question, surface it to the user (or resolve it from context) before continuing.
 
@@ -54,6 +71,7 @@ Close with a consolidated summary the user can act on:
 - **Implementation plan** (Developer)
 - **Test strategy & key cases** (QA)
 - **Rollout & production-readiness** (DevOps)
+- **Domain-expert findings** (ML/AI, security, data, frontend, or UX) — only the experts the feature warranted
 - **Open questions / assumptions** gathered across all phases
 
 Keep each section concrete and short. The deliverable is a plan, not code — implement only when the user asks.

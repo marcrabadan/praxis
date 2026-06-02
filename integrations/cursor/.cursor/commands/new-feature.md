@@ -8,7 +8,7 @@ The feature to work through:
 
 ## Phase 0 — Scope (gate)
 
-Handle this yourself in the main conversation (subagents cannot talk to the user). If the feature is underspecified (the problem, the target user, or the desired outcome is unclear), ask **2–3** clarifying questions with `AskUserQuestion` before starting. If it is clear enough, state your one-line understanding and proceed.
+Handle this yourself in the main conversation. If the feature is underspecified (the problem, the target user, or the desired outcome is unclear), ask **2–3** clarifying questions with `AskUserQuestion` before starting. If it is clear enough, state your one-line understanding and proceed.
 
 ## Phases
 
@@ -21,9 +21,25 @@ Each phase produces **one concise, structured artifact** that becomes the input 
 5. **QA Engineer** — derive a test strategy and the highest-value test cases (positive, negative, boundary) from the acceptance criteria; identify the riskiest areas and regression scope.
 6. **DevOps Engineer** — outline delivery and rollout (pipeline gates, deployment strategy, rollback), the observability/SLOs to add, and run the production-readiness checklist.
 
+### Domain experts (conditional)
+
+The core six are not enough when a feature has a strong specialist dimension. **After the Architect phase, judge from the feature and the design which — if any — of the domain experts below it warrants, and add each as an extra phase.** Do not run these by reflex; add an expert only when its column clearly applies.
+
+| If the feature involves… | Add |
+| ------------------------ | --- |
+| ML/AI, models, LLMs, inference, training, evaluation, RAG, prompting, guardrails | **ML/AI Engineer** |
+| Data pipelines (ETL/ELT, CDC, streaming), warehouse/lake modeling, dbt/orchestration, data quality | **Data Engineer** |
+| Authentication/authorization, untrusted input, crypto, secrets, or any abuse/vulnerability surface | **Security Engineer** |
+| Trust boundaries, identity/data-protection design, segmentation, encryption strategy, compliance-significant architecture | **Cybersecurity Architect** |
+| Frontend framework/rendering/state/routing/build architecture, design-system structure, Core Web Vitals | **Frontend Architect** |
+| UI components, client/server state, forms, styling, frontend TypeScript, performance, accessibility implementation | **Frontend Engineer** |
+| Design tokens, visual/interaction design, WCAG criteria, responsive layout, usability, UX writing | **UX/UI Engineer** |
+
+Each added expert produces its own artifact (e.g. the ML/AI expert: metric & evaluation design, model/serving plan, guardrails, drift/retraining; the security expert: a STRIDE threat model + the top controls) that folds into the consolidated summary under its own heading.
+
 ## Execution
 
-Work through the phases in order in **one conversation** — do not spawn subagents; keep context flowing so each phase sees the prior artifacts. For each phase, open the matching persona guide (the `praxis-*` rules), apply its practices, self-check against its checklist, and produce the listed artifact.
+Work through the phases in order in **one conversation** — do not spawn subagents; keep context flowing so each phase sees the prior artifacts. For each phase, open the matching persona guide (the `praxis-*` rules), apply its practices, self-check against its checklist, and produce the listed artifact. After the Architect phase, add any conditional domain expert the feature warrants (table above) before the QA, DevOps, and summary phases.
 
 ## Checkpoint
 
@@ -39,6 +55,7 @@ Close with a consolidated summary the user can act on:
 - **Implementation plan** (Developer)
 - **Test strategy & key cases** (QA)
 - **Rollout & production-readiness** (DevOps)
+- **Domain-expert findings** (ML/AI, security, data, frontend, or UX) — only the experts the feature warranted
 - **Open questions / assumptions** gathered across all phases
 
 Keep each section concrete and short. The deliverable is a plan, not code — implement only when the user asks.
