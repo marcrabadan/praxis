@@ -151,19 +151,29 @@ def _port_command(name: str, *, tool: str, persona_ref, personas_label: str) -> 
     else:
         # orchestration workflows: many personas, point at the set
         body = body.replace(
-            "Orchestrate the six SDLC expert skills",
-            "Orchestrate the six SDLC expert personas",
+            "Orchestrate the SDLC expert skills",
+            "Orchestrate the SDLC expert personas",
         )
-        body = body.replace(
-            "Do not spawn subagents; load each skill in the main thread.",
-            "Keep it to one conversation; do not spawn subagents.",
+        # `/new-feature` runs each phase in a Claude Code subagent; other tools
+        # have no subagents, so collapse the whole "## Execution" block into a
+        # single-thread instruction that points at the bundled persona guides.
+        body = re.sub(
+            r"## Execution\n.*?(?=\n## Checkpoint)",
+            "## Execution\n\n"
+            "Work through the phases in order in **one conversation** — do not "
+            "spawn subagents; keep context flowing so each phase sees the prior "
+            f"artifacts. For each phase, open the matching persona guide "
+            f"({personas_label}), apply its practices, self-check against its "
+            "checklist, and produce the listed artifact. After the Architect "
+            "phase, run any conditional domain expert the feature warrants "
+            "(table above) **before the Developer phase**, so its constraints "
+            "feed the implementation plan, then continue with QA and DevOps.\n",
+            body,
+            flags=re.DOTALL,
         )
-        body = body.replace(
-            "For each: load the named skill, use its `references/practices.md` "
-            "and `references/checklist.md`, and produce the listed artifact.",
-            f"For each: open the matching persona guide ({personas_label}), apply "
-            "its practices and checklist, and produce the listed artifact.",
-        )
+        # the scope-gate aside about subagents is Claude-only; drop it for
+        # single-thread tools.
+        body = body.replace(" (subagents cannot talk to the user)", "")
         body = body.replace(
             "Pick **only** the experts the diff actually warrants (do not run all "
             "of them by reflex). Load each chosen skill and apply its "
