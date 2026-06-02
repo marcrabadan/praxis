@@ -51,9 +51,10 @@ Run each phase in its **own subagent** (the `Agent` tool, `subagent_type: genera
 
 Schedule by dependency, not by reflex:
 
-- Phases **1 → 2 → 3 → 4** are serial — each needs the previous artifact, so run them one subagent at a time.
-- After Phase 3, pick the **conditional domain experts** the feature warrants (table above).
-- Phases **5 (QA)**, **6 (DevOps)**, and **any warranted domain experts** depend only on phases 1–4, not on each other — dispatch **all of those subagents in a single message** so they run in parallel.
+- Phases **1 → 2 → 3** (BA → PO → Architect) are serial — each needs the previous artifact.
+- **After Phase 3, pick the warranted domain experts** (table above) and dispatch them — in parallel with each other — **before the Developer phase**. Their findings (ML evaluation/serving constraints, security controls, frontend architecture, …) are exactly what the implementation plan must build on, so the Developer must see them.
+- **Phase 4 (Developer)** runs once the domain-expert artifacts are back, with all prior artifacts as input.
+- **Phases 5 (QA)** and **6 (DevOps)** depend only on phases 1–4 (plus the domain experts), not on each other — dispatch **both subagents in a single message** so they run in parallel.
 
 If a subagent returns a blocking open question, surface it to the user (or resolve it from context) before continuing.
 

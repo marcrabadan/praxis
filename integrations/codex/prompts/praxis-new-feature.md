@@ -39,7 +39,7 @@ Each added expert produces its own artifact (e.g. the ML/AI expert: metric & eva
 
 ## Execution
 
-Work through the phases in order in **one conversation** — do not spawn subagents; keep context flowing so each phase sees the prior artifacts. For each phase, open the matching persona guide (in `.praxis/`), apply its practices, self-check against its checklist, and produce the listed artifact. After the Architect phase, add any conditional domain expert the feature warrants (table above) before the QA, DevOps, and summary phases.
+Work through the phases in order in **one conversation** — do not spawn subagents; keep context flowing so each phase sees the prior artifacts. For each phase, open the matching persona guide (in `.praxis/`), apply its practices, self-check against its checklist, and produce the listed artifact. After the Architect phase, run any conditional domain expert the feature warrants (table above) **before the Developer phase**, so its constraints feed the implementation plan, then continue with QA and DevOps.
 
 ## Checkpoint
 

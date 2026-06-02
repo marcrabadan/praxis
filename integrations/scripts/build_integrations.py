@@ -165,8 +165,9 @@ def _port_command(name: str, *, tool: str, persona_ref, personas_label: str) -> 
             f"artifacts. For each phase, open the matching persona guide "
             f"({personas_label}), apply its practices, self-check against its "
             "checklist, and produce the listed artifact. After the Architect "
-            "phase, add any conditional domain expert the feature warrants "
-            "(table above) before the QA, DevOps, and summary phases.\n",
+            "phase, run any conditional domain expert the feature warrants "
+            "(table above) **before the Developer phase**, so its constraints "
+            "feed the implementation plan, then continue with QA and DevOps.\n",
             body,
             flags=re.DOTALL,
         )
