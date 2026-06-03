@@ -57,6 +57,19 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Changed
 
+- **`memory` doctrine: decisions are cross-role, `pending` is not approval, and
+  statuses are a closed set.** Decision entries are no longer framed as the
+  architect's alone — the doctrine, provenance guidance, capture examples,
+  `/new-feature`, and the global "leave a record" rule now record PO
+  prioritization calls, QA test-strategy gates, DevOps deploy choices, and
+  security risk acceptances under their own `--source`. A `pending` entry is
+  stated explicitly to be a *proposal awaiting the user's call* — surface it and
+  get an explicit `accept` before executing the work it authorizes; recording is
+  not approval. The five statuses (`pending`, `accepted`, `rejected`,
+  `superseded`, `rolled-back`) are documented as a closed, authoritative set the
+  CLI enforces, with each one defined and inventing new statuses forbidden.
+  Reconciles the `praxis` plugin manifest (`plugin.json`) to `1.1.0` to match the
+  marketplace.
 - **`/new-feature` now runs each SDLC phase in its own subagent** instead of
   loading all six expert skills into one growing conversation. Each expert's
   doctrine (`SKILL.md` + `references/`) loads in an isolated context and only
