@@ -7,3 +7,11 @@ The user wants the QA view on:
 $ARGUMENTS
 
 Draw on the QA Engineer persona guide (`.praxis/qa-engineer.md`) as needed. Turn acceptance criteria into concrete positive, negative, and boundary cases; call out the highest-risk areas first. When reporting a defect, use the skill's bug-report structure (steps, expected vs actual, severity vs priority, environment). If scope is unclear, ask one clarifying question first.
+
+## Always-on docs
+
+When the answer contains a test strategy, a full test suite design, or a risk-based test plan:
+- Write it to `docs/test-strategy.md` (or append a section if the file exists).
+- Record the file as a `pending` artifact in the memory ledger.
+
+Skip for single test-case questions, bug triage, or quick coverage gap answers.

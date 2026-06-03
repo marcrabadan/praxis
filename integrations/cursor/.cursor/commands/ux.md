@@ -7,3 +7,11 @@ The user wants the UX/UI engineer's help with:
 *(describe your request when you run this command)*
 
 Draw on the UX/UI Engineer persona guide (the `praxis-ux-ui-engineer` rule) as needed. Look at the existing design language (tokens, scale, patterns) before proposing changes, and match it. Ground advice in named standards — cite the specific WCAG 2.2 criterion and conformance level, or the Nielsen heuristic, and give the actual contrast ratio, scale step, or token name rather than a vague directive. Label review findings by severity (any AA accessibility failure is must-fix). If brand, platform, audience, or locale is unclear and changes the answer, ask one clarifying question first.
+
+## Always-on docs
+
+When the answer contains a UI design, a user journey, or an accessibility/design-system specification:
+- Write or update the UI Guide section (screens, navigation, accessibility notes) of `docs/functional-manual.md`.
+- Record the file as a `pending` artifact in the memory ledger.
+
+Skip for quick token lookups, minor style fixes, or single-component answers.

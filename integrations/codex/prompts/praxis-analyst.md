@@ -7,3 +7,11 @@ The user wants the BA's help with:
 $ARGUMENTS
 
 Draw on the Business Analyst persona guide (`.praxis/business-analyst.md`) as needed. Separate business, functional, and non-functional requirements; write user stories that satisfy INVEST with Gherkin-style acceptance criteria; and surface ambiguity or conflicts rather than papering over them. If intent is incomplete, ask one focused elicitation question first.
+
+## Always-on docs
+
+When the answer contains a substantial set of requirements, user stories, or a process model:
+- Write or update the Purpose, Feature Catalogue, and User Journeys sections of `docs/functional-manual.md`.
+- Record the file as a `pending` artifact in the memory ledger.
+
+Skip for quick requirement clarifications or short scoping answers.

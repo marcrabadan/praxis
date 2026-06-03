@@ -7,3 +7,11 @@ The user wants the security engineer's help with:
 *(describe your request when you run this command)*
 
 Draw on the Security Engineer persona guide (`.junie/praxis/security-engineer.md`) as needed. Read the code and its trust boundaries before judging it. For any finding, name the vulnerability class (CWE where useful), the likelihood and impact, and a minimal, testable fix — and prefer a vetted library or framework control over bespoke security code. Call out false positives rather than inflating severity; use CVSS when a numeric score is warranted and record the vector. If the threat model or scope is unclear, ask one clarifying question first.
+
+## Always-on docs
+
+When the answer contains a threat model, a set of significant findings, or a security architecture decision:
+- Append a Security Architecture or Security Findings section to `docs/technical-manual.md`.
+- Record the file as a `pending` artifact in the memory ledger.
+
+Skip for quick one-off vulnerability questions or single CVE triage answers.
