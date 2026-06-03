@@ -1,34 +1,34 @@
 # praxis — landing page (GitHub Pages)
 
-Página estática de promoción del plugin **praxis**. Sin build, sin dependencias:
-HTML + CSS + JS vanilla. Se sirve tal cual desde GitHub Pages.
+Static promo page for the **praxis** plugin. No build, no dependencies:
+vanilla HTML + CSS + JS. Served as-is from GitHub Pages.
 
-## Archivos
+## Files
 
-| Archivo        | Propósito                                              |
+| File           | Purpose                                                |
 | -------------- | ------------------------------------------------------ |
-| `index.html`   | Página principal (hero, expertos, memoria, instalación)|
-| `styles.css`   | Estilos (tema oscuro, responsive, WCAG AA)             |
-| `script.js`    | Tabs, menú móvil, copiar al portapapeles, reveal       |
-| `favicon.svg`  | Icono                                                  |
-| `.nojekyll`    | Desactiva el procesado Jekyll de GitHub Pages          |
+| `index.html`   | Main page (hero, experts, memory, install)             |
+| `styles.css`   | Styles (dark theme, responsive, WCAG AA)               |
+| `script.js`    | Tabs, mobile menu, copy-to-clipboard, scroll reveal    |
+| `favicon.svg`  | Icon                                                   |
+| `.nojekyll`    | Disables GitHub Pages' Jekyll processing               |
 
-## Cómo activar GitHub Pages
+## Enabling GitHub Pages
 
-1. En GitHub: **Settings → Pages**.
-2. En **Build and deployment → Source**, elige **Deploy from a branch**.
-3. Selecciona la rama (por ejemplo `main`) y la carpeta **`/docs`**.
-4. Guarda. La página quedará publicada en:
+1. On GitHub: **Settings → Pages**.
+2. Under **Build and deployment → Source**, pick **Deploy from a branch**.
+3. Select the branch (e.g. `main`) and the **`/docs`** folder.
+4. Save. The page will be published at:
    `https://marcrabadan.github.io/praxis/`
 
-> Si prefieres publicar desde otra rama, selecciónala en el paso 3.
-> El contenido de `/docs` se sirve sin modificaciones gracias a `.nojekyll`.
+> If you prefer to publish from another branch, select it in step 3.
+> Everything in `/docs` is served unmodified thanks to `.nojekyll`.
 
-## Desarrollo local
+## Local development
 
-Cualquier servidor estático sirve. Por ejemplo:
+Any static server works. For example:
 
 ```bash
 cd docs && python3 -m http.server 8080
-# abre http://localhost:8080
+# open http://localhost:8080
 ```

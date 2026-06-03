@@ -54,12 +54,12 @@
       if (!code) { return; }
       navigator.clipboard.writeText(code.innerText).then(function () {
         var prev = btn.textContent;
-        btn.textContent = '¡Copiado!';
+        btn.textContent = 'Copied!';
         btn.classList.add('copied');
         setTimeout(function () { btn.textContent = prev; btn.classList.remove('copied'); }, 1800);
       }).catch(function () {
         btn.textContent = 'Error';
-        setTimeout(function () { btn.textContent = 'Copiar'; }, 1800);
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1800);
       });
     });
   });
