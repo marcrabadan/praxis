@@ -13,6 +13,15 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- `/new-feature` — **token-efficiency** controls. An optional **context digest**
+  (Phase 0.5) gathers the relevant codebase/PRD context once on a cheap model
+  (Haiku `Explore` subagent) and feeds that digest to every later phase, so
+  experts stop re-reading the same material. Each phase now also runs at the
+  **model tier its work needs** — Opus for deep design/build reasoning
+  (architect, developer, domain experts), Sonnet for the artifact-transforming
+  phases (BA, PO, QA, DevOps), Haiku for retrieval only. Bumps the `praxis`
+  plugin to `1.2.0` and regenerates the Cursor/Codex/IntelliJ integrations.
+
 - `memory` skill — a **bootstrap / `/memory init`** flow that primes an empty
   ledger from the repo's existing context so memory reflects the project from day
   one. Adds a deterministic `ledger.py bootstrap [--brief]` subcommand (init +
