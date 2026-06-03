@@ -76,7 +76,7 @@
       });
     }, { threshold: 0.12 });
 
-    document.querySelectorAll('.card, .expert, .step, .meta-pill').forEach(function (el) {
+    document.querySelectorAll('.card, .expert, .step, .meta-pill, .example-card').forEach(function (el) {
       el.style.opacity = '0';
       el.style.transform = 'translateY(16px)';
       el.style.transition = 'opacity .5s ease, transform .5s ease';

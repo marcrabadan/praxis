@@ -195,6 +195,28 @@ code { font-family: var(--mono); font-size: 0.86em; background: var(--surface-2)
 .state.superseded { background: var(--surface-2);       color: var(--text-dim); }
 .memory-note { margin-top: 22px; color: var(--text-dim); font-size: 0.92rem; }
 
+/* ===================== EXAMPLES ===================== */
+.examples-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.example-card {
+  display: flex; flex-direction: column; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+  transition: transform .18s ease, border-color .18s ease;
+}
+.example-card:hover { transform: translateY(-4px); border-color: rgba(255,122,89,0.4); }
+.example-head { padding: 24px 24px 18px; }
+.example-tag {
+  display: inline-block; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.03em;
+  color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 999px;
+  border: 1px solid rgba(255,122,89,0.2); margin-bottom: 12px;
+}
+.example-head h3 { font-size: 1.18rem; letter-spacing: -0.01em; margin-bottom: 8px; }
+.example-head p { color: var(--text-muted); font-size: 0.93rem; line-height: 1.55; }
+.example-card .code-panel { border: none; border-top: 1px solid var(--border); border-radius: 0; box-shadow: none; margin-top: auto; }
+.example-card .term-body { font-size: 0.79rem; line-height: 1.75; }
+
+.examples-foot { text-align: center; margin-top: 40px; }
+.examples-foot p { color: var(--text-muted); margin-bottom: 18px; }
+
 /* ===================== TABS ===================== */
 .tabs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px; }
 .tab {
@@ -241,6 +263,7 @@ code { font-family: var(--mono); font-size: 0.86em; background: var(--surface-2)
   .hero-terminal, .memory-wrap .code-panel { order: 2; }
   .experts-grid { grid-template-columns: repeat(2, 1fr); }
   .cards-3 { grid-template-columns: 1fr; }
+  .examples-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 720px) {

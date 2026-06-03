@@ -33,6 +33,7 @@
       <nav class="nav-links" aria-label="Primary">
         <a href="#experts">Experts</a>
         <a href="#how">How it works</a>
+        <a href="#examples">Examples</a>
         <a href="#memory">Memory</a>
         <a href="#install">Install</a>
         <a class="btn btn-ghost" href="https://github.com/marcrabadan/praxis" target="_blank" rel="noopener">
@@ -47,6 +48,7 @@
     <div class="mobile-menu" id="mobile-menu" hidden>
       <a href="#experts">Experts</a>
       <a href="#how">How it works</a>
+      <a href="#examples">Examples</a>
       <a href="#memory">Memory</a>
       <a href="#install">Install</a>
       <a href="https://github.com/marcrabadan/praxis" target="_blank" rel="noopener">GitHub ↗</a>
@@ -187,8 +189,112 @@ the decision as an ADR…</code></pre>
       </div>
     </section>
 
+    <!-- ===================== EXAMPLES ===================== -->
+    <section class="section section-alt" id="examples" aria-labelledby="examples-title">
+      <div class="container">
+        <h2 id="examples-title" class="section-title">See it <span class="accent">in action</span></h2>
+        <p class="section-sub">Real workflows, organized by what you're trying to do — not by command name. Every command reads your codebase and the memory ledger at runtime.</p>
+
+        <div class="examples-grid">
+
+          <!-- Example 1: new-feature -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">End-to-end</span>
+              <h3>Kick off a new feature</h3>
+              <p>Run an idea through every SDLC role in lifecycle order. Each expert builds on the previous one's output; docs and diagrams are generated inline.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/new-feature</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/new-feature</span> add OAuth2 login with Google
+
+<span class="c-muted">Analyst</span>   ✓ requirements + acceptance criteria
+<span class="c-muted">PO</span>        ✓ prioritized increments + sprint goal
+<span class="c-muted">Architect</span> ✓ <span class="c-str">docs/decisions/ADR-014-oauth.md</span> + diagram
+<span class="c-muted">Security</span>  ✓ threat model added (auth detected)
+<span class="c-muted">Developer</span> ✓ implementation plan
+<span class="c-muted">QA</span>        ✓ <span class="c-str">docs/test-strategy.md</span>
+<span class="c-muted">DevOps</span>    ✓ rollout plan + runbook
+<span class="c-ok">✓</span> consolidated plan · 6 entries logged to ledger</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 2: ask an expert -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Single expert</span>
+              <h3>Ask the Software Architect</h3>
+              <p>Quick single-turn consultations. Each expert writes a doc or diagram automatically when the answer contains a substantial artifact.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/architect</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/architect</span> event-driven or request-response
+            for order processing?
+
+<span class="c-muted"># Trade-off analysis</span>
+  · throughput &amp; decoupling  → events
+  · consistency &amp; simplicity → request/response
+  <span class="c-warn">recommendation:</span> events for fulfilment,
+  sync for the payment confirmation path
+
+<span class="c-ok">✓</span> wrote <span class="c-str">docs/decisions/ADR-021-orders.md</span>
+<span class="c-ok">✓</span> architecture diagram generated</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 3: review-changes -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Code review</span>
+              <h3>Review before merging</h3>
+              <p>Routes the current diff to the relevant experts and returns severity-tagged findings — Developer baseline plus others based on what changed.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/review-changes</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/review-changes</span> HEAD~3..HEAD
+
+<span class="c-err">🔴 Blocker</span> <span class="c-muted">[Security]</span> token logged in plaintext
+          auth.ts:42 — redact before logging
+<span class="c-warn">🟠 Should-fix</span> <span class="c-muted">[Dev]</span> 180-line function
+          handler.ts:88 — extract validation
+<span class="c-ok">🟡 Nit</span> <span class="c-muted">[QA]</span> new branch lacks a test
+          for the expired-token path
+
+<span class="c-ok">✓</span> 3 experts routed from the diff</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 4: onboarding existing project -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Onboarding</span>
+              <h3>Bring praxis to an existing repo</h3>
+              <p>No greenfield needed. Seed the ledger from your existing ADRs and git history, then document and review what's already there.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">day-one checklist</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/plugin install</span> praxis@praxis  <span class="c-comment"># install</span>
+<span class="c-prompt">&gt;</span> <span class="c-cmd">/memory init</span>          <span class="c-comment"># seed from ADRs + git log</span>
+<span class="c-prompt">&gt;</span> <span class="c-cmd">/memory list pending</span>  <span class="c-comment"># accept what's current</span>
+<span class="c-prompt">&gt;</span> <span class="c-cmd">/docs</span>                 <span class="c-comment"># manuals from existing code</span>
+<span class="c-prompt">&gt;</span> <span class="c-cmd">/diagram</span>              <span class="c-comment"># architecture overview</span>
+<span class="c-prompt">&gt;</span> <span class="c-cmd">/review-changes</span> main..HEAD
+
+<span class="c-ok">✓</span> every later command now knows your history</code></pre>
+            </div>
+          </article>
+
+        </div>
+
+        <div class="examples-foot">
+          <p>Eighteen more scenarios — data &amp; AI, frontend, security hardening, diagrams, combined release workflows — live in the full guide.</p>
+          <a class="btn btn-ghost" href="https://github.com/marcrabadan/praxis/blob/main/USECASES.md" target="_blank" rel="noopener">Browse all use cases ↗</a>
+        </div>
+      </div>
+    </section>
+
     <!-- ===================== MEMORY ===================== -->
-    <section class="section section-alt" id="memory" aria-labelledby="memory-title">
+    <section class="section" id="memory" aria-labelledby="memory-title">
       <div class="container memory-wrap">
         <div class="memory-copy">
           <h2 id="memory-title" class="section-title">The <span class="accent">memory ledger</span></h2>
@@ -219,7 +325,7 @@ the decision as an ADR…</code></pre>
     </section>
 
     <!-- ===================== INSTALL ===================== -->
-    <section class="section" id="install" aria-labelledby="install-title">
+    <section class="section section-alt" id="install" aria-labelledby="install-title">
       <div class="container">
         <h2 id="install-title" class="section-title">Install into <span class="accent">your tool</span></h2>
         <p class="section-sub">The experts are native to Claude Code; the same personas are generated for Cursor, IntelliJ and Codex.</p>
