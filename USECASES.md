@@ -6,6 +6,7 @@ Practical scenarios for every command in this repo. Organized by what you are tr
 
 ## Table of Contents
 
+0. [Bring praxis to an existing project](#0-bring-praxis-to-an-existing-project)
 1. [Kick off a new feature end-to-end](#1-kick-off-a-new-feature-end-to-end)
 2. [Ask a specific expert](#2-ask-a-specific-expert)
 3. [Review code before merging](#3-review-code-before-merging)
@@ -17,6 +18,130 @@ Practical scenarios for every command in this repo. Organized by what you are tr
 9. [Harden security](#9-harden-security)
 10. [Maintain skills in this repo](#10-maintain-skills-in-this-repo)
 11. [Combined workflows](#11-combined-workflows)
+
+---
+
+## 0. Bring praxis to an existing project
+
+You do not need a greenfield project. Every command reads the codebase and the memory ledger at runtime — it discovers what exists, documents it, reviews it, and builds on it.
+
+### Step 1 — Install the plugin (one command)
+
+From inside your existing project, with Claude Code open:
+
+```
+/plugin marketplace add marcrabadan/praxis
+/plugin install praxis@praxis
+```
+
+That gives you all 19 commands immediately — `/new-feature`, `/review-changes`, `/docs`, `/diagram`, every expert, and `/memory`.
+
+Want the skill-authoring tooling too?
+
+```
+/plugin install skill-factory@praxis
+```
+
+### Step 2 — Seed the memory ledger from what already exists
+
+The ledger is empty on first install. Bootstrap it from your existing ADRs, README, git history, and architecture docs:
+
+```
+/memory init
+```
+
+This reads `AGENTS.md`, `README.md`, `ARCHITECTURE.md`, `docs/adr/`, and the recent git log, then records the project's already-made decisions as `pending` entries. Review and accept the ones that are still current:
+
+```
+/memory list pending
+/memory accept <id>
+```
+
+Once the ledger is seeded, every subsequent command inherits institutional context — the architect knows your past decisions, the security engineer knows your risk posture, the QA engineer knows your test strategy.
+
+### Step 3 — Document what you already have
+
+Generate documentation from the existing codebase in one command:
+
+```
+/docs
+```
+
+The experts read your code, your ADRs, and the ledger and produce:
+- `docs/functional-manual.md` — what the system does (BA + PO + UX)
+- `docs/technical-manual.md` — how it is built and operated (Architect + Developer + DevOps)
+
+Or just the part you need:
+
+```
+/docs the API reference for the payments module
+/docs the onboarding runbook
+/docs our architecture decisions
+```
+
+### Step 4 — Diagram what you already have
+
+```
+/diagram                              → L2 architecture of the whole system
+/diagram the auth flow                → sequence diagram from existing code
+/diagram the database schema          → ER diagram from existing models
+/diagram our CI/CD pipeline           → flow diagram from the workflow files
+```
+
+The diagram skill reads your `docker-compose`, `Dockerfile`, `*.tf`, ORM models, and CI config — it does not need descriptions written in advance.
+
+### Step 5 — Review any existing PR or branch
+
+```
+/review-changes
+/review-changes main..feature/my-branch
+```
+
+Works on any diff, any repo. Routes to the relevant experts based on what changed.
+
+### Step 6 (optional) — Wire it into your team's workflow
+
+#### Automatic PR reviews in CI
+
+Copy the GitHub Actions workflow into your project:
+
+```bash
+cp .claude/skills/../integrations/github-actions/praxis-pr-review.yml \
+   <your-repo>/.github/workflows/praxis-pr-review.yml
+```
+
+Add an `ANTHROPIC_API_KEY` repository secret. Every PR now gets a review posted automatically.
+
+#### Pre-push review nudge (local)
+
+Merge the hooks block from `integrations/hooks/settings.example.json` into your project's `.claude/settings.json`. Claude Code will remind you to run `/review-changes` before committing.
+
+#### Automatic memory capture (local)
+
+Merge the hooks block from `integrations/hooks/memory.settings.example.json` into `.claude/settings.json`. On every session start, pending decisions surface automatically. On every stop, uncommitted changes are snapshotted as a rollback-able entry.
+
+#### Cursor, IntelliJ, or OpenAI Codex
+
+The same expert personas are available for other agents via the generated integrations:
+
+| Agent | What to copy |
+|-------|-------------|
+| **Cursor** | `integrations/cursor/` → `.cursor/rules/` and `.cursor/commands/` in your project |
+| **IntelliJ** (AI Assistant / Junie) | `integrations/intellij/` → `.junie/` in your project |
+| **OpenAI Codex** | `integrations/codex/` → `AGENTS.praxis.md` + `.praxis/` |
+
+### Day-one checklist for an existing project
+
+```
+/plugin install praxis@praxis          # 1. install
+/memory init                           # 2. seed ledger from existing context
+/memory list pending                   # 3. review and accept what's current
+/docs                                  # 4. generate manuals from existing code
+/diagram                               # 5. generate architecture overview
+/review-changes main..HEAD             # 6. review any open work
+```
+
+After that, every subsequent expert command knows your project's history and contributes to its documentation automatically.
 
 ---
 
