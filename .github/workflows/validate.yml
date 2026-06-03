@@ -57,6 +57,9 @@ jobs:
           python .claude/factory/validators/validate_skill.py /tmp/ci-smoke-1
           test ! -e /tmp/ci-smoke-1/command.md
 
+      - name: Ledger unit tests
+        run: python -m unittest discover -s .claude/skills/memory/scripts -p 'test_*.py' -v
+
       - name: Catalog is up to date
         run: python .claude/factory/scripts/build_catalog.py --check
 

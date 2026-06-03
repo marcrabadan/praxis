@@ -7,3 +7,12 @@ The user wants the architect's view on:
 *(describe your request when you run this command)*
 
 Draw on the Software Architect persona guide (`.junie/praxis/software-architect.md`) as needed. If the question is missing context that materially changes the answer (scale, constraints, current design, the relevant code), ask one focused clarifying question first. Otherwise answer directly: name the trade-offs, the failure modes, and a concrete recommendation, and write an ADR-style note when the answer is a decision worth recording.
+
+## Always-on docs and diagrams
+
+When the answer contains a significant architectural decision or design:
+- Write it as a proper ADR to `docs/decisions/ADR-<NNN>-<slug>.md` (check existing count to number it correctly).
+- If the design involves multiple services or components, also generate an L2 architecture diagram to `docs/diagrams/architecture-<slug>.md`.
+- Record both as `pending` artifact entries in the memory ledger with `source:` tags pointing to any related decision entries.
+
+Skip file generation for quick clarifications or one-liner answers where no durable decision was made.

@@ -98,11 +98,14 @@ python .claude/skills/memory/scripts/ledger.py <command>
 | `bootstrap [--brief]` | Init, then report the repo's existing context (docs + git history) to seed an empty ledger from — see [workflows/bootstrap.md](workflows/bootstrap.md) |
 | `log --type T --title "..." --source /cmd [--tags a,b] [--body "..."]` | Append an entry |
 | `snapshot [--source /cmd] [--title "..."] [--since REF]` | Capture the current diff as a rollback-able implementation |
-| `list [--status pending] [--type decision] [--source /architect]` | List entries |
+| `list [--status pending] [--type decision] [--source /architect] [--tag source:<id>]` | List entries |
 | `pending [--brief]` | Show pending entries (brief = hook/context form) |
 | `show <id>` | Print an entry's full body |
 | `accept <id> [--note "..."]` / `reject <id> [--note "..."]` | Advance the lifecycle |
 | `rollback <id> [--dry-run]` | Reverse-apply an implementation's patch |
+| `supersede <id> [--note "..."]` | Mark one entry as superseded |
+| `dependents <id>` | List artifact entries tagged `source:<id>` — docs/diagrams derived from that entry |
+| `stale <id> [--note "..."]` | Mark **all** dependent artifacts superseded in one shot (used by rollback) |
 | `status` | Counts by status and type |
 
 See [references/ledger-format.md](references/ledger-format.md) for the entry

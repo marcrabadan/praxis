@@ -44,6 +44,28 @@ The core six are not enough when a feature has a strong specialist dimension. **
 
 Each added expert produces its own artifact (e.g. the ML/AI expert: metric & evaluation design, model/serving plan, guardrails, drift/retraining; the security expert: a STRIDE threat model + the top controls) that folds into the consolidated summary under its own heading.
 
+## Docs and diagrams — inline with each phase
+
+Each expert writes its documentation file **before** returning its planning artifact to this thread — no separate `/docs` or `/diagram` step needed. The file is the durable record; the artifact is the compact summary for the next phase.
+
+| Phase | File to write | Diagram to generate |
+|-------|--------------|---------------------|
+| BA | `docs/functional-manual.md` — Purpose, Feature Catalogue, User Journeys, Business Rules | — |
+| PO | append Priorities + Sprint Goal sections to `docs/functional-manual.md` | — |
+| Architect | `docs/decisions/ADR-<NNN>-<slug>.md` per significant decision | `docs/diagrams/architecture-<slug>.md` (L2, if design is non-trivial) |
+| Security | append Security Architecture section to `docs/technical-manual.md` | — |
+| UX | append UI Guide section to `docs/functional-manual.md` | — |
+| Developer | `docs/technical-manual.md` — Module Map, Implementation Notes, Configuration | — |
+| QA | `docs/test-strategy.md` | — |
+| DevOps | append Operations + Runbook sections to `docs/technical-manual.md` | `docs/diagrams/flow-deploy-<slug>.md` (if pipeline is non-trivial) |
+
+Rules for subagents:
+- Write the file first, **then** return the artifact text to this thread.
+- If the file already exists, append or update the relevant section — do not overwrite.
+- Skip a file only when the artifact is trivially thin (e.g. a one-liner BA scope on a tiny feature).
+- Tag each ledger artifact entry with `source:<planning-entry-id>` so rollback can mark it stale.
+- ADR numbering: check the existing count in `docs/decisions/` and increment.
+
 ## Execution
 
 Run each phase in its **own subagent** (the `Agent` tool, `subagent_type: general-purpose`) so each expert's doctrine loads in an isolated context and only its compact artifact returns to the main thread — the skill references never pile up here, and no phase re-reads another expert's full skill. In every subagent prompt:
@@ -51,7 +73,8 @@ Run each phase in its **own subagent** (the `Agent` tool, `subagent_type: genera
 - tell it to **adopt the named skill** (e.g. invoke the `business-analyst` skill) and reason in that persona;
 - pass the feature plus **all prior artifacts** verbatim as its input;
 - have it draw on the skill's `references/practices.md` to produce the artifact, then **self-check against `references/checklist.md`** before returning (that checklist read stays inside the subagent, not here);
-- ask it to return **only** the structured artifact — no preamble — and to surface any blocking ambiguity as an explicit open question rather than guessing.
+- instruct it to **write its documentation file and diagram** (from the table above) before returning — the file is written inside the subagent; only the compact artifact text comes back here;
+- ask it to return the structured artifact — no preamble — and to surface any blocking ambiguity as an explicit open question rather than guessing.
 
 Schedule by dependency, not by reflex:
 

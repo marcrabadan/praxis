@@ -41,6 +41,28 @@ The core six are not enough when a feature has a strong specialist dimension. **
 
 Each added expert produces its own artifact (e.g. the ML/AI expert: metric & evaluation design, model/serving plan, guardrails, drift/retraining; the security expert: a STRIDE threat model + the top controls) that folds into the consolidated summary under its own heading.
 
+## Docs and diagrams — inline with each phase
+
+Each expert writes its documentation file **before** returning its planning artifact to this thread — no separate `/docs` or `/diagram` step needed. The file is the durable record; the artifact is the compact summary for the next phase.
+
+| Phase | File to write | Diagram to generate |
+|-------|--------------|---------------------|
+| BA | `docs/functional-manual.md` — Purpose, Feature Catalogue, User Journeys, Business Rules | — |
+| PO | append Priorities + Sprint Goal sections to `docs/functional-manual.md` | — |
+| Architect | `docs/decisions/ADR-<NNN>-<slug>.md` per significant decision | `docs/diagrams/architecture-<slug>.md` (L2, if design is non-trivial) |
+| Security | append Security Architecture section to `docs/technical-manual.md` | — |
+| UX | append UI Guide section to `docs/functional-manual.md` | — |
+| Developer | `docs/technical-manual.md` — Module Map, Implementation Notes, Configuration | — |
+| QA | `docs/test-strategy.md` | — |
+| DevOps | append Operations + Runbook sections to `docs/technical-manual.md` | `docs/diagrams/flow-deploy-<slug>.md` (if pipeline is non-trivial) |
+
+Rules for subagents:
+- Write the file first, **then** return the artifact text to this thread.
+- If the file already exists, append or update the relevant section — do not overwrite.
+- Skip a file only when the artifact is trivially thin (e.g. a one-liner BA scope on a tiny feature).
+- Tag each ledger artifact entry with `source:<planning-entry-id>` so rollback can mark it stale.
+- ADR numbering: check the existing count in `docs/decisions/` and increment.
+
 ## Execution
 
 Work through the phases in order in **one conversation** — do not spawn subagents; keep context flowing so each phase sees the prior artifacts. For each phase, open the matching persona guide (in `.junie/praxis/`), apply its practices, self-check against its checklist, and produce the listed artifact. After the Architect phase, run any conditional domain expert the feature warrants (table above) **before the Developer phase**, so its constraints feed the implementation plan, then continue with QA and DevOps.
