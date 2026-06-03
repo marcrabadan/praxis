@@ -154,6 +154,22 @@ def _port_command(name: str, *, tool: str, persona_ref, personas_label: str) -> 
             "Orchestrate the SDLC expert skills",
             "Orchestrate the SDLC expert personas",
         )
+        # Phase 0.5 gathers the shared context on a cheap-model subagent in
+        # Claude Code; single-thread tools have no subagents, so rewrite it as
+        # an inline gather step in the current conversation.
+        body = re.sub(
+            r"## Phase 0\.5 — Context digest \(cheap, optional\)\n.*?(?=\n## Phases)",
+            "## Phase 0.5 — Context digest (optional)\n\n"
+            "If the feature touches an existing codebase or a long PRD, **gather "
+            "the shared context once, yourself, before starting the phases** "
+            "instead of making every phase re-discover it. Skim the relevant "
+            "files/conventions and the PRD and write a **short factual digest** — "
+            "paths, current behavior, key constraints, no opinions — then carry "
+            "that digest into every later phase alongside the prior artifacts. "
+            "Skip for greenfield or trivial features.\n",
+            body,
+            flags=re.DOTALL,
+        )
         # `/new-feature` runs each phase in a Claude Code subagent; other tools
         # have no subagents, so collapse the whole "## Execution" block into a
         # single-thread instruction that points at the bundled persona guides.

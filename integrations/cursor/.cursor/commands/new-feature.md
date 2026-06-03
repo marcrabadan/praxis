@@ -10,9 +10,9 @@ The feature to work through:
 
 Handle this yourself in the main conversation. If the feature is underspecified (the problem, the target user, or the desired outcome is unclear), ask **2–3** clarifying questions with `AskUserQuestion` before starting. If it is clear enough, state your one-line understanding and proceed.
 
-## Phase 0.5 — Context digest (cheap, optional)
+## Phase 0.5 — Context digest (optional)
 
-If the feature touches an existing codebase or a long PRD, **gather the shared context once on a cheap model** instead of making every expert re-discover it. Dispatch a single `Agent` (`subagent_type: Explore`, `model: haiku`) to find the relevant files/conventions and condense the PRD into a **short factual digest** — paths, current behavior, key constraints, no opinions. Pass that digest into every later phase alongside the prior artifacts. This is retrieval, not reasoning, so the cheap tier costs little and the experts stop paying to re-read the same material. Skip for greenfield or trivial features.
+If the feature touches an existing codebase or a long PRD, **gather the shared context once, yourself, before starting the phases** instead of making every phase re-discover it. Skim the relevant files/conventions and the PRD and write a **short factual digest** — paths, current behavior, key constraints, no opinions — then carry that digest into every later phase alongside the prior artifacts. Skip for greenfield or trivial features.
 
 ## Phases
 
