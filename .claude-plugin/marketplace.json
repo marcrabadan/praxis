@@ -1,7 +1,9 @@
 {
   "name": "praxis",
   "owner": {
-    "name": "praxis maintainers"
+    "name": "praxis maintainers",
+    "email": "marcrabadan@gmail.com",
+    "url": "https://marcrabadan.github.io/portfolio/"
   },
   "description": "Claude Code skills for the software delivery lifecycle. Two plugins: 'praxis' (the SDLC expert skills + /new-feature orchestrator) and 'skill-factory' (the skill-creator meta-skill + authoring tooling).",
   "plugins": [

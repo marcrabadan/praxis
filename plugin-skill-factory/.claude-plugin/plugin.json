@@ -3,7 +3,9 @@
   "description": "The skill-creator meta-skill plus the tooling to author, classify, validate, and catalog new Claude Code skills. Use to build your own skills with a tiering doctrine, a deterministic scaffolder, and validators.",
   "version": "1.0.0",
   "author": {
-    "name": "praxis maintainers"
+    "name": "praxis maintainers",
+    "email": "marcrabadan@gmail.com",
+    "url": "https://marcrabadan.github.io/portfolio/"
   },
   "homepage": "https://github.com/marcrabadan/praxis",
   "repository": "https://github.com/marcrabadan/praxis",
