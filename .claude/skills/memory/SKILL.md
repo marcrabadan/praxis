@@ -103,8 +103,9 @@ python .claude/skills/memory/scripts/ledger.py <command>
 | `show <id>` | Print an entry's full body |
 | `accept <id> [--note "..."]` / `reject <id> [--note "..."]` | Advance the lifecycle |
 | `rollback <id> [--dry-run]` | Reverse-apply an implementation's patch |
-| `supersede <id> [--note "..."]` | Mark an artifact entry stale (used automatically by rollback) |
+| `supersede <id> [--note "..."]` | Mark one entry as superseded |
 | `dependents <id>` | List artifact entries tagged `source:<id>` — docs/diagrams derived from that entry |
+| `stale <id> [--note "..."]` | Mark **all** dependent artifacts superseded in one shot (used by rollback) |
 | `status` | Counts by status and type |
 
 See [references/ledger-format.md](references/ledger-format.md) for the entry

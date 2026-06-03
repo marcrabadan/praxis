@@ -1,30 +1,32 @@
 ---
-description: Generate a versioned Mermaid diagram (architecture, sequence, ER, or flow) from the memory ledger and the codebase. Use to visualise the system structure, a user/API flow, the data model, or a pipeline.
-argument-hint: "<what to diagram> [architecture|sequence|er|flow]"
+description: Generate a Mermaid diagram from the memory ledger and the codebase. Just describe what you want to see — the system, a flow, the data model, a pipeline — and the right diagram type is chosen automatically.
+argument-hint: "<describe what you want to see>"
 ---
 
 Generate a diagram using the `diagram` skill.
 
-Request:
-
 $ARGUMENTS
 
-## How to handle it
+## Pick the diagram type from the description
 
-Load the `diagram` skill and pick the right workflow from [.claude/skills/diagram/SKILL.md](../skills/diagram/SKILL.md):
+Read the request and infer the best type — do not ask the user for a type keyword:
 
-| If the request mentions… | Use workflow |
-|--------------------------|--------------|
-| "architecture", "system", "services", "containers", "C4", "topology", "deployment" | [architecture](../skills/diagram/workflows/architecture.md) |
-| "sequence", "flow of calls", "API", "auth flow", "journey", "interactions" | [sequence](../skills/diagram/workflows/sequence.md) |
-| "ER", "data model", "entities", "schema", "tables", "relationships" | [er](../skills/diagram/workflows/er.md) |
-| "pipeline", "CI", "process", "steps", "decision tree", "data flow", "ETL" | [flow](../skills/diagram/workflows/flow.md) |
+| What the request is about | Diagram type |
+|---------------------------|--------------|
+| The overall system, services, how things connect, deployment | [architecture](../skills/diagram/workflows/architecture.md) |
+| A flow of calls, a user journey, how X talks to Y, an API | [sequence](../skills/diagram/workflows/sequence.md) |
+| The data model, entities, tables, schema, relationships | [er](../skills/diagram/workflows/er.md) |
+| A pipeline, a process, CI/CD steps, a decision tree | [flow](../skills/diagram/workflows/flow.md) |
 
-If the request is ambiguous, ask one clarifying question using the guide in [references/diagram-types.md](../skills/diagram/references/diagram-types.md) before drawing.
+Only ask a clarifying question if the description genuinely fits two types equally well. One question maximum, with two concrete options.
+
+## No arguments
+
+If the request is empty, generate an L2 architecture diagram of the whole system — the most useful default.
 
 ## Output
 
-- Deliver the diagram as a fenced `mermaid` code block.
-- Include a one-line description above the fence (what it shows and when it was generated).
-- If the user asks for a file, write to `docs/diagrams/<type>-<slug>.md`.
-- Record the diagram to the memory ledger as an `artifact` entry (`pending`) before ending.
+- Deliver the diagram as a fenced `mermaid` code block, ready to paste into any Markdown file.
+- One-line description above the fence (what it shows).
+- Write to `docs/diagrams/<type>-<slug>.md` if the user asks for a file.
+- Record the diagram as a `pending` artifact in the memory ledger before ending.

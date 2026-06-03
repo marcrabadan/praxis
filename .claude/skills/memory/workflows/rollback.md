@@ -38,40 +38,22 @@ recorded implementation should be reverted.
    python .claude/skills/memory/scripts/ledger.py rollback <id> --note "why"
    ```
 
-4. **Find and mark stale documentation and diagrams.**
-
-   Docs and diagrams generated from this entry are tagged `source:<id>` in the
-   ledger. Find them and mark them `superseded` so they are clearly stale:
+4. **Mark stale docs and diagrams — one command.**
 
    ```bash
-   python .claude/skills/memory/scripts/ledger.py dependents <id>
+   python .claude/skills/memory/scripts/ledger.py stale <id>
    ```
 
-   For each artifact returned, run:
+   This finds every `artifact` entry tagged `source:<id>` (docs and diagrams
+   generated from the rolled-back entry) and marks them all `superseded` in one
+   shot. It prints what was staled and reminds the user to regenerate.
 
-   ```bash
-   python .claude/skills/memory/scripts/ledger.py supersede <artifact-id> \
-     --note "Source entry <id> was rolled back — this doc/diagram is now stale."
-   ```
+   If the output says "no dependent artifacts found", skip to step 5 — nothing needs regenerating.
 
-   If there are no dependents, skip this step silently.
-
-5. **Surface the stale artifacts to the user.**
-
-   After marking superseded entries, list them clearly so the user knows what
-   needs regenerating:
-
-   > **Stale docs/diagrams after rollback:**
-   > - `<artifact-id>` — `<title>` (`<path if known>`)
-   > - …
-   >
-   > Run `/docs` or `/diagram` to regenerate them against the updated codebase.
-
-   If nothing was stale, say so: "No dependent docs or diagrams were found — nothing to regenerate."
-
-6. **Hand back to the user.** The revert lands in the working tree but is **not
-   committed**. Tell the user to review `git diff` and commit when satisfied.
-   Optionally run `/review-changes` on the revert.
+5. **Hand back to the user.** The revert lands in the working tree but is **not
+   committed**. Tell the user to:
+   - Review `git diff` and commit the revert.
+   - Run `/docs` or `/diagram` to regenerate any stale artifacts listed in step 4.
 
 ## Safety
 
