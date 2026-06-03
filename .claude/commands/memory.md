@@ -4,8 +4,10 @@ argument-hint: "[init|list|pending|show|accept|reject|rollback|status|log|snapsh
 ---
 
 Manage the praxis **memory ledger** for this repo using the `memory` skill. The
-ledger is the versioned record of plans, decisions, implementations, and
-artifacts, each with a `pending → accepted | rejected | rolled-back` lifecycle.
+ledger is the versioned record of plans, decisions (from any role, not just the
+architect), implementations, and artifacts, each with a status from a closed set
+— `pending → accepted | rejected | rolled-back` (plus `superseded`). `pending` is
+a proposal awaiting the user's call, not approval to act on it.
 
 Request:
 

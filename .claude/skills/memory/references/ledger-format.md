@@ -88,3 +88,11 @@ diff_hash: 9af3c1e0b2d4   # sha1 prefix of the diff, for de-duplication
 
 Status changes append a dated footer to the entry body so the file keeps its own
 audit trail.
+
+These five are the **complete, closed set** of statuses. The CLI enforces it —
+`--status` is a fixed `choices=` list and `accept` / `reject` / `rollback` /
+`--supersedes` write hard-coded values — so a status outside the set can only
+appear if someone hand-edits the ledger, which is forbidden. Never invent a new
+status (e.g. `in-progress`, `approved`, `super-seeded`); if you think the
+lifecycle needs another state, change the doctrine and the CLI together, not a
+single entry.

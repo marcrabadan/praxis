@@ -32,7 +32,10 @@ or other artifact) as a ledger entry.
    ```
 
    - `--source` is the command/skill that produced it (`/new-feature`,
-     `/architect`, `/review-changes`, …) so the ledger shows provenance.
+     `/architect`, `/product`, `/qa`, `/devops`, `/security`, `/review-changes`,
+     …) so the ledger shows provenance. Decisions are **not the architect's
+     alone** — record the PO's prioritization call, QA's test-strategy gate,
+     DevOps' deploy choice, or security's risk acceptance under their own source.
    - Long bodies: write to a temp file and pass `--body-file`, or pipe via
      `--body -`.
    - Replacing an earlier decision? Pass `--supersedes <id>`; the old entry is
@@ -50,8 +53,13 @@ or other artifact) as a ledger entry.
    everything since a ref (committed + uncommitted), pass `--since <ref>`.
    Identical diffs are de-duplicated, so it is safe to run repeatedly.
 
-5. **Default status is `pending`.** Use `pending` unless the user has already
-   approved the artifact, in which case `--status accepted`.
+5. **Default status is `pending` — and `pending` is not approval.** Use `pending`
+   unless the user has already approved the artifact, in which case
+   `--status accepted`. A pending decision or plan is a *proposal awaiting the
+   user's call*: surface it and get an explicit accept before executing the work
+   it authorizes. Don't log a consequential decision as `pending` and then quietly
+   implement it in the same breath. Use only the five statuses in
+   [../references/rules.md](../references/rules.md) — never invent one.
 
 6. **Report back.** State what was recorded, its id, and its status. Do not
    announce every tiny log line during a long task — batch into one rich entry

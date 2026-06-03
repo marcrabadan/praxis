@@ -6,6 +6,7 @@
   { "query": "roll back the change we just made", "should_trigger": true },
   { "query": "log this architecture decision record", "should_trigger": true },
   { "query": "what's still awaiting a decision in the ledger?", "should_trigger": true },
+  { "query": "record the PO's prioritization decision: ship checkout before search", "should_trigger": true },
   { "query": "write a React component with a form", "should_trigger": false },
   { "query": "what is the time complexity of quicksort?", "should_trigger": false },
   { "query": "set up a hook that runs my tests on session start", "should_trigger": false },

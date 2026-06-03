@@ -13,10 +13,13 @@ record survives across sessions, machines, and the next person to open the repo.
 
 It answers three recurring needs:
 
-1. **Remember** — record plans, engineer decisions (ADR-style), implementations,
-   and artifacts as durable, git-committed entries.
-2. **Decide** — every entry has a lifecycle: `pending → accepted | rejected`. You
-   can see at a glance what is still awaiting a call.
+1. **Remember** — record plans, decisions (ADR-style, from *any* SDLC role — not
+   just the architect), implementations, and artifacts as durable, git-committed
+   entries.
+2. **Decide** — every entry carries one status from a closed set
+   (`pending → accepted | rejected`, plus `superseded` and `rolled-back`). You can
+   see at a glance what is still awaiting a call. **Pending is a proposal awaiting
+   the user — not a licence to act on it.**
 3. **Undo** — implementation entries store a reverse-appliable patch, so a change
    can be **rolled back** even sessions later.
 
@@ -37,7 +40,9 @@ Committed to the consuming repo under `.praxis/memory/` (git root):
 
 Entry types: `plan`, `decision`, `implementation`, `artifact`, `test-strategy`,
 `rollout`, `note`. Statuses: `pending`, `accepted`, `rejected`, `rolled-back`,
-`superseded`.
+`superseded` — this is the **complete, closed set**; the CLI enforces it, so
+never invent a new status. See [references/rules.md](references/rules.md) for what
+each one means.
 
 ## When to use
 
