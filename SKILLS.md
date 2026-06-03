@@ -11,6 +11,8 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `data-engineer` | 1.0.0 | 2 | Acts as a Data Engineer SDLC expert covering the full data platform — batch and streaming pipelines (ETL/ELT, CDC, Kafka/Flink/Spark), data modeling (dimension… |
 | `developer` | 1.0.0 | 2 | Acts as a Software Developer / Engineer SDLC expert covering clean code, SOLID/DRY/YAGNI principles, TDD and the test pyramid, commit discipline, branch and PR… |
 | `devops-engineer` | 1.0.0 | 2 | Acts as a DevOps Engineer SDLC expert: designs CI/CD pipelines, writes infrastructure as code, advises on containerization and Kubernetes, selects deployment s… |
+| `diagram` | 1.0.0 | 3 | Generate versioned, text-based diagrams (Mermaid by default, PlantUML on request) from architecture decisions, memory ledger entries, system design, data model… |
+| `docs` | 1.0.0 | 3 | Generate functional and technical manuals by routing each section to the right SDLC expert. The functional manual is written by the Business Analyst, Product O… |
 | `frontend-architect` | 1.0.0 | 2 | Adopts the Frontend Architect persona to make system-level frontend design decisions — framework and meta-framework selection (React/Vue/Svelte/Angular, Next/N… |
 | `frontend-engineer` | 1.0.0 | 2 | Acts as a Frontend Engineer SDLC expert covering component implementation and composition (presentational/container, compound components, custom hooks), state-… |
 | `memory` | 1.0.0 | 4 | Persist and manage the project's working memory — a versioned ledger of plans, decisions, implementations, and artifacts produced across the praxis SDLC expert… |
@@ -31,6 +33,8 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `/data` | Consult the Data Engineer — data pipelines (ETL/ELT, batch & streaming, CDC), warehouse/lake/lakehouse modeling, dimensional/star schemas, dbt and orchestratio… |
 | `/developer` | Consult the Developer — diagnosing a bug, implementing or refactoring code, test design, error handling, security basics, commit/PR hygiene, and code review. |
 | `/devops` | Consult the DevOps Engineer — CI/CD pipelines, infrastructure as code, containers/Kubernetes, deployment strategies, rollbacks, observability/SLOs, incident re… |
+| `/diagram` | Generate a Mermaid diagram from the memory ledger and the codebase. Just describe what you want to see — the system, a flow, the data model, a pipeline — and t… |
+| `/docs` | Generate documentation — a functional manual (for users/stakeholders) and/or a technical manual (for engineers). Just describe what you need, or type /docs wit… |
 | `/frontend-architect` | Consult the Frontend Architect — framework/meta-framework choice, rendering strategy (CSR/SSR/SSG/ISR/RSC), state and data architecture, routing and code-split… |
 | `/frontend` | Consult the Frontend Engineer — building and composing components, client/server state, data fetching, forms, styling, frontend TypeScript, re-render/performan… |
 | `/memory` | Manage the project's working-memory ledger — record plans/decisions/implementations, review what's pending, accept or reject entries, and roll back a snapshott… |
