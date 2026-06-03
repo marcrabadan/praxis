@@ -11,7 +11,17 @@
   <meta property="og:title" content="praxis — Claude Code skills for the software delivery lifecycle" />
   <meta property="og:description" content="13 SDLC expert skills, a meta-skill for authoring skills, and versioned memory. One plugin for Claude Code, Cursor, IntelliJ and Codex." />
   <meta property="og:url" content="https://marcrabadan.github.io/praxis/" />
+  <meta property="og:site_name" content="praxis" />
+  <meta property="og:image" content="https://marcrabadan.github.io/praxis/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="praxis — the whole SDLC, as Claude Code skills. 13 SDLC expert skills, a meta-skill for authoring skills, and a versioned memory ledger." />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="praxis — Claude Code skills for the software delivery lifecycle" />
+  <meta name="twitter:description" content="13 SDLC expert skills, a meta-skill for authoring skills, and versioned memory. One plugin for Claude Code, Cursor, IntelliJ and Codex." />
+  <meta name="twitter:image" content="https://marcrabadan.github.io/praxis/og-image.png" />
+  <meta name="twitter:image:alt" content="praxis — the whole SDLC, as Claude Code skills." />
 
   <link rel="canonical" href="https://marcrabadan.github.io/praxis/" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -284,10 +294,78 @@ the decision as an ADR…</code></pre>
             </div>
           </article>
 
+          <!-- Example 5: data & AI -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Data &amp; AI</span>
+              <h3>Evaluate a RAG pipeline</h3>
+              <p>Consult the ML/AI Engineer on framing, leakage, evaluation and drift. The data and ML experts join <code>/new-feature</code> automatically when a feature touches pipelines or models.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/ml</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/ml</span> design an evaluation suite for our
+        support RAG chatbot
+
+<span class="c-muted"># Eval design</span>
+  · golden set + <span class="c-key">faithfulness</span> / context recall
+  · slice metrics by intent &amp; doc age
+  <span class="c-warn">leakage:</span> dedup eval docs from the index
+  <span class="c-warn">guardrails:</span> refuse when retrieval is empty
+
+<span class="c-ok">✓</span> wrote <span class="c-str">docs/ml/rag-eval-plan.md</span>
+<span class="c-ok">✓</span> drift + retraining triggers logged to ledger</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 6: frontend -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Frontend</span>
+              <h3>Fix a re-render and ship it accessibly</h3>
+              <p>The Frontend Engineer diagnoses wasted renders, then implements the fix with accessibility built in — keyboard, focus and ARIA, not bolted on after.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/frontend</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/frontend</span> this modal re-renders on every
+        keystroke — why?
+
+<span class="c-muted"># Root cause</span>
+  · context value is a new object each render
+  <span class="c-warn">fix:</span> memoize value + split read/write contexts
+<span class="c-muted"># While we're here</span>
+  · add focus trap, <span class="c-key">aria-modal</span>, Esc to close
+
+<span class="c-ok">✓</span> <span class="c-str">Modal.tsx</span> patched · renders 12 → 1
+<span class="c-ok">✓</span> a11y: focus restore + labelled dialog</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 7: security -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Security</span>
+              <h3>Threat-model a file upload</h3>
+              <p>The Security Engineer runs STRIDE over a feature, maps findings to the OWASP Top 10 and hands back fixes ranked by severity — before the code ships.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/security</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/security</span> review our file upload feature
+
+<span class="c-err">🔴 Blocker</span> unrestricted type → RCE via SVG/HTML
+          allowlist MIME + re-encode images
+<span class="c-warn">🟠 Should-fix</span> path from filename → traversal
+          store under a generated UUID key
+<span class="c-ok">🟡 Nit</span> no size cap → DoS; enforce a limit
+
+<span class="c-ok">✓</span> STRIDE model + OWASP A03/A05 mapping
+<span class="c-ok">✓</span> findings appended to <span class="c-str">docs/technical-manual.md</span></code></pre>
+            </div>
+          </article>
+
         </div>
 
         <div class="examples-foot">
-          <p>Eighteen more scenarios — data &amp; AI, frontend, security hardening, diagrams, combined release workflows — live in the full guide.</p>
+          <p>More scenarios — combined release workflows, diagrams from your schema, skill authoring and onboarding an existing repo — live in the full guide.</p>
           <a class="btn btn-ghost" href="https://github.com/marcrabadan/praxis/blob/main/USECASES.md" target="_blank" rel="noopener">Browse all use cases ↗</a>
         </div>
       </div>
