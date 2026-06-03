@@ -5,11 +5,12 @@ CATALOG := .claude/factory/scripts/build_catalog.py
 INTEGRATIONS := integrations/scripts/build_integrations.py
 SKILLS_DIR := .claude/skills
 
-.PHONY: help validate validate-all create catalog catalog-check integrations integrations-check export smoke-test clean-dist
+.PHONY: help validate validate-all create catalog catalog-check integrations integrations-check export smoke-test clean-dist test
 
 help:
 	@echo "praxis — common tasks"
 	@echo ""
+	@echo "  make test                      Run ledger unit tests"
 	@echo "  make validate SKILL=<path>     Validate one skill folder"
 	@echo "  make validate-all              Validate every skill in .claude/skills/ and dist/"
 	@echo "  make create NAME=<slug> TIER=<1-5> [BRIEF=<path>] [DESC=<text>] [OUT=<path>]"
@@ -24,6 +25,9 @@ help:
 	@echo "  make validate SKILL=.claude/skills/skill-creator"
 	@echo "  make create NAME=branch-namer TIER=1 DESC=\"...\""
 	@echo "  make export SKILL=software-architect TO=../my-product-repo"
+
+test:
+	$(PYTHON) -m unittest discover -s .claude/skills/memory/scripts -p 'test_*.py' -v
 
 validate:
 	@if [ -z "$(SKILL)" ]; then echo "error: SKILL=<path> is required"; exit 2; fi
