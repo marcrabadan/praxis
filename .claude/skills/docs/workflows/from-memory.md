@@ -55,14 +55,16 @@ For each document:
 
 ### 6. Record to the ledger
 
-For each file written:
+For each file written, include a `source:<id>` tag for every ledger entry that
+contributed to the document. This enables rollback to find and mark this artifact
+stale automatically when any source entry is rolled back.
 
 ```bash
 python .claude/skills/memory/scripts/ledger.py log \
   --type artifact \
   --title "<doc type>: <slug>" \
   --source /docs \
-  --tags docs,generated \
+  --tags "docs,generated,source:<id1>,source:<id2>,..." \
   --body "Generated <type> from ledger entries <ids>. Path: <path>."
 ```
 

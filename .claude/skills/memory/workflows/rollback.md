@@ -38,7 +38,38 @@ recorded implementation should be reverted.
    python .claude/skills/memory/scripts/ledger.py rollback <id> --note "why"
    ```
 
-4. **Hand back to the user.** The revert lands in the working tree but is **not
+4. **Find and mark stale documentation and diagrams.**
+
+   Docs and diagrams generated from this entry are tagged `source:<id>` in the
+   ledger. Find them and mark them `superseded` so they are clearly stale:
+
+   ```bash
+   python .claude/skills/memory/scripts/ledger.py dependents <id>
+   ```
+
+   For each artifact returned, run:
+
+   ```bash
+   python .claude/skills/memory/scripts/ledger.py supersede <artifact-id> \
+     --note "Source entry <id> was rolled back — this doc/diagram is now stale."
+   ```
+
+   If there are no dependents, skip this step silently.
+
+5. **Surface the stale artifacts to the user.**
+
+   After marking superseded entries, list them clearly so the user knows what
+   needs regenerating:
+
+   > **Stale docs/diagrams after rollback:**
+   > - `<artifact-id>` — `<title>` (`<path if known>`)
+   > - …
+   >
+   > Run `/docs` or `/diagram` to regenerate them against the updated codebase.
+
+   If nothing was stale, say so: "No dependent docs or diagrams were found — nothing to regenerate."
+
+6. **Hand back to the user.** The revert lands in the working tree but is **not
    committed**. Tell the user to review `git diff` and commit when satisfied.
    Optionally run `/review-changes` on the revert.
 
@@ -48,3 +79,5 @@ recorded implementation should be reverted.
 - It operates on the working tree only — it does not rewrite history.
 - If the user wants to undo a *plan* or *decision* (not code), use `reject` in
   [review.md](review.md) instead, optionally logging a new superseding decision.
+- `supersede` only marks the ledger entry — it does not delete the generated
+  file on disk. The stale file remains until the user regenerates and overwrites it.

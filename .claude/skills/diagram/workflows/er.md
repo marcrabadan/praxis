@@ -88,11 +88,13 @@ Rules:
 
 ### 5. Record to the ledger
 
+Include a `source:<id>` tag for every ledger entry that contributed to this diagram.
+
 ```bash
 python .claude/skills/memory/scripts/ledger.py log \
   --type artifact \
   --title "Diagram: ER — <domain>" \
   --source /diagram \
-  --tags diagram,er,mermaid,data-model \
-  --body "ER diagram for <domain> domain. Generated from <source files>. Path: <output path if saved>."
+  --tags "diagram,er,mermaid,data-model,source:<id1>,..." \
+  --body "ER diagram for <domain> domain. Generated from ledger entries <ids> and source files <paths>. Path: <output path if saved>."
 ```

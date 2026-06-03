@@ -133,12 +133,15 @@ Write to `docs/technical-manual.md` (or user-specified path).
 
 ### 4. Record to the ledger
 
+Collect the IDs of every ledger entry you read while generating this manual.
+Include each as a `source:<id>` tag so rollback can find this artifact automatically.
+
 ```bash
 python .claude/skills/memory/scripts/ledger.py log \
   --type artifact \
   --title "Technical Manual: <system name>" \
   --source /docs \
-  --tags docs,manual,technical \
+  --tags "docs,manual,technical,source:<id1>,source:<id2>,..." \
   --body "Technical manual written by Architect + Developer + DevOps subagents. Domain experts included: <list>. Sources: ledger entries <ids>. Path: docs/technical-manual.md."
 ```
 

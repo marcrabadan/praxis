@@ -63,14 +63,16 @@ Also link specific sections where a feature in the functional manual maps to a c
 
 ### 5. Record to the ledger
 
-One entry for the full pass:
+One entry for the full pass. Include a `source:<id>` tag for every ledger entry
+read during generation — this lets rollback find and mark this artifact stale
+automatically if any source entry is rolled back.
 
 ```bash
 python .claude/skills/memory/scripts/ledger.py log \
   --type artifact \
   --title "Documentation: functional + technical manual — <scope>" \
   --source /docs \
-  --tags docs,manual,functional,technical \
+  --tags "docs,manual,functional,technical,source:<id1>,source:<id2>,..." \
   --body "Full documentation pass. Functional: docs/functional-manual.md (BA + PO + UX). Technical: docs/technical-manual.md (Architect + Developer + DevOps + <domain experts>). Ledger entries used: <ids>."
 ```
 

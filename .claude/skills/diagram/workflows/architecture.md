@@ -102,11 +102,14 @@ Wrap the output in a Markdown block:
 
 ### 6. Record to the ledger
 
+Include a `source:<id>` tag for every ledger entry that contributed to this
+diagram. Rollback uses these tags to find and mark the diagram stale automatically.
+
 ```bash
 python .claude/skills/memory/scripts/ledger.py log \
   --type artifact \
   --title "Diagram: architecture L<N> — <slug>" \
   --source /diagram \
-  --tags diagram,architecture,mermaid \
+  --tags "diagram,architecture,mermaid,source:<id1>,source:<id2>,..." \
   --body "C4 L<N> container diagram for <system>. Generated from ledger entries <ids> and codebase paths <paths>. Path: <output path if saved to file>."
 ```

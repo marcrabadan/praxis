@@ -117,12 +117,15 @@ Write the assembled file to `docs/functional-manual.md` (or user-specified path)
 
 ### 4. Record to the ledger
 
+Collect the IDs of every ledger entry you read while generating this manual.
+Include each as a `source:<id>` tag so rollback can find this artifact automatically.
+
 ```bash
 python .claude/skills/memory/scripts/ledger.py log \
   --type artifact \
   --title "Functional Manual: <product name>" \
   --source /docs \
-  --tags docs,manual,functional \
+  --tags "docs,manual,functional,source:<id1>,source:<id2>,..." \
   --body "Functional manual written by BA + PO + UX subagents. Sources: ledger entries <ids>. Path: docs/functional-manual.md."
 ```
 

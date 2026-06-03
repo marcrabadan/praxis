@@ -59,15 +59,18 @@ For each document:
 
 ### 5. Record to the ledger
 
-For each file written:
+For each file written. If any ledger entries were consulted alongside the
+codebase (e.g. architecture decisions that explain why the code is structured
+a certain way), include a `source:<id>` tag for each so rollback can find and
+mark this artifact stale if those entries are rolled back.
 
 ```bash
 python .claude/skills/memory/scripts/ledger.py log \
   --type artifact \
   --title "<doc type>: <name>" \
   --source /docs \
-  --tags docs,generated \
-  --body "Generated <type> from <source path(s)>. Path: <output path>."
+  --tags "docs,generated,source:<id1>,..." \
+  --body "Generated <type> from <source path(s)>. Ledger entries consulted: <ids or 'none'>. Path: <output path>."
 ```
 
 Leave the entry `pending`.

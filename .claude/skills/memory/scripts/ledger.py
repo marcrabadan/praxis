@@ -26,6 +26,8 @@ Usage:
     python ledger.py accept <id> [--note "shipped in PR #12"]
     python ledger.py reject <id> [--note "..."]
     python ledger.py rollback <id> [--dry-run]
+    python ledger.py supersede <id> [--note "replaced by newer artifact"]
+    python ledger.py dependents <id>
     python ledger.py status
 
 Exit codes:
@@ -459,6 +461,8 @@ def _filtered(args) -> list[dict]:
         rows = [r for r in rows if r.get("type") == args.type]
     if getattr(args, "source", None):
         rows = [r for r in rows if r.get("source") == args.source]
+    if getattr(args, "tag", None):
+        rows = [r for r in rows if args.tag in (r.get("tags") or [])]
     return rows
 
 
@@ -572,6 +576,32 @@ def cmd_reject(args) -> int:
     return 0
 
 
+def cmd_supersede(args) -> int:
+    entry = _set_status(args.id, "superseded", args.note)
+    if not entry:
+        print(f"error: no entry matching {args.id!r}", file=sys.stderr)
+        return 1
+    print(f"superseded {entry['id']}")
+    return 0
+
+
+def cmd_dependents(args) -> int:
+    """List artifact entries tagged source:<id> — i.e. docs/diagrams derived from that entry."""
+    rows = _read_index()
+    tag = f"source:{args.id}"
+    matches = [r for r in rows if tag in (r.get("tags") or []) and r.get("type") == "artifact"]
+    if not matches:
+        print(f"(no artifact entries tagged source:{args.id})")
+        return 0
+    for r in matches:
+        icon = _ICON.get(r.get("status", ""), "?")
+        print(
+            f"{icon} {r.get('id')}  [{r.get('status')}]  {r.get('source')}\n"
+            f"    {r.get('title', '')}"
+        )
+    return 0
+
+
 def cmd_rollback(args) -> int:
     rows = _read_index()
     entry = _find(rows, args.id)
@@ -648,6 +678,7 @@ def build_parser() -> argparse.ArgumentParser:
     ls.add_argument("--status", choices=STATUSES)
     ls.add_argument("--type", choices=TYPES)
     ls.add_argument("--source")
+    ls.add_argument("--tag", help="filter by a single tag value (e.g. source:<id>)")
     ls.set_defaults(func=cmd_list)
 
     pn = sub.add_parser("pending", help="List pending entries.")
@@ -675,6 +706,15 @@ def build_parser() -> argparse.ArgumentParser:
     rb.add_argument("--dry-run", action="store_true")
     rb.add_argument("--note")
     rb.set_defaults(func=cmd_rollback)
+
+    sp = sub.add_parser("supersede", help="Mark an entry superseded (stale, replaced by a newer artifact).")
+    sp.add_argument("id")
+    sp.add_argument("--note")
+    sp.set_defaults(func=cmd_supersede)
+
+    dp = sub.add_parser("dependents", help="List artifact entries derived from a given entry (tagged source:<id>).")
+    dp.add_argument("id", help="the source entry whose dependents to find")
+    dp.set_defaults(func=cmd_dependents)
 
     return p
 

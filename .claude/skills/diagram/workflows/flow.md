@@ -81,11 +81,13 @@ Rules:
 
 ### 5. Record to the ledger
 
+Include a `source:<id>` tag for every ledger entry that contributed to this diagram.
+
 ```bash
 python .claude/skills/memory/scripts/ledger.py log \
   --type artifact \
   --title "Diagram: flow — <process name>" \
   --source /diagram \
-  --tags diagram,flow,mermaid \
-  --body "Flow diagram for <process>. Generated from <source files/ledger entries>. Path: <output path if saved>."
+  --tags "diagram,flow,mermaid,source:<id1>,..." \
+  --body "Flow diagram for <process>. Generated from ledger entries <ids> and source files <paths>. Path: <output path if saved>."
 ```
