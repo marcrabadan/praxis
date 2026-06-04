@@ -1,0 +1,23 @@
+{
+  "id": "skill-authoring",
+  "name": "Skill authoring",
+  "steps": ["brief", "scaffold", "validate", "promote"],
+  "gates": {
+    "scaffold": ["tier-classified"],
+    "validate": ["scaffold"],
+    "promote": ["validate-passed", "repeated-use-evidence"]
+  },
+  "artifacts": {
+    "brief": ["skill-brief.md"],
+    "scaffold": ["SKILL.md"],
+    "validate": []
+  },
+  "stopConditions": [
+    "the tier cannot be determined from the request",
+    "intent is incomplete (purpose, triggers, or output format unknown)",
+    "promotion lacks evidence of repeated, independent use"
+  ],
+  "validation": {
+    "validate": "make validate-all"
+  }
+}

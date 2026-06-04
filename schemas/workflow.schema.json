@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://praxis/schemas/workflow.schema.json",
+  "title": "Workflow manifest",
+  "description": "A lightweight, machine-readable lifecycle: ordered steps, the gates that authorize each step, allowed transitions, and stop conditions. Prose belongs in systems/ docs, not here.",
+  "type": "object",
+  "required": ["id", "name", "steps"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{1,64}$",
+      "description": "Lowercase, hyphen-separated workflow id. Must match the file name stem and the registry entry."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Human-readable workflow name."
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^[a-z0-9-]{1,64}$" },
+      "description": "Ordered, unique step ids. The lifecycle advances through these in order, subject to gates."
+    },
+    "gates": {
+      "type": "object",
+      "description": "Map of step id -> the conditions that must hold before that step may start. Keys must be steps. Conditions are free-form tokens (e.g. 'approved-spec', 'test-evidence') checked by the agent or a validator.",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 }
+      }
+    },
+    "stopConditions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Workflow-local stop conditions, in addition to the global rules/stop-conditions.md."
+    },
+    "validation": {
+      "type": "object",
+      "description": "Optional map of step id -> a deterministic command that verifies the step's artifacts.",
+      "additionalProperties": { "type": "string" }
+    },
+    "artifacts": {
+      "type": "object",
+      "description": "Optional map of step id -> the artifact paths (relative to a spec folder) the step is expected to produce.",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

@@ -49,6 +49,8 @@ REQUIRED_PROJECT_FILES = [
 REQUIRED_SCHEMAS = [
     "project.schema.json",
     "praxis-config.schema.json",
+    "workflow.schema.json",
+    "session-state.schema.json",
 ]
 
 
@@ -187,6 +189,126 @@ def _check_projects(root: Path, errors: list[str], warnings: list[str]) -> None:
         )
 
 
+def _check_runtime(root: Path, errors: list[str]) -> None:
+    """Validate runtime/session-state.json shape if it is present. Runtime files
+    are disposable and usually git-ignored, so absence is fine."""
+    state_path = root / "runtime" / "session-state.json"
+    if not state_path.is_file():
+        return
+    try:
+        data = json.loads(state_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"runtime/session-state.json is not valid JSON: {exc}")
+        return
+    if not isinstance(data, dict):
+        errors.append("runtime/session-state.json must be a JSON object")
+        return
+    sv = data.get("schemaVersion")
+    if not isinstance(sv, str) or not SEMVER.match(sv):
+        errors.append(
+            f"runtime/session-state.json: 'schemaVersion' must be semver (got: {sv!r})"
+        )
+
+
+def _check_workflows(root: Path, errors: list[str], warnings: list[str]) -> None:
+    """Validate workflow manifests: the registry, each manifest's shape, and
+    registry<->disk agreement. Workflows are optional; absence is fine."""
+    workflows_dir = root / "workflows"
+    if not workflows_dir.is_dir():
+        return
+
+    registry_path = workflows_dir / "registry.json"
+    registry_ids: dict[str, str] = {}  # id -> file
+    if not registry_path.is_file():
+        errors.append("workflows/ exists but workflows/registry.json is missing")
+    else:
+        try:
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"workflows/registry.json is not valid JSON: {exc}")
+            registry = None
+        if isinstance(registry, dict):
+            entries = registry.get("workflows")
+            if not isinstance(entries, list):
+                errors.append("workflows/registry.json: 'workflows' must be an array")
+            else:
+                for idx, entry in enumerate(entries):
+                    if not isinstance(entry, dict) or "id" not in entry or "file" not in entry:
+                        errors.append(
+                            f"workflows/registry.json[{idx}] must have 'id' and 'file'"
+                        )
+                        continue
+                    wid, wfile = entry["id"], entry["file"]
+                    registry_ids[wid] = wfile
+                    if not isinstance(wid, str) or not SLUG.match(wid):
+                        errors.append(
+                            f"workflows/registry.json: id {wid!r} is not a valid slug"
+                        )
+                    if not (workflows_dir / str(wfile)).is_file():
+                        errors.append(
+                            f"workflows/registry.json: file {wfile!r} for {wid!r} does not exist"
+                        )
+        elif registry is not None:
+            errors.append("workflows/registry.json must be a JSON object")
+
+    # Validate each manifest and check it is registered.
+    disk_files = sorted(p.name for p in workflows_dir.glob("*.workflow.json"))
+    registered_files = set(registry_ids.values())
+    for fname in disk_files:
+        if fname not in registered_files:
+            errors.append(f"workflows/{fname} is not listed in registry.json")
+        _check_workflow_manifest(workflows_dir / fname, errors)
+
+    for wid, wfile in registry_ids.items():
+        stem = str(wfile).removesuffix(".workflow.json")
+        if stem != wid:
+            warnings.append(
+                f"workflows/registry.json: file {wfile!r} stem does not match id {wid!r}"
+            )
+
+
+def _check_workflow_manifest(path: Path, errors: list[str]) -> None:
+    label = f"workflows/{path.name}"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"{label} is not valid JSON: {exc}")
+        return
+    if not isinstance(data, dict):
+        errors.append(f"{label} must be a JSON object")
+        return
+
+    wid = data.get("id")
+    if not isinstance(wid, str) or not SLUG.match(wid):
+        errors.append(f"{label}: 'id' must be a slug (got: {wid!r})")
+    elif path.name != f"{wid}.workflow.json":
+        errors.append(f"{label}: id {wid!r} does not match file name")
+
+    if not isinstance(data.get("name"), str) or not data["name"].strip():
+        errors.append(f"{label}: missing 'name'")
+
+    steps = data.get("steps")
+    if not isinstance(steps, list) or not steps or not all(isinstance(s, str) for s in steps):
+        errors.append(f"{label}: 'steps' must be a non-empty array of strings")
+        return
+    if len(set(steps)) != len(steps):
+        errors.append(f"{label}: 'steps' contains duplicates")
+    step_set = set(steps)
+
+    for section in ("gates", "artifacts", "validation"):
+        block = data.get(section)
+        if block is None:
+            continue
+        if not isinstance(block, dict):
+            errors.append(f"{label}: '{section}' must be an object")
+            continue
+        for key in block:
+            if key not in step_set:
+                errors.append(
+                    f"{label}: '{section}' references unknown step {key!r}"
+                )
+
+
 def _validate_config_data(
     data: Any, label: str, harness_root: Path | None, errors: list[str]
 ) -> None:
@@ -258,6 +380,8 @@ def validate(root: Path, config: Path | None = None) -> tuple[bool, dict[str, An
 
     _check_schemas(root, errors)
     _check_projects(root, errors, warnings)
+    _check_workflows(root, errors, warnings)
+    _check_runtime(root, errors)
     if config is not None:
         _check_config(config, root, errors)
 

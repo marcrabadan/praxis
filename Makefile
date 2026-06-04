@@ -30,6 +30,7 @@ help:
 
 test:
 	$(PYTHON) -m unittest discover -s .claude/skills/memory/scripts -p 'test_*.py' -v
+	$(PYTHON) -m unittest discover -s tools -p 'test_*.py' -v
 
 validate:
 	@if [ -z "$(SKILL)" ]; then echo "error: SKILL=<path> is required"; exit 2; fi

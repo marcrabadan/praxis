@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "1.0.0",
+  "workflows": [
+    { "id": "feature-development", "file": "feature-development.workflow.json" },
+    { "id": "skill-authoring", "file": "skill-authoring.workflow.json" },
+    { "id": "change-review", "file": "change-review.workflow.json" }
+  ]
+}
