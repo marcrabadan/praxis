@@ -125,6 +125,67 @@ class ConfigValidationTests(unittest.TestCase):
             self.assertTrue(any("does not resolve" in e for e in errors), errors)
 
 
+class HarnessRootResolutionTests(unittest.TestCase):
+    """A real .praxis/config.json must point harnessRoot at an actual harness."""
+
+    def _write_adapter(self, repo: Path, harness_root: str) -> Path:
+        praxis = repo / ".praxis"
+        praxis.mkdir(parents=True)
+        cfg = praxis / "config.json"
+        cfg.write_text(
+            json.dumps(
+                {
+                    "schemaVersion": "1.0.0",
+                    "harnessRoot": harness_root,
+                    "projectId": "checkout",
+                    "mode": "local",
+                }
+            ),
+            encoding="utf-8",
+        )
+        return cfg
+
+    def test_typo_harness_root_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            cfg = self._write_adapter(Path(d), "../praxiz")
+            errors: list[str] = []
+            vh._check_config(cfg, None, errors)
+            self.assertTrue(any("unknown harness root" in e for e in errors), errors)
+
+    def test_valid_harness_root_passes(self) -> None:
+        import os
+
+        real_harness = Path(vh.__file__).resolve().parent.parent
+        with tempfile.TemporaryDirectory() as d:
+            repo = Path(d)
+            rel = os.path.relpath(real_harness, repo)
+            cfg = self._write_adapter(repo, rel)
+            errors: list[str] = []
+            vh._check_config(cfg, None, errors)
+            self.assertEqual(errors, [])
+
+    def test_non_dot_praxis_config_skips_resolution(self) -> None:
+        # A config not located in a .praxis/ dir (e.g. the shipped example) is
+        # not resolved against a consuming-repo root, so a relative harnessRoot
+        # is not treated as a hard block.
+        with tempfile.TemporaryDirectory() as d:
+            cfg = Path(d) / "example.json"
+            cfg.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": "1.0.0",
+                        "harnessRoot": "../praxis",
+                        "projectId": "checkout",
+                        "mode": "local",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            errors: list[str] = []
+            vh._check_config(cfg, None, errors)
+            self.assertEqual(errors, [])
+
+
 class RuntimeTests(unittest.TestCase):
     def test_default_state_when_absent(self) -> None:
         with tempfile.TemporaryDirectory() as d:

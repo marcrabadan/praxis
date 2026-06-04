@@ -400,7 +400,17 @@ def _validate_config_data(
             )
 
 
-def _check_config(config_path: Path, harness_root: Path | None, errors: list[str]) -> None:
+def _looks_like_harness(path: Path) -> bool:
+    """A directory is a harness if it carries the canonical harness layers."""
+    return (
+        path.is_dir()
+        and (path / "rules").is_dir()
+        and (path / "projects").is_dir()
+        and (path / "schemas").is_dir()
+    )
+
+
+def _check_config(config_path: Path, fallback_harness_root: Path | None, errors: list[str]) -> None:
     if not config_path.is_file():
         errors.append(f"config not found: {config_path}")
         return
@@ -409,6 +419,27 @@ def _check_config(config_path: Path, harness_root: Path | None, errors: list[str
     except (OSError, json.JSONDecodeError) as exc:
         errors.append(f"{config_path} is not valid JSON: {exc}")
         return
+
+    # When the config lives at a real <repo>/.praxis/config.json, resolve the
+    # harnessRoot it declares (relative to the consuming repo) and verify it
+    # points at an actual harness — an unknown harness root is a hard block.
+    # Use that resolved harness for the central-mode project check; fall back to
+    # the invocation root for configs not located in a .praxis/ directory.
+    harness_root = fallback_harness_root
+    if isinstance(data, dict) and config_path.resolve().parent.name == ".praxis":
+        hr = data.get("harnessRoot")
+        if isinstance(hr, str) and hr:
+            repo_root = config_path.resolve().parent.parent
+            candidate = (repo_root / hr).resolve()
+            if _looks_like_harness(candidate):
+                harness_root = candidate
+            else:
+                errors.append(
+                    f"{config_path}: harnessRoot {hr!r} does not resolve to an existing "
+                    f"harness (looked at {candidate}) — unknown harness root is a hard block"
+                )
+                harness_root = None
+
     _validate_config_data(data, str(config_path), harness_root, errors)
 
 
