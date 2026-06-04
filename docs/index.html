@@ -44,6 +44,7 @@
         <a href="#experts">Experts</a>
         <a href="#how">How it works</a>
         <a href="#examples">Examples</a>
+        <a href="#docs-diagrams">Docs &amp; Diagrams</a>
         <a href="#memory">Memory</a>
         <a href="#harness">Harness</a>
         <a href="#install">Install</a>
@@ -60,6 +61,7 @@
       <a href="#experts">Experts</a>
       <a href="#how">How it works</a>
       <a href="#examples">Examples</a>
+      <a href="#docs-diagrams">Docs &amp; Diagrams</a>
       <a href="#memory">Memory</a>
       <a href="#harness">Harness</a>
       <a href="#install">Install</a>
@@ -396,8 +398,78 @@ the decision as an ADR…</code></pre>
       </div>
     </section>
 
+    <!-- ===================== DOCS & DIAGRAMS ===================== -->
+    <section class="section" id="docs-diagrams" aria-labelledby="docs-diagrams-title">
+      <div class="container">
+        <h2 id="docs-diagrams-title" class="section-title">Living docs &amp; diagrams, <span class="accent">straight from the ledger</span></h2>
+        <p class="section-sub">Two skills turn what your team already decided into artifacts you can hand off. Both read the <strong>memory ledger</strong> and the <strong>codebase</strong> first, so nothing is invented — every claim traces back to a recorded decision or a real file. Output is plain Markdown, committed to your repo and logged back to the ledger as an <code>artifact</code> entry.</p>
+
+        <!-- /docs -->
+        <div class="memory-wrap">
+          <div class="memory-copy">
+            <h3 class="section-title" style="text-align:left;font-size:clamp(1.3rem,2.4vw,1.7rem);"><code>/docs</code> — manuals, not note dumps</h3>
+            <p class="section-sub" style="text-align:left;margin:14px 0 20px;">Each section is dispatched to the SDLC expert who owns it, in its own subagent, so doctrine stays isolated and the writing is authoritative. The main thread stitches the sections into a table of contents and cross-links them.</p>
+            <ul class="memory-list">
+              <li><span class="state accepted">Functional</span> Written by the <strong>Business Analyst</strong>, <strong>Product Owner</strong> and <strong>UX/UI Engineer</strong> — purpose, feature catalogue, user journeys, business rules, glossary.</li>
+              <li><span class="state accepted">Technical</span> Written by the <strong>Software Architect</strong>, <strong>Developer</strong> and <strong>DevOps Engineer</strong> — architecture &amp; ADRs, modules, API reference, data model, config, runbooks.</li>
+              <li><span class="state pending">Full</span> Both manuals in one pass with a shared TOC and cross-links — the default when scope is broad.</li>
+            </ul>
+            <p class="memory-note">Run <code>/docs</code> with no arguments to generate both, or name the manual you need. No invented details — every line is sourced from the ledger or the code.</p>
+          </div>
+          <div class="code-panel">
+            <div class="term-bar">
+              <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              <span class="term-title">/docs</span>
+            </div>
+            <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/docs</span>
+
+<span class="c-muted">Functional</span> ✓ <span class="c-str">docs/functional-manual.md</span>
+  <span class="c-key">BA · PO · UX</span> — purpose · journeys · glossary
+<span class="c-muted">Technical</span>  ✓ <span class="c-str">docs/technical-manual.md</span>
+  <span class="c-key">Architect · Dev · DevOps</span> — ADRs · API · runbooks
+
+<span class="c-ok">✓</span> each section written by its owning expert
+<span class="c-ok">✓</span> shared TOC + cross-links between manuals
+<span class="c-ok">✓</span> 2 artifacts logged to the ledger <span class="c-muted">(pending)</span></code></pre>
+          </div>
+        </div>
+
+        <!-- /diagram -->
+        <div class="memory-wrap" style="margin-top:56px;">
+          <div class="code-panel">
+            <div class="term-bar">
+              <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              <span class="term-title">/diagram</span>
+            </div>
+            <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/diagram</span> the auth sequence
+
+<span class="c-comment">%% Auth flow — login with refresh</span>
+<span class="c-key">sequenceDiagram</span>
+  actor User
+  User-&gt;&gt;Web:  submit credentials
+  Web-&gt;&gt;Auth: POST /login
+  Auth--&gt;&gt;Web: access + refresh token
+
+<span class="c-ok">✓</span> wrote <span class="c-str">docs/diagrams/sequence-auth.md</span>
+<span class="c-ok">✓</span> renders natively on GitHub · artifact logged</code></pre>
+          </div>
+          <div class="memory-copy">
+            <h3 class="section-title" style="text-align:left;font-size:clamp(1.3rem,2.4vw,1.7rem);"><code>/diagram</code> — text-based, versioned visuals</h3>
+            <p class="section-sub" style="text-align:left;margin:14px 0 20px;">Diagrams are generated as <strong>Mermaid</strong> by default (PlantUML on request) — text that lives in the repo, diffs cleanly in a PR, and renders natively on GitHub, Notion and most wikis with no external tooling.</p>
+            <ul class="memory-list">
+              <li><span class="state accepted">Architecture</span> C4 system / container / component maps.</li>
+              <li><span class="state accepted">Sequence</span> Step-by-step interactions, API calls and event flows.</li>
+              <li><span class="state accepted">ER</span> Data-model entities with labelled, cardinality-marked relationships.</li>
+              <li><span class="state accepted">Flow</span> Data pipelines, process flows and decision trees.</li>
+            </ul>
+            <p class="memory-note">Just describe what you want to see — the right type is chosen automatically. Saved to <code>docs/diagrams/</code> and recorded as a ledger artifact, like every other praxis output.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ===================== MEMORY ===================== -->
-    <section class="section" id="memory" aria-labelledby="memory-title">
+    <section class="section section-alt" id="memory" aria-labelledby="memory-title">
       <div class="container memory-wrap">
         <div class="memory-copy">
           <h2 id="memory-title" class="section-title">The <span class="accent">memory ledger</span></h2>
