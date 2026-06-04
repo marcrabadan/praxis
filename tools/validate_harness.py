@@ -215,13 +215,15 @@ def _validate_config_data(
             f"{label}: 'mode' must be one of {sorted(CONFIG_MODES)} (got: {mode!r})"
         )
 
-    # If we know the harness root, check the project actually resolves there
-    # (central mode). Local mode keeps memory in the product repo, so skip.
+    # If we know the harness root, check the project actually resolves there —
+    # but only in explicit central mode. Local mode (the default, including an
+    # omitted mode) keeps memory in the product repo, so there is nothing to
+    # resolve against the harness.
     if (
         harness_root is not None
         and isinstance(project_id, str)
         and SLUG.match(project_id)
-        and mode != "local"
+        and mode == "central"
     ):
         project_dir = harness_root / "projects" / project_id
         if not project_dir.is_dir():

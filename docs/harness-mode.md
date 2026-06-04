@@ -42,15 +42,23 @@ is unchanged.
 ## Per-repo vs central (the authority choice)
 
 The critical design choice is whether Praxis is a **per-repo plugin** or a
-**central team harness**. Harness mode supports a **hybrid**:
+**central team harness**. Harness mode is **hybrid, with per-repo (`local`) as
+the default and well-paved road**, and central as an opt-in for teams that
+outgrow it:
 
-1. Praxis stays installable per repo (as today).
-2. Teams can optionally run a central harness that governs many repos.
-3. Each consuming repo declares a `.praxis/config.json` that points at either
-   local or central project memory (`mode: "local"` or `mode: "central"`).
+1. **`local` (default).** Project memory lives in the product repo under
+   `.praxis/project/`, versioned alongside the code it describes. Zero new
+   infrastructure — this matches how Praxis is already installed per repo. Use it
+   unless you have a concrete cross-repo need.
+2. **`central` (opt-in).** Project memory lives in the harness under
+   `projects/<projectId>/`, shared across many repos. Choose it when several
+   repos must share decisions, specs, and patterns — and you can run a central
+   harness repo.
 
-Project memory (`projects/<project>/`) lives in the harness in central mode, or
-in the product repo under `.praxis/project/` in local mode.
+Each consuming repo declares its choice in `.praxis/config.json` via
+`mode: "local"` or `mode: "central"`. **An omitted `mode` is treated as
+`local`.** Pick `local` first; move to `central` only when shared cross-repo
+memory actually pays for the extra repo to maintain.
 
 ## Opting a repo in
 
@@ -63,7 +71,7 @@ and [`../schemas/praxis-config.schema.json`](../schemas/praxis-config.schema.jso
   "schemaVersion": "1.0.0",
   "harnessRoot": "../praxis",
   "projectId": "example-project",
-  "mode": "central",
+  "mode": "local",
   "activeSpec": null
 }
 ```
@@ -119,7 +127,9 @@ It enforces:
   `open-questions.md`.
 - Disk projects and `projects-index.md` agree (no ghosts, no unlisted folders).
 - A `.praxis/config.json` has a valid `schemaVersion`, `harnessRoot`, and a
-  resolvable `projectId` (central mode checks the project exists in the harness).
+  well-formed `projectId`. In `central` mode it also checks the project exists in
+  the harness; `local` mode (the default) keeps memory in the product repo, so
+  there is nothing to resolve against the harness.
 
 CI runs `make validate-harness` alongside the skill validators.
 

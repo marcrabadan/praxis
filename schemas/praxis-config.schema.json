@@ -25,7 +25,7 @@
     "mode": {
       "type": "string",
       "enum": ["local", "central"],
-      "description": "Optional. 'local' keeps project memory in this product repo (.praxis/project/); 'central' reads project memory from the harness's projects/<projectId>/. Defaults to 'central'."
+      "description": "Optional. 'local' (the default) keeps project memory in this product repo (.praxis/project/); 'central' reads project memory from the harness's projects/<projectId>/. When omitted, treated as 'local'."
     },
     "projectMemory": {
       "type": ["string", "null"],
