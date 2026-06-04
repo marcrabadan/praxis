@@ -36,6 +36,7 @@ from validate_frontmatter import _read_frontmatter  # noqa: E402
 SLUG = re.compile(r"^[a-z0-9-]{1,64}$")
 SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
 PROJECT_STATUSES = {"active", "paused", "archived"}
+SPEC_STATUSES = {"draft", "accepted", "superseded", "done"}
 CONFIG_MODES = {"local", "central"}
 
 # Files every project folder (and the template) must contain.
@@ -51,6 +52,7 @@ REQUIRED_SCHEMAS = [
     "praxis-config.schema.json",
     "workflow.schema.json",
     "session-state.schema.json",
+    "spec.schema.json",
 ]
 
 
@@ -107,6 +109,49 @@ def _check_project_frontmatter(
         errors.append(
             f"{project_id}/PROJECT.md: 'status' must be one of {sorted(PROJECT_STATUSES)} (got: {status!r})"
         )
+
+
+def _check_project_specs(project_dir: Path, project_id: str, errors: list[str]) -> None:
+    """Validate spec folders under a project. Each real spec needs a spec.md with
+    valid frontmatter; underscore-prefixed folders (templates) are skipped."""
+    specs_dir = project_dir / "specs"
+    if not specs_dir.is_dir():
+        return
+    for spec in sorted(specs_dir.iterdir()):
+        if not spec.is_dir() or spec.name.startswith("_") or spec.name.startswith("."):
+            continue
+        spec_id = spec.name
+        label = f"{project_id}/specs/{spec_id}"
+        if not SLUG.match(spec_id):
+            errors.append(f"{label}: spec folder name is not a valid slug")
+        spec_md = spec / "spec.md"
+        if not spec_md.is_file():
+            errors.append(f"{label}: missing spec.md")
+            continue
+        data, read_errors = _read_frontmatter(spec_md)
+        for err in read_errors:
+            errors.append(f"{label}/spec.md: {err}")
+        if read_errors:
+            continue
+        sid = data.get("id")
+        if not isinstance(sid, str) or not SLUG.match(sid):
+            errors.append(f"{label}/spec.md: 'id' must be a slug (got: {sid!r})")
+        elif sid != spec_id:
+            errors.append(
+                f"{label}/spec.md: frontmatter id {sid!r} does not match folder {spec_id!r}"
+            )
+        if not isinstance(data.get("title"), str) or not data["title"].strip():
+            errors.append(f"{label}/spec.md: missing 'title'")
+        proj = data.get("project")
+        if proj != project_id:
+            errors.append(
+                f"{label}/spec.md: 'project' {proj!r} does not match owning project {project_id!r}"
+            )
+        status = data.get("status")
+        if status not in SPEC_STATUSES:
+            errors.append(
+                f"{label}/spec.md: 'status' must be one of {sorted(SPEC_STATUSES)} (got: {status!r})"
+            )
 
 
 def _parse_index_ids(index_path: Path) -> set[str]:
@@ -171,6 +216,7 @@ def _check_projects(root: Path, errors: list[str], warnings: list[str]) -> None:
             )
         _project_required_files(child, project_id, errors)
         _check_project_frontmatter(child, project_id, errors)
+        _check_project_specs(child, project_id, errors)
 
     if index_path.is_file():
         index_ids = _parse_index_ids(index_path)

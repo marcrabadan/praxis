@@ -63,6 +63,26 @@ Rules for subagents:
 - Tag each ledger artifact entry with `source:<planning-entry-id>` so rollback can mark it stale.
 - ADR numbering: check the existing count in `docs/decisions/` and increment.
 
+## Harness mode — durable spec artifacts (conditional)
+
+If the repo is in **harness mode** — a `.praxis/config.json` exists and resolves a `projectId` — then *in addition* to the `docs/` files above, write the feature's durable, typed artifacts under the owning project, following the `feature-development` workflow (`spec → plan → tasks → verify`). The doctrine is in the harness at `systems/feature-development/artifact-model.md`; the gates are in `workflows/feature-development.workflow.json` (resolve the harness via the config's `harnessRoot`).
+
+```
+projects/<projectId>/specs/<spec-slug>/
+  spec.md                      # BA + PO: problem, scope, requirements (frontmatter status: draft)
+  decisions/                   # one mini-ADR per significant call (architect/PO/QA/devops/security)
+  plans/implementation-plan.md # Developer: approach, files, ordered tasks
+  tasks/tasks.md               # the ordered checklist
+  reports/                     # verify evidence, once the work is built
+```
+
+- Copy the harness's `projects/_template/specs/_template/` as the starting shape; set `spec.md` frontmatter `id` = the spec folder slug and `project` = the resolved `projectId`.
+- **Respect the gates.** A planning run *proposes*: leave `spec.md` at `status: draft` and the plan/decisions as `pending`. **Pending is not approval** — do not advance a gate on a pending artifact. The user accepts the spec (`status: accepted`) before the plan authorizes a build, and accepts the plan before tasks drive implementation.
+- The chat summary (next section) becomes a **pointer** to these artifacts, not the source of truth.
+- Tag the memory-ledger entries with the spec path so they are traceable to the spec.
+- **Stop condition:** if a `projectId` is declared but does not resolve to `projects/<projectId>/`, stop and ask — do not guess a destination.
+- If the repo is **not** in harness mode, skip this section and behave as before (`docs/` + ledger only).
+
 ## Execution
 
 Work through the phases in order in **one conversation** — do not spawn subagents; keep context flowing so each phase sees the prior artifacts. For each phase, open the matching persona guide (in `.praxis/`), apply its practices, self-check against its checklist, and produce the listed artifact. After the Architect phase, run any conditional domain expert the feature warrants (table above) **before the Developer phase**, so its constraints feed the implementation plan, then continue with QA and DevOps.
