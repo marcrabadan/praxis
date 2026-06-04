@@ -432,12 +432,13 @@ the decision as an ADR…</code></pre>
       <div class="container memory-wrap">
         <div class="memory-copy">
           <h2 id="harness-title" class="section-title">Harness mode <span class="accent">(experimental)</span></h2>
-          <p class="section-sub">Beyond the skill factory, praxis is growing into an <strong>agent harness</strong> — a reliable operating environment that tells an agent where to read first, what's canonical, where durable decisions go, and when to stop and ask. Phase&nbsp;1 adds the authority model only; no existing skill or command changes.</p>
+          <p class="section-sub">Beyond the skill factory, praxis is growing into an <strong>agent harness</strong> — a reliable operating environment that tells an agent where to read first, what's canonical, where durable decisions go, and when to stop and ask. It adds project memory, durable spec artifacts, workflow gates and runtime state — all <strong>opt-in</strong>, activating only when a repo resolves a project.</p>
           <ul class="memory-list">
             <li><span class="state accepted">rules/</span> Source-of-truth authority order &amp; explicit stop conditions.</li>
-            <li><span class="state accepted">projects/</span> Per-project memory: current state, open questions, decisions.</li>
+            <li><span class="state accepted">projects/</span> Per-project memory + durable <code>specs/</code> that <code>/new-feature</code> writes.</li>
+            <li><span class="state pending">workflows/</span> Machine-readable gates: <code>spec → plan → tasks → verify</code>.</li>
             <li><span class="state pending">.praxis/config.json</span> A repo points at a harness + project; agents resolve context deterministically.</li>
-            <li><span class="state superseded">tools/</span> A mechanical <code>validate_harness.py</code> — checked in CI.</li>
+            <li><span class="state superseded">tools/</span> Mechanical <code>validate_harness.py</code> + <code>install_adapter.py</code> — checked in CI.</li>
           </ul>
           <p class="memory-note"><strong>local</strong> (default) keeps project memory in the product repo; <strong>central</strong> shares it across many repos. See <a href="https://github.com/marcrabadan/praxis/blob/main/docs/harness-mode.md" target="_blank" rel="noopener">the harness-mode guide ↗</a>.</p>
         </div>

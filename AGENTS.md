@@ -55,25 +55,34 @@ Do not invent a new top-level skill when an existing workflow in `skill-creator`
 
 ## Harness mode (experimental)
 
-Beyond the skill factory, praxis is growing an **agent-harness** layer that gives
-agents a reliable operating environment — source-of-truth authority, project
-memory, stop conditions, and a deterministic harness validator. This is **phase
-1**: it adds the authority model only and changes **no existing skill or
-command**. Start at [docs/harness-mode.md](docs/harness-mode.md).
+Beyond the skill factory, praxis has an **agent-harness** layer that gives agents
+a reliable operating environment — source-of-truth authority, project memory,
+durable spec artifacts, workflow gates, runtime state, and deterministic
+validators. All harness behavior in commands is **opt-in**: it activates only
+when a repo has a `.praxis/config.json` that resolves a project, so non-harness
+repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
 
 - [rules/source-of-truth.md](rules/source-of-truth.md) — what is canonical vs
   generated vs runtime, and the authority order to follow on conflict.
 - [rules/stop-conditions.md](rules/stop-conditions.md) — when an agent must stop
   and ask instead of guessing.
 - [projects/](projects/projects-index.md) — per-project memory (current state,
-  open questions, decisions); copy `projects/_template/` to start one.
-- [schemas/](schemas/) — `project.schema.json` (PROJECT.md frontmatter) and
-  `praxis-config.schema.json` (a consuming repo's `.praxis/config.json`).
-- [tools/validate_harness.py](tools/validate_harness.py) — deterministic
-  validator for harness state; run `make validate-harness` (CI enforces it).
+  open questions, decisions) and `specs/`; copy `projects/_template/` to start one.
+- [systems/feature-development/](systems/feature-development/artifact-model.md) —
+  the lifecycle doctrine + artifact model behind `/new-feature` in harness mode.
+- [workflows/](workflows/registry.json) — machine-readable lifecycles (steps,
+  gates, stop conditions). `feature-development` is `spec → plan → tasks → verify`.
+- [schemas/](schemas/) — `project`, `praxis-config`, `spec`, `workflow`, and
+  `session-state` JSON shapes.
+- [runtime/](runtime/README.md) — disposable session state (git-ignored), via
+  `tools/runtime.py`. Durable decisions never live only here.
+- [tools/](tools/validate_harness.py) — `validate_harness.py` (run
+  `make validate-harness`; CI enforces it), `install_adapter.py`, `runtime.py`.
 
 A repo opts in by adding `.praxis/config.json` pointing at this harness and a
-project id. If the project id can't be resolved, **stop** (see stop-conditions).
+project id (scaffold it with `tools/install_adapter.py`). If the project id can't
+be resolved, **stop** (see stop-conditions). **Pending is not approval** — don't
+advance a workflow gate on a pending decision.
 
 ## Global rules
 

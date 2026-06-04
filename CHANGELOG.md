@@ -13,6 +13,26 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- **Harness mode (phases 3, 5–8)** — completes the agent-harness layer on top of
+  phase 1. Adds **durable spec artifacts** (`/new-feature`, in harness mode, now
+  writes `spec.md` + `plans/` + `tasks/` + `decisions/` + `reports/` under
+  `projects/<project>/specs/<spec>/` following a `spec → plan → tasks → verify`
+  workflow, instead of leaving the plan only in chat; `schemas/spec.schema.json`,
+  `systems/feature-development/`, and a `projects/_template/specs/_template/`
+  scaffold). Adds **workflow gates** (`workflows/registry.json` + manifests,
+  `schemas/workflow.schema.json`) validated mechanically. Adds **runtime state**
+  (`runtime/`, `schemas/session-state.schema.json`, `tools/runtime.py`) as
+  disposable, git-ignored session glue kept separate from durable memory. Adds
+  **adapter wiring** (`tools/install_adapter.py` to scaffold a repo's
+  `.praxis/config.json` + `.praxis/current-spec.md`, and a shared **read-order
+  block** injected into the generated Cursor/Codex/IntelliJ entry docs). Hardens
+  **`/review-changes`** to load project authority, accepted decisions, and the
+  active spec, and to record outcomes only as `pending`. `tools/validate_harness.py`
+  now also checks specs, workflow manifests, and runtime state; harness tool tests
+  (`tools/test_harness_tools.py`) run in `make test` and CI. All command behavior
+  is **opt-in** (activates only when a `.praxis/config.json` resolves a project),
+  so non-harness repos are unaffected. Bumps the `praxis` plugin to `1.5.0`.
+
 - **Harness mode (phase 1)** — the first step from a skill factory toward a fuller
   **agent harness**: an authority model that tells agents where to read first,
   what is canonical, where durable decisions go, and when to stop and ask. Adds a

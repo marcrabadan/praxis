@@ -27,17 +27,34 @@ projects/
     memory/current-state.md
     memory/open-questions.md
 
+systems/
+  feature-development/   # artifact-model.md + operating model (doctrine)
+
+workflows/
+  registry.json          # the workflow registry
+  *.workflow.json        # machine-readable steps + gates + stop conditions
+
 schemas/
   project.schema.json        # PROJECT.md frontmatter shape
   praxis-config.schema.json  # .praxis/config.json shape
+  spec.schema.json           # spec.md frontmatter shape
+  workflow.schema.json       # workflow manifest shape
+  session-state.schema.json  # runtime session-state shape
+
+runtime/
+  README.md              # disposable session glue (state files are git-ignored)
 
 tools/
   validate_harness.py    # deterministic harness-state validator
+  install_adapter.py     # scaffold .praxis/config.json into a consuming repo
+  runtime.py             # read/update runtime session state
 ```
 
-It does **not** add production code, a full SDD Kit, or any change to the skill
-factory. See [`../AGENTS.md`](../AGENTS.md) for the skill-factory doctrine, which
-is unchanged.
+It does **not** add production application code or a full SDD Kit clone. The
+skill factory is unchanged; `/new-feature` and `/review-changes` gain **opt-in**
+harness behavior that only activates when a `.praxis/config.json` resolves a
+project (otherwise they behave exactly as before). See [`../AGENTS.md`](../AGENTS.md)
+for the skill-factory doctrine.
 
 ## Per-repo vs central (the authority choice)
 
@@ -126,20 +143,54 @@ It enforces:
   archived`), `linked-repos.md`, and `memory/current-state.md` +
   `open-questions.md`.
 - Disk projects and `projects-index.md` agree (no ghosts, no unlisted folders).
+- Every real spec has a `spec.md` with valid frontmatter (slug `id` matching the
+  folder, a `title`, `project` matching the owner, a `status` from
+  `draft | accepted | superseded | done`).
+- Workflow manifests are well-formed and agree with `workflows/registry.json`
+  (gates/artifacts reference real steps; ids match file names).
+- `runtime/session-state.json`, if present, has a valid shape.
 - A `.praxis/config.json` has a valid `schemaVersion`, `harnessRoot`, and a
   well-formed `projectId`. In `central` mode it also checks the project exists in
   the harness; `local` mode (the default) keeps memory in the product repo, so
   there is nothing to resolve against the harness.
 
-CI runs `make validate-harness` alongside the skill validators.
+CI runs `make validate-harness` and the harness tool tests alongside the skill
+validators.
+
+## Workflows, specs, and runtime
+
+- **Workflows** (`workflows/`) are machine-readable lifecycles — steps, gates,
+  stop conditions, and validation commands. `feature-development` is
+  `spec → plan → tasks → verify`, where each gate is opened by the previous
+  artifact reaching an authorizing status. See
+  [`../systems/feature-development/artifact-model.md`](../systems/feature-development/artifact-model.md).
+- **Specs** are the durable, typed artifacts `/new-feature` writes in harness mode
+  under `projects/<project>/specs/<spec>/` (`spec.md`, `plans/`, `tasks/`,
+  `decisions/`, `reports/`) — instead of leaving the plan only in chat.
+- **Runtime** (`runtime/`) is disposable session glue (last active
+  project/repo/spec/command), managed by `tools/runtime.py` and **git-ignored**.
+  Durable decisions never live only here — see [`../runtime/README.md`](../runtime/README.md).
+
+## Installing the adapter into a consuming repo
+
+`tools/install_adapter.py` scaffolds the pointer files deterministically:
+
+```sh
+python tools/install_adapter.py --target ../checkout --project checkout --mode local
+# writes ../checkout/.praxis/config.json + ../checkout/.praxis/current-spec.md
+```
+
+The generated Cursor / Codex / IntelliJ entry docs include the same harness
+**read order**, so every agent resolves project context the same way.
 
 ## Status
 
-This is **phase 1** of the harness conversion. Deliberately out of scope for now:
+Phases 1–8 of the harness conversion are in place: the authority model, project
+memory, adapter config + read-order wiring, the harness validator, durable spec
+artifacts for `/new-feature`, workflow gates, runtime state, and a project-aware
+`/review-changes`. All harness behavior in commands is **opt-in** — it activates
+only when a `.praxis/config.json` resolves a project, so non-harness repos are
+unaffected.
 
-- Migrating `/new-feature` to write durable spec artifacts.
-- Workflow manifests and gates.
-- Runtime/session state.
-- Any change to existing skills.
-
-Those phases build on this authority model. Make the authority model real first.
+Deliberately still out of scope (add on evidence, not anticipation): a full SDD
+Kit, an `experience` workflow step, and central-mode sync tooling.

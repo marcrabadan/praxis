@@ -250,9 +250,17 @@ make validate-harness                        # registry · memory shape · schem
 python tools/validate_harness.py --config ../checkout/.praxis/config.json
 ```
 
-**Read order** in a harness-mode repo: repo `AGENTS.md` → `.praxis/config.json` → harness `AGENTS.md` → `rules/source-of-truth.md` → `projects/<project>/PROJECT.md` → `current-state.md` → `open-questions.md` → active spec → relevant skills.
+**Read order** in a harness-mode repo: repo `AGENTS.md` → `.praxis/config.json` → harness `AGENTS.md` → `rules/source-of-truth.md` → `projects/<project>/PROJECT.md` → `current-state.md` → `open-questions.md` → active spec → relevant skills. The generated Cursor / Codex / IntelliJ entry docs embed the same order, so every agent resolves context the same way.
 
-Deliberately **out of scope for phase 1**: migrating `/new-feature` to durable spec artifacts, workflow gates, and runtime/session state — those build on this authority model and land later.
+**What harness mode now includes** (all opt-in — they activate only when a project resolves):
+
+- **Durable spec artifacts.** In harness mode, `/new-feature` writes `spec.md`, `plans/implementation-plan.md`, `tasks/tasks.md`, `decisions/`, and `reports/` under `projects/<project>/specs/<spec>/` instead of leaving the plan only in chat. Doctrine: [`systems/feature-development/artifact-model.md`](systems/feature-development/artifact-model.md).
+- **Workflow gates.** [`workflows/`](workflows/registry.json) holds machine-readable lifecycles (`spec → plan → tasks → verify`) where each gate is opened by the previous artifact reaching an authorizing status. **Pending is not approval.**
+- **Project-aware review.** In harness mode, `/review-changes` loads the project's authority, accepted decisions, and active spec, flags diffs that contradict them, and records outcomes only as `pending` memory entries.
+- **Adapter install.** [`tools/install_adapter.py`](tools/install_adapter.py) scaffolds a repo's `.praxis/config.json` + `.praxis/current-spec.md` deterministically.
+- **Runtime state.** [`runtime/`](runtime/README.md) holds disposable session glue (last active project/repo/spec) via [`tools/runtime.py`](tools/runtime.py) — git-ignored, never the home of a durable decision.
+
+Still deliberately out of scope (add on evidence, not anticipation): a full SDD Kit, an `experience` workflow step, and central-mode sync tooling.
 
 ---
 
@@ -329,9 +337,12 @@ praxis/
 ├─ examples/              # sample transcripts + praxis-config.example.json
 ├─ docs/                  # GitHub Pages site + harness-mode.md guide
 ├─ rules/                 # harness mode: source-of-truth + stop-conditions
-├─ projects/              # harness mode: per-project memory (_template + index)
-├─ schemas/               # harness mode: project + praxis-config JSON schemas
-├─ tools/                 # harness mode: validate_harness.py (make validate-harness)
+├─ projects/              # harness mode: per-project memory (_template + index + specs)
+├─ systems/               # harness mode: lifecycle doctrine (feature-development)
+├─ workflows/             # harness mode: machine-readable gates (registry + manifests)
+├─ schemas/               # harness mode: project/config/spec/workflow/session schemas
+├─ runtime/               # harness mode: disposable session state (git-ignored)
+├─ tools/                 # harness mode: validate_harness / install_adapter / runtime
 ├─ .claude-plugin/        # marketplace.json (lists the praxis + skill-factory plugins)
 ├─ plugin-praxis/         # plugin: symlinks to the 11 experts + memory + their commands
 ├─ plugin-skill-factory/  # plugin: symlinks to skill-creator + factory + /validate-skills
