@@ -8,6 +8,8 @@ It has three parts:
 2. **Thirteen SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, Frontend Engineer, Data Engineer, ML/AI Engineer), each built with that pattern.
 3. **`memory`** — a versioned *memory ledger* that records the plans, decisions (from any role, not just the architect), implementations, and artifacts the experts produce, each with a status from a closed set — `pending → accepted | rejected | rolled-back` (plus `superseded`) — so the record survives across sessions and changes can be rolled back. `pending` is a proposal awaiting your call, not approval to act.
 
+On top of these, an experimental **[harness mode](#harness-mode-experimental)** is taking shape — a source-of-truth authority model, per-project memory, explicit stop conditions, and a deterministic harness validator — so praxis can give agents a reliable *operating environment*, not just skills. It's additive: no existing skill or command changes.
+
 **Just want to use it?** Jump to [Install & integrate](#install--integrate) for Claude Code, Cursor, IntelliJ, and Codex. **Want to see the output first?** Browse [`examples/`](examples/README.md) for sample transcripts. Otherwise: **PMs, designers, stakeholders** read from the top; **developers writing or shipping a skill** skip to the [Developer guide](#developer-guide).
 
 ---
@@ -213,6 +215,55 @@ The experts produce plans, decisions, and code — `memory` makes that output **
 
 ---
 
+## Harness mode (experimental)
+
+Praxis began as a **skill factory + SDLC expert pack + memory ledger**. Harness mode is the first step toward a fuller **agent harness**: a reliable operating environment that tells an agent *where to read first, what is canonical, where durable decisions go, how project context is resolved, and when to stop and ask*. It is **phase 1 — the authority model only**, and it changes **no existing skill, command, or `/new-feature`**. See [`docs/harness-mode.md`](docs/harness-mode.md) for the full guide.
+
+What it adds (all repo-level, alongside the factory):
+
+| Path | Purpose |
+| ---- | ------- |
+| [`rules/source-of-truth.md`](rules/source-of-truth.md) | What is canonical vs generated vs runtime, and the **authority order** to follow on conflict. |
+| [`rules/stop-conditions.md`](rules/stop-conditions.md) | When an agent must **stop and ask** instead of guessing (and the hard blocks). |
+| [`projects/`](projects/projects-index.md) | **Per-project memory**: `PROJECT.md`, `linked-repos.md`, and `memory/current-state.md` + `open-questions.md`. Copy `projects/_template/` to start one. |
+| [`schemas/`](schemas/) | `project.schema.json` (PROJECT.md frontmatter) and `praxis-config.schema.json` (a consuming repo's `.praxis/config.json`). |
+| [`tools/validate_harness.py`](tools/validate_harness.py) | A **deterministic** validator (no LLM) for the registry, project memory, schemas, and config. Wired into `make validate-harness` and CI. |
+
+**Per-repo or central?** Harness mode is **hybrid, with `local` (per-repo) as the default** and `central` as an opt-in for multi-repo teams. A consuming repo opts in with a small pointer, [`examples/praxis-config.example.json`](examples/praxis-config.example.json):
+
+```json
+{
+  "schemaVersion": "1.0.0",
+  "harnessRoot": "../praxis",
+  "projectId": "checkout",
+  "mode": "local",
+  "activeSpec": null
+}
+```
+
+If `projectId` can't be resolved, the agent **stops** (per the stop conditions). Start a project and validate it:
+
+```bash
+cp -r projects/_template projects/checkout   # then edit PROJECT.md (id = folder name)
+#                                            #  + add a row to projects/projects-index.md
+make validate-harness                        # registry · memory shape · schemas · config
+python tools/validate_harness.py --config ../checkout/.praxis/config.json
+```
+
+**Read order** in a harness-mode repo: repo `AGENTS.md` → `.praxis/config.json` → harness `AGENTS.md` → `rules/source-of-truth.md` → `projects/<project>/PROJECT.md` → `current-state.md` → `open-questions.md` → active spec → relevant skills. The generated Cursor / Codex / IntelliJ entry docs embed the same order, so every agent resolves context the same way.
+
+**What harness mode now includes** (all opt-in — they activate only when a project resolves):
+
+- **Durable spec artifacts.** In harness mode, `/new-feature` writes `spec.md`, `plans/implementation-plan.md`, `tasks/tasks.md`, `decisions/`, and `reports/` under `projects/<project>/specs/<spec>/` instead of leaving the plan only in chat. Doctrine: [`systems/feature-development/artifact-model.md`](systems/feature-development/artifact-model.md).
+- **Workflow gates.** [`workflows/`](workflows/registry.json) holds machine-readable lifecycles (`spec → plan → tasks → verify`) where each gate is opened by the previous artifact reaching an authorizing status. **Pending is not approval.**
+- **Project-aware review.** In harness mode, `/review-changes` loads the project's authority, accepted decisions, and active spec, flags diffs that contradict them, and records outcomes only as `pending` memory entries.
+- **Adapter install.** [`tools/install_adapter.py`](tools/install_adapter.py) scaffolds a repo's `.praxis/config.json` + `.praxis/current-spec.md` deterministically.
+- **Runtime state.** [`runtime/`](runtime/README.md) holds disposable session glue (last active project/repo/spec) via [`tools/runtime.py`](tools/runtime.py) — git-ignored, never the home of a durable decision.
+
+Still deliberately out of scope (add on evidence, not anticipation): a full SDD Kit, an `experience` workflow step, and central-mode sync tooling.
+
+---
+
 ## Developer guide
 
 ### Quick start
@@ -263,7 +314,7 @@ python .claude/skills/skill-creator/scripts/create_skill.py \
 
 ### Continuous integration
 
-Pushes and PRs against `main` run [.github/workflows/validate.yml](.github/workflows/validate.yml): it validates every skill in `.claude/skills/` and `dist/`, runs a generator determinism check (and asserts no `command.md` is emitted), verifies `SKILLS.md` is up to date, and sanity-checks the JSON schemas.
+Pushes and PRs against `main` run [.github/workflows/validate.yml](.github/workflows/validate.yml): it validates every skill in `.claude/skills/` and `dist/`, runs a generator determinism check (and asserts no `command.md` is emitted), verifies `SKILLS.md` is up to date, validates harness state (`tools/validate_harness.py`), and sanity-checks the JSON schemas.
 
 ### Key concepts
 
@@ -283,7 +334,15 @@ praxis/
 ├─ .vscode/tasks.json     # equivalent tasks for VS Code
 ├─ .github/workflows/     # CI: validates every skill on push / PR
 ├─ SKILLS.md              # generated catalog of skills + commands (make catalog)
-├─ examples/              # sample transcripts — what each expert/command produces
+├─ examples/              # sample transcripts + praxis-config.example.json
+├─ docs/                  # GitHub Pages site + harness-mode.md guide
+├─ rules/                 # harness mode: source-of-truth + stop-conditions
+├─ projects/              # harness mode: per-project memory (_template + index + specs)
+├─ systems/               # harness mode: lifecycle doctrine (feature-development)
+├─ workflows/             # harness mode: machine-readable gates (registry + manifests)
+├─ schemas/               # harness mode: project/config/spec/workflow/session schemas
+├─ runtime/               # harness mode: disposable session state (git-ignored)
+├─ tools/                 # harness mode: validate_harness / install_adapter / runtime
 ├─ .claude-plugin/        # marketplace.json (lists the praxis + skill-factory plugins)
 ├─ plugin-praxis/         # plugin: symlinks to the 11 experts + memory + their commands
 ├─ plugin-skill-factory/  # plugin: symlinks to skill-creator + factory + /validate-skills

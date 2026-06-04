@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://praxis/schemas/spec.schema.json",
+  "title": "Spec frontmatter",
+  "description": "Schema for the YAML frontmatter at the top of a spec's spec.md (harness mode, feature-development workflow).",
+  "type": "object",
+  "required": ["id", "title", "project", "status"],
+  "additionalProperties": true,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{1,64}$",
+      "description": "Lowercase, hyphen-separated spec id. Must match the spec folder name."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Human-readable spec title."
+    },
+    "project": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{1,64}$",
+      "description": "The project id this spec belongs to. Must match the containing project folder."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "accepted", "superseded", "done"],
+      "description": "Spec lifecycle from the closed set. 'accepted' satisfies the workflow's approved-spec gate; 'draft' does not authorize downstream steps."
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://praxis/schemas/session-state.schema.json",
+  "title": "Runtime session state",
+  "description": "Disposable runtime glue — the last active project/repo/spec/command. NOT durable doctrine: major decisions live in project memory and the ledger, never only here.",
+  "type": "object",
+  "required": ["schemaVersion"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of this state shape."
+    },
+    "lastActiveProject": {
+      "type": ["string", "null"],
+      "description": "Project id last worked, or null."
+    },
+    "lastActiveRepo": {
+      "type": ["string", "null"],
+      "description": "Repo path/name last worked, or null."
+    },
+    "lastActiveSpec": {
+      "type": ["string", "null"],
+      "description": "Spec id/path last worked, or null."
+    },
+    "lastCommand": {
+      "type": ["string", "null"],
+      "description": "Most recent command run, or null."
+    },
+    "updated": {
+      "type": ["string", "null"],
+      "description": "ISO-8601 UTC timestamp of the last update, or null."
+    }
+  }
+}

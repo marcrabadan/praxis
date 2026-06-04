@@ -1,0 +1,19 @@
+{
+  "id": "change-review",
+  "name": "Change review",
+  "steps": ["diff", "route", "findings", "record"],
+  "gates": {
+    "route": ["diff"],
+    "findings": ["route"],
+    "record": ["findings"]
+  },
+  "artifacts": {
+    "findings": [],
+    "record": []
+  },
+  "stopConditions": [
+    "the diff contradicts an accepted project decision or the active spec",
+    "a finding would change security posture and the standard is undeclared"
+  ],
+  "validation": {}
+}

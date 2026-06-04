@@ -1,0 +1,24 @@
+{
+  "id": "feature-development",
+  "name": "Feature development",
+  "steps": ["spec", "plan", "tasks", "verify"],
+  "gates": {
+    "plan": ["approved-spec"],
+    "tasks": ["approved-plan"],
+    "verify": ["tasks", "test-evidence"]
+  },
+  "artifacts": {
+    "spec": ["spec.md"],
+    "plan": ["plans/implementation-plan.md"],
+    "tasks": ["tasks/tasks.md"],
+    "verify": ["reports/verify/report.md"]
+  },
+  "stopConditions": [
+    "spec scope or target user is ambiguous",
+    "the plan would commit to an architecture the project has not used",
+    "a gate's required decision is still pending (pending is not approved)"
+  ],
+  "validation": {
+    "verify": "make validate-harness"
+  }
+}

@@ -26,6 +26,10 @@ dist/*
 *.skill
 *.skill.zip
 
+# Runtime state (disposable session glue — reconstructable, never committed)
+runtime/session-state.json
+runtime/activity-log.jsonl
+
 # Logs
 *.log
 

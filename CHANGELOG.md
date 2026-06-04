@@ -13,6 +13,46 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- **Harness mode (phases 3, 5–8)** — completes the agent-harness layer on top of
+  phase 1. Adds **durable spec artifacts** (`/new-feature`, in harness mode, now
+  writes `spec.md` + `plans/` + `tasks/` + `decisions/` + `reports/` under
+  `projects/<project>/specs/<spec>/` following a `spec → plan → tasks → verify`
+  workflow, instead of leaving the plan only in chat; `schemas/spec.schema.json`,
+  `systems/feature-development/`, and a `projects/_template/specs/_template/`
+  scaffold). Adds **workflow gates** (`workflows/registry.json` + manifests,
+  `schemas/workflow.schema.json`) validated mechanically. Adds **runtime state**
+  (`runtime/`, `schemas/session-state.schema.json`, `tools/runtime.py`) as
+  disposable, git-ignored session glue kept separate from durable memory. Adds
+  **adapter wiring** (`tools/install_adapter.py` to scaffold a repo's
+  `.praxis/config.json` + `.praxis/current-spec.md`, and a shared **read-order
+  block** injected into the generated Cursor/Codex/IntelliJ entry docs). Hardens
+  **`/review-changes`** to load project authority, accepted decisions, and the
+  active spec, and to record outcomes only as `pending`. `tools/validate_harness.py`
+  now also checks specs, workflow manifests, and runtime state; harness tool tests
+  (`tools/test_harness_tools.py`) run in `make test` and CI. All command behavior
+  is **opt-in** (activates only when a `.praxis/config.json` resolves a project),
+  so non-harness repos are unaffected. Bumps the `praxis` plugin to `1.5.0`.
+
+- **Harness mode (phase 1)** — the first step from a skill factory toward a fuller
+  **agent harness**: an authority model that tells agents where to read first,
+  what is canonical, where durable decisions go, and when to stop and ask. Adds a
+  first-class **rules layer** (`rules/source-of-truth.md` — canonical vs generated
+  vs runtime, and the authority order; `rules/stop-conditions.md` — when to stop
+  and ask, plus hard blocks), **per-project memory** (`projects/projects-index.md`
+  and `projects/_template/` with `PROJECT.md`, `linked-repos.md`, and
+  `memory/current-state.md` + `open-questions.md`), two JSON **schemas**
+  (`schemas/project.schema.json`, `schemas/praxis-config.schema.json`), and a
+  **deterministic validator** (`tools/validate_harness.py`, no LLM) that checks
+  the registry, project-memory shape, schemas, and a consuming repo's
+  `.praxis/config.json`. Repos opt in with a small `.praxis/config.json` pointer
+  ([`examples/praxis-config.example.json`](examples/praxis-config.example.json));
+  the model is **hybrid with `local` (per-repo) as the default** and `central` as
+  an opt-in for multi-repo teams. Wired into the Makefile (`make validate-harness`)
+  and CI, documented in [`docs/harness-mode.md`](docs/harness-mode.md), surfaced
+  in the README and the GitHub Pages site (a new "Harness mode" section + example
+  card), and **changes no existing skill, command, or `/new-feature`**. Bumps the
+  `praxis` plugin to `1.4.0`.
+
 - `/new-feature` — **token-efficiency** controls. An optional **context digest**
   (Phase 0.5) gathers the relevant codebase/PRD context once on a cheap model
   (Haiku `Explore` subagent) and feeds that digest to every later phase, so

@@ -21,3 +21,15 @@ This repo carries the praxis SDLC expert personas under `.praxis/`. When a task 
 | **ML/AI Engineer** | Frame an ML problem, pick a metric, engineer features, prevent leakage or train/serve skew, train or select a model, design an evaluation, set up experiment tracking, serve or dep… |
 
 Reusable slash commands for each persona live in `~/.codex/prompts/` (install them with the prompts in this integration); invoke e.g. `/praxis-architect`, `/praxis-review-changes`.
+
+## Harness mode (if `.praxis/config.json` exists)
+
+If this repo has a `.praxis/config.json`, it is in **harness mode** — read these first, in order, before editing:
+
+1. this repo's `AGENTS.md`
+2. `.praxis/config.json` — resolves the harness root, the `projectId`, and the active spec
+3. the harness `rules/source-of-truth.md` and `rules/stop-conditions.md`
+4. `projects/<projectId>/PROJECT.md`, then its `memory/current-state.md` and `memory/open-questions.md`
+5. the active spec under `projects/<projectId>/specs/<spec>/`, if `activeSpec` is set
+
+If `projectId` cannot be resolved to a project, **stop and ask** — do not guess. Pending decisions are proposals, not approval to act.

@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://praxis/schemas/project.schema.json",
+  "title": "Project frontmatter",
+  "description": "Schema for the YAML frontmatter at the top of a project's PROJECT.md file (harness mode).",
+  "type": "object",
+  "required": ["id", "name", "status"],
+  "additionalProperties": true,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{1,64}$",
+      "description": "Lowercase, hyphen-separated project identifier. Must match the folder name under projects/ and the projectId in a consuming repo's .praxis/config.json."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Human-readable project name."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "paused", "archived"],
+      "description": "Lifecycle status from the closed set. Never invented; see projects/projects-index.md."
+    }
+  }
+}
