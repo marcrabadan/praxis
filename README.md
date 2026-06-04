@@ -8,6 +8,8 @@ It has three parts:
 2. **Thirteen SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, Frontend Engineer, Data Engineer, ML/AI Engineer), each built with that pattern.
 3. **`memory`** — a versioned *memory ledger* that records the plans, decisions (from any role, not just the architect), implementations, and artifacts the experts produce, each with a status from a closed set — `pending → accepted | rejected | rolled-back` (plus `superseded`) — so the record survives across sessions and changes can be rolled back. `pending` is a proposal awaiting your call, not approval to act.
 
+On top of these, an experimental **[harness mode](#harness-mode-experimental)** is taking shape — a source-of-truth authority model, per-project memory, explicit stop conditions, and a deterministic harness validator — so praxis can give agents a reliable *operating environment*, not just skills. It's additive: no existing skill or command changes.
+
 **Just want to use it?** Jump to [Install & integrate](#install--integrate) for Claude Code, Cursor, IntelliJ, and Codex. **Want to see the output first?** Browse [`examples/`](examples/README.md) for sample transcripts. Otherwise: **PMs, designers, stakeholders** read from the top; **developers writing or shipping a skill** skip to the [Developer guide](#developer-guide).
 
 ---
@@ -213,6 +215,47 @@ The experts produce plans, decisions, and code — `memory` makes that output **
 
 ---
 
+## Harness mode (experimental)
+
+Praxis began as a **skill factory + SDLC expert pack + memory ledger**. Harness mode is the first step toward a fuller **agent harness**: a reliable operating environment that tells an agent *where to read first, what is canonical, where durable decisions go, how project context is resolved, and when to stop and ask*. It is **phase 1 — the authority model only**, and it changes **no existing skill, command, or `/new-feature`**. See [`docs/harness-mode.md`](docs/harness-mode.md) for the full guide.
+
+What it adds (all repo-level, alongside the factory):
+
+| Path | Purpose |
+| ---- | ------- |
+| [`rules/source-of-truth.md`](rules/source-of-truth.md) | What is canonical vs generated vs runtime, and the **authority order** to follow on conflict. |
+| [`rules/stop-conditions.md`](rules/stop-conditions.md) | When an agent must **stop and ask** instead of guessing (and the hard blocks). |
+| [`projects/`](projects/projects-index.md) | **Per-project memory**: `PROJECT.md`, `linked-repos.md`, and `memory/current-state.md` + `open-questions.md`. Copy `projects/_template/` to start one. |
+| [`schemas/`](schemas/) | `project.schema.json` (PROJECT.md frontmatter) and `praxis-config.schema.json` (a consuming repo's `.praxis/config.json`). |
+| [`tools/validate_harness.py`](tools/validate_harness.py) | A **deterministic** validator (no LLM) for the registry, project memory, schemas, and config. Wired into `make validate-harness` and CI. |
+
+**Per-repo or central?** Harness mode is **hybrid, with `local` (per-repo) as the default** and `central` as an opt-in for multi-repo teams. A consuming repo opts in with a small pointer, [`examples/praxis-config.example.json`](examples/praxis-config.example.json):
+
+```json
+{
+  "schemaVersion": "1.0.0",
+  "harnessRoot": "../praxis",
+  "projectId": "checkout",
+  "mode": "local",
+  "activeSpec": null
+}
+```
+
+If `projectId` can't be resolved, the agent **stops** (per the stop conditions). Start a project and validate it:
+
+```bash
+cp -r projects/_template projects/checkout   # then edit PROJECT.md (id = folder name)
+#                                            #  + add a row to projects/projects-index.md
+make validate-harness                        # registry · memory shape · schemas · config
+python tools/validate_harness.py --config ../checkout/.praxis/config.json
+```
+
+**Read order** in a harness-mode repo: repo `AGENTS.md` → `.praxis/config.json` → harness `AGENTS.md` → `rules/source-of-truth.md` → `projects/<project>/PROJECT.md` → `current-state.md` → `open-questions.md` → active spec → relevant skills.
+
+Deliberately **out of scope for phase 1**: migrating `/new-feature` to durable spec artifacts, workflow gates, and runtime/session state — those build on this authority model and land later.
+
+---
+
 ## Developer guide
 
 ### Quick start
@@ -263,7 +306,7 @@ python .claude/skills/skill-creator/scripts/create_skill.py \
 
 ### Continuous integration
 
-Pushes and PRs against `main` run [.github/workflows/validate.yml](.github/workflows/validate.yml): it validates every skill in `.claude/skills/` and `dist/`, runs a generator determinism check (and asserts no `command.md` is emitted), verifies `SKILLS.md` is up to date, and sanity-checks the JSON schemas.
+Pushes and PRs against `main` run [.github/workflows/validate.yml](.github/workflows/validate.yml): it validates every skill in `.claude/skills/` and `dist/`, runs a generator determinism check (and asserts no `command.md` is emitted), verifies `SKILLS.md` is up to date, validates harness state (`tools/validate_harness.py`), and sanity-checks the JSON schemas.
 
 ### Key concepts
 
@@ -283,7 +326,12 @@ praxis/
 ├─ .vscode/tasks.json     # equivalent tasks for VS Code
 ├─ .github/workflows/     # CI: validates every skill on push / PR
 ├─ SKILLS.md              # generated catalog of skills + commands (make catalog)
-├─ examples/              # sample transcripts — what each expert/command produces
+├─ examples/              # sample transcripts + praxis-config.example.json
+├─ docs/                  # GitHub Pages site + harness-mode.md guide
+├─ rules/                 # harness mode: source-of-truth + stop-conditions
+├─ projects/              # harness mode: per-project memory (_template + index)
+├─ schemas/               # harness mode: project + praxis-config JSON schemas
+├─ tools/                 # harness mode: validate_harness.py (make validate-harness)
 ├─ .claude-plugin/        # marketplace.json (lists the praxis + skill-factory plugins)
 ├─ plugin-praxis/         # plugin: symlinks to the 11 experts + memory + their commands
 ├─ plugin-skill-factory/  # plugin: symlinks to skill-creator + factory + /validate-skills

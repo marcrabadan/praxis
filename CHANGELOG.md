@@ -13,6 +13,26 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- **Harness mode (phase 1)** — the first step from a skill factory toward a fuller
+  **agent harness**: an authority model that tells agents where to read first,
+  what is canonical, where durable decisions go, and when to stop and ask. Adds a
+  first-class **rules layer** (`rules/source-of-truth.md` — canonical vs generated
+  vs runtime, and the authority order; `rules/stop-conditions.md` — when to stop
+  and ask, plus hard blocks), **per-project memory** (`projects/projects-index.md`
+  and `projects/_template/` with `PROJECT.md`, `linked-repos.md`, and
+  `memory/current-state.md` + `open-questions.md`), two JSON **schemas**
+  (`schemas/project.schema.json`, `schemas/praxis-config.schema.json`), and a
+  **deterministic validator** (`tools/validate_harness.py`, no LLM) that checks
+  the registry, project-memory shape, schemas, and a consuming repo's
+  `.praxis/config.json`. Repos opt in with a small `.praxis/config.json` pointer
+  ([`examples/praxis-config.example.json`](examples/praxis-config.example.json));
+  the model is **hybrid with `local` (per-repo) as the default** and `central` as
+  an opt-in for multi-repo teams. Wired into the Makefile (`make validate-harness`)
+  and CI, documented in [`docs/harness-mode.md`](docs/harness-mode.md), surfaced
+  in the README and the GitHub Pages site (a new "Harness mode" section + example
+  card), and **changes no existing skill, command, or `/new-feature`**. Bumps the
+  `praxis` plugin to `1.4.0`.
+
 - `/new-feature` — **token-efficiency** controls. An optional **context digest**
   (Phase 0.5) gathers the relevant codebase/PRD context once on a cheap model
   (Haiku `Explore` subagent) and feeds that digest to every later phase, so

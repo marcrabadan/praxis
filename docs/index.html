@@ -45,6 +45,7 @@
         <a href="#how">How it works</a>
         <a href="#examples">Examples</a>
         <a href="#memory">Memory</a>
+        <a href="#harness">Harness</a>
         <a href="#install">Install</a>
         <a class="btn btn-ghost" href="https://github.com/marcrabadan/praxis" target="_blank" rel="noopener">
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -60,6 +61,7 @@
       <a href="#how">How it works</a>
       <a href="#examples">Examples</a>
       <a href="#memory">Memory</a>
+      <a href="#harness">Harness</a>
       <a href="#install">Install</a>
       <a href="https://github.com/marcrabadan/praxis" target="_blank" rel="noopener">GitHub ↗</a>
     </div>
@@ -362,6 +364,29 @@ the decision as an ADR…</code></pre>
             </div>
           </article>
 
+          <!-- Example 8: harness mode -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Harness mode</span>
+              <h3>Give a repo a project memory</h3>
+              <p>Opt a repo into the new harness layer: a deterministic project context (source of truth, current state, open questions) that agents read first — validated mechanically, no LLM.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">.praxis/config.json</span></div>
+              <pre class="term-body"><code><span class="c-prompt">$</span> <span class="c-cmd">cat</span> .praxis/config.json
+<span class="c-key">{</span>
+  <span class="c-str">"schemaVersion"</span>: <span class="c-str">"1.0.0"</span>,
+  <span class="c-str">"harnessRoot"</span>:  <span class="c-str">"../praxis"</span>,
+  <span class="c-str">"projectId"</span>:    <span class="c-str">"checkout"</span>,
+  <span class="c-str">"mode"</span>:         <span class="c-str">"local"</span>   <span class="c-comment"># default; central for teams</span>
+<span class="c-key">}</span>
+
+<span class="c-prompt">$</span> <span class="c-cmd">make</span> validate-harness
+<span class="c-ok">✓</span> projects · schemas · memory shape
+<span class="c-ok">✓</span> projectId resolves · config valid</code></pre>
+            </div>
+          </article>
+
         </div>
 
         <div class="examples-foot">
@@ -398,6 +423,40 @@ the decision as an ADR…</code></pre>
 <span class="c-warn">●</span> <span class="c-muted">pending</span>   deploy · canary 5% → 50% → 100%
 <span class="c-warn">●</span> <span class="c-muted">pending</span>   risk · accept medium CVE in dev dep
 <span class="c-err">●</span> <span class="c-muted">superseded</span> ADR-009 ← ADR-012</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== HARNESS ===================== -->
+    <section class="section" id="harness" aria-labelledby="harness-title">
+      <div class="container memory-wrap">
+        <div class="memory-copy">
+          <h2 id="harness-title" class="section-title">Harness mode <span class="accent">(experimental)</span></h2>
+          <p class="section-sub">Beyond the skill factory, praxis is growing into an <strong>agent harness</strong> — a reliable operating environment that tells an agent where to read first, what's canonical, where durable decisions go, and when to stop and ask. Phase&nbsp;1 adds the authority model only; no existing skill or command changes.</p>
+          <ul class="memory-list">
+            <li><span class="state accepted">rules/</span> Source-of-truth authority order &amp; explicit stop conditions.</li>
+            <li><span class="state accepted">projects/</span> Per-project memory: current state, open questions, decisions.</li>
+            <li><span class="state pending">.praxis/config.json</span> A repo points at a harness + project; agents resolve context deterministically.</li>
+            <li><span class="state superseded">tools/</span> A mechanical <code>validate_harness.py</code> — checked in CI.</li>
+          </ul>
+          <p class="memory-note"><strong>local</strong> (default) keeps project memory in the product repo; <strong>central</strong> shares it across many repos. See <a href="https://github.com/marcrabadan/praxis/blob/main/docs/harness-mode.md" target="_blank" rel="noopener">the harness-mode guide ↗</a>.</p>
+        </div>
+        <div class="code-panel">
+          <div class="term-bar">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="term-title">project memory</span>
+          </div>
+          <pre class="term-body"><code><span class="c-prompt">$</span> <span class="c-cmd">cp</span> -r projects/_template projects/checkout
+<span class="c-prompt">$</span> <span class="c-cmd">make</span> validate-harness
+
+<span class="c-muted">projects/checkout/</span>
+  <span class="c-str">PROJECT.md</span>          <span class="c-comment"># purpose · authority · status</span>
+  <span class="c-str">linked-repos.md</span>     <span class="c-comment"># which repos this spans</span>
+  <span class="c-str">memory/</span>
+    <span class="c-str">current-state.md</span>  <span class="c-comment"># read first</span>
+    <span class="c-str">open-questions.md</span> <span class="c-comment"># blockers = stop &amp; ask</span>
+
+<span class="c-ok">✓</span> registry + memory shape valid</code></pre>
         </div>
       </div>
     </section>
