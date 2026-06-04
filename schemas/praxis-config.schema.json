@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://praxis/schemas/praxis-config.schema.json",
+  "title": "Praxis adapter config",
+  "description": "Schema for a consuming repo's .praxis/config.json. Makes agent sessions deterministic: it answers which harness, which project, and which spec are active.",
+  "type": "object",
+  "required": ["schemaVersion", "harnessRoot", "projectId"],
+  "additionalProperties": true,
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of this config shape (e.g. 1.0.0)."
+    },
+    "harnessRoot": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Path (relative to the consuming repo) or pointer to the praxis harness root. Must resolve to an existing harness."
+    },
+    "projectId": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{1,64}$",
+      "description": "The project this repo belongs to. Must match a folder under the harness's projects/ and that project's PROJECT.md id. If it cannot be resolved, agents stop."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["local", "central"],
+      "description": "Optional. 'local' keeps project memory in this product repo (.praxis/project/); 'central' reads project memory from the harness's projects/<projectId>/. Defaults to 'central'."
+    },
+    "projectMemory": {
+      "type": ["string", "null"],
+      "description": "Optional. Explicit path to this project's memory root, overriding the mode default."
+    },
+    "activeSpec": {
+      "type": ["string", "null"],
+      "description": "Id or path of the spec currently being worked, or null when none is active."
+    },
+    "generatedBy": {
+      "type": "string",
+      "description": "Optional. The runtime/tool that generated this adapter (provenance)."
+    },
+    "praxisVersion": {
+      "type": "string",
+      "description": "Optional. The praxis version that generated this adapter."
+    }
+  }
+}

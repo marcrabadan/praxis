@@ -60,6 +60,9 @@ jobs:
       - name: Ledger unit tests
         run: python -m unittest discover -s .claude/skills/memory/scripts -p 'test_*.py' -v
 
+      - name: Validate harness state
+        run: python tools/validate_harness.py
+
       - name: Catalog is up to date
         run: python .claude/factory/scripts/build_catalog.py --check
 
@@ -70,3 +73,5 @@ jobs:
         run: |
           python -c "import json; json.load(open('.claude/factory/schemas/skill.schema.json'))"
           python -c "import json; json.load(open('.claude/factory/schemas/eval.schema.json'))"
+          python -c "import json; json.load(open('schemas/project.schema.json'))"
+          python -c "import json; json.load(open('schemas/praxis-config.schema.json'))"

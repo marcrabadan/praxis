@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "1.0.0",
+  "harnessRoot": "../praxis",
+  "projectId": "example-project",
+  "mode": "central",
+  "activeSpec": null,
+  "generatedBy": "manual",
+  "praxisVersion": "0.1.0"
+}

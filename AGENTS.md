@@ -53,6 +53,28 @@ Beyond the SDLC roster, the repo ships one **utility skill**: [.claude/skills/me
 
 Do not invent a new top-level skill when an existing workflow in `skill-creator` covers the use case.
 
+## Harness mode (experimental)
+
+Beyond the skill factory, praxis is growing an **agent-harness** layer that gives
+agents a reliable operating environment — source-of-truth authority, project
+memory, stop conditions, and a deterministic harness validator. This is **phase
+1**: it adds the authority model only and changes **no existing skill or
+command**. Start at [docs/harness-mode.md](docs/harness-mode.md).
+
+- [rules/source-of-truth.md](rules/source-of-truth.md) — what is canonical vs
+  generated vs runtime, and the authority order to follow on conflict.
+- [rules/stop-conditions.md](rules/stop-conditions.md) — when an agent must stop
+  and ask instead of guessing.
+- [projects/](projects/projects-index.md) — per-project memory (current state,
+  open questions, decisions); copy `projects/_template/` to start one.
+- [schemas/](schemas/) — `project.schema.json` (PROJECT.md frontmatter) and
+  `praxis-config.schema.json` (a consuming repo's `.praxis/config.json`).
+- [tools/validate_harness.py](tools/validate_harness.py) — deterministic
+  validator for harness state; run `make validate-harness` (CI enforces it).
+
+A repo opts in by adding `.praxis/config.json` pointing at this harness and a
+project id. If the project id can't be resolved, **stop** (see stop-conditions).
+
 ## Global rules
 
 - **Classify the tier before scaffolding.** Every skill request must be matched to a tier (1–5) using the criteria in [.claude/factory/ai/skill-tiering.md](.claude/factory/ai/skill-tiering.md).
