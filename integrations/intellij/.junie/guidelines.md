@@ -37,3 +37,15 @@ Read `AGENTS.md` for full repo doctrine (JetBrains AI Assistant reads it nativel
 - **ML/AI Engineer** — `.junie/praxis/ml-ai-engineer.md`
 
 Ready-made prompts for each persona and for the new-feature / review-changes workflows live in `prompts/` — save them to the AI Assistant prompt library.
+
+## Harness mode (if `.praxis/config.json` exists)
+
+If this repo has a `.praxis/config.json`, it is in **harness mode** — read these first, in order, before editing:
+
+1. this repo's `AGENTS.md`
+2. `.praxis/config.json` — resolves the harness root, the `projectId`, and the active spec
+3. the harness `rules/source-of-truth.md` and `rules/stop-conditions.md`
+4. `projects/<projectId>/PROJECT.md`, then its `memory/current-state.md` and `memory/open-questions.md`
+5. the active spec under `projects/<projectId>/specs/<spec>/`, if `activeSpec` is set
+
+If `projectId` cannot be resolved to a project, **stop and ask** — do not guess. Pending decisions are proposals, not approval to act.

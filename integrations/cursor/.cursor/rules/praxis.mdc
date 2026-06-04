@@ -26,3 +26,15 @@ This project carries the praxis SDLC experts. Read `AGENTS.md` for repo doctrine
 | **ML/AI Engineer** | Frame an ML problem, pick a metric, engineer features, prevent leakage or train/serve skew, train or select a model, design an evaluation, set up experiment tracking, serve or dep… |
 
 `/new-feature` runs the core six (BA → PO → Architect → Developer → QA → DevOps) in lifecycle order; `/review-changes` routes the current diff to the relevant personas (including the security experts) with severity-tagged findings.
+
+## Harness mode (if `.praxis/config.json` exists)
+
+If this repo has a `.praxis/config.json`, it is in **harness mode** — read these first, in order, before editing:
+
+1. this repo's `AGENTS.md`
+2. `.praxis/config.json` — resolves the harness root, the `projectId`, and the active spec
+3. the harness `rules/source-of-truth.md` and `rules/stop-conditions.md`
+4. `projects/<projectId>/PROJECT.md`, then its `memory/current-state.md` and `memory/open-questions.md`
+5. the active spec under `projects/<projectId>/specs/<spec>/`, if `activeSpec` is set
+
+If `projectId` cannot be resolved to a project, **stop and ask** — do not guess. Pending decisions are proposals, not approval to act.

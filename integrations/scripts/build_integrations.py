@@ -91,6 +91,22 @@ BANNER = (
     "`make integrations`. -->"
 )
 
+# Shared harness read-order block, injected into each tool's entry doc so that
+# Claude, Cursor, Codex, and Junie all resolve project context the same way when
+# a consuming repo opts into harness mode (a .praxis/config.json is present).
+HARNESS_NOTE = (
+    "## Harness mode (if `.praxis/config.json` exists)\n\n"
+    "If this repo has a `.praxis/config.json`, it is in **harness mode** — read "
+    "these first, in order, before editing:\n\n"
+    "1. this repo's `AGENTS.md`\n"
+    "2. `.praxis/config.json` — resolves the harness root, the `projectId`, and the active spec\n"
+    "3. the harness `rules/source-of-truth.md` and `rules/stop-conditions.md`\n"
+    "4. `projects/<projectId>/PROJECT.md`, then its `memory/current-state.md` and `memory/open-questions.md`\n"
+    "5. the active spec under `projects/<projectId>/specs/<spec>/`, if `activeSpec` is set\n\n"
+    "If `projectId` cannot be resolved to a project, **stop and ask** — do not "
+    "guess. Pending decisions are proposals, not approval to act.\n"
+)
+
 
 # --------------------------------------------------------------------------- #
 # Source readers
@@ -266,7 +282,8 @@ def _cursor() -> dict[str, str]:
         "`/new-feature` runs the core six (BA → PO → Architect → Developer → QA "
         "→ DevOps) in lifecycle order; `/review-changes` routes the current diff "
         "to the relevant personas (including the security experts) with "
-        "severity-tagged findings.\n"
+        "severity-tagged findings.\n\n"
+        f"{HARNESS_NOTE}"
     )
 
     # persona rules (Agent Requested: description-gated auto-attach)
@@ -307,7 +324,8 @@ def _codex() -> dict[str, str]:
         f"{_roster_table()}\n\n"
         "Reusable slash commands for each persona live in `~/.codex/prompts/` "
         "(install them with the prompts in this integration); invoke e.g. "
-        "`/praxis-architect`, `/praxis-review-changes`.\n"
+        "`/praxis-architect`, `/praxis-review-changes`.\n\n"
+        f"{HARNESS_NOTE}"
     )
 
     # prompts for ~/.codex/prompts/ (namespaced; $ARGUMENTS kept)
@@ -342,7 +360,8 @@ def _intellij() -> dict[str, str]:
         f"{index}\n\n"
         "Ready-made prompts for each persona and for the new-feature / "
         "review-changes workflows live in `prompts/` — save them to the AI "
-        "Assistant prompt library.\n"
+        "Assistant prompt library.\n\n"
+        f"{HARNESS_NOTE}"
     )
 
     for skill in EXPERTS:

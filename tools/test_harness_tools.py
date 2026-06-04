@@ -11,6 +11,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import install_adapter
 import runtime
 import validate_harness as vh
 
@@ -149,6 +150,41 @@ class RuntimeTests(unittest.TestCase):
             event = json.loads(lines[0])
             self.assertEqual(event["type"], "adapter-install")
             self.assertEqual(event["note"], "codex")
+
+
+class InstallAdapterTests(unittest.TestCase):
+    def test_writes_then_idempotent_check(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            rc = install_adapter.main(
+                ["--target", d, "--project", "checkout", "--mode", "local"]
+            )
+            self.assertEqual(rc, 0)
+            cfg = Path(d) / ".praxis" / "config.json"
+            self.assertTrue(cfg.is_file())
+            # --check on the just-written adapter reports up to date
+            rc = install_adapter.main(
+                ["--target", d, "--project", "checkout", "--mode", "local", "--check"]
+            )
+            self.assertEqual(rc, 0)
+
+    def test_generated_config_passes_validator(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            install_adapter.main(["--target", d, "--project", "checkout", "--mode", "local"])
+            data = json.loads((Path(d) / ".praxis" / "config.json").read_text())
+            errors: list[str] = []
+            vh._validate_config_data(data, "cfg", None, errors)
+            self.assertEqual(errors, [])
+
+    def test_refuses_overwrite_without_force(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            install_adapter.main(["--target", d, "--project", "checkout"])
+            rc = install_adapter.main(["--target", d, "--project", "other"])
+            self.assertEqual(rc, 1)
+
+    def test_rejects_bad_project_slug(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            rc = install_adapter.main(["--target", d, "--project", "Bad_Slug"])
+            self.assertEqual(rc, 2)
 
 
 if __name__ == "__main__":
