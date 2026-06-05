@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>praxis — Claude Code skills for the whole software delivery lifecycle</title>
-  <meta name="description" content="praxis is a skill factory for Claude Code: 13 SDLC expert skills, a meta-skill for authoring skills, and a versioned memory ledger. Install it as a plugin in any project." />
+  <meta name="description" content="praxis is a skill factory for Claude Code: 13 SDLC expert skills, meta-skills to create, refine and learn new skills (skill-creator + skill-learner / /learn), and a versioned memory ledger. Install it as a plugin in any project." />
 
   <!-- Open Graph / social -->
   <meta property="og:type" content="website" />
@@ -43,6 +43,7 @@
       <nav class="nav-links" aria-label="Primary">
         <a href="#experts">Experts</a>
         <a href="#how">How it works</a>
+        <a href="#factory">Factory</a>
         <a href="#examples">Examples</a>
         <a href="#docs-diagrams">Docs &amp; Diagrams</a>
         <a href="#memory">Memory</a>
@@ -60,6 +61,7 @@
     <div class="mobile-menu" id="mobile-menu" hidden>
       <a href="#experts">Experts</a>
       <a href="#how">How it works</a>
+      <a href="#factory">Factory</a>
       <a href="#examples">Examples</a>
       <a href="#docs-diagrams">Docs &amp; Diagrams</a>
       <a href="#memory">Memory</a>
@@ -123,7 +125,7 @@
           <article class="card">
             <div class="card-icon">🏭</div>
             <h3>A skill factory</h3>
-            <p>The <code>skill-creator</code> meta-skill <em>is</em> the pattern for creating skills: scaffold, tier classification, review and deterministic validation.</p>
+            <p>The <code>skill-creator</code> meta-skill <em>is</em> the pattern for creating skills — and <code>skill-learner</code> turns gaps an expert hits mid-task into new skills. Scaffold, tier, refine, learn, validate.</p>
           </article>
           <article class="card">
             <div class="card-icon">🧠</div>
@@ -203,8 +205,63 @@ the decision as an ADR…</code></pre>
       </div>
     </section>
 
+    <!-- ===================== SKILL FACTORY ===================== -->
+    <section class="section section-alt" id="factory" aria-labelledby="factory-title">
+      <div class="container">
+        <h2 id="factory-title" class="section-title">Create, refine, and <span class="accent">learn</span> skills</h2>
+        <p class="section-sub">praxis is a skill <em>factory</em>: it doesn't just ship experts, it gives you the meta-skills to author new ones, sharpen the ones you have, and capture what an expert didn't know — all without leaving Claude Code.</p>
+
+        <div class="cards-3">
+          <div class="card">
+            <div class="card-icon" aria-hidden="true">✍️</div>
+            <h3>Create</h3>
+            <p><code>skill-creator</code> interviews you, classifies the skill into a tier (1–5), scaffolds the folder deterministically, and validates it — from a vague purpose to a working <code>SKILL.md</code>.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon" aria-hidden="true">🛠️</div>
+            <h3>Refine</h3>
+            <p>When an answer was wrong or incomplete for your team, the review flow updates the skill — turning a one-off correction into a durable rule, so you don't re-fix the same thing every time.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon" aria-hidden="true">🧠</div>
+            <h3>Learn</h3>
+            <p><code>/learn</code> (the <code>skill-learner</code> skill) catches a gap an expert hit mid-task — your Terraform/Azure convention, a runbook — and turns it into skill knowledge, proposed for your approval.</p>
+          </div>
+        </div>
+
+        <div class="how-grid" style="margin-top:56px;">
+          <div class="how-steps">
+            <div class="step"><span class="step-num">1</span><div><h3>Detect the gap</h3><p>An expert lacks an org-specific convention or runbook — not public facts it already knows. <code>skill-learner</code> confirms it's worth capturing.</p></div></div>
+            <div class="step"><span class="step-num">2</span><div><h3>Decide where it lives</h3><p>A reference inside the role expert by default; a brand-new skill only on evidence. Role experts stay language-agnostic — no skill-per-language sprawl.</p></div></div>
+            <div class="step"><span class="step-num">3</span><div><h3>Delegate the authoring</h3><p>It hands off to <code>skill-creator</code> to create or refine — never reinventing the scaffolder, always re-running the validator.</p></div></div>
+            <div class="step"><span class="step-num">4</span><div><h3>Propose, never mutate</h3><p>The result lands in the memory ledger as <code>pending</code> for you to accept. Nothing hardens into doctrine unattended.</p></div></div>
+          </div>
+
+          <div class="code-panel">
+            <div class="term-bar">
+              <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+              <span class="term-title">claude — /learn</span>
+            </div>
+            <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/learn</span> capture how we lay out
+  Terraform for our Azure landing zone
+
+<span class="c-comment"># skill-learner</span>
+Gap is org-specific (not public HCL) ✓
+No existing coverage → <span class="c-key">create</span>
+Home: <span class="c-str">devops-engineer/references/
+  azure-landing-zone.md</span> (smallest fit)
+Delegating to skill-creator… validated ✓
+
+<span class="c-comment"># memory ledger</span>
+Logged <span class="c-str">pending</span>: "Learn: Azure
+landing-zone convention" — accept to apply.</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ===================== EXAMPLES ===================== -->
-    <section class="section section-alt" id="examples" aria-labelledby="examples-title">
+    <section class="section" id="examples" aria-labelledby="examples-title">
       <div class="container">
         <h2 id="examples-title" class="section-title">See it <span class="accent">in action</span></h2>
         <p class="section-sub">Real workflows, organized by what you're trying to do — not by command name. Every command reads your codebase and the memory ledger at runtime.</p>
@@ -491,7 +548,7 @@ the decision as an ADR…</code></pre>
     </section>
 
     <!-- ===================== DOCS & DIAGRAMS ===================== -->
-    <section class="section" id="docs-diagrams" aria-labelledby="docs-diagrams-title">
+    <section class="section section-alt" id="docs-diagrams" aria-labelledby="docs-diagrams-title">
       <div class="container">
         <h2 id="docs-diagrams-title" class="section-title">Living docs &amp; diagrams, <span class="accent">straight from the ledger</span></h2>
         <p class="section-sub">Two skills turn what your team already decided into artifacts you can hand off. Both read the <strong>memory ledger</strong> and the <strong>codebase</strong> first, so nothing is invented — every claim traces back to a recorded decision or a real file. Output is plain Markdown, committed to your repo and logged back to the ledger as an <code>artifact</code> entry.</p>
@@ -561,7 +618,7 @@ the decision as an ADR…</code></pre>
     </section>
 
     <!-- ===================== MEMORY ===================== -->
-    <section class="section section-alt" id="memory" aria-labelledby="memory-title">
+    <section class="section" id="memory" aria-labelledby="memory-title">
       <div class="container memory-wrap">
         <div class="memory-copy">
           <h2 id="memory-title" class="section-title">The <span class="accent">memory ledger</span></h2>
@@ -592,7 +649,7 @@ the decision as an ADR…</code></pre>
     </section>
 
     <!-- ===================== HARNESS ===================== -->
-    <section class="section" id="harness" aria-labelledby="harness-title">
+    <section class="section section-alt" id="harness" aria-labelledby="harness-title">
       <div class="container memory-wrap">
         <div class="memory-copy">
           <h2 id="harness-title" class="section-title">Harness mode <span class="accent">(experimental)</span></h2>
@@ -627,7 +684,7 @@ the decision as an ADR…</code></pre>
     </section>
 
     <!-- ===================== INSTALL ===================== -->
-    <section class="section section-alt" id="install" aria-labelledby="install-title">
+    <section class="section" id="install" aria-labelledby="install-title">
       <div class="container">
         <h2 id="install-title" class="section-title">Install into <span class="accent">your tool</span></h2>
         <p class="section-sub">The experts are native to Claude Code; the same personas are generated for Cursor, IntelliJ and Codex.</p>
