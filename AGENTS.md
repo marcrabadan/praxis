@@ -26,7 +26,8 @@ When deciding whether to split a workflow into its own top-level skill, read [.c
 
 ## Canonical entry points
 
-- **Create, improve, review, evaluate, or classify a skill** → use [.claude/skills/skill-creator/SKILL.md](.claude/skills/skill-creator/SKILL.md). This is the **pattern for creating new skills** and the only meta-skill in the repo.
+- **Create, improve, review, evaluate, or classify a skill** → use [.claude/skills/skill-creator/SKILL.md](.claude/skills/skill-creator/SKILL.md). This is the **pattern for creating new skills** — the primary meta-skill in the repo.
+- **Learn from a gap discovered during work** (an expert lacks an org convention, runbook, or rule — e.g. how *this team* builds infra in Terraform/Azure) → use [.claude/skills/skill-learner/SKILL.md](.claude/skills/skill-learner/SKILL.md), or `/learn`. It detects the gap, decides where the knowledge belongs (a reference inside the role expert by default; a new skill only on evidence), delegates the authoring to `skill-creator`, and **proposes** the result through the memory ledger as `pending` — it never mutates a skill silently. Captures org-specific conventions, not public facts the model already knows.
 - **Run a guided interview to capture an objective** → use [.claude/skills/skill-creator/workflows/interview.md](.claude/skills/skill-creator/workflows/interview.md).
 
 Skills are **Claude Code native**: each lives at `.claude/skills/<name>/SKILL.md` and Claude Code discovers it automatically from its frontmatter (no `command.md`, no installers). Invoke a skill by describing the task or by typing `/<name>`.
@@ -108,6 +109,7 @@ praxis/
 ├─ .claude/            # the real files (source of truth; used when this repo is the workspace)
 │  ├─ skills/          # factory-owned Claude Code skills (discovered automatically)
 │  │  ├─ skill-creator/   # the meta-skill — the pattern for creating new skills
+│  │  ├─ skill-learner/    # the learning loop — turns discovered gaps into skills
 │  │  ├─ business-analyst/   product-owner/   software-architect/
 │  │  ├─ developer/          qa-engineer/     devops-engineer/
 │  │  ├─ security-engineer/  cybersecurity-architect/
