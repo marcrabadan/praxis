@@ -412,7 +412,53 @@ the decision as an ADR…</code></pre>
             </div>
           </article>
 
-          <!-- Example 10: harness mode -->
+          <!-- Example 10: a specific CVE (Log4Shell) -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Vulnerability</span>
+              <h3>Are we exposed to a specific CVE?</h3>
+              <p>Point the Security Engineer at a named CVE. It locates the vulnerable version in your stack, decides whether the path is actually reachable, and returns the upgrade plus a stopgap mitigation while you roll it out.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/security</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/security</span> are we exposed to Log4Shell
+        (CVE-2021-44228)?
+
+<span class="c-muted"># Investigation</span>
+  · <span class="c-key">log4j-core 2.14.1</span> on the ingest service
+  <span class="c-warn">reachable:</span> user header → logged → JNDI lookup
+  <span class="c-err">CVSS 10.0 Critical</span> · unauthenticated RCE
+  <span class="c-warn">fix:</span> 2.17.1 + <span class="c-str">formatMsgNoLookups=true</span>
+
+<span class="c-ok">✓</span> patched · WAF rule blocks <span class="c-str">${jndi:</span> as stopgap
+<span class="c-ok">✓</span> IOC sweep — no exploit attempts in logs</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 11: security compliance check -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Compliance</span>
+              <h3>Do we meet a security standard?</h3>
+              <p>The Cybersecurity Architect runs a gap assessment against the framework you name — PCI-DSS, SOC 2, ISO 27001 — mapping each requirement to a control, an owner and the evidence, and flagging the gaps that still block sign-off.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/security-architect</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/security-architect</span> are we PCI-DSS ready
+        for storing saved cards?
+
+<span class="c-muted"># Gap assessment</span>
+  · tokenize via Stripe → <span class="c-key">SAQ-A</span> scope, no PAN at rest
+  <span class="c-ok">Req 3:</span> no card data stored — met by design
+  <span class="c-warn">Req 8:</span> enforce MFA + unique IDs for admins
+  <span class="c-err">gap — Req 10:</span> centralize audit logs, retain 1yr
+
+<span class="c-ok">✓</span> control map: PCI-DSS → owners + evidence
+<span class="c-ok">✓</span> residual risks logged to <span class="c-str">ledger</span> as decisions</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 12: harness mode -->
           <article class="example-card">
             <div class="example-head">
               <span class="example-tag">Harness mode</span>
