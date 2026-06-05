@@ -71,6 +71,20 @@ Default path: **detect-gap → (refine-existing | create-new)**.
 - [references/rules.md](references/rules.md) — the four governing rules.
 - [references/examples.md](references/examples.md) — worked examples (the Terraform/Azure gap, the language-granularity call).
 
+## Evals
+
+- [evals/trigger-evals.json](evals/trigger-evals.json) — positive and negative
+  routing cases, with the near-misses centred on the boundary against
+  `skill-creator` (build-from-scratch / review a SKILL.md) and against public
+  knowledge that should be answered, not captured.
+
+This skill carries `evals/` purely as a routing safety net — it has a real
+collision risk with `skill-creator` and benefits from explicit negative cases.
+It stays **Tier 3**: it orchestrates and delegates, it does not generate,
+modify, or validate code, so the Tier 4 trigger in
+[../../factory/ai/skill-tiering.md](../../factory/ai/skill-tiering.md) does not
+apply.
+
 ## Output expectations
 
 - A one-line statement of the **gap** and evidence it is org-specific, not public.
