@@ -28,15 +28,14 @@ Pick the path that matches how you work. The experts are **Claude Code native**;
 
 ### Claude Code — install into another project (plugin marketplace)
 
-To pull the experts into a *different* repo, `praxis` ships as a Claude Code **plugin marketplace** with two plugins. Run this from inside the target project:
+To pull the experts into a *different* repo, `praxis` ships as a Claude Code **plugin marketplace** with a **single, self-contained plugin**. Run this from inside the target project:
 
 ```text
 /plugin marketplace add marcrabadan/praxis
-/plugin install praxis@praxis          # the twelve SDLC experts + /new-feature + /review-changes
-/plugin install skill-factory@praxis   # optional: author your own skills (skill-creator + /validate-skills)
+/plugin install praxis@praxis          # everything: SDLC experts + /new-feature + /review-changes + the skill factory (skill-creator, skill-learner / /learn, /validate-skills) + memory
 ```
 
-As plugins, commands are namespaced under the plugin name — `/praxis:architect`, `/praxis:new-feature`, `/skill-factory:validate-skills`, and so on.
+One install brings the whole toolkit — including the skill factory, so the learning loop (`skill-learner`, which delegates to `skill-creator`) works out of the box. As plugins, commands are namespaced under the plugin name — `/praxis:architect`, `/praxis:new-feature`, `/praxis:learn`, `/praxis:validate-skills`, and so on.
 
 Want just **one** skill, with no plugin? Copy the folder, or use the export target from inside this repo:
 
@@ -277,8 +276,7 @@ Still deliberately out of scope (add on evidence, not anticipation): a full SDD 
 
 See [Install & integrate](#install--integrate) above for the plugin, single-skill copy, and Cursor / IntelliJ / Codex paths. A few notes for maintainers:
 
-- **`praxis`** — the on-demand SDLC team: the twelve expert skills, their per-expert commands, and the `/new-feature` orchestrator. Fully self-contained, so it works anywhere.
-- **`skill-factory`** — the `skill-creator` meta-skill, `/validate-skills`, and the factory tooling, for teams that want to author their own skills. (One doctrine file links back to this repo's `AGENTS.md`, which only resolves with `praxis` open as a workspace — harmless when installed elsewhere.)
+- **`praxis`** — one self-contained plugin with everything: the on-demand SDLC team (the expert skills, their per-expert commands, and the `/new-feature` orchestrator) **and** the skill factory — `skill-creator` for authoring skills, `skill-learner` (`/learn`) for turning knowledge gaps discovered mid-task into durable skills, `/validate-skills`, and the memory ledger. Shipping the factory in the same plugin means the learning loop (`skill-learner` delegates to `skill-creator`) always has its dependency, with no second install to remember.
 - Every skill carries a `version` (semver) in its frontmatter, so a consuming repo can tell when its copy is behind. Keep authoring and iteration inside `praxis`, since the factory depends on `.claude/factory/ai/`, `.claude/factory/templates/`, and `.claude/factory/validators/`.
 
 ### The catalog
@@ -343,12 +341,11 @@ praxis/
 ├─ schemas/               # harness mode: project/config/spec/workflow/session schemas
 ├─ runtime/               # harness mode: disposable session state (git-ignored)
 ├─ tools/                 # harness mode: validate_harness / install_adapter / runtime
-├─ .claude-plugin/        # marketplace.json (lists the praxis + skill-factory plugins)
-├─ plugin-praxis/         # plugin: symlinks to the 11 experts + memory + their commands
-├─ plugin-skill-factory/  # plugin: symlinks to skill-creator + factory + /validate-skills
+├─ .claude-plugin/        # marketplace.json (lists the single praxis plugin)
+├─ plugin-praxis/         # plugin: symlinks to every expert + skill-creator + skill-learner + memory + factory + their commands
 ├─ .claude/               # the real source of truth (used when this repo is the workspace)
-│  ├─ skills/             # skill-creator (meta) + the twelve SDLC experts + memory
-│  ├─ commands/           # /architect, /developer, …, /new-feature, /memory, /validate-skills
+│  ├─ skills/             # skill-creator + skill-learner (meta) + the SDLC experts + memory
+│  ├─ commands/           # /architect, /developer, …, /new-feature, /memory, /learn, /validate-skills
 │  └─ factory/            # all skill-authoring tooling + doctrine
 │     ├─ ai/              # operating model, tiering, routing, principles, promotion policy, glossary
 │     ├─ templates/       # tier-1..5 scaffolds + eval template

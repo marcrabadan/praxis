@@ -5,19 +5,13 @@
     "email": "marcrabadan@gmail.com",
     "url": "https://marcrabadan.github.io/praxis"
   },
-  "description": "Claude Code skills for the software delivery lifecycle. Two plugins: 'praxis' (the SDLC expert skills + /new-feature orchestrator) and 'skill-factory' (the skill-creator meta-skill + authoring tooling).",
+  "description": "Claude Code skills for the software delivery lifecycle, shipped as one self-contained plugin: the SDLC expert skills + /new-feature orchestrator, plus the skill factory (skill-creator, skill-learner / /learn, /validate-skills) and a versioned memory ledger.",
   "plugins": [
     {
       "name": "praxis",
       "source": "./plugin-praxis",
       "category": "development",
-      "description": "Self-contained SDLC expert skills (core six + security, frontend, data, ML/AI, and UX specialists) + per-expert commands + /new-feature orchestrator."
-    },
-    {
-      "name": "skill-factory",
-      "source": "./plugin-skill-factory",
-      "category": "development",
-      "description": "skill-creator meta-skill + /validate-skills + factory tooling for authoring new skills."
+      "description": "Self-contained: SDLC expert skills (core six + security, frontend, data, ML/AI, UX specialists) + per-expert commands + /new-feature orchestrator, and the skill factory — skill-creator, skill-learner (/learn) for capturing knowledge gaps as skills, /validate-skills, and the memory ledger. One install, everything included."
     }
   ]
 }

@@ -34,13 +34,7 @@ From inside your existing project, with Claude Code open:
 /plugin install praxis@praxis
 ```
 
-That gives you all 19 commands immediately — `/new-feature`, `/review-changes`, `/docs`, `/diagram`, every expert, and `/memory`.
-
-Want the skill-authoring tooling too?
-
-```
-/plugin install skill-factory@praxis
-```
+That single install gives you all 20 commands immediately — `/new-feature`, `/review-changes`, `/docs`, `/diagram`, every expert, `/memory`, and the skill factory: `/learn` (turn a knowledge gap into a skill), `skill-creator`, and `/validate-skills`. There is no second plugin to add.
 
 ### Step 2 — Seed the memory ledger from what already exists
 
