@@ -366,7 +366,53 @@ the decision as an ADR…</code></pre>
             </div>
           </article>
 
-          <!-- Example 8: harness mode -->
+          <!-- Example 8: find & triage a CVE -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">CVE triage</span>
+              <h3>Find and triage a CVE</h3>
+              <p>The Security Engineer runs an SCA scan, confirms whether the vulnerable path is actually reachable, scores it with CVSS and hands back a concrete upgrade — not just a scanner dump.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/security</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/security</span> scan our dependencies for known
+        CVEs and tell me what actually matters
+
+<span class="c-muted"># Triage</span>
+  · SCA flags <span class="c-key">lodash 4.17.20</span> → CVE-2021-23337
+  <span class="c-warn">reachable:</span> yes — hit via template render
+  <span class="c-err">CVSS 7.2 High</span> · prototype-pollution path
+  <span class="c-warn">fix:</span> bump to 4.17.21 (no breaking change)
+
+<span class="c-ok">✓</span> SCA gate added to CI — fail on High+
+<span class="c-ok">✓</span> finding + CVSS logged to <span class="c-str">ledger</span></code></pre>
+            </div>
+          </article>
+
+          <!-- Example 9: contain a CVE's blast radius -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Architecture</span>
+              <h3>Contain a CVE's blast radius</h3>
+              <p>A critical CVE lands in a running service. The Cybersecurity Architect zooms out from the patch to the system — segmentation, least-privilege identity and short-lived keys — so the next one can't pivot across the estate.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/security-architect</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/security-architect</span> a critical CVE hit our
+        auth service — limit the blast radius
+
+<span class="c-muted"># Containment design</span>
+  · isolate auth in its own <span class="c-key">trust zone</span> + segment
+  <span class="c-warn">least privilege:</span> scope tokens, drop ambient creds
+  · short-lived creds, rotate keys via <span class="c-key">KMS</span>
+  <span class="c-ok">blast radius:</span> lateral movement → contained
+
+<span class="c-ok">✓</span> zero-trust segmentation + IAM plan
+<span class="c-ok">✓</span> NIST CSF <span class="c-str">PR.AC / DE.CM</span> controls mapped</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 10: harness mode -->
           <article class="example-card">
             <div class="example-head">
               <span class="example-tag">Harness mode</span>
