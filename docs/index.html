@@ -366,7 +366,99 @@ the decision as an ADR…</code></pre>
             </div>
           </article>
 
-          <!-- Example 8: harness mode -->
+          <!-- Example 8: find & triage a CVE -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">CVE triage</span>
+              <h3>Find and triage a CVE</h3>
+              <p>The Security Engineer runs an SCA scan, confirms whether the vulnerable path is actually reachable, scores it with CVSS and hands back a concrete upgrade — not just a scanner dump.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/security</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/security</span> scan our dependencies for known
+        CVEs and tell me what actually matters
+
+<span class="c-muted"># Triage</span>
+  · SCA flags <span class="c-key">lodash 4.17.20</span> → CVE-2021-23337
+  <span class="c-warn">reachable:</span> yes — hit via template render
+  <span class="c-err">CVSS 7.2 High</span> · prototype-pollution path
+  <span class="c-warn">fix:</span> bump to 4.17.21 (no breaking change)
+
+<span class="c-ok">✓</span> SCA gate added to CI — fail on High+
+<span class="c-ok">✓</span> finding + CVSS logged to <span class="c-str">ledger</span></code></pre>
+            </div>
+          </article>
+
+          <!-- Example 9: contain a CVE's blast radius -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Architecture</span>
+              <h3>Contain a CVE's blast radius</h3>
+              <p>A critical CVE lands in a running service. The Cybersecurity Architect zooms out from the patch to the system — segmentation, least-privilege identity and short-lived keys — so the next one can't pivot across the estate.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/security-architect</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/security-architect</span> a critical CVE hit our
+        auth service — limit the blast radius
+
+<span class="c-muted"># Containment design</span>
+  · isolate auth in its own <span class="c-key">trust zone</span> + segment
+  <span class="c-warn">least privilege:</span> scope tokens, drop ambient creds
+  · short-lived creds, rotate keys via <span class="c-key">KMS</span>
+  <span class="c-ok">blast radius:</span> lateral movement → contained
+
+<span class="c-ok">✓</span> zero-trust segmentation + IAM plan
+<span class="c-ok">✓</span> NIST CSF <span class="c-str">PR.AC / DE.CM</span> controls mapped</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 10: a specific CVE (Log4Shell) -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Vulnerability</span>
+              <h3>Are we exposed to Log4Shell (CVE-2021-44228)?</h3>
+              <p>Point the Security Engineer at a named CVE. It locates the vulnerable version in your stack, decides whether the path is actually reachable, and returns the upgrade plus a stopgap mitigation while you roll it out.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/security</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/security</span> are we exposed to Log4Shell
+        (CVE-2021-44228)?
+
+<span class="c-muted"># Investigation</span>
+  · <span class="c-key">log4j-core 2.14.1</span> on the ingest service
+  <span class="c-warn">reachable:</span> user header → logged → JNDI lookup
+  <span class="c-err">CVSS 10.0 Critical</span> · unauthenticated RCE
+  <span class="c-warn">fix:</span> 2.17.1 + <span class="c-str">formatMsgNoLookups=true</span>
+
+<span class="c-ok">✓</span> patched · WAF rule blocks <span class="c-str">${jndi:</span> as stopgap
+<span class="c-ok">✓</span> IOC sweep — no exploit attempts in logs</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 11: security compliance check -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Compliance</span>
+              <h3>Do we meet a security standard?</h3>
+              <p>The Cybersecurity Architect runs a gap assessment against the framework you name — PCI-DSS, SOC 2, ISO 27001 — mapping each requirement to a control, an owner and the evidence, and flagging the gaps that still block sign-off.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/security-architect</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/security-architect</span> are we PCI-DSS ready
+        for storing saved cards?
+
+<span class="c-muted"># Gap assessment</span>
+  · tokenize via Stripe → <span class="c-key">SAQ-A</span> scope, no PAN at rest
+  <span class="c-ok">Req 3:</span> no card data stored — met by design
+  <span class="c-warn">Req 8:</span> enforce MFA + unique IDs for admins
+  <span class="c-err">gap — Req 10:</span> centralize audit logs, retain 1yr
+
+<span class="c-ok">✓</span> control map: PCI-DSS → owners + evidence
+<span class="c-ok">✓</span> residual risks logged to <span class="c-str">ledger</span> as decisions</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 12: harness mode -->
           <article class="example-card">
             <div class="example-head">
               <span class="example-tag">Harness mode</span>
