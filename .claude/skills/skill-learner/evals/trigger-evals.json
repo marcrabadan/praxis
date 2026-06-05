@@ -1,0 +1,62 @@
+[
+  {
+    "query": "you didn't know how we lay out our Terraform for Azure — learn it for next time",
+    "should_trigger": true,
+    "notes": "Core case: a gap in org-specific IaC convention, asked to be remembered."
+  },
+  {
+    "query": "capture how we do deployments so the devops expert remembers our runbook",
+    "should_trigger": true,
+    "notes": "Capture an org runbook discovered during work."
+  },
+  {
+    "query": "remember our convention: state goes in an Azure Storage backend, never local",
+    "should_trigger": true,
+    "notes": "User supplies the org convention to persist."
+  },
+  {
+    "query": "the devops skill gave the wrong answer for us — update it with what you just learned",
+    "should_trigger": true,
+    "notes": "Refine-existing: correct an existing skill with newly learned org knowledge."
+  },
+  {
+    "query": "teach the system how our team names resource groups",
+    "should_trigger": true,
+    "notes": "Teach/learn phrasing for an org naming convention."
+  },
+  {
+    "query": "next time you should know our dbt project structure — write it down somewhere durable",
+    "should_trigger": true,
+    "notes": "Durable capture of an org-specific structure tied to a role expert (data)."
+  },
+  {
+    "query": "make a skill from scratch that enforces our commit message format",
+    "should_trigger": false,
+    "notes": "Build-from-scratch is skill-creator's surface, not a gap discovered mid-task."
+  },
+  {
+    "query": "review my SKILL.md and tell me what's wrong with the frontmatter",
+    "should_trigger": false,
+    "notes": "Skill authoring/QA — skill-creator's review flow, no learned org knowledge involved."
+  },
+  {
+    "query": "what's the difference between Terraform count and for_each?",
+    "should_trigger": false,
+    "notes": "Public knowledge the model already produces — answer directly, do not capture (Rule 2)."
+  },
+  {
+    "query": "what tier should this skill folder be?",
+    "should_trigger": false,
+    "notes": "Classification question — skill-creator's classify-tier, not a learning gap."
+  },
+  {
+    "query": "run the devops skill on this pipeline",
+    "should_trigger": false,
+    "notes": "User wants to USE an expert, not capture a gap. Near-miss on 'skill'."
+  },
+  {
+    "query": "remember to ping me when the deploy finishes",
+    "should_trigger": false,
+    "notes": "Near-miss on 'remember' — a reminder, not durable skill knowledge."
+  }
+]

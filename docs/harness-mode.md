@@ -54,7 +54,7 @@ It does **not** add production application code or a full SDD Kit clone. The
 skill factory is unchanged; `/new-feature` and `/review-changes` gain **opt-in**
 harness behavior that only activates when a `.praxis/config.json` resolves a
 project (otherwise they behave exactly as before). See [`../AGENTS.md`](../AGENTS.md)
-for the skill-factory doctrine.
+for the skill factory doctrine.
 
 ## Per-repo vs central (the authority choice)
 

@@ -13,6 +13,31 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- **`skill-learner` — the factory's learning loop** (Tier 3). Turns a knowledge
+  gap discovered during expert work — a missing org convention, runbook, or rule
+  (e.g. how *this team* builds infra in Terraform/Azure) — into durable,
+  auditable skill knowledge. It detects the gap, decides where the knowledge
+  belongs (a `references/` file inside the role expert by default; a new skill
+  only on evidence per the promotion policy — role experts stay
+  language-agnostic), delegates authoring to `skill-creator`, and **proposes**
+  the result through the memory ledger as `pending` (never mutates a skill
+  silently). Captures org-specific conventions, not public facts the model
+  already knows. Ships three workflows (detect-gap, refine-existing, create-new),
+  governing rules, worked examples, routing trigger-evals, and a `/learn`
+  command.
+
+### Changed
+
+- **Merged the two plugins into one self-contained `praxis` plugin.** The
+  separate `skill-factory` plugin is removed; `plugin-praxis` now also carries
+  `skill-creator`, `skill-learner`, the `factory/` tooling, `/learn`, and
+  `/validate-skills` (via symlinks). A single `/plugin install praxis@praxis`
+  now brings the experts **and** the skill factory, so the learning loop
+  (`skill-learner` delegates to `skill-creator`) always has its dependency and
+  there is no second install to remember. Updates `marketplace.json`, the plugin
+  manifest, AGENTS.md, README, USECASES, and the docs site. Bumps the `praxis`
+  plugin to `1.6.0`.
+
 - **Harness mode (phases 3, 5–8)** — completes the agent-harness layer on top of
   phase 1. Adds **durable spec artifacts** (`/new-feature`, in harness mode, now
   writes `spec.md` + `plans/` + `tasks/` + `decisions/` + `reports/` under

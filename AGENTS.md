@@ -26,7 +26,8 @@ When deciding whether to split a workflow into its own top-level skill, read [.c
 
 ## Canonical entry points
 
-- **Create, improve, review, evaluate, or classify a skill** → use [.claude/skills/skill-creator/SKILL.md](.claude/skills/skill-creator/SKILL.md). This is the **pattern for creating new skills** and the only meta-skill in the repo.
+- **Create, improve, review, evaluate, or classify a skill** → use [.claude/skills/skill-creator/SKILL.md](.claude/skills/skill-creator/SKILL.md). This is the **pattern for creating new skills** — the primary meta-skill in the repo.
+- **Learn from a gap discovered during work** (an expert lacks an org convention, runbook, or rule — e.g. how *this team* builds infra in Terraform/Azure) → use [.claude/skills/skill-learner/SKILL.md](.claude/skills/skill-learner/SKILL.md), or `/learn`. It detects the gap, decides where the knowledge belongs (a reference inside the role expert by default; a new skill only on evidence), delegates the authoring to `skill-creator`, and **proposes** the result through the memory ledger as `pending` — it never mutates a skill silently. Captures org-specific conventions, not public facts the model already knows.
 - **Run a guided interview to capture an objective** → use [.claude/skills/skill-creator/workflows/interview.md](.claude/skills/skill-creator/workflows/interview.md).
 
 Skills are **Claude Code native**: each lives at `.claude/skills/<name>/SKILL.md` and Claude Code discovers it automatically from its frontmatter (no `command.md`, no installers). Invoke a skill by describing the task or by typing `/<name>`.
@@ -102,12 +103,12 @@ advance a workflow gate on a pending decision.
 ```
 praxis/
 ├─ AGENTS.md, CLAUDE.md, README.md, SKILLS.md
-├─ .claude-plugin/     # marketplace.json (lists the praxis + skill-factory plugins)
-├─ plugin-praxis/      # plugin shell: symlinks to the 11 experts + their commands
-├─ plugin-skill-factory/ # plugin shell: symlinks to skill-creator + factory + /validate-skills
+├─ .claude-plugin/     # marketplace.json (lists the single praxis plugin)
+├─ plugin-praxis/      # plugin shell: symlinks to every expert + skill-creator + skill-learner + memory + factory + their commands
 ├─ .claude/            # the real files (source of truth; used when this repo is the workspace)
 │  ├─ skills/          # factory-owned Claude Code skills (discovered automatically)
 │  │  ├─ skill-creator/   # the meta-skill — the pattern for creating new skills
+│  │  ├─ skill-learner/    # the learning loop — turns discovered gaps into skills
 │  │  ├─ business-analyst/   product-owner/   software-architect/
 │  │  ├─ developer/          qa-engineer/     devops-engineer/
 │  │  ├─ security-engineer/  cybersecurity-architect/
@@ -134,15 +135,14 @@ The `cursor/`, `codex/`, and `intellij/` integrations are **generated** — neve
 
 Skills are **Claude Code native**. Any skill under `.claude/skills/<name>/` is discovered automatically when this repo is open as the workspace — no install step.
 
-To load everything into a **different** project, the repo is a Claude Code **plugin marketplace** ([.claude-plugin/marketplace.json](.claude-plugin/marketplace.json)) with two plugins. From inside the target project:
+To load everything into a **different** project, the repo is a Claude Code **plugin marketplace** ([.claude-plugin/marketplace.json](.claude-plugin/marketplace.json)) with a **single, self-contained plugin**. From inside the target project:
 
 ```text
 /plugin marketplace add marcrabadan/praxis
-/plugin install praxis@praxis          # the twelve SDLC experts + /new-feature
-/plugin install skill-factory@praxis   # optional: author your own skills
+/plugin install praxis@praxis          # everything: the SDLC experts + /new-feature + the skill factory (skill-creator, skill-learner / /learn, /validate-skills) + memory
 ```
 
-Each plugin lives in a thin shell dir (`plugin-praxis/`, `plugin-skill-factory/`) made of **symlinks** into `.claude/`; the plugin cache dereferences them at install time, so the real files stay in one place. `praxis` is fully self-contained; `skill-factory` carries the `factory/` tooling via a symlink. Plugin commands are namespaced (`/praxis:<command>`, `/skill-factory:<command>`).
+One install brings the whole toolkit — there is no separate factory plugin to remember, so the learning loop (`skill-learner`, which delegates to `skill-creator`) always has what it needs. The plugin lives in a thin shell dir (`plugin-praxis/`) made of **symlinks** into `.claude/` (including a top-level `factory` symlink so the meta-skills resolve their doctrine); the plugin cache dereferences them at install time, so the real files stay in one place. Plugin commands are namespaced (`/praxis:<command>`).
 
 For a single skill without the plugin, copy its folder into the target's `.claude/skills/` (or `~/.claude/skills/` for user scope), or run `make export SKILL=<name> TO=<dir>`. The factory itself (`.claude/factory/ai/`, `templates/`, `validators/`) is needed only when authoring skills with `praxis` open as the workspace.
 

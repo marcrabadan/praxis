@@ -21,6 +21,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `qa-engineer` | 1.0.0 | 2 | Acts as a QA Engineer / Tester SDLC expert to design test strategies, write test cases, author bug reports, and assess release readiness. Applies the test auto… |
 | `security-engineer` | 1.0.0 | 2 | Acts as a Security Engineer / Application Security (AppSec) SDLC expert covering threat modeling (STRIDE), secure coding against the OWASP Top 10 and ASVS, SAS… |
 | `skill-creator` | 1.0.0 | 5 | Create new Claude Code skills from scratch, improve or review existing skills, validate skill structure, classify a skill into the right tier, and run guided i… |
+| `skill-learner` | 1.0.0 | 3 | Detects when a praxis SDLC expert hits a knowledge gap mid-task — missing team conventions, runbooks, or domain rules it should have applied — and turns it int… |
 | `software-architect` | 1.0.0 | 2 | Adopts the Software Architect persona to reason about system design, architectural trade-offs, non-functional requirements, architectural decision records (ADR… |
 | `ux-ui-engineer` | 1.0.0 | 2 | Acts as a UX/UI Engineer SDLC expert bridging design and code — design systems and component libraries, design tokens and theming, visual design (type scale, c… |
 
@@ -37,6 +38,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `/docs` | Generate documentation — a functional manual (for users/stakeholders) and/or a technical manual (for engineers). Just describe what you need, or type /docs wit… |
 | `/frontend-architect` | Consult the Frontend Architect — framework/meta-framework choice, rendering strategy (CSR/SSR/SSG/ISR/RSC), state and data architecture, routing and code-split… |
 | `/frontend` | Consult the Frontend Engineer — building and composing components, client/server state, data fetching, forms, styling, frontend TypeScript, re-render/performan… |
+| `/learn` | Turn a knowledge gap discovered during work into durable skill knowledge — capture an org convention, runbook, or rule, or refine an existing skill, by routing… |
 | `/memory` | Manage the project's working-memory ledger — record plans/decisions/implementations, review what's pending, accept or reject entries, and roll back a snapshott… |
 | `/ml` | Consult the ML/AI Engineer — problem framing & metric selection, ML-ready features (leakage, train/serve skew, feature stores), training & model selection, rig… |
 | `/new-feature` | Run a feature idea or PRD through the full SDLC, consulting each expert in order — Business Analyst, Product Owner, Software Architect, Developer, QA Engineer,… |
