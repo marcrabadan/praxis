@@ -88,6 +88,16 @@ Each consuming repo declares its choice in `.praxis/config.json` via
 `local`.** Pick `local` first; move to `central` only when shared cross-repo
 memory actually pays for the extra repo to maintain.
 
+**Multiple repos for one product → one project, central mode.** A product split
+across several repos (e.g. two backend + two frontend) is **one** project whose
+specs, decisions, and memory live centrally in the harness, with each repo
+carrying the same `projectId` and `mode: central`. A worked example —
+the fictional **Helios** product across four repos — lives at
+[`../projects/helios/`](../projects/helios/PROJECT.md) with copy-ready configs and
+a walkthrough at [`../examples/multi-repo/`](../examples/multi-repo/README.md).
+Split into multiple projects only when the repos are genuinely independent
+products.
+
 ## Opting a repo in
 
 Add a `.praxis/config.json` to the consuming repo (see
