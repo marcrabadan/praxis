@@ -1,22 +1,32 @@
 {
   "id": "feature-development",
   "name": "Feature development",
-  "steps": ["spec", "plan", "tasks", "verify"],
+  "steps": ["discovery", "research", "spec", "plan", "tasks", "build", "verify", "release"],
   "gates": {
+    "research": ["discovery"],
+    "spec": ["approved-discovery"],
     "plan": ["approved-spec"],
     "tasks": ["approved-plan"],
-    "verify": ["tasks", "test-evidence"]
+    "build": ["tasks"],
+    "verify": ["build", "test-evidence"],
+    "release": ["verify-passed", "release-approved"]
   },
   "artifacts": {
+    "discovery": ["discovery/discovery-report.md"],
+    "research": ["research/research-report.md", "research/evidence-log.md", "research/alternatives.md"],
     "spec": ["spec.md"],
     "plan": ["plans/implementation-plan.md"],
     "tasks": ["tasks/tasks.md"],
-    "verify": ["reports/verify/report.md"]
+    "verify": ["reports/verify/report.md"],
+    "release": ["reports/release/release-notes.md"]
   },
   "stopConditions": [
+    "the problem, target user, or desired outcome is unclear after discovery",
+    "specification is attempted before research findings are recorded (research must precede spec)",
     "spec scope or target user is ambiguous",
     "the plan would commit to an architecture the project has not used",
-    "a gate's required decision is still pending (pending is not approved)"
+    "a gate's required decision is still pending (pending is not approved)",
+    "release is attempted before the verify report shows acceptance criteria are met"
   ],
   "validation": {
     "verify": "make validate-harness"

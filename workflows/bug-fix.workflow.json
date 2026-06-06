@@ -1,0 +1,27 @@
+{
+  "id": "bug-fix",
+  "name": "Bug fix",
+  "steps": ["triage", "reproduce", "diagnose", "fix", "verify"],
+  "gates": {
+    "reproduce": ["triage"],
+    "diagnose": ["reproduced"],
+    "fix": ["root-cause-accepted"],
+    "verify": ["fix", "regression-test"]
+  },
+  "artifacts": {
+    "triage": ["bug-report.md"],
+    "diagnose": ["root-cause.md"],
+    "fix": ["plans/fix-plan.md"],
+    "verify": ["reports/verify/report.md"]
+  },
+  "stopConditions": [
+    "the bug cannot be reproduced and the report lacks enough detail to reproduce it",
+    "the root cause is a guess rather than an evidenced diagnosis",
+    "the fix would change product behavior beyond restoring the expected behavior",
+    "the bug exposes a security issue and the disclosure or severity standard is undeclared",
+    "a gate's required decision is still pending (pending is not approved)"
+  ],
+  "validation": {
+    "verify": "make validate-harness"
+  }
+}

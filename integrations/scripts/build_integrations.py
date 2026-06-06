@@ -77,7 +77,7 @@ COMMAND_PERSONA: dict[str, str] = {
 }
 
 # multi-persona workflows (no single owning skill)
-ORCHESTRATION = ("new-feature", "review-changes")
+ORCHESTRATION = ("new-feature", "fix-bug", "refine", "review-changes")
 
 # factory-internal, repo-specific — not portable to consuming projects
 SKIP_COMMANDS = {"validate-skills"}
@@ -169,6 +169,21 @@ def _port_command(name: str, *, tool: str, persona_ref, personas_label: str) -> 
         body = body.replace(
             "Orchestrate the SDLC expert skills",
             "Orchestrate the SDLC expert personas",
+        )
+        # subagents are Claude Code-only; single-thread tools run the phases
+        # inline. Neutralize the generic "own subagent" phrasing used by the
+        # lighter orchestrators (/fix-bug, /refine) so they port cleanly.
+        body = body.replace(
+            "Run each phase in its **own subagent** (`Agent`, "
+            "`subagent_type: general-purpose`):",
+            "Work through the phases in order in **one conversation** "
+            "(no subagents):",
+        )
+        body = body.replace(
+            "Run each phase in its **own subagent** (`Agent`, "
+            "`subagent_type: general-purpose`)",
+            "Work through the phases in order in **one conversation** "
+            "(no subagents)",
         )
         # Phase 0.5 gathers the shared context on a cheap-model subagent in
         # Claude Code; single-thread tools have no subagents, so rewrite it as

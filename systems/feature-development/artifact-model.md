@@ -6,7 +6,19 @@ It answers: which artifacts exist, which are required, which status values are
 allowed, and which artifact authorizes the next step.
 
 A feature plan is **not** the final source of truth. It becomes a set of durable,
-typed artifacts that future agents can load selectively.
+typed artifacts that future agents can load selectively. The spec is the single
+source of truth once written; discovery and research are what earn it.
+
+## The full lifecycle
+
+```
+Idea → Discovery → Research → Spec → Plan → Tasks → Build → Verify → Release
+```
+
+No spec is written before research; no research happens before discovery frames
+the problem; no build happens before an accepted spec and plan. This encodes the
+operating philosophy: understand → research → specify → plan → build → validate →
+release.
 
 ## Where artifacts live
 
@@ -14,6 +26,12 @@ In harness mode, a feature's durable artifacts live under the owning project:
 
 ```
 projects/<project>/specs/<spec>/
+  discovery/
+    discovery-report.md         # understand: problem, stakeholders, assumptions
+  research/
+    research-report.md          # investigate: findings, recommendation
+    evidence-log.md             # one row per source backing a finding
+    alternatives.md             # options weighed; the chosen direction
   spec.md                       # what & why (frontmatter: id, title, project, status)
   decisions/                    # typed decisions (mini-ADRs) for this spec
   plans/
@@ -22,6 +40,7 @@ projects/<project>/specs/<spec>/
     tasks.md                    # the checklist the build follows
   reports/
     verify/report.md            # evidence the work meets the spec
+    release/release-notes.md    # what shipped; acceptance met; rollback
 ```
 
 A scaffold lives at
@@ -30,15 +49,27 @@ copy it to `projects/<project>/specs/<spec>/`.
 
 ## The steps and what authorizes the next one
 
-The workflow is `spec → plan → tasks → verify`. Each step is **gated** by an
-artifact from the previous step reaching an authorizing status:
+The workflow is `discovery → research → spec → plan → tasks → build → verify →
+release`. Each step is **gated** by an artifact from a previous step reaching an
+authorizing status:
 
-| Step | Produces | Gate to enter (from the manifest) |
-|------|----------|-----------------------------------|
-| `spec` | `spec.md` | — (entry point) |
-| `plan` | `plans/implementation-plan.md` | `approved-spec` — `spec.md` status is `accepted` |
-| `tasks` | `tasks/tasks.md` | `approved-plan` — the plan decision is `accepted` |
-| `verify` | `reports/verify/report.md` | `tasks` exist **and** `test-evidence` is present |
+| Step | Produces | Gate to enter | HITL gate |
+|------|----------|---------------|-----------|
+| `discovery` | `discovery/discovery-report.md` | — (entry point) | — |
+| `research` | `research/*` | discovery report exists | — |
+| `spec` | `spec.md` | `approved-discovery` — discovery + research accepted | **Gate 1** |
+| `plan` | `plans/implementation-plan.md` | `approved-spec` — `spec.md` status is `accepted` | **Gate 2** |
+| `tasks` | `tasks/tasks.md` | `approved-plan` — the plan decision is `accepted` | (Gate 3 if architecture) |
+| `build` | code (in the product repo) | `tasks` exist | — |
+| `verify` | `reports/verify/report.md` | build done **and** `test-evidence` present | — |
+| `release` | `reports/release/release-notes.md` | `verify-passed` **and** `release-approved` | **Gate 4** |
+
+The four HITL gates mirror the operating model: **Gate 1** (Discovery & Research
+approval) opens the spec; **Gate 2** (Specification approval) opens planning;
+**Gate 3** (Architecture approval) is required only when a structurally
+significant decision exists — it does not block every feature; **Gate 4**
+(Release approval) opens release. At each gate provide Recommendation, Evidence,
+Risks, Alternatives, and pause for `ACCEPT | REFINE | REJECT`.
 
 **Pending is not approval.** A `spec.md` left at `draft`, or a plan recorded as a
 `pending` ledger decision, does **not** open the next gate. Advance only after the
@@ -55,15 +86,27 @@ and [`../../rules/stop-conditions.md`](../../rules/stop-conditions.md)).
 Never invent a status. If the lifecycle needs another state, change the schema
 and this doc together.
 
+## Traceability
+
+Every artifact carries a typed id (`DISC-`, `RES-`, `SPEC-`, `ADR-`, `TASK-`,
+`VER-`, `REL-`) and links to its `source:` and `traces:` neighbours, so the chain
+`IDEA → DISC → RES → SPEC → … → REL` is navigable both ways. See
+[`../../rules/traceability.md`](../../rules/traceability.md).
+
 ## Required vs optional
 
+- **Required to start:** `discovery/discovery-report.md`.
+- **Required before a spec:** research findings recorded (research precedes spec).
 - **Required to call a spec real:** `spec.md`.
 - **Required before building:** `plans/implementation-plan.md` (once the spec is
   accepted).
 - **Required before verify:** `tasks/tasks.md` + test evidence.
-- **Optional but encouraged:** `decisions/` (one file per significant call) and
-  `reports/` (verify output, run logs).
+- **Required before release:** a verify report showing acceptance criteria met.
+- **Optional but encouraged:** `decisions/` (one file per significant call).
 
-Keep it light. Do not force a full artifact chain on a one-line change — a tiny
-fix may need only a spec note or nothing at all. The chain earns its keep on
-features with real ambiguity or risk.
+Keep it light. Do not force the full chain on a one-line change — a tiny tweak
+may be a `refinement` or a `bug-fix` instead, or need only a spec note. The chain
+earns its keep on features with real ambiguity or risk. For corrective or
+quality-only work, use the lighter
+[`../bug-fix/artifact-model.md`](../bug-fix/artifact-model.md) and
+[`../refinement/artifact-model.md`](../refinement/artifact-model.md) lifecycles.
