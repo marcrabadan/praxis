@@ -3,6 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" id="theme-color-meta" content="#0d0f14" />
+
+  <!-- Theme bootstrap: set data-theme before paint to avoid a flash of the wrong theme -->
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('praxis-theme');
+        var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        var theme = stored || (prefersLight ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+        var meta = document.getElementById('theme-color-meta');
+        if (meta) { meta.setAttribute('content', theme === 'light' ? '#ffffff' : '#0d0f14'); }
+      } catch (e) { /* keep the dark default from the markup */ }
+    })();
+  </script>
+
   <title>praxis — Claude Code skills for the whole software delivery lifecycle</title>
   <meta name="description" content="praxis is a skill factory for Claude Code: 13 SDLC expert skills, meta-skills to create, refine and learn new skills (skill-creator + skill-learner / /learn), and a versioned memory ledger. Install it as a plugin in any project." />
 
@@ -29,6 +47,37 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Structured data for richer search/social discovery -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://marcrabadan.github.io/praxis/#website",
+        "url": "https://marcrabadan.github.io/praxis/",
+        "name": "praxis",
+        "description": "A skill factory for Claude Code: 13 SDLC expert skills, meta-skills to author and refine skills, and a versioned memory ledger.",
+        "inLanguage": "en"
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "https://marcrabadan.github.io/praxis/#software",
+        "name": "praxis",
+        "description": "Capture how your team works once, in a format Claude Code reads and applies consistently: thirteen software-lifecycle experts, a meta-skill to author your own, and a versioned memory ledger of every decision.",
+        "url": "https://marcrabadan.github.io/praxis/",
+        "codeRepository": "https://github.com/marcrabadan/praxis",
+        "programmingLanguage": "Markdown",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "isAccessibleForFree": true,
+        "keywords": "Claude Code, AI agents, SDLC, skills, plugin, software delivery lifecycle, Cursor, Codex"
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -54,6 +103,10 @@
           GitHub
         </a>
       </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false" title="Toggle light / dark theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
       <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
         <span></span><span></span><span></span>
       </button>

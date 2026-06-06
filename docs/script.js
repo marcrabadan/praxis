@@ -2,6 +2,44 @@
 (function () {
   'use strict';
 
+  /* ---------- Theme toggle ---------- */
+  var root = document.documentElement;
+  var themeBtn = document.querySelector('.theme-toggle');
+  var themeMeta = document.getElementById('theme-color-meta');
+
+  function syncThemeButton(theme) {
+    if (!themeBtn) { return; }
+    var goingTo = theme === 'light' ? 'dark' : 'light';
+    themeBtn.setAttribute('aria-label', 'Switch to ' + goingTo + ' theme');
+    themeBtn.setAttribute('aria-pressed', String(theme === 'light'));
+  }
+
+  function applyTheme(theme) {
+    root.setAttribute('data-theme', theme);
+    if (themeMeta) { themeMeta.setAttribute('content', theme === 'light' ? '#ffffff' : '#0d0f14'); }
+    syncThemeButton(theme);
+  }
+
+  syncThemeButton(root.getAttribute('data-theme') || 'dark');
+
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      applyTheme(next);
+      try { localStorage.setItem('praxis-theme', next); } catch (e) { /* storage may be blocked */ }
+    });
+  }
+
+  /* Follow the OS preference unless the visitor has made an explicit choice. */
+  var mql = window.matchMedia('(prefers-color-scheme: light)');
+  var onSchemeChange = function (e) {
+    var hasChoice;
+    try { hasChoice = !!localStorage.getItem('praxis-theme'); } catch (err) { hasChoice = false; }
+    if (!hasChoice) { applyTheme(e.matches ? 'light' : 'dark'); }
+  };
+  if (mql.addEventListener) { mql.addEventListener('change', onSchemeChange); }
+  else if (mql.addListener) { mql.addListener(onSchemeChange); }
+
   /* ---------- Mobile menu ---------- */
   var toggle = document.querySelector('.nav-toggle');
   var menu = document.getElementById('mobile-menu');
@@ -82,5 +120,41 @@
       el.style.transition = 'opacity .5s ease, transform .5s ease';
       io.observe(el);
     });
+  }
+
+  /* ---------- Active-section nav (scrollspy) ---------- */
+  if ('IntersectionObserver' in window) {
+    /* Map each section id to every nav link that targets it (desktop + mobile). */
+    var linkMap = {};
+    document.querySelectorAll('.nav-links a[href^="#"], .mobile-menu a[href^="#"]').forEach(function (a) {
+      var id = a.getAttribute('href').slice(1);
+      if (!id) { return; }
+      (linkMap[id] = linkMap[id] || []).push(a);
+    });
+
+    var sections = Object.keys(linkMap)
+      .map(function (id) { return document.getElementById(id); })
+      .filter(Boolean);
+
+    var current = null;
+    function setCurrent(id) {
+      if (id === current) { return; }
+      current = id;
+      Object.keys(linkMap).forEach(function (key) {
+        var on = key === id;
+        linkMap[key].forEach(function (a) {
+          if (on) { a.setAttribute('aria-current', 'true'); }
+          else { a.removeAttribute('aria-current'); }
+        });
+      });
+    }
+
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) { setCurrent(entry.target.id); }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+
+    sections.forEach(function (s) { spy.observe(s); });
   }
 })();
