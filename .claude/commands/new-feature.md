@@ -81,7 +81,7 @@ Rules for subagents:
 
 ## Harness mode — durable spec artifacts (conditional)
 
-If the repo is in **harness mode** — a `.praxis/config.json` exists and resolves a `projectId` — then *in addition* to the `docs/` files above, write the feature's durable, typed artifacts under the owning project, following the `feature-development` workflow (`spec → plan → tasks → verify`). The doctrine is in the harness at `systems/feature-development/artifact-model.md`; the gates are in `workflows/feature-development.workflow.json` (resolve the harness via the config's `harnessRoot`).
+If the repo is in **harness mode** — a `.praxis/config.json` exists and resolves a `projectId` — then *in addition* to the `docs/` files above, write the feature's durable, typed artifacts under the owning project, following the `feature-development` workflow (`discovery → research → spec → plan → tasks → build → verify → release`). The doctrine is in the harness at `systems/feature-development/artifact-model.md`; the gates are in `workflows/feature-development.workflow.json` (resolve the harness via the config's `harnessRoot`).
 
 ```
 projects/<projectId>/specs/<spec-slug>/
