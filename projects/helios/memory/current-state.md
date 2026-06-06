@@ -11,6 +11,9 @@ after `PROJECT.md`. Keep it short and current.
 - **`SPEC-live-tracking`** is the active spec (status: accepted) — build underway
   across all four repos. Team Tracking owns api/workers/web; Team Ops owns the
   console dashboard. See `specs/live-tracking/tasks/tasks.md`.
+- Also in flight: `BUG-sse-reconnect-stale-marker` (fix under review) and
+  `REF-web-map-perf` (in progress). Recently closed:
+  `BUG-coupon-total-mismatch`, `REF-extract-pricing-calculator`.
 
 ## Recently landed
 
