@@ -42,6 +42,11 @@ Project-specific authority that overrides general defaults (authority order:
   than one repo gets a single spec under `specs/`, with tasks grouped by repo —
   not a separate plan per repo.
 - **Auth changes require a security review** before merge (any repo).
+- **Gate approvers (who can ACCEPT).** Spec gate → product owner; Architecture
+  gate → tech lead; Release gate → tech lead + product owner. The agent presents
+  each gate; only the named owner accepts it. **Pending is not approval.** (See
+  [`../../docs/teamwork.md`](../../docs/teamwork.md) for how concurrent teams
+  coordinate.)
 
 ## Current workflow
 

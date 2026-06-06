@@ -72,6 +72,12 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
   navigable in both directions (advisory validator: `make validate-traceability`).
 - [projects/](projects/projects-index.md) — per-project memory (current state,
   open questions, decisions) and `specs/`; copy `projects/_template/` to start one.
+  For a product split across repos, use one **central-mode** project (worked
+  example: [projects/helios/](projects/helios/PROJECT.md) +
+  [examples/multi-repo/](examples/multi-repo/README.md)). Collaborating with 1→many
+  people or several teams: [docs/teamwork.md](docs/teamwork.md) — the spec is the
+  single source of truth, the spec folder is the unit of parallel work, ids are
+  collision-safe, and SPEC/REQ are never duplicated across repos.
 - [systems/feature-development/](systems/feature-development/artifact-model.md) —
   the lifecycle doctrine + artifact model behind `/new-feature` in harness mode.
 - [systems/bug-fix/](systems/bug-fix/artifact-model.md) and

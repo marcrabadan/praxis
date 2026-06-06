@@ -96,7 +96,8 @@ the fictional **Helios** product across four repos — lives at
 [`../projects/helios/`](../projects/helios/PROJECT.md) with copy-ready configs and
 a walkthrough at [`../examples/multi-repo/`](../examples/multi-repo/README.md).
 Split into multiple projects only when the repos are genuinely independent
-products.
+products. For collaborating with **1→many people or several teams** without mixing
+or duplicating SPEC/REQ, see [`teamwork.md`](teamwork.md).
 
 ## Opting a repo in
 

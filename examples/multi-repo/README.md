@@ -94,6 +94,36 @@ Because memory is central, a decision recorded while working `helios-api` (say,
 open `helios-web`. The API contract stays canonical, so frontend and backend
 agents agree on shapes.
 
+## Syncing across machines & team (option A)
+
+Keep it simple: **don't version the `workspace/` parent.** Each of the five repos
+(the harness + the four products) is its own git repo, cloned side by side.
+
+- **Standardize the layout** so the relative `harnessRoot: ../praxis` resolves the
+  same for everyone. (Don't put absolute paths in the committed config — they
+  differ per machine.)
+- **The harness `praxis` is the shared repo.** It carries the central project
+  memory (`projects/helios/`: specs, decisions, current-state). Syncing the team
+  = pushing/pulling `praxis`. Branch and PR it like any shared repo.
+- **Don't nest git repos.** A parent that is itself a git repo and merely contains
+  child `.git` repos causes "embedded repository" problems. Option A avoids this
+  by leaving the parent unversioned. (If you ever need one-clone reproducibility,
+  switch to submodules — not needed here.)
+- `runtime/` (last active project/repo/spec) is **git-ignored** — per-machine,
+  never synced. Durable memory is in `projects/`, which **is** committed.
+
+For working **concurrently** — several people on one repo, or several teams across
+repos, without mixing or duplicating SPEC/REQ — see
+[**Working as a team**](../../docs/teamwork.md). The essentials:
+
+- **One canonical spec.** A cross-repo feature is **one** spec under
+  `projects/helios/specs/<slug>/`; tasks reference `REQ-` ids, never copy them.
+- **The spec folder is the unit of parallelism** — one spec, one owner at a time;
+  different specs = different folders = no conflict.
+- **`activeSpec` stays per-session** (in git-ignored runtime), so people sharing a
+  repo don't churn the committed config:
+  `python tools/runtime.py set --project helios --repo helios-api --spec <slug>`.
+
 ## Why one project, not four
 
 Four projects would fragment the memory the repos must share — the API contract,
