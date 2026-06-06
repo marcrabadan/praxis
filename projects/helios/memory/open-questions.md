@@ -7,8 +7,8 @@ proceeding on the work it blocks. See
 
 | # | Question | Blocks | Raised | Status |
 |---|----------|--------|--------|--------|
-| 1 | Do `helios-web` and `helios-console` share one component library, or two? | Any cross-frontend UI work | 2026-06-06 | open |
-| 2 | Is real-time tracking delivered over WebSocket or SSE? | Tracking feature spec | 2026-06-06 | open |
+| 1 | Do `helios-web` and `helios-console` share one component library, or two? | `TASK-008` shared-UI parts | 2026-06-06 | open |
+| 2 | Is real-time tracking delivered over WebSocket or SSE? | Tracking feature spec | 2026-06-06 | resolved → SSE (`specs/live-tracking/decisions/ADR-001-realtime-transport.md`) |
 
 ## Conventions
 

@@ -8,16 +8,19 @@ after `PROJECT.md`. Keep it short and current.
 
 ## Now
 
-- Standing up the harness for the four repos; no feature spec in flight yet.
+- **`SPEC-live-tracking`** is the active spec (status: accepted) — build underway
+  across all four repos. Team Tracking owns api/workers/web; Team Ops owns the
+  console dashboard. See `specs/live-tracking/tasks/tasks.md`.
 
 ## Recently landed
 
+- 2026-06-06 — Accepted `SPEC-live-tracking` (Gate 1 + Gate 2 passed).
 - 2026-06-06 — Adopted central-mode harness across `helios-api`, `helios-workers`,
   `helios-web`, `helios-console`.
 
 ## Active spec
 
-- _none_
+- `specs/live-tracking/` — Live delivery tracking (accepted, building)
 
 ## Known constraints
 
