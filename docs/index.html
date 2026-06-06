@@ -176,17 +176,17 @@
         <p class="section-sub">It's not a product repo. It's the instructions Claude uses <em>while working on</em> your product repos.</p>
         <div class="cards-3">
           <article class="card">
-            <div class="card-icon">🏭</div>
+            <div class="card-icon" aria-hidden="true">🏭</div>
             <h3>A skill factory</h3>
             <p>The <code>skill-creator</code> meta-skill <em>is</em> the pattern for creating skills — and <code>skill-learner</code> turns gaps an expert hits mid-task into new skills. Scaffold, tier, refine, learn, validate.</p>
           </article>
           <article class="card">
-            <div class="card-icon">🧠</div>
+            <div class="card-icon" aria-hidden="true">🧠</div>
             <h3>Memory that lasts</h3>
             <p>The <code>memory ledger</code> records plans, decisions and implementations with a closed status set — <code>pending → accepted | rejected | rolled-back</code> — versioned in git.</p>
           </article>
           <article class="card">
-            <div class="card-icon">🔌</div>
+            <div class="card-icon" aria-hidden="true">🔌</div>
             <h3>Where you already work</h3>
             <p>Native to Claude Code, and generated for Cursor, IntelliJ and OpenAI Codex from a single source so they never drift.</p>
           </article>
@@ -869,6 +869,14 @@ cp integrations/codex/prompts/*.md ~/.codex/prompts/</code></pre>
       <p>Made with vanilla HTML, CSS and JS — no build, no dependencies.</p>
     </div>
   </footer>
+
+  <!-- Back to top — appears after scrolling past the hero -->
+  <button class="to-top" type="button" aria-label="Back to top" title="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+  </button>
+
+  <!-- Polite live region for transient status (e.g. copy confirmation) -->
+  <div id="status-region" class="sr-only" role="status" aria-live="polite"></div>
 
   <script src="script.js" defer></script>
 </body>

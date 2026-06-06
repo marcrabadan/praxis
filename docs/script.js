@@ -86,6 +86,9 @@
   });
 
   /* ---------- Copy-to-clipboard ---------- */
+  var statusRegion = document.getElementById('status-region');
+  function announce(msg) { if (statusRegion) { statusRegion.textContent = msg; } }
+
   document.querySelectorAll('.copy-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var code = btn.parentElement.querySelector('pre');
@@ -94,9 +97,11 @@
         var prev = btn.textContent;
         btn.textContent = 'Copied!';
         btn.classList.add('copied');
+        announce('Copied to clipboard');
         setTimeout(function () { btn.textContent = prev; btn.classList.remove('copied'); }, 1800);
       }).catch(function () {
         btn.textContent = 'Error';
+        announce('Copy failed');
         setTimeout(function () { btn.textContent = 'Copy'; }, 1800);
       });
     });
@@ -156,5 +161,28 @@
     }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
 
     sections.forEach(function (s) { spy.observe(s); });
+  }
+
+  /* ---------- Back to top ---------- */
+  var toTop = document.querySelector('.to-top');
+  if (toTop) {
+    var ticking = false;
+    function updateToTop() {
+      ticking = false;
+      var show = window.scrollY > window.innerHeight * 0.6;
+      toTop.classList.toggle('visible', show);
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { window.requestAnimationFrame(updateToTop); ticking = true; }
+    }, { passive: true });
+    updateToTop();
+
+    toTop.addEventListener('click', function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+      /* Return keyboard focus to the top of the document for a sensible tab order. */
+      var brand = document.querySelector('.brand');
+      if (brand) { brand.setAttribute('tabindex', '-1'); brand.focus({ preventScroll: true }); }
+    });
   }
 })();
