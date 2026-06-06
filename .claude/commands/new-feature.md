@@ -3,7 +3,7 @@ description: Run a feature idea or PRD through the full SDLC, consulting each ex
 argument-hint: <the feature idea, PRD, or ticket>
 ---
 
-Orchestrate the SDLC expert skills over the feature below, in lifecycle order — the **core six** (Business Analyst → Product Owner → Software Architect → Developer → QA → DevOps) plus any specialist experts the feature warrants (see *Domain experts* below). Each phase **builds on the output of the previous one**: every expert receives the artifacts produced before it.
+Orchestrate the SDLC expert skills over the feature below, following the full lifecycle — **Discovery → Research → Spec → Plan → Tasks → Build → Verify → Release** — driven by the **core six** (Business Analyst → Product Owner → Software Architect → Developer → QA → DevOps) plus any specialist experts the feature warrants (see *Domain experts* below). Each phase **builds on the output of the previous one**: every expert receives the artifacts produced before it. **Understand before specifying, research before specifying, specify before building, validate before releasing.**
 
 The feature to work through:
 
@@ -17,16 +17,29 @@ Handle this yourself in the main conversation (subagents cannot talk to the user
 
 If the feature touches an existing codebase or a long PRD, **gather the shared context once on a cheap model** instead of making every expert re-discover it. Dispatch a single `Agent` (`subagent_type: Explore`, `model: haiku`) to find the relevant files/conventions and condense the PRD into a **short factual digest** — paths, current behavior, key constraints, no opinions. Pass that digest into every later phase alongside the prior artifacts. This is retrieval, not reasoning, so the cheap tier costs little and the experts stop paying to re-read the same material. Skip for greenfield or trivial features.
 
+## Phase D — Discovery (understand before proposing)
+
+Before any specification, **frame the problem**. Dispatch the `business-analyst` to produce a **Discovery Report**: problem statement (in the user's terms, not a solution), business goals, stakeholders, constraints, assumptions, risks, and open questions. No solutions yet. In harness mode this is `discovery/discovery-report.md`.
+
+## Phase R — Research (research before specifying)
+
+**Research must precede the specification.** Dispatch `deep-research` (and any domain expert the questions need) to investigate the open questions from discovery and produce a **Research Report** + **Evidence Log** + **Alternatives Analysis**. Apply **Reuse > Extend > Build**: surface what already exists in this codebase, the org, the ecosystem, and the praxis skills before proposing something new. In harness mode these are `research/research-report.md`, `research/evidence-log.md`, `research/alternatives.md`.
+
+### Gate 1 — Discovery & Research approval (HITL)
+
+Present the consolidated discovery + research to the user with **Recommendation, Evidence, Risks, Alternatives**, and request `ACCEPT | REFINE | REJECT`. **Do not write the spec until this is accepted** — research informs the spec, the spec is not guessed. Pending is not approval.
+
 ## Phases
 
 Each phase produces **one concise, structured artifact** that becomes the input to the phases after it and to the final summary.
 
-1. **Business Analyst** (`business-analyst`) — frame the problem and stakeholders; capture business/functional/non-functional requirements; write user stories (INVEST) with Gherkin acceptance criteria; flag ambiguities and open questions.
+1. **Business Analyst** (`business-analyst`) — building on the accepted Discovery + Research, turn understanding into the **specification**: capture business/functional/non-functional requirements; write user stories (INVEST) with Gherkin acceptance criteria; resolve the discovery open questions or flag the ones that still block. This produces the `spec.md` in harness mode.
 2. **Product Owner** (`product-owner`) — slice into thin vertical increments, prioritize them (pick and justify a framework), define the sprint goal and the Definition of Ready/Done, and state the value/outcome being targeted.
 3. **Software Architect** (`software-architect`) — propose the design approach, record the key decisions as short ADR notes, call out the driving NFRs, the main trade-offs, and the top risks.
 4. **Developer** (`developer`) — turn the top-priority slice into a concrete implementation plan: components/files to touch, the test approach, and an ordered task list. Note assumptions; do not write production code unless asked.
 5. **QA Engineer** (`qa-engineer`) — derive a test strategy and the highest-value test cases (positive, negative, boundary) from the acceptance criteria; identify the riskiest areas and regression scope.
 6. **DevOps Engineer** (`devops-engineer`) — outline delivery and rollout (pipeline gates, deployment strategy, rollback), the observability/SLOs to add, and run the production-readiness checklist.
+7. **Release** (`devops-engineer` + `product-owner`) — only after the work is built and verified: confirm the acceptance criteria are met against the verify report, write the **release notes** (what shipped, residual risks, rollback), and present **Gate 4 (Release approval)** for `ACCEPT | REFINE | REJECT`. In a planning-only run, produce the release/readiness plan rather than releasing. In harness mode this is `reports/release/release-notes.md`.
 
 ### Domain experts (conditional)
 
@@ -68,18 +81,24 @@ Rules for subagents:
 
 ## Harness mode — durable spec artifacts (conditional)
 
-If the repo is in **harness mode** — a `.praxis/config.json` exists and resolves a `projectId` — then *in addition* to the `docs/` files above, write the feature's durable, typed artifacts under the owning project, following the `feature-development` workflow (`spec → plan → tasks → verify`). The doctrine is in the harness at `systems/feature-development/artifact-model.md`; the gates are in `workflows/feature-development.workflow.json` (resolve the harness via the config's `harnessRoot`).
+If the repo is in **harness mode** — a `.praxis/config.json` exists and resolves a `projectId` — then *in addition* to the `docs/` files above, write the feature's durable, typed artifacts under the owning project, following the `feature-development` workflow (`discovery → research → spec → plan → tasks → build → verify → release`). The doctrine is in the harness at `systems/feature-development/artifact-model.md`; the gates are in `workflows/feature-development.workflow.json` (resolve the harness via the config's `harnessRoot`).
 
 ```
 projects/<projectId>/specs/<spec-slug>/
-  spec.md                      # BA + PO: problem, scope, requirements (frontmatter status: draft)
-  decisions/                   # one mini-ADR per significant call (architect/PO/QA/devops/security)
-  plans/implementation-plan.md # Developer: approach, files, ordered tasks
-  tasks/tasks.md               # the ordered checklist
-  reports/                     # verify evidence, once the work is built
+  discovery/discovery-report.md # Discovery: problem, stakeholders, assumptions, open questions
+  research/research-report.md   # Research: findings, recommendation (research precedes spec)
+  research/evidence-log.md      # one row per source
+  research/alternatives.md      # options weighed; chosen direction
+  spec.md                       # BA + PO: problem, scope, requirements (frontmatter status: draft)
+  decisions/                    # one mini-ADR per significant call (architect/PO/QA/devops/security)
+  plans/implementation-plan.md  # Developer: approach, files, ordered tasks
+  tasks/tasks.md                # the ordered checklist
+  reports/verify/report.md      # verify evidence, once the work is built
+  reports/release/release-notes.md # Release: what shipped, acceptance met, rollback (Gate 4)
 ```
 
-- Copy the harness's `projects/_template/specs/_template/` as the starting shape; set `spec.md` frontmatter `id` = the spec folder slug and `project` = the resolved `projectId`.
+- Copy the harness's `projects/_template/specs/_template/` as the starting shape; set `spec.md` frontmatter `id` = the spec folder slug and `project` = the resolved `projectId`. Assign typed ids and link `source:`/`traces:` per [`rules/traceability.md`](../../rules/traceability.md) so the chain `IDEA → DISC → RES → SPEC → … → REL` stays navigable.
+- **Discovery and Research come first.** Write `discovery/` then `research/` before `spec.md`, and hold **Gate 1** (Discovery & Research approval) before the spec is written. Research must precede the spec.
 - **Respect the gates.** A planning run *proposes*: leave `spec.md` at `status: draft` and the plan/decisions as `pending`. **Pending is not approval** — do not advance a gate on a pending artifact. The user accepts the spec (`status: accepted`) before the plan authorizes a build, and accepts the plan before tasks drive implementation.
 - The chat summary (next section) becomes a **pointer** to these artifacts, not the source of truth.
 - Tag the memory-ledger entries with the spec path so they are traceable to the spec.

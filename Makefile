@@ -4,9 +4,10 @@ VALIDATOR := .claude/factory/validators/validate_skill.py
 CATALOG := .claude/factory/scripts/build_catalog.py
 INTEGRATIONS := integrations/scripts/build_integrations.py
 HARNESS_VALIDATOR := tools/validate_harness.py
+TRACEABILITY_VALIDATOR := tools/validate_traceability.py
 SKILLS_DIR := .claude/skills
 
-.PHONY: help validate validate-all validate-harness create catalog catalog-check integrations integrations-check export smoke-test clean-dist test
+.PHONY: help validate validate-all validate-harness validate-traceability create catalog catalog-check integrations integrations-check export smoke-test clean-dist test
 
 help:
 	@echo "praxis — common tasks"
@@ -15,6 +16,7 @@ help:
 	@echo "  make validate SKILL=<path>     Validate one skill folder"
 	@echo "  make validate-all              Validate every skill in .claude/skills/ and dist/"
 	@echo "  make validate-harness          Validate harness state (projects, schemas, config)"
+	@echo "  make validate-traceability     Check artifact source:/traces: links resolve (advisory)"
 	@echo "  make create NAME=<slug> TIER=<1-5> [BRIEF=<path>] [DESC=<text>] [OUT=<path>]"
 	@echo "                                 Run the generator (default OUT=dist/<name>)"
 	@echo "  make catalog                   Regenerate SKILLS.md (the skill + command index)"
@@ -49,6 +51,9 @@ validate-all:
 
 validate-harness:
 	$(PYTHON) $(HARNESS_VALIDATOR)
+
+validate-traceability:
+	$(PYTHON) $(TRACEABILITY_VALIDATOR)
 
 create:
 	@if [ -z "$(NAME)" ] || [ -z "$(TIER)" ]; then echo "error: NAME and TIER are required"; exit 2; fi

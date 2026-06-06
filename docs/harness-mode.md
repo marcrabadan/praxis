@@ -6,11 +6,14 @@ a reliable operating environment that tells an agent where to read first, where
 source of truth lives, where durable decisions go, how project context is
 resolved, and when to stop and ask.
 
-This is intentionally a **small first layer**. It adds the *authority model* —
-projects, source-of-truth rules, stop conditions, adapter config, and a
-deterministic validator — without changing any existing skill, command, or
-`/new-feature`. Everything else (workflow gates, durable spec artifacts, runtime
-state) builds on this and lands later.
+It carries two layers. The *authority model* — projects, source-of-truth rules,
+stop conditions, adapter config, and a deterministic validator — and the
+*delivery lifecycle* on top of it: machine-readable workflows with human-in-the-loop
+gates, durable typed artifacts, bidirectional traceability, and runtime state.
+The feature lifecycle runs `discovery → research → spec → plan → tasks → build →
+verify → release`; lighter `bug-fix` and `refinement` lifecycles handle corrective
+and quality-only work. All of it is **opt-in** — it activates only when a
+`.praxis/config.json` resolves a project, so non-harness repos are unaffected.
 
 ## What harness mode adds
 
@@ -27,11 +30,19 @@ projects/
     memory/current-state.md
     memory/open-questions.md
 
+rules/
+  traceability.md        # typed ids + source:/traces: links (the chain)
+
 systems/
-  feature-development/   # artifact-model.md + operating model (doctrine)
+  feature-development/   # full lifecycle doctrine (discovery → … → release)
+  bug-fix/               # corrective lifecycle doctrine
+  refinement/            # behavior-preserving lifecycle doctrine
 
 workflows/
   registry.json          # the workflow registry
+  feature-development.workflow.json   # discovery → research → spec → plan → tasks → build → verify → release
+  bug-fix.workflow.json               # triage → reproduce → diagnose → fix → verify
+  refinement.workflow.json            # assess → plan → change → verify
   *.workflow.json        # machine-readable steps + gates + stop conditions
 
 schemas/
@@ -51,10 +62,10 @@ tools/
 ```
 
 It does **not** add production application code or a full SDD Kit clone. The
-skill factory is unchanged; `/new-feature` and `/review-changes` gain **opt-in**
-harness behavior that only activates when a `.praxis/config.json` resolves a
-project (otherwise they behave exactly as before). See [`../AGENTS.md`](../AGENTS.md)
-for the skill factory doctrine.
+skill factory is unchanged; `/new-feature`, `/fix-bug`, `/refine`, and
+`/review-changes` gain **opt-in** harness behavior that only activates when a
+`.praxis/config.json` resolves a project (otherwise they behave exactly as
+before). See [`../AGENTS.md`](../AGENTS.md) for the skill factory doctrine.
 
 ## Per-repo vs central (the authority choice)
 
@@ -76,6 +87,17 @@ Each consuming repo declares its choice in `.praxis/config.json` via
 `mode: "local"` or `mode: "central"`. **An omitted `mode` is treated as
 `local`.** Pick `local` first; move to `central` only when shared cross-repo
 memory actually pays for the extra repo to maintain.
+
+**Multiple repos for one product → one project, central mode.** A product split
+across several repos (e.g. two backend + two frontend) is **one** project whose
+specs, decisions, and memory live centrally in the harness, with each repo
+carrying the same `projectId` and `mode: central`. A worked example —
+the fictional **Helios** product across four repos — lives at
+[`../projects/helios/`](../projects/helios/PROJECT.md) with copy-ready configs and
+a walkthrough at [`../examples/multi-repo/`](../examples/multi-repo/README.md).
+Split into multiple projects only when the repos are genuinely independent
+products. For collaborating with **1→many people or several teams** without mixing
+or duplicating SPEC/REQ, see [`teamwork.md`](teamwork.md).
 
 ## Opting a repo in
 
@@ -160,16 +182,80 @@ validators.
 ## Workflows, specs, and runtime
 
 - **Workflows** (`workflows/`) are machine-readable lifecycles — steps, gates,
-  stop conditions, and validation commands. `feature-development` is
-  `spec → plan → tasks → verify`, where each gate is opened by the previous
-  artifact reaching an authorizing status. See
-  [`../systems/feature-development/artifact-model.md`](../systems/feature-development/artifact-model.md).
+  stop conditions, and validation commands. Each gate is opened by the previous
+  artifact reaching an authorizing status, and **pending is not approval**.
+  - `feature-development`: `discovery → research → spec → plan → tasks → build →
+    verify → release`, with four human-in-the-loop gates — **Discovery &
+    Research**, **Specification**, **Architecture** (only when a significant
+    decision exists), and **Release**. Research must precede the spec. Doctrine:
+    [`../systems/feature-development/artifact-model.md`](../systems/feature-development/artifact-model.md).
+  - `bug-fix`: `triage → reproduce → diagnose → fix → verify` — corrective work,
+    no discovery/research/spec chain. Doctrine:
+    [`../systems/bug-fix/artifact-model.md`](../systems/bug-fix/artifact-model.md).
+  - `refinement`: `assess → plan → change → verify` — quality-only,
+    behavior-preserving. Doctrine:
+    [`../systems/refinement/artifact-model.md`](../systems/refinement/artifact-model.md).
 - **Specs** are the durable, typed artifacts `/new-feature` writes in harness mode
-  under `projects/<project>/specs/<spec>/` (`spec.md`, `plans/`, `tasks/`,
-  `decisions/`, `reports/`) — instead of leaving the plan only in chat.
+  under `projects/<project>/specs/<spec>/` (`discovery/`, `research/`, `spec.md`,
+  `plans/`, `tasks/`, `decisions/`, `reports/verify/`, `reports/release/`) —
+  instead of leaving the plan only in chat. `/fix-bug` writes under
+  `projects/<project>/bugs/<id>/` and `/refine` under
+  `projects/<project>/refinements/<id>/`.
+- **Traceability** (`rules/traceability.md`) gives every artifact a typed id
+  (`DISC-`, `RES-`, `SPEC-`, `ADR-`, `BUG-`, `REF-`, `VER-`, `REL-`, …) and
+  `source:` / `traces:` links, so the chain `IDEA → DISC → RES → SPEC → … → REL`
+  is navigable both ways. Check it with `make validate-traceability` (advisory).
 - **Runtime** (`runtime/`) is disposable session glue (last active
   project/repo/spec/command), managed by `tools/runtime.py` and **git-ignored**.
   Durable decisions never live only here — see [`../runtime/README.md`](../runtime/README.md).
+
+## Trying harness mode end to end
+
+You can exercise the whole loop in a few minutes. Two ways to run it:
+
+**A. Inside praxis itself (quickest — no second repo).**
+
+```sh
+# 1. Scaffold a project under the harness
+cp -r projects/_template projects/checkout
+#    edit projects/checkout/PROJECT.md  → frontmatter id: checkout, set name + status: active
+#    add a row for `checkout` to projects/projects-index.md
+make validate-harness                  # must pass
+
+# 2. Add a repo-root .praxis/config.json pointing at this harness
+cat > .praxis/config.json <<'JSON'
+{ "schemaVersion": "1.0.0", "harnessRoot": ".", "projectId": "checkout", "mode": "central", "activeSpec": null }
+JSON
+
+# 3. Drive a lifecycle from your agent
+#    /new-feature "saved payment methods at checkout"
+#      → writes projects/checkout/specs/<slug>/ : discovery/ → research/ → spec.md → plans/ → tasks/ → reports/
+#    /fix-bug "totals wrong when a coupon is removed"
+#      → writes projects/checkout/bugs/<id>/
+#    /refine "extract the pricing calculator, no behavior change"
+#      → writes projects/checkout/refinements/<id>/
+```
+
+**B. From a product repo (the realistic setup).**
+
+```sh
+python tools/install_adapter.py --target ../checkout --project checkout --mode local
+#    writes ../checkout/.praxis/config.json + .praxis/current-spec.md
+#    open ../checkout in your agent and run /new-feature, /fix-bug, or /refine
+```
+
+**What to watch for** (this is the methodology working):
+
+- **Discovery and research come first.** `/new-feature` writes `discovery/` and
+  `research/` and pauses at **Gate 1** before writing `spec.md`. It will not
+  guess a spec.
+- **Gates hold.** The spec stays `status: draft` and the plan stays a `pending`
+  ledger decision until *you* accept them. Pending never opens the next gate.
+- **Stop conditions fire.** If `projectId` doesn't resolve, or an open question
+  gates the step, the agent stops and asks instead of guessing.
+- **Everything is traceable.** Run `make validate-traceability` to confirm the
+  `source:`/`traces:` ids resolve, and `make validate-harness` to confirm the
+  project/spec/workflow shapes are well-formed.
 
 ## Installing the adapter into a consuming repo
 
@@ -185,12 +271,14 @@ The generated Cursor / Codex / IntelliJ entry docs include the same harness
 
 ## Status
 
-Phases 1–8 of the harness conversion are in place: the authority model, project
-memory, adapter config + read-order wiring, the harness validator, durable spec
-artifacts for `/new-feature`, workflow gates, runtime state, and a project-aware
-`/review-changes`. All harness behavior in commands is **opt-in** — it activates
-only when a `.praxis/config.json` resolves a project, so non-harness repos are
-unaffected.
+The harness conversion is in place: the authority model, project memory, adapter
+config + read-order wiring, the harness validator, the full `feature-development`
+lifecycle (discovery → research → spec → plan → tasks → build → verify → release)
+with four HITL gates, the lighter `bug-fix` and `refinement` lifecycles
+(`/fix-bug`, `/refine`), bidirectional traceability, runtime state, and a
+project-aware `/review-changes`. All harness behavior in commands is **opt-in** —
+it activates only when a `.praxis/config.json` resolves a project, so non-harness
+repos are unaffected.
 
 Deliberately still out of scope (add on evidence, not anticipation): a full SDD
 Kit, an `experience` workflow step, and central-mode sync tooling.

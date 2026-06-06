@@ -48,7 +48,7 @@ Alongside the meta-skill, the repo ships thirteen **SDLC expert skills** — one
 - [.claude/skills/data-engineer/](.claude/skills/data-engineer/) — data pipelines (ETL/ELT, batch & streaming, CDC), warehouse/lake/lakehouse modeling, dimensional/star schemas, orchestration (dbt/Airflow/Dagster), data quality & contracts, lineage & governance, DataOps & cost.
 - [.claude/skills/ml-ai-engineer/](.claude/skills/ml-ai-engineer/) — model lifecycle: problem framing & metrics, ML-ready features (leakage, train/serve skew, feature stores), training & evaluation, experiment tracking, serving & deployment (shadow/canary/A-B), MLOps, drift monitoring & retraining, responsible AI, and LLM/GenAI (RAG, prompting, fine-tuning, evals, guardrails).
 
-Each SDLC expert also has a short **slash command** under [.claude/commands/](.claude/commands/) for addressing it directly — `/architect`, `/developer`, `/qa`, `/analyst`, `/product`, `/devops`, `/security`, `/security-architect`, `/ux`, `/frontend-architect`, `/frontend`, `/data`, `/ml` — e.g. `/architect how do I avoid this race condition?`. Each command loads its matching skill and answers in that persona. `/new-feature <idea>` orchestrates the core six (BA → PO → architect → developer → QA → devops) in lifecycle order — each phase in its own subagent so doctrine stays out of the main thread — and automatically routes in the specialist experts (security, frontend, data, ML/AI, UX) a feature warrants, to produce a consolidated plan; those same specialists are also available on demand and via `/review-changes`. `/review-changes` routes the current diff to the relevant experts (including the security experts) and returns severity-tagged, didactic findings; opt-in CI and local-hook templates in [integrations/](integrations/README.md) trigger it automatically on PRs and before pushing.
+Each SDLC expert also has a short **slash command** under [.claude/commands/](.claude/commands/) for addressing it directly — `/architect`, `/developer`, `/qa`, `/analyst`, `/product`, `/devops`, `/security`, `/security-architect`, `/ux`, `/frontend-architect`, `/frontend`, `/data`, `/ml` — e.g. `/architect how do I avoid this race condition?`. Each command loads its matching skill and answers in that persona. `/new-feature <idea>` orchestrates the full lifecycle (Discovery → Research → Spec → Plan → Tasks → Build → Verify → Release) via the core six (BA → PO → architect → developer → QA → devops) — each phase in its own subagent so doctrine stays out of the main thread — and automatically routes in the specialist experts (security, frontend, data, ML/AI, UX) a feature warrants, to produce a consolidated plan; those same specialists are also available on demand and via `/review-changes`. For work that is not a greenfield feature, `/fix-bug <bug>` drives the corrective lifecycle (triage → reproduce → diagnose → fix → verify) and `/refine <target>` drives the quality-only, behavior-preserving lifecycle (assess → plan → change → verify) — both lighter than `/new-feature`, both orchestrated the same way. `/review-changes` routes the current diff to the relevant experts (including the security experts) and returns severity-tagged, didactic findings; opt-in CI and local-hook templates in [integrations/](integrations/README.md) trigger it automatically on PRs and before pushing.
 
 Beyond the SDLC roster, the repo ships one **utility skill**: [.claude/skills/memory/](.claude/skills/memory/) — the **memory ledger**. It records the plans, decisions, implementations, and artifacts the experts produce as durable, git-committed entries under `.praxis/memory/`, each with a status from one closed set — `pending → accepted | rejected | rolled-back` (plus `superseded`). Manage it with `/memory` (list, accept/reject, roll back) or let it run automatically via the opt-in hook in [integrations/hooks/memory.settings.example.json](integrations/hooks/memory.settings.example.json).
 
@@ -67,12 +67,27 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
   generated vs runtime, and the authority order to follow on conflict.
 - [rules/stop-conditions.md](rules/stop-conditions.md) — when an agent must stop
   and ask instead of guessing.
+- [rules/traceability.md](rules/traceability.md) — typed ids and `source:` /
+  `traces:` links that keep the chain `IDEA → DISC → RES → SPEC → … → REL`
+  navigable in both directions (advisory validator: `make validate-traceability`).
 - [projects/](projects/projects-index.md) — per-project memory (current state,
   open questions, decisions) and `specs/`; copy `projects/_template/` to start one.
+  For a product split across repos, use one **central-mode** project (worked
+  example: [projects/helios/](projects/helios/PROJECT.md) +
+  [examples/multi-repo/](examples/multi-repo/README.md)). Collaborating with 1→many
+  people or several teams: [docs/teamwork.md](docs/teamwork.md) — the spec is the
+  single source of truth, the spec folder is the unit of parallel work, ids are
+  collision-safe, and SPEC/REQ are never duplicated across repos.
 - [systems/feature-development/](systems/feature-development/artifact-model.md) —
   the lifecycle doctrine + artifact model behind `/new-feature` in harness mode.
+- [systems/bug-fix/](systems/bug-fix/artifact-model.md) and
+  [systems/refinement/](systems/refinement/artifact-model.md) — the lighter
+  corrective and quality-only lifecycles behind `/fix-bug` and `/refine`.
 - [workflows/](workflows/registry.json) — machine-readable lifecycles (steps,
-  gates, stop conditions). `feature-development` is `spec → plan → tasks → verify`.
+  gates, stop conditions). `feature-development` is the full
+  `discovery → research → spec → plan → tasks → build → verify → release` chain
+  with four HITL gates; `bug-fix` is `triage → reproduce → diagnose → fix →
+  verify`; `refinement` is `assess → plan → change → verify`.
 - [schemas/](schemas/) — `project`, `praxis-config`, `spec`, `workflow`, and
   `session-state` JSON shapes.
 - [runtime/](runtime/README.md) — disposable session state (git-ignored), via

@@ -1,0 +1,24 @@
+{
+  "id": "refinement",
+  "name": "Refinement",
+  "steps": ["assess", "plan", "change", "verify"],
+  "gates": {
+    "plan": ["assessed", "baseline-captured"],
+    "change": ["approved-plan"],
+    "verify": ["change", "behavior-preserving-evidence"]
+  },
+  "artifacts": {
+    "assess": ["assessment.md"],
+    "plan": ["plans/refine-plan.md"],
+    "verify": ["reports/verify/report.md"]
+  },
+  "stopConditions": [
+    "the current behavior to preserve is not captured as a baseline",
+    "the refinement would change observable behavior (then it is a feature or a bug fix, not a refinement)",
+    "the change is structurally significant and the architecture decision is undeclared",
+    "a gate's required decision is still pending (pending is not approved)"
+  ],
+  "validation": {
+    "verify": "make validate-harness"
+  }
+}
