@@ -7,9 +7,9 @@ vanilla HTML + CSS + JS. Served as-is from GitHub Pages.
 
 | File           | Purpose                                                |
 | -------------- | ------------------------------------------------------ |
-| `index.html`   | Main page (hero, experts, memory, install)             |
-| `styles.css`   | Styles (dark theme, responsive, WCAG AA)               |
-| `script.js`    | Tabs, mobile menu, copy-to-clipboard, scroll reveal    |
+| `index.html`   | Main page (hero, experts, memory, install) + JSON-LD   |
+| `styles.css`   | Styles (dark + light themes, responsive, WCAG AA)      |
+| `script.js`    | Theme, scrollspy, tabs, menu, copy, reveal, back-to-top|
 | `favicon.svg`  | Icon                                                   |
 | `.nojekyll`    | Disables GitHub Pages' Jekyll processing               |
 
