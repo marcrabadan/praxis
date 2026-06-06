@@ -273,20 +273,59 @@ landing-zone convention" — accept to apply.</code></pre>
             <div class="example-head">
               <span class="example-tag">End-to-end</span>
               <h3>Kick off a new feature</h3>
-              <p>Run an idea through every SDLC role in lifecycle order. Each expert builds on the previous one's output; docs and diagrams are generated inline.</p>
+              <p>Run an idea through the full lifecycle — discovery → research → spec → plan → tasks → build → verify → release. Each expert builds on the previous one's output; research precedes the spec and human-in-the-loop gates hold.</p>
             </div>
             <div class="code-panel">
               <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/new-feature</span></div>
               <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/new-feature</span> add OAuth2 login with Google
 
-<span class="c-muted">Analyst</span>   ✓ requirements + acceptance criteria
+<span class="c-muted">Discovery</span> ✓ problem, stakeholders, open questions
+<span class="c-muted">Research</span>  ✓ findings + evidence → <span class="c-comment">Gate 1</span>
+<span class="c-muted">Analyst</span>   ✓ spec: requirements + acceptance criteria
 <span class="c-muted">PO</span>        ✓ prioritized increments + sprint goal
-<span class="c-muted">Architect</span> ✓ <span class="c-str">docs/decisions/ADR-014-oauth.md</span> + diagram
+<span class="c-muted">Architect</span> ✓ <span class="c-str">ADR-014-oauth.md</span> + diagram
 <span class="c-muted">Security</span>  ✓ threat model added (auth detected)
-<span class="c-muted">Developer</span> ✓ implementation plan
-<span class="c-muted">QA</span>        ✓ <span class="c-str">docs/test-strategy.md</span>
-<span class="c-muted">DevOps</span>    ✓ rollout plan + runbook
-<span class="c-ok">✓</span> consolidated plan · 6 entries logged to ledger</code></pre>
+<span class="c-muted">Dev · QA · DevOps</span> ✓ plan · tests · rollout
+<span class="c-muted">Release</span>   ✓ release notes → <span class="c-comment">Gate 4</span>
+<span class="c-ok">✓</span> consolidated plan · logged to ledger as pending</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 1b: fix a bug -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">End-to-end</span>
+              <h3>Fix a bug</h3>
+              <p>The corrective lifecycle — triage → reproduce → diagnose → fix → verify. Reproduce before you diagnose, diagnose before you fix; no discovery/research ceremony.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/fix-bug</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/fix-bug</span> totals wrong when a coupon is removed
+
+<span class="c-muted">QA</span>        ✓ reproduced — failing case captured
+<span class="c-muted">Developer</span> ✓ root cause traced (<span class="c-str">pricing.ts:88</span>)
+<span class="c-muted">Developer</span> ✓ minimal fix + regression test
+<span class="c-muted">QA</span>        ✓ verified — fixed &amp; stays fixed
+<span class="c-ok">✓</span> minimal, regression-tested fix</code></pre>
+            </div>
+          </article>
+
+          <!-- Example 1c: refine -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">End-to-end</span>
+              <h3>Refine without changing behavior</h3>
+              <p>The quality-only lifecycle — assess → plan → change → verify. Capture a baseline first, then refactor or optimize while keeping observable behavior identical.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/refine</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/refine</span> extract the pricing calculator
+
+<span class="c-muted">Developer</span> ✓ baseline captured (tests + golden output)
+<span class="c-muted">Developer</span> ✓ behavior-preserving plan + rollback
+<span class="c-muted">Developer</span> ✓ refactor applied — suite stays green
+<span class="c-muted">QA</span>        ✓ verified — behavior unchanged
+<span class="c-ok">✓</span> cleaner code · zero behavior change</code></pre>
             </div>
           </article>
 
@@ -653,32 +692,32 @@ landing-zone convention" — accept to apply.</code></pre>
       <div class="container memory-wrap">
         <div class="memory-copy">
           <h2 id="harness-title" class="section-title">Harness mode <span class="accent">(experimental)</span></h2>
-          <p class="section-sub">Beyond the skill factory, praxis is growing into an <strong>agent harness</strong> — a reliable operating environment that tells an agent where to read first, what's canonical, where durable decisions go, and when to stop and ask. It adds project memory, durable spec artifacts, workflow gates and runtime state — all <strong>opt-in</strong>, activating only when a repo resolves a project.</p>
+          <p class="section-sub">Beyond the skill factory, praxis is an <strong>agent harness</strong> — a reliable operating environment that tells an agent where to read first, what's canonical, where durable decisions go, and when to stop and ask. It carries the full delivery lifecycle: project memory, durable typed spec artifacts, machine-readable workflows with human-in-the-loop gates, bidirectional traceability and runtime state — all <strong>opt-in</strong>, activating only when a repo resolves a project.</p>
           <ul class="memory-list">
-            <li><span class="state accepted">rules/</span> Source-of-truth authority order &amp; explicit stop conditions.</li>
-            <li><span class="state accepted">projects/</span> Per-project memory + durable <code>specs/</code> that <code>/new-feature</code> writes.</li>
-            <li><span class="state pending">workflows/</span> Machine-readable gates: <code>spec → plan → tasks → verify</code>.</li>
+            <li><span class="state accepted">rules/</span> Source-of-truth authority order, stop conditions &amp; traceability.</li>
+            <li><span class="state accepted">projects/</span> Per-project memory + durable <code>specs/</code>, <code>bugs/</code> &amp; <code>refinements/</code>.</li>
+            <li><span class="state pending">workflows/</span> Gated lifecycles: feature <code>discovery → research → spec → plan → tasks → build → verify → release</code>, plus <code>bug-fix</code> &amp; <code>refinement</code>.</li>
             <li><span class="state pending">.praxis/config.json</span> A repo points at a harness + project; agents resolve context deterministically.</li>
-            <li><span class="state superseded">tools/</span> Mechanical <code>validate_harness.py</code> + <code>install_adapter.py</code> — checked in CI.</li>
+            <li><span class="state superseded">tools/</span> Mechanical <code>validate_harness.py</code> + <code>validate_traceability.py</code> + <code>install_adapter.py</code> — checked in CI.</li>
           </ul>
           <p class="memory-note"><strong>local</strong> (default) keeps project memory in the product repo; <strong>central</strong> shares it across many repos. See <a href="https://github.com/marcrabadan/praxis/blob/main/docs/harness-mode.md" target="_blank" rel="noopener">the harness-mode guide ↗</a>.</p>
         </div>
         <div class="code-panel">
           <div class="term-bar">
             <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-            <span class="term-title">project memory</span>
+            <span class="term-title">drive a lifecycle</span>
           </div>
           <pre class="term-body"><code><span class="c-prompt">$</span> <span class="c-cmd">cp</span> -r projects/_template projects/checkout
-<span class="c-prompt">$</span> <span class="c-cmd">make</span> validate-harness
+<span class="c-prompt">&gt;</span> <span class="c-cmd">/new-feature</span> saved payment methods
 
-<span class="c-muted">projects/checkout/</span>
-  <span class="c-str">PROJECT.md</span>          <span class="c-comment"># purpose · authority · status</span>
-  <span class="c-str">linked-repos.md</span>     <span class="c-comment"># which repos this spans</span>
-  <span class="c-str">memory/</span>
-    <span class="c-str">current-state.md</span>  <span class="c-comment"># read first</span>
-    <span class="c-str">open-questions.md</span> <span class="c-comment"># blockers = stop &amp; ask</span>
+<span class="c-muted">projects/checkout/specs/saved-cards/</span>
+  <span class="c-str">discovery/</span>   <span class="c-comment"># understand first</span>
+  <span class="c-str">research/</span>    <span class="c-comment"># evidence — precedes the spec</span>
+  <span class="c-str">spec.md</span>      <span class="c-comment"># draft → you ACCEPT (Gate)</span>
+  <span class="c-str">plans/ tasks/ decisions/</span>
+  <span class="c-str">reports/</span>     <span class="c-comment"># verify → release notes</span>
 
-<span class="c-ok">✓</span> registry + memory shape valid</code></pre>
+<span class="c-ok">✓</span> gates hold · pending ≠ approval</code></pre>
         </div>
       </div>
     </section>
