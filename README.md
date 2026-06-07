@@ -1,5 +1,8 @@
 # praxis
 
+[![Sponsor on GitHub](https://img.shields.io/badge/Sponsor-GitHub-EA4AAA?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/marcrabadan)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/marcrabadan)
+
 **A shared library of Claude Code skills.** A repo where a team captures *how it does things* — processes, conventions, roles, taste — once, in a format Claude Code reads and applies consistently across every project.
 
 It has three parts:
