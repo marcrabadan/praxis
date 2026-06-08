@@ -67,6 +67,11 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
   generated vs runtime, and the authority order to follow on conflict.
 - [rules/stop-conditions.md](rules/stop-conditions.md) — when an agent must stop
   and ask instead of guessing.
+- [rules/never-assume.md](rules/never-assume.md) — *never assume, always
+  validate*: low-stakes, reversible guesses are logged to the assumptions ledger
+  (`tools/assumptions.py`), replayed to the user as a question-flow (`sweep`),
+  then resolved into a decision and — when they generalise — a *pending*,
+  human-gated promotion to a rule/guardrail/eval/gate.
 - [rules/traceability.md](rules/traceability.md) — typed ids and `source:` /
   `traces:` links that keep the chain `IDEA → DISC → RES → SPEC → … → REL`
   navigable in both directions (advisory validator: `make validate-traceability`).
@@ -88,12 +93,13 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
   `discovery → research → spec → plan → tasks → build → verify → release` chain
   with four HITL gates; `bug-fix` is `triage → reproduce → diagnose → fix →
   verify`; `refinement` is `assess → plan → change → verify`.
-- [schemas/](schemas/) — `project`, `praxis-config`, `spec`, `workflow`, and
-  `session-state` JSON shapes.
+- [schemas/](schemas/) — `project`, `praxis-config`, `spec`, `workflow`,
+  `session-state`, and `assumption` JSON shapes.
 - [runtime/](runtime/README.md) — disposable session state (git-ignored), via
   `tools/runtime.py`. Durable decisions never live only here.
 - [tools/](tools/validate_harness.py) — `validate_harness.py` (run
-  `make validate-harness`; CI enforces it), `install_adapter.py`, `runtime.py`.
+  `make validate-harness`; CI enforces it), `install_adapter.py`, `runtime.py`,
+  `assumptions.py` (the assumptions ledger behind *never assume, always validate*).
 
 A repo opts in by adding `.praxis/config.json` pointing at this harness and a
 project id (scaffold it with `tools/install_adapter.py`). If the project id can't
