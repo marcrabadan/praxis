@@ -80,6 +80,66 @@ class WorkflowManifestTests(unittest.TestCase):
             vh._check_workflow_manifest(path, errors)
             self.assertTrue(any("duplicate" in e for e in errors), errors)
 
+    def test_valid_loops_block_passes(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            tmp = Path(d)
+            path = self._write(
+                tmp,
+                "feature-development.workflow.json",
+                {
+                    "id": "feature-development",
+                    "name": "F",
+                    "steps": ["build", "verify"],
+                    "loops": {
+                        "verify": {
+                            "predicate": ["tests green", "lint clean"],
+                            "maxIterations": 8,
+                            "patience": 3,
+                            "onContinue": "build",
+                        }
+                    },
+                },
+            )
+            errors: list[str] = []
+            vh._check_workflow_manifest(path, errors)
+            self.assertEqual(errors, [])
+
+    def test_loop_empty_predicate_fails(self) -> None:
+        errors: list[str] = []
+        vh._check_workflow_loops("wf", {"verify": {"predicate": []}}, {"verify"}, errors)
+        self.assertTrue(any("predicate" in e for e in errors), errors)
+
+    def test_loop_on_unknown_step_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            tmp = Path(d)
+            path = self._write(
+                tmp,
+                "wf.workflow.json",
+                {
+                    "id": "wf",
+                    "name": "W",
+                    "steps": ["build", "verify"],
+                    "loops": {"nope": {"predicate": ["x"]}},
+                },
+            )
+            errors: list[str] = []
+            vh._check_workflow_manifest(path, errors)
+            self.assertTrue(any("unknown step" in e for e in errors), errors)
+
+    def test_loop_bad_max_iterations_fails(self) -> None:
+        errors: list[str] = []
+        vh._check_workflow_loops(
+            "wf", {"verify": {"predicate": ["x"], "maxIterations": 0}}, {"verify"}, errors
+        )
+        self.assertTrue(any("maxIterations" in e for e in errors), errors)
+
+    def test_loop_dangling_on_continue_fails(self) -> None:
+        errors: list[str] = []
+        vh._check_workflow_loops(
+            "wf", {"verify": {"predicate": ["x"], "onContinue": "ghost"}}, {"verify"}, errors
+        )
+        self.assertTrue(any("onContinue" in e for e in errors), errors)
+
 
 class ConfigValidationTests(unittest.TestCase):
     def test_missing_project_id_fails(self) -> None:

@@ -341,7 +341,7 @@ def _check_workflow_manifest(path: Path, errors: list[str]) -> None:
         errors.append(f"{label}: 'steps' contains duplicates")
     step_set = set(steps)
 
-    for section in ("gates", "artifacts", "validation"):
+    for section in ("gates", "artifacts", "validation", "loops"):
         block = data.get(section)
         if block is None:
             continue
@@ -353,6 +353,44 @@ def _check_workflow_manifest(path: Path, errors: list[str]) -> None:
                 errors.append(
                     f"{label}: '{section}' references unknown step {key!r}"
                 )
+
+    _check_workflow_loops(label, data.get("loops"), step_set, errors)
+
+
+def _check_workflow_loops(
+    label: str, loops: Any, step_set: set[str], errors: list[str]
+) -> None:
+    """Validate the optional 'loops' block (rules/loop-control.md).
+
+    Each looped step must carry a non-empty terminal predicate; the budget and
+    patience guards must be positive integers; and onContinue must name a real
+    step — a loop with no predicate or a dangling back-edge defeats the rule.
+    """
+    if loops is None:
+        return
+    if not isinstance(loops, dict):
+        return  # already reported as "must be an object" above
+    for step, spec in loops.items():
+        where = f"{label}: loops[{step!r}]"
+        if not isinstance(spec, dict):
+            errors.append(f"{where} must be an object")
+            continue
+        predicate = spec.get("predicate")
+        if (
+            not isinstance(predicate, list)
+            or not predicate
+            or not all(isinstance(c, str) and c.strip() for c in predicate)
+        ):
+            errors.append(
+                f"{where}: 'predicate' must be a non-empty array of strings "
+                "(a step with no predicate could loop forever)"
+            )
+        for guard in ("maxIterations", "patience"):
+            if guard in spec and (not isinstance(spec[guard], int) or isinstance(spec[guard], bool) or spec[guard] < 1):
+                errors.append(f"{where}: '{guard}' must be an integer >= 1")
+        cont = spec.get("onContinue")
+        if cont is not None and cont not in step_set:
+            errors.append(f"{where}: 'onContinue' references unknown step {cont!r}")
 
 
 def _validate_config_data(

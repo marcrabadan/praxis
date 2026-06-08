@@ -12,6 +12,18 @@
     "plan": ["plans/refine-plan.md"],
     "verify": ["reports/verify/report.md"]
   },
+  "loops": {
+    "verify": {
+      "predicate": [
+        "observable behavior still matches the captured baseline",
+        "the full test suite passes with no regressions",
+        "no public API or behavior change was introduced"
+      ],
+      "maxIterations": 6,
+      "patience": 3,
+      "onContinue": "change"
+    }
+  },
   "stopConditions": [
     "the current behavior to preserve is not captured as a baseline",
     "the refinement would change observable behavior (then it is a feature or a bug fix, not a refinement)",

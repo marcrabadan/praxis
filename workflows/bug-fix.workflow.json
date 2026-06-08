@@ -14,6 +14,18 @@
     "fix": ["plans/fix-plan.md"],
     "verify": ["reports/verify/report.md"]
   },
+  "loops": {
+    "verify": {
+      "predicate": [
+        "the original failure no longer reproduces",
+        "a regression test covers the bug and passes",
+        "the full test suite passes with no new failures"
+      ],
+      "maxIterations": 6,
+      "patience": 3,
+      "onContinue": "fix"
+    }
+  },
   "stopConditions": [
     "the bug cannot be reproduced and the report lacks enough detail to reproduce it",
     "the root cause is a guess rather than an evidenced diagnosis",

@@ -29,10 +29,40 @@ commands/new-feature.md
   -> skills/<SDLC expert>                          (the work)
 ```
 
+## The verify step is a convergence loop
+
+`verify` does not run once — it iterates until the change actually meets its
+acceptance criteria, under [`../../rules/loop-control.md`](../../rules/loop-control.md).
+The manifest's `loops.verify` block is its **terminal predicate** (every spec
+acceptance criterion met, the suite green with no regressions, the step
+validation command passing) plus the budget and no-progress guards. Drive it with
+[`../../tools/loop.py`](../../tools/loop.py):
+
+```
+loop.py start --goal "verify <spec>" --criterion "<each predicate entry>" \
+        --max-iterations 8 --patience 3
+loop.py tick <id> --met c1 --signal "<state, e.g. 2 tests failing>"
+```
+
+Each tick yields one verdict:
+
+- **continue** — criteria unmet, progress is being made: return to `build`
+  (`onContinue`), fix, and tick again.
+- **done** — the predicate holds: `verify` is complete; the `release` gate's
+  `verify-passed` condition is now satisfied. Record the result in the ledger.
+- **escalate** — a guard tripped (budget exhausted or no progress). **Stop** and
+  bring the user the state, the blocker, and options — exactly like a stop
+  condition. Resume only after they give guidance (and maybe a larger budget).
+
+This is what makes "iterate until it's correct" terminate: it ends by meeting the
+predicate or by escalating to a human, and never just spins. The bug-fix
+(`verify → fix`) and refinement (`verify → change`) lifecycles use the same
+mechanism with their own predicates.
+
 ## Stop conditions
 
 In addition to [`../../rules/stop-conditions.md`](../../rules/stop-conditions.md),
 this workflow stops when: the spec's scope or target user is ambiguous; the plan
 would adopt an architecture the project has not used; or a gate's required
-decision is still `pending`. Recording a proposal is allowed; acting on it before
-acceptance is not.
+decision is still `pending`. A tripped convergence-loop guard (above) is also a
+stop. Recording a proposal is allowed; acting on it before acceptance is not.

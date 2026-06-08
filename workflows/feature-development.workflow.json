@@ -20,6 +20,18 @@
     "verify": ["reports/verify/report.md"],
     "release": ["reports/release/release-notes.md"]
   },
+  "loops": {
+    "verify": {
+      "predicate": [
+        "every acceptance criterion in the spec is demonstrably met",
+        "the full test suite passes with no regressions",
+        "the step validation command passes"
+      ],
+      "maxIterations": 8,
+      "patience": 3,
+      "onContinue": "build"
+    }
+  },
   "stopConditions": [
     "the problem, target user, or desired outcome is unclear after discovery",
     "specification is attempted before research findings are recorded (research must precede spec)",

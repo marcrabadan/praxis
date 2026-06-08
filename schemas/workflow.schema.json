@@ -49,6 +49,38 @@
         "type": "array",
         "items": { "type": "string", "minLength": 1 }
       }
+    },
+    "loops": {
+      "type": "object",
+      "description": "Optional map of step id -> a bounded loop spec for steps that iterate to convergence (notably 'verify' and corrective 'fix'/'change'). Governed by rules/loop-control.md and driven by tools/loop.py: the step runs until its terminal predicate is met (done) or a guard trips (escalate to the user). Keys must be steps.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["predicate"],
+        "additionalProperties": false,
+        "properties": {
+          "predicate": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 },
+            "description": "The acceptance criteria, all of which must be met for the step to complete. Non-empty: a step with no predicate could loop forever."
+          },
+          "maxIterations": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Budget guard for the loop (tools/loop.py applies its default if omitted)."
+          },
+          "patience": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "No-progress guard: escalate after this many unchanging iterations."
+          },
+          "onContinue": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]{1,64}$",
+            "description": "The step to return to when an iteration's verdict is 'continue' (the failing predicate is fixed there, e.g. verify -> build). Must be a step in this workflow."
+          }
+        }
+      }
     }
   }
 }
