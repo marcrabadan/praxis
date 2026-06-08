@@ -54,7 +54,11 @@
     },
     "decision_ref": {
       "type": "string",
-      "description": "Id of the memory-ledger entry that records the user's adjudication."
+      "description": "Id of the memory-ledger entry that records the user's adjudication (the confirm/correct decision). Distinct from promotion_ref."
+    },
+    "promotion_ref": {
+      "type": "string",
+      "description": "Id of the memory-ledger promotion proposal created from this assumption via tools/promote.py, if any. Never overwrites decision_ref."
     },
     "resolution": {
       "type": "string",

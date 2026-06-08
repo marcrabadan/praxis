@@ -85,9 +85,11 @@ path to governance:
   assumption that is not resolved — an open guess cannot become a rule.
 - **Propose, never mutate.** It does not write the rule/gate/eval. It records a
   `pending` `decision` in the memory ledger (tagged `promotion`,
-  `promote:<target>`, `source:<ASSUME-id>`), links it back to the assumption, and
-  prints the routing for who authors it after acceptance (rules → `rules/`, gates
-  → `workflows/`, evals/skills → skill-learner → skill-creator).
+  `promote:<target>`, `source:<ASSUME-id>`), links it back to the assumption as
+  `promotion_ref` — leaving the adjudication `decision_ref` from the
+  confirm/correct step intact — and prints the routing for who authors it after
+  acceptance (rules → `rules/`, gates → `workflows/`, evals/skills →
+  skill-learner → skill-creator).
 
 **Pending is not approval**: the user accepts (`/memory accept <id>`) before any
 rule, guardrail, eval, or gate is actually added — a wrong promotion poisons every

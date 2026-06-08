@@ -159,7 +159,7 @@ def _write_entry_md(meta: dict, body: str) -> None:
     fm_keys = [
         "id", "created", "updated", "source", "status", "confidence",
         "statement", "impact", "alternatives", "promote", "decision_ref",
-        "resolution",
+        "promotion_ref", "resolution",
     ]
     lines = ["---"]
     for k in fm_keys:
@@ -262,13 +262,14 @@ def cmd_add(args) -> int:
         "alternatives": alternatives,
         "promote": "none",
         "decision_ref": "",
+        "promotion_ref": "",
         "resolution": "",
     }
     rows = _read_index()
     rows.append({k: meta[k] for k in (
         "id", "created", "updated", "source", "status", "confidence",
         "statement", "impact", "alternatives", "promote", "decision_ref",
-        "resolution",
+        "promotion_ref", "resolution",
     ) if meta[k] not in (None, "", [])})
     _write_index(rows)
     _write_entry_md(meta, _read_body_arg(args))

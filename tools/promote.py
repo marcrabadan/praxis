@@ -131,12 +131,18 @@ def _proposal_body(*, target: str, headline: str, evidence_lines: list[str],
 
 
 def _link_assumption(assume_id: str, ledger_id: str, target: str) -> None:
-    """Point the assumption at its proposal (decision_ref) without changing status."""
+    """Point the assumption at its promotion proposal, without changing status.
+
+    Records the proposal id in `promotion_ref` and never touches `decision_ref` —
+    that field holds the memory-ledger entry recording the user's *adjudication*
+    (set when the assumption was confirmed/corrected with --decision), which is a
+    distinct, durable link we must not clobber.
+    """
     rows = A._read_index()
     row = A._find(rows, assume_id)
     if not row:
         return
-    row["decision_ref"] = ledger_id
+    row["promotion_ref"] = ledger_id
     row["promote"] = target
     row["updated"] = A._now()
     A._write_index(rows)

@@ -77,13 +77,26 @@ class FromAssumptionTests(_TmpRoot):
         self.assertIn("promote:rule", entry["tags"])
         self.assertIn(f"source:{aid}", entry["tags"])
 
-    def test_links_decision_ref_back_to_assumption(self) -> None:
+    def test_links_promotion_ref_back_to_assumption(self) -> None:
         aid = self._resolved_assumption(promote="gate")
         _, out = self._run(P, ["from-assumption", aid])
         lid = out.splitlines()[0].strip()
         arow = A._find(A._read_index(), aid)
-        self.assertEqual(arow["decision_ref"], lid)
+        self.assertEqual(arow["promotion_ref"], lid)
         self.assertEqual(arow["promote"], "gate")
+
+    def test_does_not_clobber_adjudication_decision_ref(self) -> None:
+        # an assumption confirmed with --decision keeps that decision link after
+        # a promotion is proposed (the promotion id goes to promotion_ref).
+        _, out = self._run(A, ["add", "--statement", "tz is UTC", "--confidence", "low"])
+        aid = out.strip()
+        self._run(A, ["confirm", aid, "--decision", "DECISION-123", "--promote", "rule"])
+        _, out = self._run(P, ["from-assumption", aid])
+        lid = out.splitlines()[0].strip()
+        arow = A._find(A._read_index(), aid)
+        self.assertEqual(arow["decision_ref"], "DECISION-123")  # preserved
+        self.assertEqual(arow["promotion_ref"], lid)            # proposal recorded separately
+        self.assertNotEqual(arow["decision_ref"], arow["promotion_ref"])
 
     def test_target_required_when_none_recorded(self) -> None:
         aid = self._resolved_assumption()  # no --promote
