@@ -152,7 +152,7 @@ praxis/
 │     ├─ scripts/      # repo-level tooling (catalog generator)
 │     └─ validators/   # deterministic Python validators
 ├─ integrations/       # opt-in, copy-in wiring for consuming repos
-│  ├─ github-actions/, hooks/   # CI + local-hook templates for /review-changes
+│  ├─ github-actions/, hooks/   # CI + local-hook templates (/review-changes, memory, validation)
 │  ├─ cursor/, codex/, intellij/  # the experts re-expressed for other agents (generated)
 │  └─ scripts/         # build_integrations.py — regenerates the three above from .claude/
 └─ dist/               # scratch space for one-off produced output (gitignored)

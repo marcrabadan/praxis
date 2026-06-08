@@ -57,6 +57,21 @@ context, and **Stop** snapshots uncommitted changes as a rollback-able entry. Co
 doctrine in `AGENTS.md` (which records the *why* of decisions) for full coverage. Manage the
 ledger any time with `/memory` (`list`, `accept`, `reject`, `rollback`).
 
+## 4. Ambient validation: assumptions & loops (hooks)
+
+Make the *never assume, always validate* and *loop control* rules ambient instead
+of opt-in-per-invocation. Copy the `hooks` block from
+[`hooks/validation.settings.example.json`](hooks/validation.settings.example.json)
+into your repo's `.praxis`-adjacent `.claude/settings.json` (merge if it already
+has hooks). It resolves the harness `tools/` dir from your `.praxis/config.json`
+(`harnessRoot`), so no per-repo copy of the tools is needed.
+
+It wires two nudges (never blocks): **SessionStart** surfaces open assumptions
+(`assumptions.py open --brief`) and any escalated/running loops (`loop.py brief`)
+into context; **before a commit or push** it re-surfaces them, so you don't ship
+work resting on an unconfirmed guess or a loop that quietly gave up. Silent when
+there is nothing to report. Pair with `assumptions.py sweep` to adjudicate.
+
 ## Which to use
 
 | Want… | Use |
@@ -64,9 +79,10 @@ ledger any time with `/memory` (`list`, `accept`, `reject`, `rollback`).
 | Team-wide safety net, no local setup per dev | The **CI** action (1) |
 | Fast personal feedback before pushing | The **local review hooks** (2) |
 | A durable, rollback-able record of decisions & changes | The **memory hooks** (3) |
+| Open guesses & stuck loops surfaced automatically | The **validation hooks** (4) |
 | Both review + memory | Install both hook blocks — they complement each other |
 
-## 4. Other agents: Cursor, IntelliJ, OpenAI Codex
+## 5. Other agents: Cursor, IntelliJ, OpenAI Codex
 
 The twelve experts and the `/new-feature` + `/review-changes` workflows are **Claude Code
 native** (`.claude/skills/`, `.claude/commands/`). To use the *same* personas from another

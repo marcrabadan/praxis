@@ -518,6 +518,29 @@ def cmd_status(args) -> int:
 
 
 # --------------------------------------------------------------------------- #
+# brief — compact context line for hooks (SessionStart / pre-gate)
+# --------------------------------------------------------------------------- #
+def cmd_brief(_args) -> int:
+    rows = _read_index()
+    escalated = [r for r in rows if r.get("status") == "escalated"]
+    running = [r for r in rows if r.get("status") == "running"]
+    if not escalated and not running:
+        return 0
+    if escalated:
+        print(f"[praxis loops] {len(escalated)} loop"
+              f"{'' if len(escalated) == 1 else 's'} ESCALATED — need your guidance "
+              f"before work continues:")
+        for r in escalated[:10]:
+            print(f"  - {r.get('id')}: {r.get('goal', '') or '(no goal)'}"
+                  f" — {r.get('escalation', '') or 'a guard tripped'}")
+        print("  Give guidance, then `python tools/loop.py resume <id>`.")
+    if running:
+        print(f"[praxis loops] {len(running)} loop"
+              f"{'' if len(running) == 1 else 's'} in progress.")
+    return 0
+
+
+# --------------------------------------------------------------------------- #
 # CLI
 # --------------------------------------------------------------------------- #
 def build_parser() -> argparse.ArgumentParser:
@@ -569,6 +592,8 @@ def build_parser() -> argparse.ArgumentParser:
     stt = sub.add_parser("status", help="Show one loop's predicate and progress.")
     stt.add_argument("id")
     stt.set_defaults(func=cmd_status)
+
+    sub.add_parser("brief", help="Compact summary of escalated/running loops (for hooks).").set_defaults(func=cmd_brief)
 
     return p
 

@@ -164,5 +164,25 @@ class CloseTests(_TmpRoot):
         self.assertEqual(rc, 1)
 
 
+class BriefTests(_TmpRoot):
+    def test_brief_is_silent_when_empty(self) -> None:
+        rc, out = self._run(["brief"])
+        self.assertEqual(rc, 0)
+        self.assertEqual(out.strip(), "")
+
+    def test_brief_surfaces_escalated_loops(self) -> None:
+        loop_id = self._start(max_iter=1, patience=99)
+        self._run(["tick", loop_id, "--signal", "x"])  # escalates at budget
+        rc, out = self._run(["brief"])
+        self.assertEqual(rc, 0)
+        self.assertIn("ESCALATED", out)
+        self.assertIn(loop_id, out)
+
+    def test_brief_counts_running_loops(self) -> None:
+        self._start()
+        rc, out = self._run(["brief"])
+        self.assertIn("in progress", out)
+
+
 if __name__ == "__main__":
     unittest.main()

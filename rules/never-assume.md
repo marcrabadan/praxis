@@ -84,6 +84,17 @@ any rule, guardrail, eval, or gate is actually added. This is how the workflow
 *learns*: a human decision becomes durable governance, deterministically and
 under review.
 
+## Making it ambient (opt-in hook)
+
+Doctrine tells the agent to log and sweep; a **hook** makes it impossible to
+forget. The opt-in template
+[../integrations/hooks/validation.settings.example.json](../integrations/hooks/validation.settings.example.json)
+wires `assumptions.py open --brief` into **SessionStart** (every session opens
+with any unvalidated guesses in context) and re-surfaces them **before a commit
+or push** — the moment you would ship work built on an unconfirmed assumption. It
+is silent when there is nothing open, and it never blocks. praxis ships the
+template and does not enable it on itself.
+
 ## Why this is deterministic
 
 The judgement (was the assumption right?) is the user's. Everything around it is

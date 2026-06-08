@@ -69,6 +69,16 @@ Status set: `running → done | escalated | abandoned` (an `escalated` loop retu
 to `running` only via `resume`). The shape is enforced by
 [../schemas/loop.schema.json](../schemas/loop.schema.json).
 
+## Making it ambient (opt-in hook)
+
+An escalated loop is waiting on you — it should not sit unseen. The opt-in
+template
+[../integrations/hooks/validation.settings.example.json](../integrations/hooks/validation.settings.example.json)
+wires `loop.py brief` into **SessionStart** and the pre-commit/push moment, so any
+loop that tripped a guard is surfaced in context (with its goal and the reason it
+escalated) until you `resume` or close it. Silent when nothing is escalated;
+never blocks. praxis ships the template and does not enable it on itself.
+
 ## Where this fits the workflow
 
 A workflow step that iterates (notably `verify`, and corrective `fix → verify`)
