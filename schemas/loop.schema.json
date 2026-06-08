@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://praxis/schemas/loop.schema.json",
+  "title": "Loop controller entry",
+  "description": "One bounded work loop under .praxis/loops/log.jsonl, governed by the loop-control rule. A loop iterates toward a terminal predicate (all acceptance criteria met) under a budget and a no-progress guard, and either converges (done) or escalates to the user — it never spins forever.",
+  "type": "object",
+  "required": ["id", "created", "updated", "status", "criteria", "max_iterations", "patience", "iterations"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^LOOP-\\d{8}-\\d{6}-[0-9a-f]{4}$",
+      "description": "Typed id: LOOP-<YYYYMMDD>-<HHMMSS>-<salt>."
+    },
+    "created": { "type": "string", "description": "ISO-8601 UTC creation timestamp." },
+    "updated": { "type": "string", "description": "ISO-8601 UTC timestamp of the last mutation." },
+    "status": {
+      "type": "string",
+      "enum": ["running", "done", "escalated", "abandoned"],
+      "description": "Lifecycle: running -> done | escalated | abandoned. An escalated loop returns to running only via resume. Closed set, never invented."
+    },
+    "goal": { "type": "string", "description": "What the loop is trying to achieve." },
+    "criteria": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The terminal predicate: every criterion must be met to finish. Must be non-empty — an empty predicate can never legitimately complete.",
+      "items": {
+        "type": "object",
+        "required": ["id", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^c\\d+$", "description": "Stable id, c1, c2, ..." },
+          "text": { "type": "string", "description": "The acceptance criterion." }
+        }
+      }
+    },
+    "max_iterations": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Budget guard: escalate once this many iterations have run without meeting the predicate."
+    },
+    "patience": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "No-progress guard: escalate after this many consecutive iterations with an unchanged progress signature."
+    },
+    "iterations": {
+      "type": "array",
+      "description": "One record per tick, in order.",
+      "items": {
+        "type": "object",
+        "required": ["n", "ts", "met", "verdict"],
+        "additionalProperties": false,
+        "properties": {
+          "n": { "type": "integer", "minimum": 1, "description": "1-based iteration number." },
+          "ts": { "type": "string", "description": "ISO-8601 UTC timestamp of the tick." },
+          "met": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^c\\d+$" },
+            "description": "Criterion ids met at this tick (a fresh snapshot, not cumulative)."
+          },
+          "signal": { "type": "string", "description": "Free-form state fingerprint, e.g. '2 tests failing'." },
+          "note": { "type": "string" },
+          "verdict": {
+            "type": "string",
+            "enum": ["continue", "done", "escalate"],
+            "description": "The computed verdict for this tick. Closed set."
+          }
+        }
+      }
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["", "continue", "done", "escalate", "abandoned"],
+      "description": "The latest verdict (empty before the first tick)."
+    },
+    "escalation": {
+      "type": "string",
+      "description": "Why the loop escalated (budget exhausted or no progress), or a manual close note."
+    }
+  }
+}
