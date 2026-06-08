@@ -107,7 +107,10 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
 - [tools/](tools/validate_harness.py) — `validate_harness.py` (run
   `make validate-harness`; CI enforces it), `install_adapter.py`, `runtime.py`,
   `assumptions.py` (the assumptions ledger behind *never assume, always
-  validate*), `loop.py` (the bounded loop controller behind *loop control*).
+  validate*), `loop.py` (the bounded loop controller behind *loop control*),
+  `promote.py` (the human-gated promotion executor: validated assumption →
+  `pending` rule/gate/eval/guardrail in the memory ledger, routed via
+  skill-learner).
 
 A repo opts in by adding `.praxis/config.json` pointing at this harness and a
 project id (scaffold it with `tools/install_adapter.py`). If the project id can't

@@ -70,19 +70,29 @@ Every answer is adjudicated and recorded — the answer never lives only in chat
 - **Withdrawn** (`withdraw <id>`): the assumption became moot.
 
 When a confirmed or corrected answer **generalises** — it is not a one-off but a
-rule the team should always follow — propose promoting it:
+rule the team should always follow — record the *intent* on the resolution and
+then run the promotion executor:
 
 ```sh
 python tools/assumptions.py confirm <id> --decision <ledger-id> --promote rule
+python tools/promote.py from-assumption <id>      # target taken from --promote
 ```
 
-`--promote rule | guardrail | eval | gate` records the *intent*. The promotion
-itself is **proposed through the memory ledger as `pending`** (route via
-`skill-learner` / `/learn`) and **never applied silently** — a wrong promotion
-poisons every future run. **Pending is not approval**: the user accepts before
-any rule, guardrail, eval, or gate is actually added. This is how the workflow
-*learns*: a human decision becomes durable governance, deterministically and
-under review.
+`tools/promote.py` enforces the two doctrine rules and is the only sanctioned
+path to governance:
+
+- **Promote on evidence, never on anticipation.** It refuses to promote an
+  assumption that is not resolved — an open guess cannot become a rule.
+- **Propose, never mutate.** It does not write the rule/gate/eval. It records a
+  `pending` `decision` in the memory ledger (tagged `promotion`,
+  `promote:<target>`, `source:<ASSUME-id>`), links it back to the assumption, and
+  prints the routing for who authors it after acceptance (rules → `rules/`, gates
+  → `workflows/`, evals/skills → skill-learner → skill-creator).
+
+**Pending is not approval**: the user accepts (`/memory accept <id>`) before any
+rule, guardrail, eval, or gate is actually added — a wrong promotion poisons every
+future run. This is how the workflow *learns*: a human decision becomes durable
+governance, deterministically and under review.
 
 ## Making it ambient (opt-in hook)
 

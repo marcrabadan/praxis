@@ -63,8 +63,10 @@ Pick the mode that matches the situation and follow its file.
 | Detect & route | [workflows/detect-gap.md](workflows/detect-gap.md) | Entry point — confirm the gap is real and org-specific, search existing coverage, decide the route. |
 | Refine existing | [workflows/refine-existing.md](workflows/refine-existing.md) | Coverage exists but is wrong/incomplete — hand to skill-creator's review flow. |
 | Create new | [workflows/create-new.md](workflows/create-new.md) | No coverage — decide reference-vs-new-skill and tier, hand to skill-creator's create flow. |
+| Promote governance | [workflows/promote-governance.md](workflows/promote-governance.md) | The insight is a standing *constraint*, not skill knowledge — turn a validated assumption or evidenced gap into a `pending` rule / gate / eval / guardrail via `tools/promote.py`. |
 
-Default path: **detect-gap → (refine-existing | create-new)**.
+Default path: **detect-gap → (refine-existing | create-new)**. When the learning
+is a harness constraint rather than skill knowledge, use **promote-governance**.
 
 ## References
 
