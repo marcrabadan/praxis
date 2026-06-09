@@ -13,6 +13,45 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- **Spec-driven verification spine + self-evolving doctrine.** A set of
+  opt-in harness capabilities that make "iterate until it's actually correct"
+  deterministic and bounded, and let the harness learn under a human gate:
+  - **Never assume, always validate** ([`rules/never-assume.md`](rules/never-assume.md),
+    `tools/assumptions.py`) — low-confidence guesses are logged to an assumptions
+    ledger and replayed to the user as an A/B/C question-flow (`sweep`), then
+    resolved into a decision.
+  - **Loop control** ([`rules/loop-control.md`](rules/loop-control.md),
+    `tools/loop.py`) — the `verify` step runs as a bounded convergence loop with a
+    terminal predicate, budget, and no-progress guard; it meets the predicate
+    (`done`) or escalates, never spins. Wired into every workflow's `verify` step
+    via `loops.verify` (+ `onContinue` back-edge).
+  - **Enumerated stop-conditions catalog** ([`rules/stop-conditions-catalog.md`](rules/stop-conditions-catalog.md),
+    `schemas/stop-conditions.schema.json`) — `U-1…U-10` universal hard blockers
+    with exact `STOP[...]` text and resolution gates, plus per-spec `P-*`/`S-*`
+    additions and a run-log incident protocol; the deterministic counterpart to
+    the assumptions ledger.
+  - **Experience contracts** (`schemas/experience-contract.schema.json`) — an
+    optional `experience` step between spec and plan that turns each declared
+    surface into an executable, verifiable contract (markdown + validating JSON).
+  - **Typed gate catalog + verify report** — a `gateCatalog` of `G-*` gates in the
+    workflow schema, referenced by `loops.verify` and experience contracts; verify
+    reports record a per-gate result with reviewer sign-off and forbid
+    self-certification (`U-8`).
+  - **Per-task anti-drift** — tasks carry `Forbidden / Gate / Output` + `files-owned`,
+    linted by `tools/check_tasks.py` (`make check-tasks FILE=…`).
+  - **Promotion executor** (`tools/promote.py`) — promotes a validated assumption
+    into a `pending` rule/gate/eval/guardrail in the memory ledger, routed via
+    `skill-learner` (promote on evidence; propose, never mutate; human-gated).
+  - **Ambient validation hook** ([`integrations/hooks/validation.settings.example.json`](integrations/hooks/validation.settings.example.json))
+    surfaces open assumptions and escalated loops at SessionStart and before a
+    commit/push.
+
+  Adds the `feature-development` `experience` step, expands `spec.schema.json`
+  (optional `experienceInventory`), and extends `tools/validate_harness.py` with
+  experience-contract, gate-catalog, and stop-condition checks (harness tests grow
+  to 92). All opt-in; existing specs are unaffected. Bumps the `praxis` plugin to
+  `1.8.0`.
+
 - **`skill-learner` — the factory's learning loop** (Tier 3). Turns a knowledge
   gap discovered during expert work — a missing org convention, runbook, or rule
   (e.g. how *this team* builds infra in Terraform/Azure) — into durable,

@@ -258,7 +258,10 @@ python tools/validate_harness.py --config ../checkout/.praxis/config.json
 
 **What harness mode now includes** (all opt-in — they activate only when a project resolves):
 
-- **The full feature lifecycle.** In harness mode, `/new-feature` runs `discovery → research → spec → plan → tasks → build → verify → release` and writes the durable, typed artifacts under `projects/<project>/specs/<spec>/` — `discovery/`, `research/` (report + evidence log + alternatives), `spec.md`, `plans/implementation-plan.md`, `tasks/tasks.md`, `decisions/`, `reports/verify/`, and `reports/release/` — instead of leaving the plan only in chat. **Research precedes the spec.** Doctrine: [`systems/feature-development/artifact-model.md`](systems/feature-development/artifact-model.md).
+- **The full feature lifecycle.** In harness mode, `/new-feature` runs `discovery → research → spec → experience → plan → tasks → build → verify → release` and writes the durable, typed artifacts under `projects/<project>/specs/<spec>/` — `discovery/`, `research/` (report + evidence log + alternatives), `spec.md`, optional `experience/` contracts, `plans/implementation-plan.md`, `tasks/tasks.md`, `decisions/`, `reports/verify/`, and `reports/release/` — instead of leaving the plan only in chat. **Research precedes the spec.** Doctrine: [`systems/feature-development/artifact-model.md`](systems/feature-development/artifact-model.md).
+- **Executable surface contracts + typed gates.** The optional `experience` step turns each surface a spec declares (screen/flow/api/job/cli/data/integration) into a verifiable contract — markdown + a companion JSON validated against [`schemas/experience-contract.schema.json`](schemas/experience-contract.schema.json) — that names its source of truth, files-owned, dependency map, and the `G-*` gates that prove it. The workflow's `gateCatalog` defines those gates; the verify report records a pass/fail result per gate with reviewer sign-off and **forbids self-certification**. Tasks carry per-task **Forbidden / Gate / Output** fields + files-owned for deterministic anti-drift (lint: `make check-tasks FILE=…`).
+- **Never assume; loop, don't spin; hard stops.** Three complementary controls keep work honest: the **assumptions ledger** ([`rules/never-assume.md`](rules/never-assume.md), `tools/assumptions.py`) logs low-confidence guesses and replays them to you as a question-flow; **loop control** ([`rules/loop-control.md`](rules/loop-control.md), `tools/loop.py`) runs the `verify` step as a bounded convergence loop that either meets its predicate or escalates — never spins; and an enumerated **stop-conditions catalog** ([`rules/stop-conditions-catalog.md`](rules/stop-conditions-catalog.md)) of `U/P/S-*` hard blockers halts the step and writes a run log.
+- **A learning loop.** A validated assumption that generalises can be promoted — via [`tools/promote.py`](tools/promote.py), routed through `skill-learner` — into a **`pending`** rule, gate, eval, or guardrail in the memory ledger. Promote on evidence, never on anticipation; propose, never mutate; the user accepts before any governance is added.
 - **Lighter lifecycles for bugs and refinements.** `/fix-bug` drives the corrective `triage → reproduce → diagnose → fix → verify` chain ([`systems/bug-fix/`](systems/bug-fix/artifact-model.md)); `/refine` drives the quality-only, behavior-preserving `assess → plan → change → verify` chain ([`systems/refinement/`](systems/refinement/artifact-model.md)). Both skip the discovery/research/spec ceremony a feature needs.
 - **Workflow gates + HITL.** [`workflows/`](workflows/registry.json) holds machine-readable lifecycles (steps, gates, stop conditions). The feature chain has four human-in-the-loop gates — **Discovery & Research**, **Specification**, **Architecture** (only when significant), and **Release**. Each gate is opened by the previous artifact reaching an authorizing status. **Pending is not approval.**
 - **Traceability.** Every artifact carries a typed id and links via `source:` / `traces:`, so the chain `IDEA → DISC → RES → SPEC → … → REL` is navigable both ways. Convention: [`rules/traceability.md`](rules/traceability.md); advisory check: `make validate-traceability`.
@@ -369,13 +372,13 @@ praxis/
 ├─ SKILLS.md              # generated catalog of skills + commands (make catalog)
 ├─ examples/              # sample transcripts + praxis-config.example.json
 ├─ docs/                  # GitHub Pages site + harness-mode.md guide
-├─ rules/                 # harness mode: source-of-truth + stop-conditions + traceability
+├─ rules/                 # harness mode: source-of-truth, stop-conditions (+catalog), never-assume, loop-control, traceability
 ├─ projects/              # harness mode: per-project memory (_template + index + specs)
 ├─ systems/               # harness mode: lifecycle doctrine (feature-development, bug-fix, refinement)
-├─ workflows/             # harness mode: machine-readable gates (registry + manifests)
-├─ schemas/               # harness mode: project/config/spec/workflow/session schemas
+├─ workflows/             # harness mode: machine-readable lifecycles (steps, gates, gate catalog, loops)
+├─ schemas/               # harness mode: project/config/spec/workflow/session + experience-contract/assumption/loop/stop-conditions
 ├─ runtime/               # harness mode: disposable session state (git-ignored)
-├─ tools/                 # harness mode: validate_harness / install_adapter / runtime
+├─ tools/                 # harness mode: validate_harness / install_adapter / runtime / assumptions / loop / promote / check_tasks
 ├─ .claude-plugin/        # marketplace.json (lists the single praxis plugin)
 ├─ plugin-praxis/         # plugin: symlinks to every expert + skill-creator + skill-learner + memory + factory + their commands
 ├─ .claude/               # the real source of truth (used when this repo is the workspace)
