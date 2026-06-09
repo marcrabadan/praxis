@@ -321,6 +321,24 @@ landing-zone convention" — accept to apply.</code></pre>
 
         <div class="examples-grid">
 
+          <!-- Example 0: idea (intake) -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Intake</span>
+              <h3>Triage a raw idea</h3>
+              <p>The intake &amp; triage front door — clarify (≤2 questions), classify (feature / bug / refinement / not-worth-doing), capture a pending ledger note, and recommend the right lifecycle command. It triages and routes; it never plans.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/idea</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/idea</span> add a caching layer to the fetch helper
+
+<span class="c-muted">Classification</span> feature
+<span class="c-muted">Captured</span>       <span class="c-str">20260609-…-a1b2</span> (pending · intake,feature)
+<span class="c-muted">Next</span>           <span class="c-cmd">/new-feature</span> "cache the fetch helper"
+<span class="c-ok">✓</span> triaged · routed · nothing planned yet</code></pre>
+            </div>
+          </article>
+
           <!-- Example 1: new-feature -->
           <article class="example-card">
             <div class="example-head">
