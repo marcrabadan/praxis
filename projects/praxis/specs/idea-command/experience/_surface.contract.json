@@ -1,0 +1,24 @@
+{
+  "$schema": "../../../../../../schemas/experience-contract.schema.json",
+  "schemaVersion": "1.0.0",
+  "contractType": "experience-contract",
+  "spec": "template",
+  "surface": "surface-slug",
+  "experienceType": "screen",
+  "route": "<route / endpoint / command / trigger>",
+  "sourceOfTruth": [
+    { "kind": "figma", "ref": "<node-or-url>", "committedPath": "assets/references/<file>" }
+  ],
+  "filesOwned": [
+    "<path/owned/by/this/surface>"
+  ],
+  "components": [
+    { "id": "c-1", "name": "<Button or module>", "source": "design-system", "notes": "<why>" }
+  ],
+  "verification": [
+    { "gate": "G-build", "evidence": "<build command>", "passCriteria": "exit 0" },
+    { "gate": "G-runtime-clean", "evidence": "<test/runtime check>", "passCriteria": "no unexpected errors" }
+  ],
+  "status": "draft",
+  "openQuestions": []
+}
