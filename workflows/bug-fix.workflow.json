@@ -23,8 +23,15 @@
       ],
       "maxIterations": 6,
       "patience": 3,
-      "onContinue": "fix"
+      "onContinue": "fix",
+      "gates": ["G-repro-gone", "G-regression-test", "G-tests", "G-build"]
     }
+  },
+  "gateCatalog": {
+    "G-repro-gone": { "description": "The original failure no longer reproduces.", "runner": "<reproduction steps/test>", "passCriteria": "the documented repro no longer fails" },
+    "G-regression-test": { "description": "A regression test covers the bug and passes.", "runner": "<new test>", "passCriteria": "test exists, fails before the fix, passes after" },
+    "G-tests": { "description": "Full suite passes with no new failures.", "runner": "<repo test command>", "passCriteria": "all tests pass" },
+    "G-build": { "description": "Build command succeeds.", "runner": "<repo build command>", "passCriteria": "exit 0" }
   },
   "stopConditions": [
     "the bug cannot be reproduced and the report lacks enough detail to reproduce it",

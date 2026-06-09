@@ -425,17 +425,46 @@ def _check_workflow_manifest(path: Path, errors: list[str]) -> None:
                     f"{label}: '{section}' references unknown step {key!r}"
                 )
 
-    _check_workflow_loops(label, data.get("loops"), step_set, errors)
+    catalog_ids = _check_gate_catalog(label, data.get("gateCatalog"), errors)
+    _check_workflow_loops(label, data.get("loops"), step_set, catalog_ids, errors)
+
+
+def _check_gate_catalog(label: str, catalog: Any, errors: list[str]) -> set[str]:
+    """Validate the optional 'gateCatalog' (typed verification gates). Returns the
+    set of valid gate ids so callers can check references resolve."""
+    if catalog is None:
+        return set()
+    if not isinstance(catalog, dict):
+        errors.append(f"{label}: 'gateCatalog' must be an object")
+        return set()
+    ids: set[str] = set()
+    for gid, spec in catalog.items():
+        where = f"{label}: gateCatalog[{gid!r}]"
+        if not GATE_ID.match(str(gid)):
+            errors.append(f"{where}: gate id must match ^G-[a-z0-9-]+")
+            continue
+        if not isinstance(spec, dict):
+            errors.append(f"{where} must be an object")
+            continue
+        if not (isinstance(spec.get("description"), str) and spec["description"].strip()):
+            errors.append(f"{where}: 'description' is required")
+        if not (isinstance(spec.get("passCriteria"), str) and spec["passCriteria"].strip()):
+            errors.append(f"{where}: 'passCriteria' is required")
+        if "conditional" in spec and not isinstance(spec["conditional"], bool):
+            errors.append(f"{where}: 'conditional' must be a boolean")
+        ids.add(gid)
+    return ids
 
 
 def _check_workflow_loops(
-    label: str, loops: Any, step_set: set[str], errors: list[str]
+    label: str, loops: Any, step_set: set[str], catalog_ids: set[str], errors: list[str]
 ) -> None:
     """Validate the optional 'loops' block (rules/loop-control.md).
 
     Each looped step must carry a non-empty terminal predicate; the budget and
-    patience guards must be positive integers; and onContinue must name a real
-    step — a loop with no predicate or a dangling back-edge defeats the rule.
+    patience guards must be positive integers; onContinue must name a real step;
+    and any referenced gates must resolve to the gate catalog — a loop with no
+    predicate, a dangling back-edge, or a phantom gate defeats the rule.
     """
     if loops is None:
         return
@@ -462,6 +491,9 @@ def _check_workflow_loops(
         cont = spec.get("onContinue")
         if cont is not None and cont not in step_set:
             errors.append(f"{where}: 'onContinue' references unknown step {cont!r}")
+        for g in spec.get("gates", []) or []:
+            if catalog_ids and g not in catalog_ids:
+                errors.append(f"{where}: gate {g!r} is not defined in gateCatalog")
 
 
 def _validate_config_data(

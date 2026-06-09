@@ -106,7 +106,7 @@ class WorkflowManifestTests(unittest.TestCase):
 
     def test_loop_empty_predicate_fails(self) -> None:
         errors: list[str] = []
-        vh._check_workflow_loops("wf", {"verify": {"predicate": []}}, {"verify"}, errors)
+        vh._check_workflow_loops("wf", {"verify": {"predicate": []}}, {"verify"}, set(), errors)
         self.assertTrue(any("predicate" in e for e in errors), errors)
 
     def test_loop_on_unknown_step_fails(self) -> None:
@@ -129,16 +129,42 @@ class WorkflowManifestTests(unittest.TestCase):
     def test_loop_bad_max_iterations_fails(self) -> None:
         errors: list[str] = []
         vh._check_workflow_loops(
-            "wf", {"verify": {"predicate": ["x"], "maxIterations": 0}}, {"verify"}, errors
+            "wf", {"verify": {"predicate": ["x"], "maxIterations": 0}}, {"verify"}, set(), errors
         )
         self.assertTrue(any("maxIterations" in e for e in errors), errors)
 
     def test_loop_dangling_on_continue_fails(self) -> None:
         errors: list[str] = []
         vh._check_workflow_loops(
-            "wf", {"verify": {"predicate": ["x"], "onContinue": "ghost"}}, {"verify"}, errors
+            "wf", {"verify": {"predicate": ["x"], "onContinue": "ghost"}}, {"verify"}, set(), errors
         )
         self.assertTrue(any("onContinue" in e for e in errors), errors)
+
+    def test_valid_gate_catalog_passes(self) -> None:
+        ids = vh._check_gate_catalog(
+            "wf",
+            {"G-build": {"description": "build succeeds", "passCriteria": "exit 0", "runner": "make build"}},
+            [],
+        )
+        self.assertIn("G-build", ids)
+
+    def test_gate_catalog_missing_pass_criteria_fails(self) -> None:
+        errors: list[str] = []
+        vh._check_gate_catalog("wf", {"G-build": {"description": "x"}}, errors)
+        self.assertTrue(any("passCriteria" in e for e in errors), errors)
+
+    def test_bad_gate_id_fails(self) -> None:
+        errors: list[str] = []
+        vh._check_gate_catalog("wf", {"build": {"description": "x", "passCriteria": "y"}}, errors)
+        self.assertTrue(any("gate id" in e for e in errors), errors)
+
+    def test_loop_gate_must_resolve_to_catalog(self) -> None:
+        errors: list[str] = []
+        vh._check_workflow_loops(
+            "wf", {"verify": {"predicate": ["x"], "gates": ["G-ghost"]}},
+            {"verify"}, {"G-build"}, errors
+        )
+        self.assertTrue(any("not defined in gateCatalog" in e for e in errors), errors)
 
 
 class ExperienceContractTests(unittest.TestCase):

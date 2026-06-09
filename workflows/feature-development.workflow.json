@@ -31,8 +31,21 @@
       ],
       "maxIterations": 8,
       "patience": 3,
-      "onContinue": "build"
+      "onContinue": "build",
+      "gates": ["G-acceptance", "G-build", "G-lint", "G-typecheck", "G-tests", "G-runtime-clean"]
     }
+  },
+  "gateCatalog": {
+    "G-build": { "description": "Build command succeeds.", "runner": "<repo build command>", "passCriteria": "exit 0" },
+    "G-lint": { "description": "Lint passes.", "runner": "<repo lint command>", "passCriteria": "exit 0, no errors" },
+    "G-typecheck": { "description": "Typecheck passes.", "runner": "<repo typecheck command>", "passCriteria": "exit 0" },
+    "G-tests": { "description": "Test suite passes with no regressions.", "runner": "<repo test command>", "passCriteria": "all tests pass" },
+    "G-runtime-clean": { "description": "Runtime has no unexpected errors.", "runner": "<smoke/runtime check>", "passCriteria": "no unexpected errors logged" },
+    "G-routes-200": { "description": "Routes or endpoints respond successfully.", "runner": "<http/route check>", "passCriteria": "expected status codes", "conditional": true, "appliesTo": ["screen", "flow", "api"] },
+    "G-assets-present": { "description": "Referenced assets exist.", "runner": "manual", "passCriteria": "every asset named in the experience contract resolves" },
+    "G-imports-used": { "description": "Named primitives/modules are implemented or imported where expected.", "runner": "manual", "passCriteria": "no named dependency is missing or substituted" },
+    "G-acceptance": { "description": "Every acceptance criterion in the spec is demonstrably met.", "runner": "manual", "passCriteria": "each criterion has evidence" },
+    "G-visual": { "description": "Visual output matches the approved reference.", "runner": "<visual diff>", "passCriteria": "diff under threshold", "conditional": true, "appliesTo": ["screen", "flow"] }
   },
   "stopConditions": [
     "the problem, target user, or desired outcome is unclear after discovery",
