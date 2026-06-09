@@ -11,6 +11,8 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-06-09
+
 ### Added
 
 - **PSDOS gap-closure: mandatory security/performance gates, criteria-checked
@@ -255,5 +257,6 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
   published via `.claude-plugin/marketplace.json`.
 - Deterministic skill generator, validators, catalog builder, and CI.
 
-[Unreleased]: https://github.com/marcrabadan/praxis/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/marcrabadan/praxis/compare/v1.9.0...HEAD
+[1.9.0]: https://github.com/marcrabadan/praxis/compare/v1.0.0...v1.9.0
 [1.0.0]: https://github.com/marcrabadan/praxis/releases/tag/v1.0.0

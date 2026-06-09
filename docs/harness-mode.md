@@ -10,9 +10,10 @@ It carries two layers. The *authority model* — projects, source-of-truth rules
 stop conditions, adapter config, and a deterministic validator — and the
 *delivery lifecycle* on top of it: machine-readable workflows with human-in-the-loop
 gates, durable typed artifacts, bidirectional traceability, and runtime state.
-The feature lifecycle runs `discovery → research → spec → plan → tasks → build →
-verify → release`; lighter `bug-fix` and `refinement` lifecycles handle corrective
-and quality-only work. All of it is **opt-in** — it activates only when a
+The feature lifecycle runs `discovery → research → product-definition → spec →
+experience → plan → tasks → build → verify → release-candidate → release`, gated by
+a **Validation Orchestrator**; lighter `bug-fix` and `refinement` lifecycles handle
+corrective and quality-only work. All of it is **opt-in** — it activates only when a
 `.praxis/config.json` resolves a project, so non-harness repos are unaffected.
 
 ## What harness mode adds
@@ -184,10 +185,15 @@ validators.
 - **Workflows** (`workflows/`) are machine-readable lifecycles — steps, gates,
   stop conditions, and validation commands. Each gate is opened by the previous
   artifact reaching an authorizing status, and **pending is not approval**.
-  - `feature-development`: `discovery → research → spec → plan → tasks → build →
-    verify → release`, with four human-in-the-loop gates — **Discovery &
-    Research**, **Specification**, **Architecture** (only when a significant
-    decision exists), and **Release**. Research must precede the spec. Doctrine:
+  - `feature-development`: `discovery → research → product-definition → spec →
+    experience → plan → tasks → build → verify → release-candidate → release`, with
+    **five criteria-checked human-in-the-loop gates** — `approved-discovery`,
+    `approved-product-definition`, `approved-spec`, `architecture-validated`
+    (only when a significant decision exists), and `release-candidate-ready`. Each
+    gate carries explicit, checkable `gateCriteria`, so an approval is a checklist
+    not a vibe. A failed gate routes back to its mapped rework state
+    (`transitions.onGateFailure`) — root-cause → return → revalidate, never a
+    bypass. Research must precede the spec. Doctrine:
     [`../systems/feature-development/artifact-model.md`](../systems/feature-development/artifact-model.md).
   - `bug-fix`: `triage → reproduce → diagnose → fix → verify` — corrective work,
     no discovery/research/spec chain. Doctrine:
@@ -208,6 +214,46 @@ validators.
 - **Runtime** (`runtime/`) is disposable session glue (last active
   project/repo/spec/command), managed by `tools/runtime.py` and **git-ignored**.
   Durable decisions never live only here — see [`../runtime/README.md`](../runtime/README.md).
+
+## Gates, verification, and the Validation Orchestrator
+
+A gate is only as good as the thing that enforces it. Harness mode makes that
+explicit:
+
+- **The Validation Orchestrator** ([`../.claude/skills/validation-orchestrator/SKILL.md`](../.claude/skills/validation-orchestrator/SKILL.md),
+  `/validation-orchestrator`) is the standing role with **sole authority to halt
+  progression**. It runs each gate's `gateCriteria`, the typed verify-gate
+  catalog, and the stop-conditions catalog, and returns a closed-set verdict —
+  `advance | block | escalate`. A `pending` decision blocks; pending is never
+  approval.
+- **The verify gate catalog** (`gateCatalog`) is a closed set of `G-*` gates the
+  `verify` loop must prove: `G-build`, `G-lint`, `G-typecheck`, `G-tests`,
+  `G-runtime-clean`, `G-acceptance`, plus surface-conditional gates
+  (`G-routes-200`, `G-assets-present`, `G-imports-used`, `G-visual`). The verify
+  report records pass/fail **per gate** with reviewer sign-off and **forbids
+  self-certification**.
+  - **`G-security` is mandatory** — a feature cannot reach `release` without a
+    recorded security review (owned by `security-engineer`); high/critical
+    findings are fixed or carry an approved risk-acceptance decision.
+  - **`G-performance` is conditional** on runtime-bearing surfaces, owned by
+    `software-architect` for build-time budgets
+    ([`references/performance-review.md`](../.claude/skills/software-architect/references/performance-review.md))
+    and `devops-engineer` for runtime SLOs.
+- **Failure protocol.** A failed gate routes back to its mapped rework state via
+  `transitions.onGateFailure` (root-cause → return → revalidate), enforced by
+  `tools/validate_harness.py`.
+
+## Continuous learning (the pattern miner)
+
+The learning loop has two halves. The **reactive** half ([`../tools/promote.py`](../tools/promote.py),
+routed through `skill-learner` / `/learn`) captures a knowledge gap the moment an
+expert hits it. The **proactive** half — `make patterns` / the `/patterns`
+command ([`../tools/patterns.py`](../tools/patterns.py)) — sweeps the memory
+ledger and the stop-condition run logs for recurring tags, sources, artifact
+types, and stop conditions, and surfaces them as **human-gated promotion
+candidates**: a repeated blocker becomes a candidate `P-*` stop condition or
+guardrail, a repeated theme a candidate rule or skill. Nothing is promoted
+automatically — the miner asks "what keeps happening?" and the user decides.
 
 ## Trying harness mode end to end
 
@@ -273,12 +319,16 @@ The generated Cursor / Codex / IntelliJ entry docs include the same harness
 
 The harness conversion is in place: the authority model, project memory, adapter
 config + read-order wiring, the harness validator, the full `feature-development`
-lifecycle (discovery → research → spec → plan → tasks → build → verify → release)
-with four HITL gates, the lighter `bug-fix` and `refinement` lifecycles
-(`/fix-bug`, `/refine`), bidirectional traceability, runtime state, and a
-project-aware `/review-changes`. All harness behavior in commands is **opt-in** —
-it activates only when a `.praxis/config.json` resolves a project, so non-harness
-repos are unaffected.
+lifecycle (discovery → research → product-definition → spec → experience → plan →
+tasks → build → verify → release-candidate → release) with five criteria-checked
+HITL gates and a Validation Orchestrator, a typed verify-gate catalog (mandatory
+`G-security`, conditional `G-performance`) with a failure protocol, the lighter
+`bug-fix` and `refinement` lifecycles (`/fix-bug`, `/refine`), bidirectional
+traceability, runtime state, a continuous-learning pattern miner (`/patterns`),
+and a project-aware `/review-changes`. All harness behavior in commands is
+**opt-in** — it activates only when a `.praxis/config.json` resolves a project, so
+non-harness repos are unaffected.
 
 Deliberately still out of scope (add on evidence, not anticipation): a full SDD
-Kit, an `experience` workflow step, and central-mode sync tooling.
+Kit, central-mode sync tooling, and extending the mandatory security/performance
+gates to the lighter `bug-fix` and `refinement` lifecycles.

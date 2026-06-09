@@ -749,9 +749,10 @@ landing-zone convention" — accept to apply.</code></pre>
           <ul class="memory-list">
             <li><span class="state accepted">rules/</span> Source-of-truth authority order, stop conditions &amp; traceability.</li>
             <li><span class="state accepted">projects/</span> Per-project memory + durable <code>specs/</code>, <code>bugs/</code> &amp; <code>refinements/</code>.</li>
-            <li><span class="state pending">workflows/</span> Gated lifecycles: feature <code>discovery → research → spec → plan → tasks → build → verify → release</code>, plus <code>bug-fix</code> &amp; <code>refinement</code>.</li>
+            <li><span class="state pending">workflows/</span> Gated lifecycles: feature <code>discovery → research → product-definition → spec → experience → plan → tasks → build → verify → release-candidate → release</code>, plus <code>bug-fix</code> &amp; <code>refinement</code>.</li>
+            <li><span class="state accepted">validation-orchestrator</span> The standing authority that gates each step — five criteria-checked HITL gates + a typed verify catalog (mandatory <code>G-security</code>, conditional <code>G-performance</code>); verdict is <code>advance | block | escalate</code>.</li>
             <li><span class="state pending">.praxis/config.json</span> A repo points at a harness + project; agents resolve context deterministically.</li>
-            <li><span class="state superseded">tools/</span> Mechanical <code>validate_harness.py</code> + <code>validate_traceability.py</code> + <code>install_adapter.py</code> — checked in CI.</li>
+            <li><span class="state superseded">tools/</span> Mechanical <code>validate_harness.py</code> + <code>validate_traceability.py</code> + <code>install_adapter.py</code> + the <code>/patterns</code> miner — checked in CI.</li>
           </ul>
           <p class="memory-note"><strong>local</strong> (default) keeps project memory in the product repo; <strong>central</strong> shares it across many repos for one product — one spec, never duplicated. See the <a href="https://github.com/marcrabadan/praxis/blob/main/docs/harness-mode.md" target="_blank" rel="noopener">harness-mode guide ↗</a> and <a href="https://github.com/marcrabadan/praxis/blob/main/docs/teamwork.md" target="_blank" rel="noopener">working as a team ↗</a>.</p>
         </div>
