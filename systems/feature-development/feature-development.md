@@ -82,6 +82,18 @@ verdict, and **reviewer sign-off**. Two rules make it authoritative:
 
 Only `overall-result: pass` with accepted sign-off satisfies the `release` gate.
 
+### Tasks carry their own anti-drift constraints
+
+The `tasks` step doesn't just list work — each task names its **Plan ref**,
+**Decisions** in force, what is **Forbidden** (don't rename the route, don't
+substitute a named dependency `U-9`, don't hardcode contract tokens), the
+**Gate** that proves it, and its allowed **Output** (the only files it may
+touch). Each per-surface group declares `files-owned`, mirroring the surface's
+experience-contract `filesOwned`, so the verifier and the build agree on scope.
+[`../../tools/check_tasks.py`](../../tools/check_tasks.py) lints this
+deterministically (`make check-tasks FILE=…`) — a task with no Forbidden/Gate/
+Output is drift waiting to happen.
+
 ## Stop conditions
 
 In addition to [`../../rules/stop-conditions.md`](../../rules/stop-conditions.md),

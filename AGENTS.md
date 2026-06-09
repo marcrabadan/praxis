@@ -116,7 +116,9 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
   validate*), `loop.py` (the bounded loop controller behind *loop control*),
   `promote.py` (the human-gated promotion executor: validated assumption →
   `pending` rule/gate/eval/guardrail in the memory ledger, routed via
-  skill-learner).
+  skill-learner), `check_tasks.py` (advisory lint that every task in a tasks.md
+  names its Forbidden / Gate / Output and each surface group declares
+  files-owned — deterministic anti-drift; `make check-tasks FILE=…`).
 
 A repo opts in by adding `.praxis/config.json` pointing at this harness and a
 project id (scaffold it with `tools/install_adapter.py`). If the project id can't
