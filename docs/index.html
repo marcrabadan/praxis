@@ -321,6 +321,24 @@ landing-zone convention" — accept to apply.</code></pre>
 
         <div class="examples-grid">
 
+          <!-- Example 0: idea (intake) -->
+          <article class="example-card">
+            <div class="example-head">
+              <span class="example-tag">Intake</span>
+              <h3>Triage a raw idea</h3>
+              <p>The intake &amp; triage front door — clarify (≤2 questions), classify (feature / bug / refinement / not-worth-doing), capture a pending ledger note, and recommend the right lifecycle command. It triages and routes; it never plans.</p>
+            </div>
+            <div class="code-panel">
+              <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/idea</span></div>
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/idea</span> add a caching layer to the fetch helper
+
+<span class="c-muted">Classification</span> feature
+<span class="c-muted">Captured</span>       <span class="c-str">20260609-…-a1b2</span> (pending · intake,feature)
+<span class="c-muted">Next</span>           <span class="c-cmd">/new-feature</span> "cache the fetch helper"
+<span class="c-ok">✓</span> triaged · routed · nothing planned yet</code></pre>
+            </div>
+          </article>
+
           <!-- Example 1: new-feature -->
           <article class="example-card">
             <div class="example-head">
@@ -611,22 +629,22 @@ landing-zone convention" — accept to apply.</code></pre>
           <article class="example-card">
             <div class="example-head">
               <span class="example-tag">Harness mode</span>
-              <h3>Give a repo a project memory</h3>
-              <p>Opt a repo into the new harness layer: a deterministic project context (source of truth, current state, open questions) that agents read first — validated mechanically, no LLM.</p>
+              <h3>Every repo has a project memory</h3>
+              <p>Harness mode is always on: a deterministic project context (source of truth, current state, open questions) that agents read first — auto-bootstrapped if absent, validated mechanically, no LLM.</p>
             </div>
             <div class="code-panel">
               <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">.praxis/config.json</span></div>
-              <pre class="term-body"><code><span class="c-prompt">$</span> <span class="c-cmd">cat</span> .praxis/config.json
+              <pre class="term-body"><code><span class="c-prompt">$</span> <span class="c-cmd">/new-feature</span> …      <span class="c-comment"># auto-bootstraps on first run</span>
+<span class="c-muted">bootstrapped harness for project 'checkout'</span>
+
+<span class="c-prompt">$</span> <span class="c-cmd">cat</span> .praxis/config.json
 <span class="c-key">{</span>
   <span class="c-str">"schemaVersion"</span>: <span class="c-str">"1.0.0"</span>,
-  <span class="c-str">"harnessRoot"</span>:  <span class="c-str">"../praxis"</span>,
   <span class="c-str">"projectId"</span>:    <span class="c-str">"checkout"</span>,
-  <span class="c-str">"mode"</span>:         <span class="c-str">"local"</span>   <span class="c-comment"># default; central for teams</span>
+  <span class="c-str">"mode"</span>:         <span class="c-str">"local"</span>,  <span class="c-comment"># default; central for teams</span>
+  <span class="c-str">"generatedBy"</span>:  <span class="c-str">"tools/ensure_harness.py"</span>
 <span class="c-key">}</span>
-
-<span class="c-prompt">$</span> <span class="c-cmd">make</span> validate-harness
-<span class="c-ok">✓</span> projects · schemas · memory shape
-<span class="c-ok">✓</span> projectId resolves · config valid</code></pre>
+<span class="c-ok">✓</span> always on · missing config is bootstrapped, not an error</code></pre>
             </div>
           </article>
 
@@ -744,14 +762,15 @@ landing-zone convention" — accept to apply.</code></pre>
     <section class="section section-alt" id="harness" aria-labelledby="harness-title">
       <div class="container memory-wrap">
         <div class="memory-copy">
-          <h2 id="harness-title" class="section-title">Harness mode <span class="accent">(experimental)</span></h2>
-          <p class="section-sub">Beyond the skill factory, praxis is an <strong>agent harness</strong> — a reliable operating environment that tells an agent where to read first, what's canonical, where durable decisions go, and when to stop and ask. It carries the full delivery lifecycle: project memory, durable typed spec artifacts, machine-readable workflows with human-in-the-loop gates, bidirectional traceability and runtime state — all <strong>opt-in</strong>, activating only when a repo resolves a project.</p>
+          <h2 id="harness-title" class="section-title">Harness mode <span class="accent">(always on)</span></h2>
+          <p class="section-sub">Beyond the skill factory, praxis is an <strong>agent harness</strong> — a reliable operating environment that tells an agent where to read first, what's canonical, where durable decisions go, and when to stop and ask. It carries the full delivery lifecycle: project memory, durable typed spec artifacts, machine-readable workflows with human-in-the-loop gates, bidirectional traceability and runtime state. It is praxis's <strong>default and only</strong> mode — a repo with no config is <strong>auto-bootstrapped</strong>, never run without the harness.</p>
           <ul class="memory-list">
             <li><span class="state accepted">rules/</span> Source-of-truth authority order, stop conditions &amp; traceability.</li>
             <li><span class="state accepted">projects/</span> Per-project memory + durable <code>specs/</code>, <code>bugs/</code> &amp; <code>refinements/</code>.</li>
-            <li><span class="state pending">workflows/</span> Gated lifecycles: feature <code>discovery → research → spec → plan → tasks → build → verify → release</code>, plus <code>bug-fix</code> &amp; <code>refinement</code>.</li>
+            <li><span class="state pending">workflows/</span> Gated lifecycles: feature <code>discovery → research → product-definition → spec → experience → plan → tasks → build → verify → release-candidate → release</code>, plus <code>bug-fix</code> &amp; <code>refinement</code>.</li>
+            <li><span class="state accepted">validation-orchestrator</span> The standing authority that gates each step — five criteria-checked HITL gates + a typed verify catalog (mandatory <code>G-security</code>, conditional <code>G-performance</code>); verdict is <code>advance | block | escalate</code>.</li>
             <li><span class="state pending">.praxis/config.json</span> A repo points at a harness + project; agents resolve context deterministically.</li>
-            <li><span class="state superseded">tools/</span> Mechanical <code>validate_harness.py</code> + <code>validate_traceability.py</code> + <code>install_adapter.py</code> — checked in CI.</li>
+            <li><span class="state superseded">tools/</span> Mechanical <code>validate_harness.py</code> + <code>validate_traceability.py</code> + <code>install_adapter.py</code> + the <code>/patterns</code> miner — checked in CI.</li>
           </ul>
           <p class="memory-note"><strong>local</strong> (default) keeps project memory in the product repo; <strong>central</strong> shares it across many repos for one product — one spec, never duplicated. See the <a href="https://github.com/marcrabadan/praxis/blob/main/docs/harness-mode.md" target="_blank" rel="noopener">harness-mode guide ↗</a> and <a href="https://github.com/marcrabadan/praxis/blob/main/docs/teamwork.md" target="_blank" rel="noopener">working as a team ↗</a>.</p>
         </div>

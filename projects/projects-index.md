@@ -11,6 +11,7 @@ listed here exists with the required shape, and that every project folder on dis
 
 | Project id | Name | Status | Notes |
 |------------|------|--------|-------|
+| `praxis` | Praxis | active | Auto-bootstrapped by ensure_harness. |
 | `helios` | Helios | active | Example **multi-repo** project (central mode) — last-mile logistics across 4 repos. |
 
 ## Status values (closed set)

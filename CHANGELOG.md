@@ -13,6 +13,74 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- **`/idea` — intake & triage front door** ([`.claude/commands/idea.md`](.claude/commands/idea.md))
+  — a thin command that takes a raw idea, clarifies it (≤2 questions), classifies
+  it (`feature` → `/new-feature`, `bug` → `/fix-bug`, `refinement` → `/refine`,
+  `not-worth-doing` → no route), captures a `pending` note in the memory ledger
+  (`--source /idea --tags intake,<class>`), and recommends the next command. It
+  classifies, captures, and recommends — it never plans, specs, or runs the
+  lifecycle. A command, not a skill (per promotion-policy). Designed end-to-end
+  through the harness lifecycle under
+  [`projects/praxis/specs/idea-command/`](projects/praxis/specs/idea-command/).
+
+### Changed
+
+- **Harness mode is now always on (was opt-in).** Harness behavior is praxis's
+  default and only operating mode — the `if not in harness mode, behave as before`
+  fallback is gone from `/new-feature`, `/fix-bug`, `/refine`, and
+  `/review-changes`. A missing `.praxis/config.json` is no longer treated as
+  "no harness"; it is **auto-bootstrapped**.
+  - New [`tools/ensure_harness.py`](tools/ensure_harness.py) (`make harness-init`)
+    — idempotent, stdlib-only. On the first lifecycle command it derives a project
+    id from the repo name and writes the config + project memory: `central` mode
+    under `projects/<id>/` for the harness repo itself, `local` mode under
+    `.praxis/project/` for a consuming repo. A no-op once initialized.
+  - **Stop conditions narrowed:** a *missing* config is not a hard block (it is
+    bootstrapped); only a config that is *present but broken* (malformed, or a
+    `projectId` that does not resolve) stops the agent — it asks rather than
+    overwriting. Updated [`rules/stop-conditions.md`](rules/stop-conditions.md)
+    and [`rules/source-of-truth.md`](rules/source-of-truth.md).
+  - Doctrine + docs updated throughout (AGENTS.md, README, `docs/harness-mode.md`,
+    the GitHub page) from "opt-in / experimental" to "always on".
+
+## [1.9.0] - 2026-06-09
+
+### Added
+
+- **PSDOS gap-closure: mandatory security/performance gates, criteria-checked
+  gates, front-half states, failure transitions, a Validation Orchestrator, and
+  a pattern miner.** Brings the `feature-development` harness lifecycle closer to
+  a faithful PSDOS implementation:
+  - **Mandatory `G-security` + conditional `G-performance` verify gates**
+    ([`workflows/feature-development.workflow.json`](workflows/feature-development.workflow.json))
+    — a feature can no longer reach `release` without a recorded security review;
+    high/critical findings are fixed or carry an approved risk-acceptance
+    decision. Wired into `loops.verify` and the verify-report template.
+  - **Criteria-checked gates** (`gateCriteria`) — HITL approval tokens
+    (`approved-discovery`, `approved-product-definition`, `approved-spec`,
+    `architecture-validated`, `release-candidate-ready`) now carry explicit,
+    checkable criteria, so an approval is a checklist not a vibe.
+    `architecture-validated` gives architecture its own pass/fail via
+    [`plans/architecture-review.md`](projects/_template/specs/_template/plans/architecture-review.md).
+  - **Front-half + back-half states** — `product-definition` (PO-owned MVP/scope/
+    metrics) and `release-candidate` (proven-correct vs decided-to-ship) are now
+    explicit states with their own artifacts.
+  - **Failure protocol** (`transitions.onGateFailure`) — a failed gate routes
+    back to its mapped rework state (root-cause → return → revalidate), never a
+    bypass. Validated by `tools/validate_harness.py`.
+  - **Validation Orchestrator** ([`.claude/skills/validation-orchestrator/`](.claude/skills/validation-orchestrator/SKILL.md),
+    `/validation-orchestrator`) — the standing role with sole authority to halt
+    progression; adjudicates each gate to a closed-set verdict
+    (`advance | block | escalate`).
+  - **Continuous-learning pattern miner** ([`tools/patterns.py`](tools/patterns.py),
+    `make patterns`, and the `/patterns` command) — sweeps the ledger + run logs
+    for recurring tags, sources, and stop conditions and surfaces them as
+    human-gated promotion candidates, routed into `/learn`.
+  - **`G-performance` now has an owning expert** — `software-architect` gains
+    [`references/performance-review.md`](.claude/skills/software-architect/references/performance-review.md)
+    (build-time budgets, review method, regression threshold), with
+    `devops-engineer` owning the runtime/SLO side, so the gate routes to a named
+    role like `G-security` does. No new skill (per promotion-policy).
 - **Spec-driven verification spine + self-evolving doctrine.** A set of
   opt-in harness capabilities that make "iterate until it's actually correct"
   deterministic and bounded, and let the harness learn under a human gate:
@@ -221,5 +289,6 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
   published via `.claude-plugin/marketplace.json`.
 - Deterministic skill generator, validators, catalog builder, and CI.
 
-[Unreleased]: https://github.com/marcrabadan/praxis/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/marcrabadan/praxis/compare/v1.9.0...HEAD
+[1.9.0]: https://github.com/marcrabadan/praxis/compare/v1.0.0...v1.9.0
 [1.0.0]: https://github.com/marcrabadan/praxis/releases/tag/v1.0.0

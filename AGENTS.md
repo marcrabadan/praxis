@@ -54,14 +54,20 @@ Beyond the SDLC roster, the repo ships one **utility skill**: [.claude/skills/me
 
 Do not invent a new top-level skill when an existing workflow in `skill-creator` covers the use case.
 
-## Harness mode (experimental)
+## Harness mode (always on)
 
 Beyond the skill factory, praxis has an **agent-harness** layer that gives agents
 a reliable operating environment — source-of-truth authority, project memory,
 durable spec artifacts, workflow gates, runtime state, and deterministic
-validators. All harness behavior in commands is **opt-in**: it activates only
-when a repo has a `.praxis/config.json` that resolves a project, so non-harness
-repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
+validators. **Harness mode is praxis's default and only operating mode** — there
+is no opt-in and no non-harness fallback. Any repo praxis runs in is a harness
+repo. If a repo has no `.praxis/config.json`, or it does not yet resolve a
+project, the harness **auto-bootstraps** one on the first command (a `local`
+project derived from the repo name, via `python tools/ensure_harness.py`, which
+is idempotent) and continues — it never degrades to a non-harness path. The one
+hard stop is a config that is *present but broken* (a `projectId` that does not
+resolve): then the agent stops and asks rather than guessing or overwriting.
+Start at [docs/harness-mode.md](docs/harness-mode.md).
 
 - [rules/source-of-truth.md](rules/source-of-truth.md) — what is canonical vs
   generated vs runtime, and the authority order to follow on conflict.
@@ -99,13 +105,22 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
   corrective and quality-only lifecycles behind `/fix-bug` and `/refine`.
 - [workflows/](workflows/registry.json) — machine-readable lifecycles (steps,
   gates, stop conditions). `feature-development` is the full
-  `discovery → research → spec → experience → plan → tasks → build → verify →
-  release` chain with four HITL gates (the optional `experience` step contracts
-  each surface the spec declares); `bug-fix` is `triage → reproduce → diagnose → fix →
-  verify`; `refinement` is `assess → plan → change → verify`. Each `verify` step
-  runs as a bounded **convergence loop** (`loops.verify`; see
-  [rules/loop-control.md](rules/loop-control.md)) — iterate to the predicate or
-  escalate, never spin.
+  `discovery → research → product-definition → spec → experience → plan → tasks →
+  build → verify → release-candidate → release` chain (the optional `experience`
+  step contracts each surface the spec declares); `bug-fix` is
+  `triage → reproduce → diagnose → fix → verify`; `refinement` is
+  `assess → plan → change → verify`. Gates are **criteria-checked**: a manifest's
+  `gateCriteria` lists the explicit conditions each gate token proves, so an HITL
+  approval is a checklist, not a vibe (notably `architecture-validated`, which
+  gives architecture its own pass/fail, and the mandatory `G-security` /
+  conditional `G-performance` verify gates). A failed gate routes back to its
+  mapped rework state via `transitions.onGateFailure` — the failure protocol,
+  never a bypass. Each `verify` step runs as a bounded **convergence loop**
+  (`loops.verify`; see [rules/loop-control.md](rules/loop-control.md)) — iterate
+  to the predicate or escalate, never spin. The standing **validation-orchestrator**
+  skill (and `/validation-orchestrator`) is the only role with authority to halt
+  progression; it adjudicates each gate to a closed-set verdict
+  (`advance | block | escalate`).
 - [schemas/](schemas/) — `project`, `praxis-config`, `spec`, `workflow`,
   `session-state`, `assumption`, `loop`, and `experience-contract` JSON shapes.
 - [runtime/](runtime/README.md) — disposable session state (git-ignored), via
@@ -118,7 +133,11 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
   `pending` rule/gate/eval/guardrail in the memory ledger, routed via
   skill-learner), `check_tasks.py` (advisory lint that every task in a tasks.md
   names its Forbidden / Gate / Output and each surface group declares
-  files-owned — deterministic anti-drift; `make check-tasks FILE=…`).
+  files-owned — deterministic anti-drift; `make check-tasks FILE=…`),
+  `patterns.py` (the *proactive* half of continuous learning: sweeps the memory
+  ledger and stop-condition run logs for recurring tags, sources, and blockers
+  and surfaces them as promotion **candidates** — read-only, human-gated;
+  `make patterns [MIN=n]`).
 
 A repo opts in by adding `.praxis/config.json` pointing at this harness and a
 project id (scaffold it with `tools/install_adapter.py`). If the project id can't

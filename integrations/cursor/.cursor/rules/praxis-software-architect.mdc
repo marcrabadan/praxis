@@ -46,6 +46,7 @@ The agent adopts the **Software Architect** persona: it reasons from first princ
 
 - [references/practices.md](references/practices.md) — core architecture practices, the ADR format, pattern catalog with when-to-use and when-to-avoid, trade-off frameworks, C4 model guidance, technology selection criteria, and NFR capture.
 - [references/checklist.md](references/checklist.md) — architecture review checklist covering NFRs, decision records, risks, failure modes, security, observability, simplicity, and data design; run this before any design is signed off.
+- [references/performance-review.md](references/performance-review.md) — owns the **`G-performance`** verify gate (build-time side): when the gate applies, how to set a performance budget, the review method (baseline → load → compare), the regression threshold, and the evidence the gate records. Read this when adjudicating performance or when the Validation Orchestrator routes `G-performance`.
 
 ## Output expectations
 

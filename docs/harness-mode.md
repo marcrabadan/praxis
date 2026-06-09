@@ -1,19 +1,27 @@
-# Harness Mode (experimental)
+# Harness Mode (always on)
 
 Praxis began as a **skill factory + SDLC expert pack + memory ledger + generated
-integrations**. Harness mode is the first step toward a fuller **agent harness**:
-a reliable operating environment that tells an agent where to read first, where
-source of truth lives, where durable decisions go, how project context is
-resolved, and when to stop and ask.
+integrations**. Harness mode turns it into a fuller **agent harness**: a reliable
+operating environment that tells an agent where to read first, where source of
+truth lives, where durable decisions go, how project context is resolved, and
+when to stop and ask.
+
+**Harness mode is praxis's default and only operating mode.** There is no opt-in
+and no non-harness fallback: any repo praxis runs in is a harness repo. When a
+repo has no `.praxis/config.json` (or it does not yet resolve a project), the
+first lifecycle command **auto-bootstraps** one — a `local` project derived from
+the repo name, written by the idempotent `tools/ensure_harness.py` — and
+continues. The only hard stop is a config that is *present but broken*.
 
 It carries two layers. The *authority model* — projects, source-of-truth rules,
 stop conditions, adapter config, and a deterministic validator — and the
 *delivery lifecycle* on top of it: machine-readable workflows with human-in-the-loop
 gates, durable typed artifacts, bidirectional traceability, and runtime state.
-The feature lifecycle runs `discovery → research → spec → plan → tasks → build →
-verify → release`; lighter `bug-fix` and `refinement` lifecycles handle corrective
-and quality-only work. All of it is **opt-in** — it activates only when a
-`.praxis/config.json` resolves a project, so non-harness repos are unaffected.
+The feature lifecycle runs `discovery → research → product-definition → spec →
+experience → plan → tasks → build → verify → release-candidate → release`, gated by
+a **Validation Orchestrator**; lighter `bug-fix` and `refinement` lifecycles handle
+corrective and quality-only work. None of it is opt-in — it is always on, with a
+missing project auto-bootstrapped rather than treated as "no harness".
 
 ## What harness mode adds
 
@@ -63,9 +71,9 @@ tools/
 
 It does **not** add production application code or a full SDD Kit clone. The
 skill factory is unchanged; `/new-feature`, `/fix-bug`, `/refine`, and
-`/review-changes` gain **opt-in** harness behavior that only activates when a
-`.praxis/config.json` resolves a project (otherwise they behave exactly as
-before). See [`../AGENTS.md`](../AGENTS.md) for the skill factory doctrine.
+`/review-changes` **always** run their harness behavior — they call
+`tools/ensure_harness.py` first, so a project always resolves (auto-bootstrapped
+if absent). See [`../AGENTS.md`](../AGENTS.md) for the skill factory doctrine.
 
 ## Per-repo vs central (the authority choice)
 
@@ -99,9 +107,13 @@ Split into multiple projects only when the repos are genuinely independent
 products. For collaborating with **1→many people or several teams** without mixing
 or duplicating SPEC/REQ, see [`teamwork.md`](teamwork.md).
 
-## Opting a repo in
+## Initializing a repo
 
-Add a `.praxis/config.json` to the consuming repo (see
+You do not have to opt in — harness mode is always on. On the first lifecycle
+command, `tools/ensure_harness.py` writes a `.praxis/config.json` and a `local`
+project derived from the repo name. You only write a config by hand when you want
+to **control** the wiring — point at a *named, pre-existing* project, switch to
+`central` mode, or set `harnessRoot` explicitly (see
 [`../examples/praxis-config.example.json`](../examples/praxis-config.example.json)
 and [`../schemas/praxis-config.schema.json`](../schemas/praxis-config.schema.json)):
 
@@ -115,8 +127,17 @@ and [`../schemas/praxis-config.schema.json`](../schemas/praxis-config.schema.jso
 }
 ```
 
-If `projectId` cannot be resolved to a project, the agent **stops** (see
+A **missing** config is auto-bootstrapped, not an error. A config that is
+*present but broken* — malformed, or a `projectId` that does not resolve — is the
+one hard stop: the agent stops and asks rather than overwriting it (see
 [`../rules/stop-conditions.md`](../rules/stop-conditions.md)).
+
+To bootstrap (or check) the harness explicitly:
+
+```sh
+python tools/ensure_harness.py            # idempotent: bootstrap if needed
+python tools/ensure_harness.py --check    # exit 1 if not yet initialized
+```
 
 ## Read order (harness mode)
 
@@ -184,10 +205,15 @@ validators.
 - **Workflows** (`workflows/`) are machine-readable lifecycles — steps, gates,
   stop conditions, and validation commands. Each gate is opened by the previous
   artifact reaching an authorizing status, and **pending is not approval**.
-  - `feature-development`: `discovery → research → spec → plan → tasks → build →
-    verify → release`, with four human-in-the-loop gates — **Discovery &
-    Research**, **Specification**, **Architecture** (only when a significant
-    decision exists), and **Release**. Research must precede the spec. Doctrine:
+  - `feature-development`: `discovery → research → product-definition → spec →
+    experience → plan → tasks → build → verify → release-candidate → release`, with
+    **five criteria-checked human-in-the-loop gates** — `approved-discovery`,
+    `approved-product-definition`, `approved-spec`, `architecture-validated`
+    (only when a significant decision exists), and `release-candidate-ready`. Each
+    gate carries explicit, checkable `gateCriteria`, so an approval is a checklist
+    not a vibe. A failed gate routes back to its mapped rework state
+    (`transitions.onGateFailure`) — root-cause → return → revalidate, never a
+    bypass. Research must precede the spec. Doctrine:
     [`../systems/feature-development/artifact-model.md`](../systems/feature-development/artifact-model.md).
   - `bug-fix`: `triage → reproduce → diagnose → fix → verify` — corrective work,
     no discovery/research/spec chain. Doctrine:
@@ -208,6 +234,46 @@ validators.
 - **Runtime** (`runtime/`) is disposable session glue (last active
   project/repo/spec/command), managed by `tools/runtime.py` and **git-ignored**.
   Durable decisions never live only here — see [`../runtime/README.md`](../runtime/README.md).
+
+## Gates, verification, and the Validation Orchestrator
+
+A gate is only as good as the thing that enforces it. Harness mode makes that
+explicit:
+
+- **The Validation Orchestrator** ([`../.claude/skills/validation-orchestrator/SKILL.md`](../.claude/skills/validation-orchestrator/SKILL.md),
+  `/validation-orchestrator`) is the standing role with **sole authority to halt
+  progression**. It runs each gate's `gateCriteria`, the typed verify-gate
+  catalog, and the stop-conditions catalog, and returns a closed-set verdict —
+  `advance | block | escalate`. A `pending` decision blocks; pending is never
+  approval.
+- **The verify gate catalog** (`gateCatalog`) is a closed set of `G-*` gates the
+  `verify` loop must prove: `G-build`, `G-lint`, `G-typecheck`, `G-tests`,
+  `G-runtime-clean`, `G-acceptance`, plus surface-conditional gates
+  (`G-routes-200`, `G-assets-present`, `G-imports-used`, `G-visual`). The verify
+  report records pass/fail **per gate** with reviewer sign-off and **forbids
+  self-certification**.
+  - **`G-security` is mandatory** — a feature cannot reach `release` without a
+    recorded security review (owned by `security-engineer`); high/critical
+    findings are fixed or carry an approved risk-acceptance decision.
+  - **`G-performance` is conditional** on runtime-bearing surfaces, owned by
+    `software-architect` for build-time budgets
+    ([`references/performance-review.md`](../.claude/skills/software-architect/references/performance-review.md))
+    and `devops-engineer` for runtime SLOs.
+- **Failure protocol.** A failed gate routes back to its mapped rework state via
+  `transitions.onGateFailure` (root-cause → return → revalidate), enforced by
+  `tools/validate_harness.py`.
+
+## Continuous learning (the pattern miner)
+
+The learning loop has two halves. The **reactive** half ([`../tools/promote.py`](../tools/promote.py),
+routed through `skill-learner` / `/learn`) captures a knowledge gap the moment an
+expert hits it. The **proactive** half — `make patterns` / the `/patterns`
+command ([`../tools/patterns.py`](../tools/patterns.py)) — sweeps the memory
+ledger and the stop-condition run logs for recurring tags, sources, artifact
+types, and stop conditions, and surfaces them as **human-gated promotion
+candidates**: a repeated blocker becomes a candidate `P-*` stop condition or
+guardrail, a repeated theme a candidate rule or skill. Nothing is promoted
+automatically — the miner asks "what keeps happening?" and the user decides.
 
 ## Trying harness mode end to end
 
@@ -273,12 +339,16 @@ The generated Cursor / Codex / IntelliJ entry docs include the same harness
 
 The harness conversion is in place: the authority model, project memory, adapter
 config + read-order wiring, the harness validator, the full `feature-development`
-lifecycle (discovery → research → spec → plan → tasks → build → verify → release)
-with four HITL gates, the lighter `bug-fix` and `refinement` lifecycles
-(`/fix-bug`, `/refine`), bidirectional traceability, runtime state, and a
-project-aware `/review-changes`. All harness behavior in commands is **opt-in** —
-it activates only when a `.praxis/config.json` resolves a project, so non-harness
-repos are unaffected.
+lifecycle (discovery → research → product-definition → spec → experience → plan →
+tasks → build → verify → release-candidate → release) with five criteria-checked
+HITL gates and a Validation Orchestrator, a typed verify-gate catalog (mandatory
+`G-security`, conditional `G-performance`) with a failure protocol, the lighter
+`bug-fix` and `refinement` lifecycles (`/fix-bug`, `/refine`), bidirectional
+traceability, runtime state, a continuous-learning pattern miner (`/patterns`),
+and a project-aware `/review-changes`. Harness mode is **always on** — every
+lifecycle command runs its harness behavior, auto-bootstrapping a project via
+`tools/ensure_harness.py` when a repo has none, so there is no non-harness path.
 
 Deliberately still out of scope (add on evidence, not anticipation): a full SDD
-Kit, an `experience` workflow step, and central-mode sync tooling.
+Kit, central-mode sync tooling, and extending the mandatory security/performance
+gates to the lighter `bug-fix` and `refinement` lifecycles.

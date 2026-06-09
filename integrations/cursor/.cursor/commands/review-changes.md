@@ -38,18 +38,16 @@ Pick **only** the experts the diff actually warrants (do not run all of them by 
 
 Always run the Developer checklist on code changes as the baseline. Add others by the table above.
 
-## Step 1.5 — Harness mode: review against project standards (conditional)
+## Step 1.5 — Harness mode: review against project standards
 
-If the repo is in **harness mode** — a `.praxis/config.json` exists and resolves a `projectId` — load the project's context *before* judging the diff, so the review enforces **this team's** standards rather than only generic best practice:
+Praxis **always runs in harness mode**. Ensure the harness is initialized with `python tools/ensure_harness.py` (idempotent; auto-bootstraps a project from the repo if none resolves), then load the project's context *before* judging the diff, so the review enforces **this team's** standards rather than only generic best practice:
 
-- **Authority & rules.** Read the project's `PROJECT.md` authority notes and the harness `rules/source-of-truth.md` + `rules/stop-conditions.md` (resolve the harness via the config's `harnessRoot`).
+- **Authority & rules.** Read the project's `PROJECT.md` authority notes and the harness `rules/source-of-truth.md` + `rules/stop-conditions.md`.
 - **Accepted decisions.** Load the project's *accepted* decisions — `projects/<projectId>/memory/decisions/` and `accepted` entries in the memory ledger. A diff that contradicts an accepted decision is at least a **🟠 Should-fix**; cite the decision by id/title.
 - **Active spec.** If `config.activeSpec` is set, load that spec and check the diff against its acceptance criteria; flag drift from the spec.
 - **Stop condition:** if the diff plainly contradicts an accepted decision or the active spec, surface that explicitly in the verdict rather than quietly approving.
 
 When recording any durable outcome from the review (an agreed standard, an accepted risk), record it **only as a `pending` memory entry** (`--source /review-changes`) — review proposes, it does not authorize. The user accepts it. Never auto-accept.
-
-If the repo is **not** in harness mode, skip this step and review with the generic expert checklists as before.
 
 ## Step 2 — Output: didactic, severity-tagged findings
 

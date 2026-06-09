@@ -166,6 +166,49 @@ class WorkflowManifestTests(unittest.TestCase):
         )
         self.assertTrue(any("not defined in gateCatalog" in e for e in errors), errors)
 
+    def test_valid_gate_criteria_passes(self) -> None:
+        errors: list[str] = []
+        vh._check_gate_criteria("wf", {"approved-spec": ["c1", "c2"]}, errors)
+        self.assertEqual(errors, [])
+
+    def test_empty_gate_criteria_fails(self) -> None:
+        errors: list[str] = []
+        vh._check_gate_criteria("wf", {"approved-spec": []}, errors)
+        self.assertTrue(any("non-empty array" in e for e in errors), errors)
+
+    def test_valid_transitions_pass(self) -> None:
+        errors: list[str] = []
+        vh._check_transitions(
+            "wf", {"onGateFailure": {"approved-spec": "spec"}}, {"spec", "plan"}, errors
+        )
+        self.assertEqual(errors, [])
+
+    def test_transition_to_unknown_step_fails(self) -> None:
+        errors: list[str] = []
+        vh._check_transitions(
+            "wf", {"onGateFailure": {"approved-spec": "ghost"}}, {"spec", "plan"}, errors
+        )
+        self.assertTrue(any("unknown step" in e for e in errors), errors)
+
+    def test_transitions_and_criteria_in_full_manifest(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            tmp = Path(d)
+            path = self._write(
+                tmp,
+                "feature-development.workflow.json",
+                {
+                    "id": "feature-development",
+                    "name": "F",
+                    "steps": ["spec", "plan", "tasks"],
+                    "gates": {"plan": ["approved-spec"], "tasks": ["architecture-validated"]},
+                    "gateCriteria": {"approved-spec": ["acceptance criteria are testable"]},
+                    "transitions": {"onGateFailure": {"architecture-validated": "plan"}},
+                },
+            )
+            errors: list[str] = []
+            vh._check_workflow_manifest(path, errors)
+            self.assertEqual(errors, [])
+
 
 class ExperienceContractTests(unittest.TestCase):
     def _spec_with_contract(self, tmp: Path, contract: dict | None, *,

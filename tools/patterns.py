@@ -1,0 +1,239 @@
+#!/usr/bin/env python
+"""Continuous-learning pattern miner.
+
+PSDOS asks the system to *analyse execution history* and propose new skills,
+rules, or gates when patterns recur. praxis already turns a single discovered
+gap into a pending skill proposal (`skill-learner` / `/learn`); this tool adds
+the missing *proactive* half: it sweeps the durable record — the memory ledger
+and the stop-condition run logs — for things that keep happening, and surfaces
+them as **candidates**. It proposes; it never mutates. Promotion stays human-
+gated, routed through `tools/promote.py` / `skill-learner`.
+
+Deterministic, stdlib-only. It reads; it does not write to the ledger.
+
+Usage:
+    python tools/patterns.py                 # scan ./.praxis + ./projects
+    python tools/patterns.py --root <dir>    # scan a different harness root
+    python tools/patterns.py --min 3         # recurrence threshold (default 3)
+    python tools/patterns.py --json          # machine-readable report
+
+Exit codes:
+    0: ran (with or without candidates)
+    2: arguments wrong or root unreadable
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from collections import Counter, defaultdict
+from pathlib import Path
+from typing import Any
+
+STOP_ID_RE = re.compile(r"\b([UPS]-\d{1,3})\b")
+DEFAULT_MIN = 3
+
+# Which recurring dimensions suggest which kind of promotion. Conservative on
+# purpose — a hint for a human, not an auto-rule.
+PROMOTION_HINT = {
+    "stop-condition": "a recurring blocker — consider promoting a P-* stop condition, gate, or guardrail",
+    "tag": "a recurring theme — consider a rule or a dedicated skill",
+    "source": "a heavily-used command/skill — consider codifying its repeated decisions as a rule",
+    "type": "a recurring artifact kind — informational",
+}
+
+
+def load_ledger(ledger_path: Path) -> list[dict[str, Any]]:
+    """Parse a memory ledger.jsonl into a list of entry dicts. Malformed lines
+    are skipped (the ledger is the source of truth; a bad line is not fatal to a
+    read-only sweep)."""
+    entries: list[dict[str, Any]] = []
+    if not ledger_path.is_file():
+        return entries
+    for line in ledger_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            obj = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(obj, dict):
+            entries.append(obj)
+    return entries
+
+
+def scan_run_logs(runs_paths: list[Path]) -> list[tuple[str, str]]:
+    """Return (stop_condition_id, source_file) pairs found across run logs.
+
+    Reads the `condition:` frontmatter field and any STOP[<id>] / bare id in the
+    body, deduplicated per file so one log counts a condition once."""
+    found: list[tuple[str, str]] = []
+    for path in runs_paths:
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        ids: set[str] = set()
+        for m in STOP_ID_RE.finditer(text):
+            cid = m.group(1)
+            # ignore obvious template placeholders like "U-*"
+            ids.add(cid)
+        for cid in sorted(ids):
+            found.append((cid, str(path)))
+    return found
+
+
+def mine_patterns(
+    entries: list[dict[str, Any]],
+    stop_hits: list[tuple[str, str]],
+    min_count: int = DEFAULT_MIN,
+) -> dict[str, list[dict[str, Any]]]:
+    """Count recurring dimensions and return those at/above min_count.
+
+    Returns a dict keyed by dimension ('tag', 'source', 'type', 'stop-condition'),
+    each a list of {value, count, examples} sorted by count desc then value."""
+    counters: dict[str, Counter] = {
+        "tag": Counter(),
+        "source": Counter(),
+        "type": Counter(),
+        "stop-condition": Counter(),
+    }
+    examples: dict[str, dict[str, list[str]]] = {
+        k: defaultdict(list) for k in counters
+    }
+
+    def _bump(kind: str, value: str, example: str) -> None:
+        counters[kind][value] += 1
+        if len(examples[kind][value]) < 5:
+            examples[kind][value].append(example)
+
+    for e in entries:
+        eid = str(e.get("id", "?"))
+        for tag in e.get("tags", []) or []:
+            if isinstance(tag, str) and tag.strip():
+                _bump("tag", tag, eid)
+        src = e.get("source")
+        if isinstance(src, str) and src.strip():
+            _bump("source", src, eid)
+        etype = e.get("type")
+        if isinstance(etype, str) and etype.strip():
+            _bump("type", etype, eid)
+
+    for cid, path in stop_hits:
+        _bump("stop-condition", cid, path)
+
+    result: dict[str, list[dict[str, Any]]] = {}
+    for kind, counter in counters.items():
+        rows = [
+            {"value": value, "count": count, "examples": examples[kind][value]}
+            for value, count in counter.items()
+            if count >= min_count
+        ]
+        rows.sort(key=lambda r: (-r["count"], r["value"]))
+        result[kind] = rows
+    return result
+
+
+def format_report(
+    patterns: dict[str, list[dict[str, Any]]],
+    n_entries: int,
+    n_logs: int,
+    min_count: int,
+) -> str:
+    lines = [
+        "# Continuous-learning pattern report",
+        "",
+        f"Swept {n_entries} ledger entries and {n_logs} run logs "
+        f"(recurrence threshold ≥ {min_count}).",
+        "",
+        "> Candidates only. Nothing here is a rule yet — promotion is "
+        "human-gated via `tools/promote.py` / `skill-learner`.",
+        "",
+    ]
+    titles = {
+        "stop-condition": "Recurring stop conditions",
+        "tag": "Recurring tags",
+        "source": "Recurring sources (commands/skills)",
+        "type": "Recurring artifact types",
+    }
+    any_found = False
+    for kind in ("stop-condition", "tag", "source", "type"):
+        rows = patterns.get(kind, [])
+        lines.append(f"## {titles[kind]}")
+        if not rows:
+            lines.append("")
+            lines.append("_none above threshold._")
+            lines.append("")
+            continue
+        any_found = True
+        lines.append("")
+        lines.append(f"_{PROMOTION_HINT[kind]}._")
+        lines.append("")
+        for r in rows:
+            ex = ", ".join(r["examples"][:3])
+            lines.append(f"- `{r['value']}` ×{r['count']} — e.g. {ex}")
+        lines.append("")
+
+    if not any_found:
+        lines.append("No recurring patterns above the threshold. Nothing to propose.")
+        lines.append("")
+    return "\n".join(lines)
+
+
+def _default_run_logs(root: Path) -> list[Path]:
+    """All run logs under projects/*/specs/*/runs/, excluding the _template."""
+    out: list[Path] = []
+    projects = root / "projects"
+    if not projects.is_dir():
+        return out
+    for md in projects.glob("*/specs/*/runs/*.md"):
+        if "_template" in md.parts:
+            continue
+        if md.name.startswith("_"):
+            continue
+        out.append(md)
+    return sorted(out)
+
+
+def run(root: Path, min_count: int) -> dict[str, Any]:
+    ledger = root / ".praxis" / "memory" / "ledger.jsonl"
+    entries = load_ledger(ledger)
+    run_logs = _default_run_logs(root)
+    stop_hits = scan_run_logs(run_logs)
+    patterns = mine_patterns(entries, stop_hits, min_count)
+    return {
+        "n_entries": len(entries),
+        "n_logs": len(run_logs),
+        "min": min_count,
+        "patterns": patterns,
+    }
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Mine recurring patterns from the memory ledger and run logs.")
+    parser.add_argument("--root", default=".", help="Harness root to scan (default: cwd).")
+    parser.add_argument("--min", type=int, default=DEFAULT_MIN, help=f"Recurrence threshold (default {DEFAULT_MIN}).")
+    parser.add_argument("--json", action="store_true", help="Emit JSON instead of markdown.")
+    args = parser.parse_args(argv)
+
+    root = Path(args.root)
+    if not root.is_dir():
+        print(f"error: root not found: {root}", file=sys.stderr)
+        return 2
+    if args.min < 1:
+        print("error: --min must be >= 1", file=sys.stderr)
+        return 2
+
+    report = run(root, args.min)
+    if args.json:
+        print(json.dumps(report, indent=2))
+    else:
+        print(format_report(report["patterns"], report["n_entries"], report["n_logs"], report["min"]))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

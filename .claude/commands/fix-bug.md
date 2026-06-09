@@ -33,9 +33,9 @@ Run each phase in its **own subagent** (`Agent`, `subagent_type: general-purpose
 - **Opus** — diagnosis and the fix (Developer): root-cause reasoning is where depth pays.
 - **Sonnet** — reproduction and verification (QA): structured transformation of the report.
 
-## Harness mode — durable artifacts (conditional)
+## Harness mode — durable artifacts
 
-If the repo is in **harness mode** — a `.praxis/config.json` exists and resolves a `projectId` — write the durable artifacts under the owning project, following the `bug-fix` workflow. Doctrine: the harness `systems/bug-fix/artifact-model.md`; gates: `workflows/bug-fix.workflow.json` (resolve the harness via the config's `harnessRoot`).
+Praxis **always runs in harness mode**. At the start, **ensure the harness is initialized** with `python tools/ensure_harness.py` (idempotent; auto-bootstraps a project derived from the repo if none resolves). Then write the durable artifacts under the owning project, following the `bug-fix` workflow. Doctrine: the harness `systems/bug-fix/artifact-model.md`; gates: `workflows/bug-fix.workflow.json`. There is no non-harness fallback.
 
 ```
 projects/<projectId>/bugs/<bug-id>/
@@ -47,8 +47,7 @@ projects/<projectId>/bugs/<bug-id>/
 
 - Copy the harness's `projects/_template/bugs/_template/` as the starting shape. Assign a `BUG-<NNN>` id and link any owning `SPEC-` (see `rules/traceability.md`).
 - **Respect the gates.** The fix is authorized by an accepted root cause, not a pending one — **pending is not approval**.
-- **Stop condition:** if the `projectId` does not resolve, stop and ask — do not guess a destination.
-- If the repo is **not** in harness mode, skip this section: produce the fix and a short summary, and record the change in the memory ledger.
+- **Stop condition:** auto-bootstrap covers a *missing* config. If a config is *present* but its `projectId` does not resolve, stop and ask — do not guess a destination, and do not overwrite it.
 
 ## Memory
 

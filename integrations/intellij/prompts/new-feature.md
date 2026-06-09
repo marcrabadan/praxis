@@ -64,9 +64,11 @@ Rules for subagents:
 - Tag each ledger artifact entry with `source:<planning-entry-id>` so rollback can mark it stale.
 - ADR numbering: check the existing count in `docs/decisions/` and increment.
 
-## Harness mode — durable spec artifacts (conditional)
+## Harness mode — durable spec artifacts
 
-If the repo is in **harness mode** — a `.praxis/config.json` exists and resolves a `projectId` — then *in addition* to the `docs/` files above, write the feature's durable, typed artifacts under the owning project, following the `feature-development` workflow (`discovery → research → spec → plan → tasks → build → verify → release`). The doctrine is in the harness at `systems/feature-development/artifact-model.md`; the gates are in `workflows/feature-development.workflow.json` (resolve the harness via the config's `harnessRoot`).
+Praxis **always runs in harness mode** — it is the default and only operating mode. At the start of the run, **ensure the harness is initialized**: run `python tools/ensure_harness.py` (idempotent — resolve the harness via the config's `harnessRoot`, or the installed plugin). If no `.praxis/config.json` resolves a project, it **auto-bootstraps** one derived from the repo name and continues. There is no non-harness fallback.
+
+In addition to the `docs/` files above, write the feature's durable, typed artifacts under the owning project, following the `feature-development` workflow (`discovery → research → product-definition → spec → experience → plan → tasks → build → verify → release-candidate → release`). The doctrine is in the harness at `systems/feature-development/artifact-model.md`; the gates are in `workflows/feature-development.workflow.json`.
 
 ```
 projects/<projectId>/specs/<spec-slug>/
@@ -87,8 +89,7 @@ projects/<projectId>/specs/<spec-slug>/
 - **Respect the gates.** A planning run *proposes*: leave `spec.md` at `status: draft` and the plan/decisions as `pending`. **Pending is not approval** — do not advance a gate on a pending artifact. The user accepts the spec (`status: accepted`) before the plan authorizes a build, and accepts the plan before tasks drive implementation.
 - The chat summary (next section) becomes a **pointer** to these artifacts, not the source of truth.
 - Tag the memory-ledger entries with the spec path so they are traceable to the spec.
-- **Stop condition:** if a `projectId` is declared but does not resolve to `projects/<projectId>/`, stop and ask — do not guess a destination.
-- If the repo is **not** in harness mode, skip this section and behave as before (`docs/` + ledger only).
+- **Stop condition:** auto-bootstrap covers a *missing* config. If a config is *present* but its `projectId` is declared and does not resolve (a corrupt or ambiguous pointer), stop and ask — do not guess a destination, and do not silently overwrite it.
 
 ## Execution
 

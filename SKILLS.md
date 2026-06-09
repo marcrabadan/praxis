@@ -24,6 +24,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `skill-learner` | 1.0.0 | 3 | Detects when a praxis SDLC expert hits a knowledge gap mid-task — missing team conventions, runbooks, or domain rules it should have applied — and turns it int… |
 | `software-architect` | 1.0.0 | 2 | Adopts the Software Architect persona to reason about system design, architectural trade-offs, non-functional requirements, architectural decision records (ADR… |
 | `ux-ui-engineer` | 1.0.0 | 2 | Acts as a UX/UI Engineer SDLC expert bridging design and code — design systems and component libraries, design tokens and theming, visual design (type scale, c… |
+| `validation-orchestrator` | 1.0.0 | 2 | The standing validation authority for harness-mode workflows — the agent that decides whether a workflow may advance past a gate, and the only role with author… |
 
 ## Commands
 
@@ -39,10 +40,12 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `/fix-bug` | Run a bug through the corrective lifecycle — triage → reproduce → diagnose → fix → verify — consulting QA and the Developer (and Security if it's a vulnerabili… |
 | `/frontend-architect` | Consult the Frontend Architect — framework/meta-framework choice, rendering strategy (CSR/SSR/SSG/ISR/RSC), state and data architecture, routing and code-split… |
 | `/frontend` | Consult the Frontend Engineer — building and composing components, client/server state, data fetching, forms, styling, frontend TypeScript, re-render/performan… |
+| `/idea` | Triage a raw idea — clarify it, classify it as a feature, bug, or refinement (or not worth doing), capture it as a pending note in the memory ledger, and recom… |
 | `/learn` | Turn a knowledge gap discovered during work into durable skill knowledge — capture an org convention, runbook, or rule, or refine an existing skill, by routing… |
 | `/memory` | Manage the project's working-memory ledger — record plans/decisions/implementations, review what's pending, accept or reject entries, and roll back a snapshott… |
 | `/ml` | Consult the ML/AI Engineer — problem framing & metric selection, ML-ready features (leakage, train/serve skew, feature stores), training & model selection, rig… |
 | `/new-feature` | Run a feature idea or PRD through the full SDLC, consulting each expert in order — Business Analyst, Product Owner, Software Architect, Developer, QA Engineer,… |
+| `/patterns` | Mine the memory ledger and stop-condition run logs for recurring patterns — repeated tags, sources, artifact types, and stop conditions — and surface them as h… |
 | `/product` | Consult the Product Owner — backlog ordering, prioritization (MoSCoW/RICE/WSJF), sprint goals, Definition of Ready/Done, roadmapping, OKRs, story splitting, an… |
 | `/qa` | Consult the QA Engineer — test strategy, test-case design, edge cases, bug reports, regression and risk-based testing, coverage gaps, and release-quality asses… |
 | `/refine` | Run a quality-only improvement through the refinement lifecycle — assess → plan → change → verify — preserving observable behavior. Use to refactor, pay down t… |
@@ -51,4 +54,5 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `/security` | Consult the Security Engineer — threat modeling, finding/fixing vulnerabilities, secure coding (OWASP Top 10), authn/authz hardening, secrets, crypto usage, SA… |
 | `/ux` | Consult the UX/UI Engineer — design systems and tokens, visual design (type/color/spacing/grid), interaction and motion, accessibility (WCAG 2.2 AA), responsiv… |
 | `/validate-skills` | Validate every skill in the repo — runs the deterministic validator across .claude/skills/ and dist/. Use to check skill structure and frontmatter before commi… |
+| `/validation-orchestrator` | Consult the Validation Orchestrator — the standing authority that decides whether a harness workflow may advance past a gate, runs the gate's criteria and the… |
 

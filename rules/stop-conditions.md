@@ -30,10 +30,15 @@ conditions on top of these.
 
 These are not "ask if convenient" — they block implementation outright:
 
-- **Unknown harness root** — `.praxis/config.json` is missing or `harnessRoot`
-  does not resolve to an existing path.
-- **Unresolvable project id** — `projectId` is absent or maps to no project under
-  `projects/`.
+- **Broken harness config** — a `.praxis/config.json` that is *present* but
+  unusable: malformed JSON, or a `harnessRoot` that does not resolve to an
+  existing path. Stop and ask; never overwrite a config you did not write.
+  (A **missing** config is *not* a hard block — harness mode is always on, so the
+  harness auto-bootstraps one via `tools/ensure_harness.py` and continues.)
+- **Unresolvable project id** — a config declares a `projectId` that maps to no
+  project under `projects/` (in `central` mode) or has no `.praxis/project/`
+  (in `local` mode). A *declared-but-broken* pointer is a hard block: stop and
+  ask. An *absent* config is handled by auto-bootstrap, not a stop.
 - **Missing project memory for the active project** — no `current-state.md` or
   `open-questions.md`.
 - **Missing source of truth** — the artifact you would edit has no canonical

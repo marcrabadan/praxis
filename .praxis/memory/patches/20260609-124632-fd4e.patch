@@ -1,0 +1,1090 @@
+diff --git a/.claude/commands/validation-orchestrator.md b/.claude/commands/validation-orchestrator.md
+new file mode 100644
+index 0000000..dff4c7a
+--- /dev/null
++++ b/.claude/commands/validation-orchestrator.md
+@@ -0,0 +1,24 @@
++---
++description: Consult the Validation Orchestrator — the standing authority that decides whether a harness workflow may advance past a gate, runs the gate's criteria and the verify gate catalog, enforces stop conditions, and returns a go/no-go verdict (advance | block | escalate).
++argument-hint: <the gate or transition to adjudicate, e.g. "can SPEC-012 advance to plan?" or "go/no-go on release">
++---
++
++Use the **validation-orchestrator** skill and act as the Validation Orchestrator.
++
++The user wants a validation decision on:
++
++$ARGUMENTS
++
++Decide deterministically. Identify the gate guarding the requested transition
++(the workflow manifest's `gates`), check each of that gate's criteria
++(`gateCriteria`) with cited evidence, run the applicable validators
++(`make validate-harness`, `make check-tasks`, `tools/loop.py`), and read the
++**verify report** rather than re-judging the code. Consult the validation experts
++(qa, security, software-architect) for criteria, not for the decision.
++
++Return exactly one verdict — **advance**, **block**, or **escalate** — naming the
++gate, the criteria checked, and the evidence. On **block**, name the unmet
++criterion and the return state from `transitions.onGateFailure`; never bypass.
++**Pending is not approved.** Record the decision in the memory ledger as
++`pending`. See the skill's `references/authority.md` for the gate-by-gate
++checklist and escalation protocol.
+diff --git a/.claude/skills/validation-orchestrator/SKILL.md b/.claude/skills/validation-orchestrator/SKILL.md
+new file mode 100644
+index 0000000..eb5682b
+--- /dev/null
++++ b/.claude/skills/validation-orchestrator/SKILL.md
+@@ -0,0 +1,70 @@
++---
++name: validation-orchestrator
++description: The standing validation authority for harness-mode workflows — the agent that decides whether a workflow may advance past a gate, and the only role with authority to halt progression. It runs each gate's criteria (the workflow manifest's gateCriteria), the typed verify gate catalog, and the stop-conditions catalog; refuses advancement on a pending decision (pending is not approved); and routes a failed gate back to its mapped rework state. Use when you need to decide if a feature/bug/refinement may move to the next state, evaluate or enforce a gate, adjudicate whether the verify report is authoritative, check whether a stop condition or pending decision blocks progress, or get a go/no-go on release. Returns a closed-set verdict: advance | block | escalate. Trigger on "can this advance", "is this gate passed", "go/no-go", "validate the gate", "is it releasable".
++tier: 2
++version: 1.0.0
++---
++
++# Validation Orchestrator
++
++The **Validation Orchestrator** is praxis's answer to PSDOS's "Validation
++Orchestrator can stop the workflow." praxis keeps orchestration *thin* — the
++forward drive lives in `/new-feature`, `/fix-bug`, `/refine`, and the work lives
++in the SDLC experts. This skill adds the one missing standing role: a decision
++maker whose **only** job is to say whether progression is allowed, and who is
++allowed to say **no**.
++
++It does not produce product or code. It validates and decides.
++
++## Authority
++
++- It owns the **gate decision**. A workflow step may not start until this role
++  confirms the gate that authorizes it (the manifest's `gates`) is satisfied
++  against that gate's **criteria** (the manifest's `gateCriteria`).
++- It is the only role that can **halt** progression, and it must when a
++  validation fails. Halting is not failure — it is the system working.
++- It never *self*-certifies an implementer's work (hard stop `U-8`). It reads
++  the **verify report**, with real gate results and reviewer sign-off, and
++  decides whether that verdict is authoritative.
++- **Pending is not approved.** A gate whose required decision is still `pending`
++  blocks; do not advance on it.
++
++## The verdict is a closed set
++
++Every adjudication ends in exactly one of:
++
++- **advance** — every criterion for the gate holds, with evidence; the next
++  state may begin. Record the decision in the memory ledger.
++- **block** — a criterion is unmet, a required gate is unrun or red, a stop
++  condition fired, or a required decision is pending. Name the failing gate, the
++  unmet criterion, and the evidence. Route back per `transitions.onGateFailure`
++  (root-cause → return to the mapped state → fix → revalidate); never bypass.
++- **escalate** — a convergence-loop guard tripped (budget/no-progress), two
++  authoritative artifacts contradict each other, or the decision is the user's
++  to make. Bring the state, the blocker, and at least two options.
++
++## How it decides (deterministic first)
++
++1. Identify the gate that guards the requested transition (manifest `gates`).
++2. Pull that gate's criteria from `gateCriteria` and check each, citing
++   evidence. For the `verify`/`G-*` gates, read the verify report, not the code.
++3. Run the deterministic validators where they apply — `make validate-harness`,
++   `make check-tasks FILE=…`, the loop controller's verdict (`tools/loop.py`).
++4. Consult the validation **experts** for judgement criteria, not for the
++   decision: **qa-engineer** (test adequacy, acceptance), **security-engineer**
++   (`G-security`), the performance angle (`G-performance`), **software-architect**
++   (`architecture-validated`).
++5. Apply the stop-conditions catalog (`U/P/S-*`). Any fired, unresolved
++   condition forces **block**.
++6. Emit the verdict and record it.
++
++See [references/authority.md](references/authority.md) for the gate-by-gate
++checklist and the escalation protocol.
++
++## What it must not do
++
++- Do not write product requirements, specs, architecture, or implementation.
++- Do not advance a gate to be helpful, to save time, or because a human seems to
++  want it — only because the criteria hold.
++- Do not invent a verdict outside `advance | block | escalate`.
++- Do not mark a gate green without the evidence that ran it.
+diff --git a/.claude/skills/validation-orchestrator/references/authority.md b/.claude/skills/validation-orchestrator/references/authority.md
+new file mode 100644
+index 0000000..39aef36
+--- /dev/null
++++ b/.claude/skills/validation-orchestrator/references/authority.md
+@@ -0,0 +1,54 @@
++# Validation Orchestrator — gate checklist & escalation
++
++This reference makes the role deterministic. For each gate in
++`feature-development`, the criteria source, the evidence to demand, and where a
++failure routes. Criteria text is owned by the **workflow manifest's
++`gateCriteria`** — this file points at it; it does not fork it.
++
++## Gate-by-gate
++
++| Gate (token) | Criteria source | Evidence to demand | On failure → |
++|--------------|-----------------|--------------------|--------------|
++| `approved-discovery` | `gateCriteria.approved-discovery` | discovery report + research; problem/user/outcome stated | `discovery` |
++| `approved-product-definition` | `gateCriteria.approved-product-definition` | product-definition.md; MVP bounded, requirements prioritised & traced | `product-definition` |
++| `approved-spec` | `gateCriteria.approved-spec` | spec.md; testable acceptance criteria; no contradiction with product def | `spec` |
++| `experience-complete` | manifest `gates.plan` | each declared surface has a contract | `experience` |
++| `architecture-validated` | `gateCriteria.architecture-validated` | architecture-review.md; NFRs met, ADR for unfamiliar arch | `plan` |
++| `approved-plan` | manifest `gates.tasks` | implementation plan accepted | `plan` |
++| `verify-passed` | `loops.verify.predicate` + `G-*` | verify report `overall-result: pass`, accepted sign-off | `build` |
++| `release-candidate-ready` | `gateCriteria.release-candidate-ready` | release candidate; pass sign-off; no open high/critical security finding | `verify` |
++| `release-approved` | human decision | explicit release approval (not pending) | — |
++
++The verify gate is proven by the typed catalog — `G-build`, `G-lint`,
++`G-typecheck`, `G-tests`, `G-runtime-clean`, `G-acceptance`, the mandatory
++`G-security`, and the conditional `G-performance`/`G-routes-200`/`G-visual`.
++A skipped **required** gate without justification fails the report. A conditional
++gate that does not apply records *why* (wrong surface type).
++
++## The block protocol
++
++1. State the gate and the **specific** unmet criterion (quote it).
++2. Cite the missing or red evidence.
++3. Name the return state from `transitions.onGateFailure`.
++4. Record a `decision` (verdict: block) in the memory ledger, `pending`.
++5. Do not allow the guarded step to start.
++
++## The escalate protocol
++
++Escalate (do not decide) when:
++
++- a convergence-loop guard tripped — `tools/loop.py` returned `escalate`
++  (budget exhausted or no progress);
++- two authoritative artifacts contradict (stop condition `U-6`);
++- a required gate **cannot run** (`U-7`) and no approved waiver exists;
++- the call is genuinely the user's (a risk acceptance, a scope trade-off).
++
++Bring: the current state, the blocker, the evidence, and **at least two**
++options. "Keep going anyway" is never one of them.
++
++## Promotion
++
++A recurring block of the same class is evidence to **promote** a new stop
++condition (`P-*`), gate, or guardrail via `tools/promote.py` — pending and
++human-gated, routed through `skill-learner`. The Validation Orchestrator
++proposes; it does not silently add rules.
+diff --git a/AGENTS.md b/AGENTS.md
+index 7eff823..aa7ed98 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -99,13 +99,22 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
+   corrective and quality-only lifecycles behind `/fix-bug` and `/refine`.
+ - [workflows/](workflows/registry.json) — machine-readable lifecycles (steps,
+   gates, stop conditions). `feature-development` is the full
+-  `discovery → research → spec → experience → plan → tasks → build → verify →
+-  release` chain with four HITL gates (the optional `experience` step contracts
+-  each surface the spec declares); `bug-fix` is `triage → reproduce → diagnose → fix →
+-  verify`; `refinement` is `assess → plan → change → verify`. Each `verify` step
+-  runs as a bounded **convergence loop** (`loops.verify`; see
+-  [rules/loop-control.md](rules/loop-control.md)) — iterate to the predicate or
+-  escalate, never spin.
++  `discovery → research → product-definition → spec → experience → plan → tasks →
++  build → verify → release-candidate → release` chain (the optional `experience`
++  step contracts each surface the spec declares); `bug-fix` is
++  `triage → reproduce → diagnose → fix → verify`; `refinement` is
++  `assess → plan → change → verify`. Gates are **criteria-checked**: a manifest's
++  `gateCriteria` lists the explicit conditions each gate token proves, so an HITL
++  approval is a checklist, not a vibe (notably `architecture-validated`, which
++  gives architecture its own pass/fail, and the mandatory `G-security` /
++  conditional `G-performance` verify gates). A failed gate routes back to its
++  mapped rework state via `transitions.onGateFailure` — the failure protocol,
++  never a bypass. Each `verify` step runs as a bounded **convergence loop**
++  (`loops.verify`; see [rules/loop-control.md](rules/loop-control.md)) — iterate
++  to the predicate or escalate, never spin. The standing **validation-orchestrator**
++  skill (and `/validation-orchestrator`) is the only role with authority to halt
++  progression; it adjudicates each gate to a closed-set verdict
++  (`advance | block | escalate`).
+ - [schemas/](schemas/) — `project`, `praxis-config`, `spec`, `workflow`,
+   `session-state`, `assumption`, `loop`, and `experience-contract` JSON shapes.
+ - [runtime/](runtime/README.md) — disposable session state (git-ignored), via
+@@ -118,7 +127,11 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
+   `pending` rule/gate/eval/guardrail in the memory ledger, routed via
+   skill-learner), `check_tasks.py` (advisory lint that every task in a tasks.md
+   names its Forbidden / Gate / Output and each surface group declares
+-  files-owned — deterministic anti-drift; `make check-tasks FILE=…`).
++  files-owned — deterministic anti-drift; `make check-tasks FILE=…`),
++  `patterns.py` (the *proactive* half of continuous learning: sweeps the memory
++  ledger and stop-condition run logs for recurring tags, sources, and blockers
++  and surfaces them as promotion **candidates** — read-only, human-gated;
++  `make patterns [MIN=n]`).
+ 
+ A repo opts in by adding `.praxis/config.json` pointing at this harness and a
+ project id (scaffold it with `tools/install_adapter.py`). If the project id can't
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 6c129a3..bc154a9 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -13,6 +13,34 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
+ 
+ ### Added
+ 
++- **PSDOS gap-closure: mandatory security/performance gates, criteria-checked
++  gates, front-half states, failure transitions, a Validation Orchestrator, and
++  a pattern miner.** Brings the `feature-development` harness lifecycle closer to
++  a faithful PSDOS implementation:
++  - **Mandatory `G-security` + conditional `G-performance` verify gates**
++    ([`workflows/feature-development.workflow.json`](workflows/feature-development.workflow.json))
++    — a feature can no longer reach `release` without a recorded security review;
++    high/critical findings are fixed or carry an approved risk-acceptance
++    decision. Wired into `loops.verify` and the verify-report template.
++  - **Criteria-checked gates** (`gateCriteria`) — HITL approval tokens
++    (`approved-discovery`, `approved-product-definition`, `approved-spec`,
++    `architecture-validated`, `release-candidate-ready`) now carry explicit,
++    checkable criteria, so an approval is a checklist not a vibe.
++    `architecture-validated` gives architecture its own pass/fail via
++    [`plans/architecture-review.md`](projects/_template/specs/_template/plans/architecture-review.md).
++  - **Front-half + back-half states** — `product-definition` (PO-owned MVP/scope/
++    metrics) and `release-candidate` (proven-correct vs decided-to-ship) are now
++    explicit states with their own artifacts.
++  - **Failure protocol** (`transitions.onGateFailure`) — a failed gate routes
++    back to its mapped rework state (root-cause → return → revalidate), never a
++    bypass. Validated by `tools/validate_harness.py`.
++  - **Validation Orchestrator** ([`.claude/skills/validation-orchestrator/`](.claude/skills/validation-orchestrator/SKILL.md),
++    `/validation-orchestrator`) — the standing role with sole authority to halt
++    progression; adjudicates each gate to a closed-set verdict
++    (`advance | block | escalate`).
++  - **Continuous-learning pattern miner** ([`tools/patterns.py`](tools/patterns.py),
++    `make patterns`) — sweeps the ledger + run logs for recurring tags, sources,
++    and stop conditions and surfaces them as human-gated promotion candidates.
+ - **Spec-driven verification spine + self-evolving doctrine.** A set of
+   opt-in harness capabilities that make "iterate until it's actually correct"
+   deterministic and bounded, and let the harness learn under a human gate:
+diff --git a/Makefile b/Makefile
+index 9af0890..bd1cd79 100644
+--- a/Makefile
++++ b/Makefile
+@@ -7,7 +7,7 @@ HARNESS_VALIDATOR := tools/validate_harness.py
+ TRACEABILITY_VALIDATOR := tools/validate_traceability.py
+ SKILLS_DIR := .claude/skills
+ 
+-.PHONY: help validate validate-all validate-harness validate-traceability check-tasks create catalog catalog-check integrations integrations-check export smoke-test clean-dist test
++.PHONY: help validate validate-all validate-harness validate-traceability check-tasks patterns create catalog catalog-check integrations integrations-check export smoke-test clean-dist test
+ 
+ help:
+ 	@echo "praxis — common tasks"
+@@ -18,6 +18,7 @@ help:
+ 	@echo "  make validate-harness          Validate harness state (projects, schemas, config)"
+ 	@echo "  make validate-traceability     Check artifact source:/traces: links resolve (advisory)"
+ 	@echo "  make check-tasks FILE=<path>   Lint a tasks.md for per-task anti-drift fields (advisory)"
++	@echo "  make patterns [MIN=<n>]        Mine recurring patterns from the ledger + run logs (advisory)"
+ 	@echo "  make create NAME=<slug> TIER=<1-5> [BRIEF=<path>] [DESC=<text>] [OUT=<path>]"
+ 	@echo "                                 Run the generator (default OUT=dist/<name>)"
+ 	@echo "  make catalog                   Regenerate SKILLS.md (the skill + command index)"
+@@ -60,6 +61,9 @@ check-tasks:
+ 	@if [ -z "$(FILE)" ]; then echo "error: FILE=<path to tasks.md> is required"; exit 2; fi
+ 	$(PYTHON) tools/check_tasks.py $(FILE)
+ 
++patterns:
++	$(PYTHON) tools/patterns.py $(if $(MIN),--min $(MIN),)
++
+ create:
+ 	@if [ -z "$(NAME)" ] || [ -z "$(TIER)" ]; then echo "error: NAME and TIER are required"; exit 2; fi
+ 	$(PYTHON) $(GENERATOR) \
+diff --git a/SKILLS.md b/SKILLS.md
+index 2f14721..e707396 100644
+--- a/SKILLS.md
++++ b/SKILLS.md
+@@ -24,6 +24,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
+ | `skill-learner` | 1.0.0 | 3 | Detects when a praxis SDLC expert hits a knowledge gap mid-task — missing team conventions, runbooks, or domain rules it should have applied — and turns it int… |
+ | `software-architect` | 1.0.0 | 2 | Adopts the Software Architect persona to reason about system design, architectural trade-offs, non-functional requirements, architectural decision records (ADR… |
+ | `ux-ui-engineer` | 1.0.0 | 2 | Acts as a UX/UI Engineer SDLC expert bridging design and code — design systems and component libraries, design tokens and theming, visual design (type scale, c… |
++| `validation-orchestrator` | 1.0.0 | 2 | The standing validation authority for harness-mode workflows — the agent that decides whether a workflow may advance past a gate, and the only role with author… |
+ 
+ ## Commands
+ 
+@@ -51,4 +52,5 @@ Generated index of every skill and command in this repo. Do not edit by hand —
+ | `/security` | Consult the Security Engineer — threat modeling, finding/fixing vulnerabilities, secure coding (OWASP Top 10), authn/authz hardening, secrets, crypto usage, SA… |
+ | `/ux` | Consult the UX/UI Engineer — design systems and tokens, visual design (type/color/spacing/grid), interaction and motion, accessibility (WCAG 2.2 AA), responsiv… |
+ | `/validate-skills` | Validate every skill in the repo — runs the deterministic validator across .claude/skills/ and dist/. Use to check skill structure and frontmatter before commi… |
++| `/validation-orchestrator` | Consult the Validation Orchestrator — the standing authority that decides whether a harness workflow may advance past a gate, runs the gate's criteria and the… |
+ 
+diff --git a/plugin-praxis/commands/validation-orchestrator.md b/plugin-praxis/commands/validation-orchestrator.md
+new file mode 120000
+index 0000000..451961f
+--- /dev/null
++++ b/plugin-praxis/commands/validation-orchestrator.md
+@@ -0,0 +1 @@
++../../.claude/commands/validation-orchestrator.md
+\ No newline at end of file
+diff --git a/plugin-praxis/skills/validation-orchestrator b/plugin-praxis/skills/validation-orchestrator
+new file mode 120000
+index 0000000..11b6b09
+--- /dev/null
++++ b/plugin-praxis/skills/validation-orchestrator
+@@ -0,0 +1 @@
++../../.claude/skills/validation-orchestrator
+\ No newline at end of file
+diff --git a/projects/_template/specs/_template/plans/architecture-review.md b/projects/_template/specs/_template/plans/architecture-review.md
+new file mode 100644
+index 0000000..c26d539
+--- /dev/null
++++ b/projects/_template/specs/_template/plans/architecture-review.md
+@@ -0,0 +1,54 @@
++# Architecture Review — <Feature title>
++
++> Produced in the `plan` step alongside the implementation plan, routed to the
++> **software-architect**. Its acceptance is the `architecture-validated` gate
++> that opens `tasks` — a **criteria-checked** gate (see the workflow manifest's
++> `gateCriteria`). Architecture is no longer an implicit sub-activity of the
++> plan; it has its own pass/fail.
++
++## Design summary
++
++The chosen design in a few sentences, with a C4-level sketch or link.
++
++## Non-functional requirements
++
++How the design meets the spec's NFRs, each with evidence or rationale.
++
++| NFR | Target | How the design meets it |
++|-----|--------|-------------------------|
++| Scalability | … | … |
++| Availability | … | … |
++| Latency | … | … |
++
++## Maintainability & modularity
++
++Boundaries, coupling, and cohesion. Why the seams are where they are.
++
++## Architecture decisions (ADRs)
++
++Link the ADRs under [`../decisions/`](../decisions/). **Any architecture new to
++this project must be justified by an ADR** — otherwise the
++"unfamiliar architecture" stop condition fires.
++
++## Security-relevant design
++
++Trust boundaries, authn/authz placement, and data handling that the **security
++gate** (`G-security`) will scrutinise. Naming them here hands the security
++review a map.
++
++## Risks
++
++Architectural risks and their mitigations.
++
++## Gate criteria (must all hold to pass `architecture-validated`)
++
++- [ ] NFRs met with stated evidence or rationale
++- [ ] maintainable and modular — clear boundaries, no needless coupling
++- [ ] any unfamiliar architecture is justified by an ADR
++- [ ] security-relevant design choices are identified for the security gate
++
++## Traceability
++
++- This artifact id: `ARCH-<NNN>`
++- Sources: spec (`SPEC-<NNN>`)
++- Feeds: tasks (`TASK-<NNN>`)
+diff --git a/projects/_template/specs/_template/product/product-definition.md b/projects/_template/specs/_template/product/product-definition.md
+new file mode 100644
+index 0000000..2d847a0
+--- /dev/null
++++ b/projects/_template/specs/_template/product/product-definition.md
+@@ -0,0 +1,41 @@
++# Product Definition — <Feature title>
++
++> Step 3 of `feature-development`, between research and spec. Routed to the
++> **product-owner**. This is where the *what* and *why* are bounded before the
++> spec pins the *how-it-behaves*. Gate `approved-product-definition` opens the
++> spec step, and it is **criteria-checked** (see the workflow manifest's
++> `gateCriteria`): a human approves only when every criterion below holds.
++
++## Problem & outcome
++
++The discovery problem restated as the product bet, and the outcome it targets.
++
++## MVP scope
++
++Explicit **in scope** / **out of scope** lists. Out-of-scope is as important as
++in-scope — it is what keeps the spec bounded.
++
++## Prioritised requirements
++
++Each requirement with a MoSCoW (or RICE/WSJF) rank and a one-line rationale.
++Every requirement **traces to a discovery need** (cite the `DISC-`/`RES-` id).
++
++| Req id | Requirement | Priority | Traces to | Rationale |
++|--------|-------------|----------|-----------|-----------|
++| `REQ-<NNN>` | … | Must \| Should \| Could \| Won't | `DISC-<NNN>` | … |
++
++## Success criteria
++
++Measurable target metrics / signals that tell us the bet paid off. These feed
++the spec's acceptance criteria and the acceptance gate.
++
++## Assumptions & open questions
++
++Open product questions. One that gates the spec is a **stop condition** —
++resolve it or log it as an assumption with an owner before advancing.
++
++## Traceability
++
++- This artifact id: `PROD-<NNN>`
++- Sources: discovery (`DISC-<NNN>`), research (`RES-<NNN>`)
++- Feeds: spec (`SPEC-<NNN>`)
+diff --git a/projects/_template/specs/_template/reports/release/release-candidate.md b/projects/_template/specs/_template/reports/release/release-candidate.md
+new file mode 100644
+index 0000000..9491194
+--- /dev/null
++++ b/projects/_template/specs/_template/reports/release/release-candidate.md
+@@ -0,0 +1,38 @@
++# Release Candidate — <Feature title>
++
++> Step 10 of `feature-development`, between verify and release. The candidate is
++> assembled once `verify` passes; the `release-candidate-ready` gate (criteria-
++> checked) must hold before the final `release-approved` gate can be sought.
++> This separates "the change is proven correct" from "we have decided to ship
++> it".
++
++## Candidate
++
++What is being proposed for release (build / artifact / commit range).
++
++## Verify result
++
++Link the [verify report](../verify/report.md). Its `overall-result` must be
++`pass` with accepted sign-off.
++
++## Security posture
++
++Confirm no open high or critical security finding remains (or link the approved
++risk-acceptance decision under [`../../decisions/`](../../decisions/)).
++
++## Release notes (draft)
++
++Draft of the user-facing notes / changelog entry that the `release` step will
++finalise.
++
++## Go / no-go checklist (must all hold to pass `release-candidate-ready`)
++
++- [ ] verify report `overall-result: pass` with accepted sign-off
++- [ ] release notes / changelog entry drafted
++- [ ] no open high or critical security finding
++
++## Traceability
++
++- This artifact id: `RC-<NNN>`
++- Sources: verify report, spec (`SPEC-<NNN>`)
++- Feeds: release (`REL-<NNN>`)
+diff --git a/schemas/workflow.schema.json b/schemas/workflow.schema.json
+index a016dcd..9b6993d 100644
+--- a/schemas/workflow.schema.json
++++ b/schemas/workflow.schema.json
+@@ -32,6 +32,27 @@
+         "items": { "type": "string", "minLength": 1 }
+       }
+     },
++    "gateCriteria": {
++      "type": "object",
++      "description": "Optional map of gate token (a value used in `gates`, e.g. 'approved-spec') -> the explicit, checkable criteria that gate proves. Turns an HITL approval token into a criteria-checked gate: a human approves only when every criterion holds. Keys are gate tokens, not steps.",
++      "additionalProperties": {
++        "type": "array",
++        "minItems": 1,
++        "items": { "type": "string", "minLength": 1 }
++      }
++    },
++    "transitions": {
++      "type": "object",
++      "description": "Optional failure-protocol transitions: where the workflow returns when a gate fails (root-cause, return to the failing state, revalidate). Distinct from the forward order in `steps` and the verify loop's `onContinue`.",
++      "additionalProperties": false,
++      "properties": {
++        "onGateFailure": {
++          "type": "object",
++          "description": "Map of gate token -> the step to return to for rework when that gate fails. Each target must be a step in this workflow.",
++          "additionalProperties": { "type": "string", "pattern": "^[a-z0-9-]{1,64}$" }
++        }
++      }
++    },
+     "stopConditions": {
+       "type": "array",
+       "items": { "type": "string", "minLength": 1 },
+diff --git a/systems/feature-development/feature-development.md b/systems/feature-development/feature-development.md
+index 1544452..14c5fcd 100644
+--- a/systems/feature-development/feature-development.md
++++ b/systems/feature-development/feature-development.md
+@@ -29,6 +29,48 @@ commands/new-feature.md
+   -> skills/<SDLC expert>                          (the work)
+ ```
+ 
++## Lifecycle states, criteria-checked gates, and the failure protocol
++
++The full chain is:
++
++```
++discovery → research → product-definition → spec → experience → plan
++  → tasks → build → verify → release-candidate → release
++```
++
++Two states make the front and back halves explicit rather than folded away:
++
++- **product-definition** (routed to the **product-owner**) bounds the *what/why*
++  — MVP scope, prioritised requirements, success metrics — before the spec pins
++  behaviour. Its artifact is [`product/product-definition.md`](../../projects/_template/specs/_template/product/product-definition.md).
++- **release-candidate** separates "proven correct" (`verify` passed) from
++  "decided to ship" (`release-approved`). Its artifact is
++  [`reports/release/release-candidate.md`](../../projects/_template/specs/_template/reports/release/release-candidate.md).
++
++### Gates are criteria-checked, not vibes
++
++A gate token in the manifest's `gates` (e.g. `approved-spec`, `architecture-validated`)
++is no longer a bare human thumbs-up. The manifest's **`gateCriteria`** block lists
++the explicit, checkable criteria each gate proves; a human approves *only when
++every criterion holds*. This closes the difference between an HITL approval and a
++validator — the criteria are the validator, the human runs them. Notably,
++**`architecture-validated`** gives architecture its own pass/fail (NFRs met,
++maintainable/modular, unfamiliar architecture justified by an ADR,
++security-relevant design identified) via
++[`plans/architecture-review.md`](../../projects/_template/specs/_template/plans/architecture-review.md),
++instead of leaving it implicit inside the plan. **Pending is not approved** — a
++gate whose decision is still pending is a stop condition.
++
++### The failure protocol: return to the failing state
++
++When a gate fails, the workflow does not limp forward or silently retry in place.
++The manifest's **`transitions.onGateFailure`** map says exactly which state to
++return to for rework: a failed `architecture-validated` routes back to `plan`, a
++failed `approved-spec` back to `spec`, a failed `verify-passed` back to `build`
++(the same back-edge the verify loop's `onContinue` uses), and so on. The protocol
++is: **stop → root-cause → return to the mapped state → fix → revalidate.** Letting
++a failed gate be bypassed instead of routed back is itself a stop condition.
++
+ ## The verify step is a convergence loop
+ 
+ `verify` does not run once — it iterates until the change actually meets its
+diff --git a/tools/patterns.py b/tools/patterns.py
+new file mode 100644
+index 0000000..dd63bd6
+--- /dev/null
++++ b/tools/patterns.py
+@@ -0,0 +1,239 @@
++#!/usr/bin/env python
++"""Continuous-learning pattern miner.
++
++PSDOS asks the system to *analyse execution history* and propose new skills,
++rules, or gates when patterns recur. praxis already turns a single discovered
++gap into a pending skill proposal (`skill-learner` / `/learn`); this tool adds
++the missing *proactive* half: it sweeps the durable record — the memory ledger
++and the stop-condition run logs — for things that keep happening, and surfaces
++them as **candidates**. It proposes; it never mutates. Promotion stays human-
++gated, routed through `tools/promote.py` / `skill-learner`.
++
++Deterministic, stdlib-only. It reads; it does not write to the ledger.
++
++Usage:
++    python tools/patterns.py                 # scan ./.praxis + ./projects
++    python tools/patterns.py --root <dir>    # scan a different harness root
++    python tools/patterns.py --min 3         # recurrence threshold (default 3)
++    python tools/patterns.py --json          # machine-readable report
++
++Exit codes:
++    0: ran (with or without candidates)
++    2: arguments wrong or root unreadable
++"""
++
++from __future__ import annotations
++
++import argparse
++import json
++import re
++import sys
++from collections import Counter, defaultdict
++from pathlib import Path
++from typing import Any
++
++STOP_ID_RE = re.compile(r"\b([UPS]-\d{1,3})\b")
++DEFAULT_MIN = 3
++
++# Which recurring dimensions suggest which kind of promotion. Conservative on
++# purpose — a hint for a human, not an auto-rule.
++PROMOTION_HINT = {
++    "stop-condition": "a recurring blocker — consider promoting a P-* stop condition, gate, or guardrail",
++    "tag": "a recurring theme — consider a rule or a dedicated skill",
++    "source": "a heavily-used command/skill — consider codifying its repeated decisions as a rule",
++    "type": "a recurring artifact kind — informational",
++}
++
++
++def load_ledger(ledger_path: Path) -> list[dict[str, Any]]:
++    """Parse a memory ledger.jsonl into a list of entry dicts. Malformed lines
++    are skipped (the ledger is the source of truth; a bad line is not fatal to a
++    read-only sweep)."""
++    entries: list[dict[str, Any]] = []
++    if not ledger_path.is_file():
++        return entries
++    for line in ledger_path.read_text(encoding="utf-8").splitlines():
++        line = line.strip()
++        if not line:
++            continue
++        try:
++            obj = json.loads(line)
++        except json.JSONDecodeError:
++            continue
++        if isinstance(obj, dict):
++            entries.append(obj)
++    return entries
++
++
++def scan_run_logs(runs_paths: list[Path]) -> list[tuple[str, str]]:
++    """Return (stop_condition_id, source_file) pairs found across run logs.
++
++    Reads the `condition:` frontmatter field and any STOP[<id>] / bare id in the
++    body, deduplicated per file so one log counts a condition once."""
++    found: list[tuple[str, str]] = []
++    for path in runs_paths:
++        try:
++            text = path.read_text(encoding="utf-8")
++        except OSError:
++            continue
++        ids: set[str] = set()
++        for m in STOP_ID_RE.finditer(text):
++            cid = m.group(1)
++            # ignore obvious template placeholders like "U-*"
++            ids.add(cid)
++        for cid in sorted(ids):
++            found.append((cid, str(path)))
++    return found
++
++
++def mine_patterns(
++    entries: list[dict[str, Any]],
++    stop_hits: list[tuple[str, str]],
++    min_count: int = DEFAULT_MIN,
++) -> dict[str, list[dict[str, Any]]]:
++    """Count recurring dimensions and return those at/above min_count.
++
++    Returns a dict keyed by dimension ('tag', 'source', 'type', 'stop-condition'),
++    each a list of {value, count, examples} sorted by count desc then value."""
++    counters: dict[str, Counter] = {
++        "tag": Counter(),
++        "source": Counter(),
++        "type": Counter(),
++        "stop-condition": Counter(),
++    }
++    examples: dict[str, dict[str, list[str]]] = {
++        k: defaultdict(list) for k in counters
++    }
++
++    def _bump(kind: str, value: str, example: str) -> None:
++        counters[kind][value] += 1
++        if len(examples[kind][value]) < 5:
++            examples[kind][value].append(example)
++
++    for e in entries:
++        eid = str(e.get("id", "?"))
++        for tag in e.get("tags", []) or []:
++            if isinstance(tag, str) and tag.strip():
++                _bump("tag", tag, eid)
++        src = e.get("source")
++        if isinstance(src, str) and src.strip():
++            _bump("source", src, eid)
++        etype = e.get("type")
++        if isinstance(etype, str) and etype.strip():
++            _bump("type", etype, eid)
++
++    for cid, path in stop_hits:
++        _bump("stop-condition", cid, path)
++
++    result: dict[str, list[dict[str, Any]]] = {}
++    for kind, counter in counters.items():
++        rows = [
++            {"value": value, "count": count, "examples": examples[kind][value]}
++            for value, count in counter.items()
++            if count >= min_count
++        ]
++        rows.sort(key=lambda r: (-r["count"], r["value"]))
++        result[kind] = rows
++    return result
++
++
++def format_report(
++    patterns: dict[str, list[dict[str, Any]]],
++    n_entries: int,
++    n_logs: int,
++    min_count: int,
++) -> str:
++    lines = [
++        "# Continuous-learning pattern report",
++        "",
++        f"Swept {n_entries} ledger entries and {n_logs} run logs "
++        f"(recurrence threshold ≥ {min_count}).",
++        "",
++        "> Candidates only. Nothing here is a rule yet — promotion is "
++        "human-gated via `tools/promote.py` / `skill-learner`.",
++        "",
++    ]
++    titles = {
++        "stop-condition": "Recurring stop conditions",
++        "tag": "Recurring tags",
++        "source": "Recurring sources (commands/skills)",
++        "type": "Recurring artifact types",
++    }
++    any_found = False
++    for kind in ("stop-condition", "tag", "source", "type"):
++        rows = patterns.get(kind, [])
++        lines.append(f"## {titles[kind]}")
++        if not rows:
++            lines.append("")
++            lines.append("_none above threshold._")
++            lines.append("")
++            continue
++        any_found = True
++        lines.append("")
++        lines.append(f"_{PROMOTION_HINT[kind]}._")
++        lines.append("")
++        for r in rows:
++            ex = ", ".join(r["examples"][:3])
++            lines.append(f"- `{r['value']}` ×{r['count']} — e.g. {ex}")
++        lines.append("")
++
++    if not any_found:
++        lines.append("No recurring patterns above the threshold. Nothing to propose.")
++        lines.append("")
++    return "\n".join(lines)
++
++
++def _default_run_logs(root: Path) -> list[Path]:
++    """All run logs under projects/*/specs/*/runs/, excluding the _template."""
++    out: list[Path] = []
++    projects = root / "projects"
++    if not projects.is_dir():
++        return out
++    for md in projects.glob("*/specs/*/runs/*.md"):
++        if "_template" in md.parts:
++            continue
++        if md.name.startswith("_"):
++            continue
++        out.append(md)
++    return sorted(out)
++
++
++def run(root: Path, min_count: int) -> dict[str, Any]:
++    ledger = root / ".praxis" / "memory" / "ledger.jsonl"
++    entries = load_ledger(ledger)
++    run_logs = _default_run_logs(root)
++    stop_hits = scan_run_logs(run_logs)
++    patterns = mine_patterns(entries, stop_hits, min_count)
++    return {
++        "n_entries": len(entries),
++        "n_logs": len(run_logs),
++        "min": min_count,
++        "patterns": patterns,
++    }
++
++
++def main(argv: list[str] | None = None) -> int:
++    parser = argparse.ArgumentParser(description="Mine recurring patterns from the memory ledger and run logs.")
++    parser.add_argument("--root", default=".", help="Harness root to scan (default: cwd).")
++    parser.add_argument("--min", type=int, default=DEFAULT_MIN, help=f"Recurrence threshold (default {DEFAULT_MIN}).")
++    parser.add_argument("--json", action="store_true", help="Emit JSON instead of markdown.")
++    args = parser.parse_args(argv)
++
++    root = Path(args.root)
++    if not root.is_dir():
++        print(f"error: root not found: {root}", file=sys.stderr)
++        return 2
++    if args.min < 1:
++        print("error: --min must be >= 1", file=sys.stderr)
++        return 2
++
++    report = run(root, args.min)
++    if args.json:
++        print(json.dumps(report, indent=2))
++    else:
++        print(format_report(report["patterns"], report["n_entries"], report["n_logs"], report["min"]))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tools/test_harness_tools.py b/tools/test_harness_tools.py
+index b1b8ba8..203ed48 100644
+--- a/tools/test_harness_tools.py
++++ b/tools/test_harness_tools.py
+@@ -166,6 +166,49 @@ class WorkflowManifestTests(unittest.TestCase):
+         )
+         self.assertTrue(any("not defined in gateCatalog" in e for e in errors), errors)
+ 
++    def test_valid_gate_criteria_passes(self) -> None:
++        errors: list[str] = []
++        vh._check_gate_criteria("wf", {"approved-spec": ["c1", "c2"]}, errors)
++        self.assertEqual(errors, [])
++
++    def test_empty_gate_criteria_fails(self) -> None:
++        errors: list[str] = []
++        vh._check_gate_criteria("wf", {"approved-spec": []}, errors)
++        self.assertTrue(any("non-empty array" in e for e in errors), errors)
++
++    def test_valid_transitions_pass(self) -> None:
++        errors: list[str] = []
++        vh._check_transitions(
++            "wf", {"onGateFailure": {"approved-spec": "spec"}}, {"spec", "plan"}, errors
++        )
++        self.assertEqual(errors, [])
++
++    def test_transition_to_unknown_step_fails(self) -> None:
++        errors: list[str] = []
++        vh._check_transitions(
++            "wf", {"onGateFailure": {"approved-spec": "ghost"}}, {"spec", "plan"}, errors
++        )
++        self.assertTrue(any("unknown step" in e for e in errors), errors)
++
++    def test_transitions_and_criteria_in_full_manifest(self) -> None:
++        with tempfile.TemporaryDirectory() as d:
++            tmp = Path(d)
++            path = self._write(
++                tmp,
++                "feature-development.workflow.json",
++                {
++                    "id": "feature-development",
++                    "name": "F",
++                    "steps": ["spec", "plan", "tasks"],
++                    "gates": {"plan": ["approved-spec"], "tasks": ["architecture-validated"]},
++                    "gateCriteria": {"approved-spec": ["acceptance criteria are testable"]},
++                    "transitions": {"onGateFailure": {"architecture-validated": "plan"}},
++                },
++            )
++            errors: list[str] = []
++            vh._check_workflow_manifest(path, errors)
++            self.assertEqual(errors, [])
++
+ 
+ class ExperienceContractTests(unittest.TestCase):
+     def _spec_with_contract(self, tmp: Path, contract: dict | None, *,
+diff --git a/tools/test_patterns.py b/tools/test_patterns.py
+new file mode 100644
+index 0000000..cbc4f18
+--- /dev/null
++++ b/tools/test_patterns.py
+@@ -0,0 +1,84 @@
++"""Unit tests for the continuous-learning pattern miner.
++
++Deterministic, stdlib-only. Run via:
++    python -m unittest discover -s tools -p 'test_*.py'
++"""
++
++from __future__ import annotations
++
++import json
++import tempfile
++import unittest
++from pathlib import Path
++
++import patterns as pt
++
++
++def _entry(eid: str, **kw) -> dict:
++    base = {"id": eid, "source": "/new-feature", "type": "decision", "tags": []}
++    base.update(kw)
++    return base
++
++
++class MineTests(unittest.TestCase):
++    def test_recurring_tag_at_threshold(self) -> None:
++        entries = [_entry(f"e{i}", tags=["harness"]) for i in range(3)]
++        out = pt.mine_patterns(entries, [], min_count=3)
++        tags = {r["value"]: r["count"] for r in out["tag"]}
++        self.assertEqual(tags.get("harness"), 3)
++
++    def test_below_threshold_excluded(self) -> None:
++        entries = [_entry("e1", tags=["rare"]), _entry("e2", tags=["rare"])]
++        out = pt.mine_patterns(entries, [], min_count=3)
++        self.assertEqual(out["tag"], [])
++
++    def test_stop_conditions_counted(self) -> None:
++        hits = [("U-2", "a.md"), ("U-2", "b.md"), ("U-2", "c.md"), ("U-7", "a.md")]
++        out = pt.mine_patterns([], hits, min_count=3)
++        vals = {r["value"]: r["count"] for r in out["stop-condition"]}
++        self.assertEqual(vals.get("U-2"), 3)
++        self.assertNotIn("U-7", vals)
++
++    def test_examples_capped(self) -> None:
++        entries = [_entry(f"e{i}", tags=["x"]) for i in range(10)]
++        out = pt.mine_patterns(entries, [], min_count=1)
++        row = next(r for r in out["tag"] if r["value"] == "x")
++        self.assertLessEqual(len(row["examples"]), 5)
++
++    def test_load_ledger_skips_malformed(self) -> None:
++        with tempfile.TemporaryDirectory() as d:
++            p = Path(d) / "ledger.jsonl"
++            p.write_text(
++                json.dumps(_entry("ok")) + "\nnot-json\n" + json.dumps(_entry("ok2")) + "\n",
++                encoding="utf-8",
++            )
++            entries = pt.load_ledger(p)
++            self.assertEqual([e["id"] for e in entries], ["ok", "ok2"])
++
++    def test_scan_run_logs_dedupes_per_file(self) -> None:
++        with tempfile.TemporaryDirectory() as d:
++            log = Path(d) / "r.md"
++            log.write_text("STOP[U-2] ... and again U-2 here", encoding="utf-8")
++            hits = pt.scan_run_logs([log])
++            self.assertEqual(hits, [("U-2", str(log))])
++
++    def test_run_on_full_root(self) -> None:
++        with tempfile.TemporaryDirectory() as d:
++            root = Path(d)
++            mem = root / ".praxis" / "memory"
++            mem.mkdir(parents=True)
++            (mem / "ledger.jsonl").write_text(
++                "\n".join(json.dumps(_entry(f"e{i}", tags=["harness"])) for i in range(3)),
++                encoding="utf-8",
++            )
++            report = pt.run(root, min_count=3)
++            self.assertEqual(report["n_entries"], 3)
++            self.assertTrue(any(r["value"] == "harness" for r in report["patterns"]["tag"]))
++
++    def test_format_report_handles_empty(self) -> None:
++        text = pt.format_report({"tag": [], "source": [], "type": [], "stop-condition": []}, 0, 0, 3)
++        self.assertIn("No recurring patterns", text)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/validate_harness.py b/tools/validate_harness.py
+index c27e024..36164ee 100644
+--- a/tools/validate_harness.py
++++ b/tools/validate_harness.py
+@@ -479,6 +479,48 @@ def _check_workflow_manifest(path: Path, errors: list[str]) -> None:
+ 
+     catalog_ids = _check_gate_catalog(label, data.get("gateCatalog"), errors)
+     _check_workflow_loops(label, data.get("loops"), step_set, catalog_ids, errors)
++    _check_gate_criteria(label, data.get("gateCriteria"), errors)
++    _check_transitions(label, data.get("transitions"), step_set, errors)
++
++
++def _check_gate_criteria(label: str, criteria: Any, errors: list[str]) -> None:
++    """Validate the optional 'gateCriteria' block: each gate token maps to a
++    non-empty list of criterion strings (an empty criteria list is a gate that
++    proves nothing)."""
++    if criteria is None:
++        return
++    if not isinstance(criteria, dict):
++        errors.append(f"{label}: 'gateCriteria' must be an object")
++        return
++    for token, items in criteria.items():
++        where = f"{label}: gateCriteria[{token!r}]"
++        if (
++            not isinstance(items, list)
++            or not items
++            or not all(isinstance(c, str) and c.strip() for c in items)
++        ):
++            errors.append(f"{where} must be a non-empty array of criterion strings")
++
++
++def _check_transitions(label: str, transitions: Any, step_set: set[str], errors: list[str]) -> None:
++    """Validate the optional 'transitions' block: onGateFailure must map gate
++    tokens to real steps — a dangling return target defeats the failure protocol."""
++    if transitions is None:
++        return
++    if not isinstance(transitions, dict):
++        errors.append(f"{label}: 'transitions' must be an object")
++        return
++    on_fail = transitions.get("onGateFailure")
++    if on_fail is None:
++        return
++    if not isinstance(on_fail, dict):
++        errors.append(f"{label}: 'transitions.onGateFailure' must be an object")
++        return
++    for token, target in on_fail.items():
++        if not isinstance(target, str) or target not in step_set:
++            errors.append(
++                f"{label}: transitions.onGateFailure[{token!r}] references unknown step {target!r}"
++            )
+ 
+ 
+ def _check_gate_catalog(label: str, catalog: Any, errors: list[str]) -> set[str]:
+diff --git a/workflows/feature-development.workflow.json b/workflows/feature-development.workflow.json
+index 3daf4fd..d898ce1 100644
+--- a/workflows/feature-development.workflow.json
++++ b/workflows/feature-development.workflow.json
+@@ -1,25 +1,70 @@
+ {
+   "id": "feature-development",
+   "name": "Feature development",
+-  "steps": ["discovery", "research", "spec", "experience", "plan", "tasks", "build", "verify", "release"],
++  "steps": ["discovery", "research", "product-definition", "spec", "experience", "plan", "tasks", "build", "verify", "release-candidate", "release"],
+   "gates": {
+     "research": ["discovery"],
+-    "spec": ["approved-discovery"],
++    "product-definition": ["approved-discovery", "research"],
++    "spec": ["approved-product-definition"],
+     "experience": ["approved-spec"],
+     "plan": ["approved-spec", "experience-complete"],
+-    "tasks": ["approved-plan"],
++    "tasks": ["approved-plan", "architecture-validated"],
+     "build": ["tasks"],
+     "verify": ["build", "test-evidence"],
+-    "release": ["verify-passed", "release-approved"]
++    "release-candidate": ["verify-passed"],
++    "release": ["release-candidate-ready", "release-approved"]
++  },
++  "gateCriteria": {
++    "approved-discovery": [
++      "the problem is stated and falsifiable",
++      "the target user or segment is named",
++      "the desired outcome and a success signal are defined",
++      "the opportunity is sized well enough to justify continuing"
++    ],
++    "approved-product-definition": [
++      "the MVP scope is bounded — in-scope and out-of-scope are explicit",
++      "requirements are prioritised (e.g. MoSCoW) with a stated rationale",
++      "each requirement traces to a discovery need",
++      "measurable success criteria or target metrics are defined"
++    ],
++    "approved-spec": [
++      "every requirement has testable acceptance criteria",
++      "scope and target user are unambiguous",
++      "the spec is consistent with the approved product definition (no contradiction)",
++      "open questions are resolved or logged as assumptions with an owner"
++    ],
++    "architecture-validated": [
++      "the design meets the spec's non-functional requirements (scalability, availability, latency) with stated evidence or rationale",
++      "it is maintainable and modular — clear boundaries, no needless coupling",
++      "any architecture new to the project is justified by an ADR (else the unfamiliar-architecture stop condition fires)",
++      "security-relevant design choices (trust boundaries, authz, data handling) are identified for the security gate"
++    ],
++    "release-candidate-ready": [
++      "the verify report's overall-result is pass with accepted sign-off",
++      "release notes or a changelog entry are drafted",
++      "no open high or critical security finding remains"
++    ]
++  },
++  "transitions": {
++    "onGateFailure": {
++      "approved-discovery": "discovery",
++      "approved-product-definition": "product-definition",
++      "approved-spec": "spec",
++      "architecture-validated": "plan",
++      "verify-passed": "build",
++      "release-candidate-ready": "verify"
++    }
+   },
+   "artifacts": {
+     "discovery": ["discovery/discovery-report.md"],
+     "research": ["research/research-report.md", "research/evidence-log.md", "research/alternatives.md"],
++    "product-definition": ["product/product-definition.md"],
+     "spec": ["spec.md"],
+     "experience": ["experience/<surface>.md", "experience/<surface>.contract.json"],
+-    "plan": ["plans/implementation-plan.md"],
++    "plan": ["plans/implementation-plan.md", "plans/architecture-review.md"],
+     "tasks": ["tasks/tasks.md"],
+     "verify": ["reports/verify/report.md"],
++    "release-candidate": ["reports/release/release-candidate.md"],
+     "release": ["reports/release/release-notes.md"]
+   },
+   "loops": {
+@@ -53,10 +98,14 @@
+   },
+   "stopConditions": [
+     "the problem, target user, or desired outcome is unclear after discovery",
++    "product definition is attempted before discovery is approved",
+     "specification is attempted before research findings are recorded (research must precede spec)",
++    "a spec requirement does not trace to an approved product-definition need",
+     "spec scope or target user is ambiguous",
++    "task decomposition is attempted before architecture is validated",
+     "the plan would commit to an architecture the project has not used",
+     "a gate's required decision is still pending (pending is not approved)",
++    "a gate fails and work continues without returning to its mapped state for rework (a failed gate must route back via transitions.onGateFailure, never be bypassed)",
+     "release is attempted with an unaddressed high or critical security finding and no approved risk-acceptance decision",
+     "release is attempted before the verify report shows acceptance criteria are met"
+   ],

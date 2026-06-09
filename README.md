@@ -11,7 +11,7 @@ It has three parts:
 2. **Thirteen SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, Frontend Engineer, Data Engineer, ML/AI Engineer), each built with that pattern.
 3. **`memory`** — a versioned *memory ledger* that records the plans, decisions (from any role, not just the architect), implementations, and artifacts the experts produce, each with a status from a closed set — `pending → accepted | rejected | rolled-back` (plus `superseded`) — so the record survives across sessions and changes can be rolled back. `pending` is a proposal awaiting your call, not approval to act.
 
-On top of these, an experimental **[harness mode](#harness-mode-experimental)** gives agents a reliable *operating environment*, not just skills — a source-of-truth authority model, per-project memory, explicit stop conditions, machine-readable lifecycles with human-in-the-loop gates (`/new-feature`, `/fix-bug`, `/refine`), bidirectional traceability, and deterministic validators. It's **opt-in**: the harness behavior activates only when a repo carries a `.praxis/config.json` that resolves a project.
+On top of these, **[harness mode](#harness-mode-always-on)** gives agents a reliable *operating environment*, not just skills — a source-of-truth authority model, per-project memory, explicit stop conditions, machine-readable lifecycles with human-in-the-loop gates (`/new-feature`, `/fix-bug`, `/refine`), bidirectional traceability, and deterministic validators. It is **always on**: harness mode is praxis's default and only operating mode, and if a repo has no `.praxis/config.json`, the harness **auto-bootstraps** one (`tools/ensure_harness.py`) on the first command instead of falling back to a non-harness path.
 
 **Just want to use it?** Jump to [Install & integrate](#install--integrate) for Claude Code, Cursor, IntelliJ, and Codex. **Want to see the output first?** Browse [`examples/`](examples/README.md) for sample transcripts. Otherwise: **PMs, designers, stakeholders** read from the top; **developers writing or shipping a skill** skip to the [Developer guide](#developer-guide).
 
@@ -50,7 +50,7 @@ cp -R .claude/skills/software-architect ~/.claude/skills/
 
 ### Cursor
 
-The twelve experts ship as Cursor **project rules** (auto-attaching) plus **commands**. Copy the generated `.cursor/` directory into your project root:
+The thirteen experts ship as Cursor **project rules** (auto-attaching) plus **commands**. Copy the generated `.cursor/` directory into your project root:
 
 ```bash
 cp -R integrations/cursor/.cursor <your-repo>/
@@ -147,6 +147,8 @@ To run a feature through the **full lifecycle** — `discovery → research → 
 
 Not every change is a greenfield feature. For a defect, `/fix-bug <bug>` runs the **corrective** lifecycle — `triage → reproduce → diagnose → fix → verify` — to produce a minimal, regression-tested fix without the discovery/research/spec ceremony. For internal quality work, `/refine <target>` runs the **behavior-preserving** lifecycle — `assess → plan → change → verify` — to refactor, pay down debt, or improve performance while keeping observable behavior unchanged. Both are orchestrated the same way as `/new-feature`, just lighter.
 
+Not sure which of these a raw idea is? `/idea <a half-formed thought>` is the **intake & triage front door**: it clarifies (≤2 questions), classifies the idea (feature / bug / refinement / not-worth-doing), captures it as a `pending` note in the memory ledger, and recommends the right lifecycle command to run next — it triages and routes, it does not plan.
+
 **Token-efficient by construction.** Beyond context isolation, `/new-feature` keeps cost down two more ways. An optional **context digest** step gathers the relevant codebase/PRD context *once* on a cheap model (Haiku) and feeds that digest to every later phase, so experts stop re-reading the same material. And each phase runs at the **model tier its work needs** — Opus for the deep design/build reasoning (architect, developer, domain experts), Sonnet for the artifact-transforming phases (BA, PO, QA, devops), Haiku for retrieval only — so you pay top-tier prices only where depth actually pays off.
 
 ### See it in action
@@ -180,7 +182,7 @@ The pattern for creating new skills. You describe what you want; it runs a guide
 - **General-purpose interview** — the one-question-at-a-time workflow works for scoping *any* objective, not only skills.
 - **Iteration capture (a learning loop)** — when you correct its output ("actually, always do X"), it asks whether to record that as a durable rule for the skill or a meta-rule for the factory (`learned-rules.md`), so the same correction is never needed twice.
 
-### The twelve SDLC expert skills (Tier 2)
+### The thirteen SDLC expert skills (Tier 2)
 
 Each makes Claude act as that role's expert, with practices and a review checklist:
 
@@ -219,9 +221,9 @@ The experts produce plans, decisions, and code — `memory` makes that output **
 
 ---
 
-## Harness mode (experimental)
+## Harness mode (always on)
 
-Praxis began as a **skill factory + SDLC expert pack + memory ledger**. Harness mode turns it into a fuller **agent harness**: a reliable operating environment that tells an agent *where to read first, what is canonical, where durable decisions go, how project context is resolved, and when to stop and ask*. It carries the authority model **and** the full delivery lifecycle — discovery, research, specs, plans, tasks, verification, and release, plus lighter lifecycles for bugs and refinements. All of it is **opt-in**: it activates only when a `.praxis/config.json` resolves a project, so non-harness repos are unaffected. See [`docs/harness-mode.md`](docs/harness-mode.md) for the full guide.
+Praxis began as a **skill factory + SDLC expert pack + memory ledger**. Harness mode turns it into a fuller **agent harness**: a reliable operating environment that tells an agent *where to read first, what is canonical, where durable decisions go, how project context is resolved, and when to stop and ask*. It carries the authority model **and** the full delivery lifecycle — discovery, research, specs, plans, tasks, verification, and release, plus lighter lifecycles for bugs and refinements. **It is praxis's default and only operating mode** — there is no opt-in and no non-harness fallback. If a repo has no `.praxis/config.json`, the harness **auto-bootstraps** one (a `local` project derived from the repo name, via `python tools/ensure_harness.py` — idempotent) on the first command and continues; the one hard stop is a config that is *present but broken*. See [`docs/harness-mode.md`](docs/harness-mode.md) for the full guide.
 
 What it adds (all repo-level, alongside the factory):
 
@@ -256,17 +258,19 @@ python tools/validate_harness.py --config ../checkout/.praxis/config.json
 
 **Read order** in a harness-mode repo: repo `AGENTS.md` → `.praxis/config.json` → harness `AGENTS.md` → `rules/source-of-truth.md` → `projects/<project>/PROJECT.md` → `current-state.md` → `open-questions.md` → active spec → relevant skills. The generated Cursor / Codex / IntelliJ entry docs embed the same order, so every agent resolves context the same way.
 
-**What harness mode now includes** (all opt-in — they activate only when a project resolves):
+**What harness mode now includes** (always on — a missing project is auto-bootstrapped, never a fallback):
 
-- **The full feature lifecycle.** In harness mode, `/new-feature` runs `discovery → research → spec → experience → plan → tasks → build → verify → release` and writes the durable, typed artifacts under `projects/<project>/specs/<spec>/` — `discovery/`, `research/` (report + evidence log + alternatives), `spec.md`, optional `experience/` contracts, `plans/implementation-plan.md`, `tasks/tasks.md`, `decisions/`, `reports/verify/`, and `reports/release/` — instead of leaving the plan only in chat. **Research precedes the spec.** Doctrine: [`systems/feature-development/artifact-model.md`](systems/feature-development/artifact-model.md).
+- **The full feature lifecycle.** In harness mode, `/new-feature` runs `discovery → research → product-definition → spec → experience → plan → tasks → build → verify → release-candidate → release` and writes the durable, typed artifacts under `projects/<project>/specs/<spec>/` — `discovery/`, `research/` (report + evidence log + alternatives), the PO-owned `product-definition` (MVP/scope/metrics), `spec.md`, optional `experience/` contracts, `plans/implementation-plan.md`, `tasks/tasks.md`, `decisions/`, `reports/verify/`, and `reports/release/` (with `release-candidate` separating *proven-correct* from *decided-to-ship*) — instead of leaving the plan only in chat. **Research precedes the spec.** Doctrine: [`systems/feature-development/artifact-model.md`](systems/feature-development/artifact-model.md).
 - **Executable surface contracts + typed gates.** The optional `experience` step turns each surface a spec declares (screen/flow/api/job/cli/data/integration) into a verifiable contract — markdown + a companion JSON validated against [`schemas/experience-contract.schema.json`](schemas/experience-contract.schema.json) — that names its source of truth, files-owned, dependency map, and the `G-*` gates that prove it. The workflow's `gateCatalog` defines those gates; the verify report records a pass/fail result per gate with reviewer sign-off and **forbids self-certification**. Tasks carry per-task **Forbidden / Gate / Output** fields + files-owned for deterministic anti-drift (lint: `make check-tasks FILE=…`).
 - **Never assume; loop, don't spin; hard stops.** Three complementary controls keep work honest: the **assumptions ledger** ([`rules/never-assume.md`](rules/never-assume.md), `tools/assumptions.py`) logs low-confidence guesses and replays them to you as a question-flow; **loop control** ([`rules/loop-control.md`](rules/loop-control.md), `tools/loop.py`) runs the `verify` step as a bounded convergence loop that either meets its predicate or escalates — never spins; and an enumerated **stop-conditions catalog** ([`rules/stop-conditions-catalog.md`](rules/stop-conditions-catalog.md)) of `U/P/S-*` hard blockers halts the step and writes a run log.
 - **A learning loop.** A validated assumption that generalises can be promoted — via [`tools/promote.py`](tools/promote.py), routed through `skill-learner` — into a **`pending`** rule, gate, eval, or guardrail in the memory ledger. Promote on evidence, never on anticipation; propose, never mutate; the user accepts before any governance is added.
 - **Lighter lifecycles for bugs and refinements.** `/fix-bug` drives the corrective `triage → reproduce → diagnose → fix → verify` chain ([`systems/bug-fix/`](systems/bug-fix/artifact-model.md)); `/refine` drives the quality-only, behavior-preserving `assess → plan → change → verify` chain ([`systems/refinement/`](systems/refinement/artifact-model.md)). Both skip the discovery/research/spec ceremony a feature needs.
-- **Workflow gates + HITL.** [`workflows/`](workflows/registry.json) holds machine-readable lifecycles (steps, gates, stop conditions). The feature chain has four human-in-the-loop gates — **Discovery & Research**, **Specification**, **Architecture** (only when significant), and **Release**. Each gate is opened by the previous artifact reaching an authorizing status. **Pending is not approval.**
+- **Workflow gates + HITL, with an owning authority.** [`workflows/`](workflows/registry.json) holds machine-readable lifecycles (steps, gates, stop conditions). The feature chain has **five criteria-checked human-in-the-loop gates** — `approved-discovery`, `approved-product-definition`, `approved-spec`, `architecture-validated`, and `release-candidate-ready` — each carrying explicit, checkable criteria (`gateCriteria`) so an approval is a checklist, not a vibe. The **[Validation Orchestrator](.claude/skills/validation-orchestrator/SKILL.md)** (`/validation-orchestrator`) is the standing role with sole authority to halt progression, adjudicating each gate to a closed-set verdict (`advance | block | escalate`). A failed gate routes back to its mapped rework state (`transitions.onGateFailure`) — never a bypass. Each gate is opened by the previous artifact reaching an authorizing status. **Pending is not approval.**
+- **A typed verify gate catalog with a mandatory security gate.** The verify loop proves a closed set of `G-*` gates (`G-build`, `G-lint`, `G-typecheck`, `G-tests`, `G-runtime-clean`, `G-acceptance`, …). **`G-security` is mandatory** — a feature cannot reach `release` without a recorded security review (owned by `security-engineer`); high/critical findings are fixed or carry an approved risk-acceptance decision. **`G-performance` is conditional** on runtime-bearing surfaces, owned by `software-architect` (build-time budgets) and `devops-engineer` (runtime SLOs). The verify report records a pass/fail per gate with reviewer sign-off and **forbids self-certification**.
+- **Continuous learning — a pattern miner.** `make patterns` / `/patterns` ([`tools/patterns.py`](tools/patterns.py)) sweeps the memory ledger and stop-condition run logs for recurring tags, sources, and stop conditions, and surfaces them as **human-gated promotion candidates** routed into `/learn`. The reactive half of the learning loop (`promote.py`) captures gaps as they happen; the miner is the proactive half that asks "what keeps happening?".
 - **Traceability.** Every artifact carries a typed id and links via `source:` / `traces:`, so the chain `IDEA → DISC → RES → SPEC → … → REL` is navigable both ways. Convention: [`rules/traceability.md`](rules/traceability.md); advisory check: `make validate-traceability`.
 - **Project-aware review.** In harness mode, `/review-changes` loads the project's authority, accepted decisions, and active spec, flags diffs that contradict them, and records outcomes only as `pending` memory entries.
-- **Adapter install.** [`tools/install_adapter.py`](tools/install_adapter.py) scaffolds a repo's `.praxis/config.json` + `.praxis/current-spec.md` deterministically.
+- **Always-on bootstrap.** [`tools/ensure_harness.py`](tools/ensure_harness.py) is the idempotent guarantee that harness mode is always on: run at the start of every lifecycle command, it auto-bootstraps a project (config + project memory) derived from the repo name when none resolves, and is a no-op once initialized. [`tools/install_adapter.py`](tools/install_adapter.py) is the explicit variant for wiring a consuming repo to a *named, pre-existing* project (`.praxis/config.json` + `.praxis/current-spec.md`).
 - **Runtime state.** [`runtime/`](runtime/README.md) holds disposable session glue (last active project/repo/spec) via [`tools/runtime.py`](tools/runtime.py) — git-ignored, never the home of a durable decision.
 
 ### Try harness mode end to end
@@ -297,7 +301,7 @@ make validate-traceability            # advisory: checks source:/traces: ids res
 
 To try it **without a separate repo**, scaffold a project under `projects/` as in step 1, add a `.praxis/config.json` at the repo root pointing `harnessRoot` at `.` with `projectId: checkout`, then run `/new-feature` — it will write artifacts under `projects/checkout/specs/`.
 
-Still deliberately out of scope (add on evidence, not anticipation): a full SDD Kit, an `experience` workflow step, and central-mode sync tooling.
+Still deliberately out of scope (add on evidence, not anticipation): a full SDD Kit, central-mode sync tooling, and extending the mandatory security/performance gates to the lighter `bug-fix` and `refinement` lifecycles.
 
 ---
 
@@ -378,7 +382,7 @@ praxis/
 ├─ workflows/             # harness mode: machine-readable lifecycles (steps, gates, gate catalog, loops)
 ├─ schemas/               # harness mode: project/config/spec/workflow/session + experience-contract/assumption/loop/stop-conditions
 ├─ runtime/               # harness mode: disposable session state (git-ignored)
-├─ tools/                 # harness mode: validate_harness / install_adapter / runtime / assumptions / loop / promote / check_tasks
+├─ tools/                 # harness mode: ensure_harness (always-on bootstrap) / validate_harness / install_adapter / runtime / assumptions / loop / promote / check_tasks
 ├─ .claude-plugin/        # marketplace.json (lists the single praxis plugin)
 ├─ plugin-praxis/         # plugin: symlinks to every expert + skill-creator + skill-learner + memory + factory + their commands
 ├─ .claude/               # the real source of truth (used when this repo is the workspace)
