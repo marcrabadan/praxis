@@ -44,6 +44,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `/memory` | Manage the project's working-memory ledger — record plans/decisions/implementations, review what's pending, accept or reject entries, and roll back a snapshott… |
 | `/ml` | Consult the ML/AI Engineer — problem framing & metric selection, ML-ready features (leakage, train/serve skew, feature stores), training & model selection, rig… |
 | `/new-feature` | Run a feature idea or PRD through the full SDLC, consulting each expert in order — Business Analyst, Product Owner, Software Architect, Developer, QA Engineer,… |
+| `/patterns` | Mine the memory ledger and stop-condition run logs for recurring patterns — repeated tags, sources, artifact types, and stop conditions — and surface them as h… |
 | `/product` | Consult the Product Owner — backlog ordering, prioritization (MoSCoW/RICE/WSJF), sprint goals, Definition of Ready/Done, roadmapping, OKRs, story splitting, an… |
 | `/qa` | Consult the QA Engineer — test strategy, test-case design, edge cases, bug reports, regression and risk-based testing, coverage gaps, and release-quality asses… |
 | `/refine` | Run a quality-only improvement through the refinement lifecycle — assess → plan → change → verify — preserving observable behavior. Use to refactor, pay down t… |

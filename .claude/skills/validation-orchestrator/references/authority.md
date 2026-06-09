@@ -21,7 +21,10 @@ failure routes. Criteria text is owned by the **workflow manifest's
 
 The verify gate is proven by the typed catalog — `G-build`, `G-lint`,
 `G-typecheck`, `G-tests`, `G-runtime-clean`, `G-acceptance`, the mandatory
-`G-security`, and the conditional `G-performance`/`G-routes-200`/`G-visual`.
+`G-security` (owned by **security-engineer**), and the conditional
+`G-performance` (owned by **software-architect** for build-time budgets —
+`references/performance-review.md` — and **devops-engineer** for runtime SLOs) /
+`G-routes-200` / `G-visual`.
 A skipped **required** gate without justification fails the report. A conditional
 gate that does not apply records *why* (wrong surface type).
 

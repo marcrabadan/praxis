@@ -52,8 +52,9 @@ Every adjudication ends in exactly one of:
    `make check-tasks FILE=…`, the loop controller's verdict (`tools/loop.py`).
 4. Consult the validation **experts** for judgement criteria, not for the
    decision: **qa-engineer** (test adequacy, acceptance), **security-engineer**
-   (`G-security`), the performance angle (`G-performance`), **software-architect**
-   (`architecture-validated`).
+   (`G-security`), **software-architect** (`architecture-validated`, and
+   `G-performance` build-time budgets via `references/performance-review.md`)
+   with **devops-engineer** for the `G-performance` runtime/SLO side.
 5. Apply the stop-conditions catalog (`U/P/S-*`). Any fired, unresolved
    condition forces **block**.
 6. Emit the verdict and record it.

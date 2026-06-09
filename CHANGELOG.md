@@ -39,8 +39,14 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
     progression; adjudicates each gate to a closed-set verdict
     (`advance | block | escalate`).
   - **Continuous-learning pattern miner** ([`tools/patterns.py`](tools/patterns.py),
-    `make patterns`) — sweeps the ledger + run logs for recurring tags, sources,
-    and stop conditions and surfaces them as human-gated promotion candidates.
+    `make patterns`, and the `/patterns` command) — sweeps the ledger + run logs
+    for recurring tags, sources, and stop conditions and surfaces them as
+    human-gated promotion candidates, routed into `/learn`.
+  - **`G-performance` now has an owning expert** — `software-architect` gains
+    [`references/performance-review.md`](.claude/skills/software-architect/references/performance-review.md)
+    (build-time budgets, review method, regression threshold), with
+    `devops-engineer` owning the runtime/SLO side, so the gate routes to a named
+    role like `G-security` does. No new skill (per promotion-policy).
 - **Spec-driven verification spine + self-evolving doctrine.** A set of
   opt-in harness capabilities that make "iterate until it's actually correct"
   deterministic and bounded, and let the harness learn under a human gate:
