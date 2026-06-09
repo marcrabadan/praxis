@@ -30,6 +30,8 @@ One row per gate in the workflow's `gateCatalog` that applies to this scope.
 | G-tests | pass \| fail \| skipped \| n/a | |
 | G-runtime-clean | pass \| fail \| skipped \| n/a | |
 | G-acceptance | pass \| fail \| skipped \| n/a | |
+| G-security | pass \| fail \| skipped \| n/a | `<security review ref; high/critical findings + dispositions>` |
+| G-performance | pass \| fail \| skipped \| n/a | `<budget + measured result, or why n/a>` |
 
 Conditional gates (e.g. `G-visual`, `G-routes-200`) that are skipped must say why
 here. A skipped required gate without justification fails the report.

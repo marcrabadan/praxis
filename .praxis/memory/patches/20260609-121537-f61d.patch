@@ -1,0 +1,79 @@
+diff --git a/projects/_template/specs/_template/reports/verify/report.md b/projects/_template/specs/_template/reports/verify/report.md
+index 9c5b5da..6ede0a1 100644
+--- a/projects/_template/specs/_template/reports/verify/report.md
++++ b/projects/_template/specs/_template/reports/verify/report.md
+@@ -30,6 +30,8 @@ One row per gate in the workflow's `gateCatalog` that applies to this scope.
+ | G-tests | pass \| fail \| skipped \| n/a | |
+ | G-runtime-clean | pass \| fail \| skipped \| n/a | |
+ | G-acceptance | pass \| fail \| skipped \| n/a | |
++| G-security | pass \| fail \| skipped \| n/a | `<security review ref; high/critical findings + dispositions>` |
++| G-performance | pass \| fail \| skipped \| n/a | `<budget + measured result, or why n/a>` |
+ 
+ Conditional gates (e.g. `G-visual`, `G-routes-200`) that are skipped must say why
+ here. A skipped required gate without justification fails the report.
+diff --git a/systems/feature-development/feature-development.md b/systems/feature-development/feature-development.md
+index 8291edb..1544452 100644
+--- a/systems/feature-development/feature-development.md
++++ b/systems/feature-development/feature-development.md
+@@ -63,8 +63,12 @@ mechanism with their own predicates.
+ 
+ The predicate is proven by **typed gates** declared in the manifest's
+ `gateCatalog` — `G-build`, `G-lint`, `G-typecheck`, `G-tests`, `G-runtime-clean`,
+-`G-acceptance`, and conditional ones like `G-routes-200` / `G-visual` (which apply
+-only to certain experience types). `loops.verify.gates` lists the gates that
++`G-acceptance`, the mandatory `G-security` (every feature records a security
++review; high/critical findings are fixed or carry an approved risk-acceptance
++decision — a feature never reaches `release` on an unaddressed one), and
++conditional ones like `G-performance` (runtime-bearing surfaces meet their stated
++budget), `G-routes-200`, and `G-visual` (which apply only to certain experience
++types). `loops.verify.gates` lists the gates that
+ prove this step, and each gate id resolves to a catalog entry (the harness
+ validator enforces this). An experience contract's `verification` list references
+ the same gate ids, so a surface declares exactly which gates prove it.
+@@ -98,6 +102,7 @@ Output is drift waiting to happen.
+ 
+ In addition to [`../../rules/stop-conditions.md`](../../rules/stop-conditions.md),
+ this workflow stops when: the spec's scope or target user is ambiguous; the plan
+-would adopt an architecture the project has not used; or a gate's required
+-decision is still `pending`. A tripped convergence-loop guard (above) is also a
++would adopt an architecture the project has not used; a gate's required
++decision is still `pending`; or `release` is reached with an unaddressed high or
++critical security finding and no approved risk-acceptance decision. A tripped convergence-loop guard (above) is also a
+ stop. Recording a proposal is allowed; acting on it before acceptance is not.
+diff --git a/workflows/feature-development.workflow.json b/workflows/feature-development.workflow.json
+index 7a1e210..3daf4fd 100644
+--- a/workflows/feature-development.workflow.json
++++ b/workflows/feature-development.workflow.json
+@@ -27,12 +27,14 @@
+       "predicate": [
+         "every acceptance criterion in the spec is demonstrably met",
+         "the full test suite passes with no regressions",
++        "no unaddressed high or critical security finding remains (each is fixed or carries an approved risk-acceptance decision)",
++        "performance-sensitive surfaces meet their stated budget with no regression beyond threshold",
+         "the step validation command passes"
+       ],
+       "maxIterations": 8,
+       "patience": 3,
+       "onContinue": "build",
+-      "gates": ["G-acceptance", "G-build", "G-lint", "G-typecheck", "G-tests", "G-runtime-clean"]
++      "gates": ["G-acceptance", "G-build", "G-lint", "G-typecheck", "G-tests", "G-runtime-clean", "G-security", "G-performance"]
+     }
+   },
+   "gateCatalog": {
+@@ -45,6 +47,8 @@
+     "G-assets-present": { "description": "Referenced assets exist.", "runner": "manual", "passCriteria": "every asset named in the experience contract resolves" },
+     "G-imports-used": { "description": "Named primitives/modules are implemented or imported where expected.", "runner": "manual", "passCriteria": "no named dependency is missing or substituted" },
+     "G-acceptance": { "description": "Every acceptance criterion in the spec is demonstrably met.", "runner": "manual", "passCriteria": "each criterion has evidence" },
++    "G-security": { "description": "Security review found no unaddressed high or critical vulnerability (OWASP Top 10, authn/authz, secrets, dependency/supply-chain).", "runner": "manual", "passCriteria": "a security review is recorded and every high/critical finding is fixed or carries an approved risk-acceptance decision" },
++    "G-performance": { "description": "Performance review found no regression beyond the change's stated budget (latency, throughput, resource use).", "runner": "<repo perf/benchmark check, or manual>", "passCriteria": "performance-sensitive surfaces meet their stated budget with evidence; none regress beyond threshold", "conditional": true, "appliesTo": ["screen", "flow", "api", "job", "data", "integration"] },
+     "G-visual": { "description": "Visual output matches the approved reference.", "runner": "<visual diff>", "passCriteria": "diff under threshold", "conditional": true, "appliesTo": ["screen", "flow"] }
+   },
+   "stopConditions": [
+@@ -53,6 +57,7 @@
+     "spec scope or target user is ambiguous",
+     "the plan would commit to an architecture the project has not used",
+     "a gate's required decision is still pending (pending is not approved)",
++    "release is attempted with an unaddressed high or critical security finding and no approved risk-acceptance decision",
+     "release is attempted before the verify report shows acceptance criteria are met"
+   ],
+   "validation": {

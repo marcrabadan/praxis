@@ -27,12 +27,14 @@
       "predicate": [
         "every acceptance criterion in the spec is demonstrably met",
         "the full test suite passes with no regressions",
+        "no unaddressed high or critical security finding remains (each is fixed or carries an approved risk-acceptance decision)",
+        "performance-sensitive surfaces meet their stated budget with no regression beyond threshold",
         "the step validation command passes"
       ],
       "maxIterations": 8,
       "patience": 3,
       "onContinue": "build",
-      "gates": ["G-acceptance", "G-build", "G-lint", "G-typecheck", "G-tests", "G-runtime-clean"]
+      "gates": ["G-acceptance", "G-build", "G-lint", "G-typecheck", "G-tests", "G-runtime-clean", "G-security", "G-performance"]
     }
   },
   "gateCatalog": {
@@ -45,6 +47,8 @@
     "G-assets-present": { "description": "Referenced assets exist.", "runner": "manual", "passCriteria": "every asset named in the experience contract resolves" },
     "G-imports-used": { "description": "Named primitives/modules are implemented or imported where expected.", "runner": "manual", "passCriteria": "no named dependency is missing or substituted" },
     "G-acceptance": { "description": "Every acceptance criterion in the spec is demonstrably met.", "runner": "manual", "passCriteria": "each criterion has evidence" },
+    "G-security": { "description": "Security review found no unaddressed high or critical vulnerability (OWASP Top 10, authn/authz, secrets, dependency/supply-chain).", "runner": "manual", "passCriteria": "a security review is recorded and every high/critical finding is fixed or carries an approved risk-acceptance decision" },
+    "G-performance": { "description": "Performance review found no regression beyond the change's stated budget (latency, throughput, resource use).", "runner": "<repo perf/benchmark check, or manual>", "passCriteria": "performance-sensitive surfaces meet their stated budget with evidence; none regress beyond threshold", "conditional": true, "appliesTo": ["screen", "flow", "api", "job", "data", "integration"] },
     "G-visual": { "description": "Visual output matches the approved reference.", "runner": "<visual diff>", "passCriteria": "diff under threshold", "conditional": true, "appliesTo": ["screen", "flow"] }
   },
   "stopConditions": [
@@ -53,6 +57,7 @@
     "spec scope or target user is ambiguous",
     "the plan would commit to an architecture the project has not used",
     "a gate's required decision is still pending (pending is not approved)",
+    "release is attempted with an unaddressed high or critical security finding and no approved risk-acceptance decision",
     "release is attempted before the verify report shows acceptance criteria are met"
   ],
   "validation": {

@@ -63,8 +63,12 @@ mechanism with their own predicates.
 
 The predicate is proven by **typed gates** declared in the manifest's
 `gateCatalog` — `G-build`, `G-lint`, `G-typecheck`, `G-tests`, `G-runtime-clean`,
-`G-acceptance`, and conditional ones like `G-routes-200` / `G-visual` (which apply
-only to certain experience types). `loops.verify.gates` lists the gates that
+`G-acceptance`, the mandatory `G-security` (every feature records a security
+review; high/critical findings are fixed or carry an approved risk-acceptance
+decision — a feature never reaches `release` on an unaddressed one), and
+conditional ones like `G-performance` (runtime-bearing surfaces meet their stated
+budget), `G-routes-200`, and `G-visual` (which apply only to certain experience
+types). `loops.verify.gates` lists the gates that
 prove this step, and each gate id resolves to a catalog entry (the harness
 validator enforces this). An experience contract's `verification` list references
 the same gate ids, so a surface declares exactly which gates prove it.
@@ -98,6 +102,7 @@ Output is drift waiting to happen.
 
 In addition to [`../../rules/stop-conditions.md`](../../rules/stop-conditions.md),
 this workflow stops when: the spec's scope or target user is ambiguous; the plan
-would adopt an architecture the project has not used; or a gate's required
-decision is still `pending`. A tripped convergence-loop guard (above) is also a
+would adopt an architecture the project has not used; a gate's required
+decision is still `pending`; or `release` is reached with an unaddressed high or
+critical security finding and no approved risk-acceptance decision. A tripped convergence-loop guard (above) is also a
 stop. Recording a proposal is allowed; acting on it before acceptance is not.
