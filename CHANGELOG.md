@@ -11,6 +11,18 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+### Added
+
+- **`/idea` — intake & triage front door** ([`.claude/commands/idea.md`](.claude/commands/idea.md))
+  — a thin command that takes a raw idea, clarifies it (≤2 questions), classifies
+  it (`feature` → `/new-feature`, `bug` → `/fix-bug`, `refinement` → `/refine`,
+  `not-worth-doing` → no route), captures a `pending` note in the memory ledger
+  (`--source /idea --tags intake,<class>`), and recommends the next command. It
+  classifies, captures, and recommends — it never plans, specs, or runs the
+  lifecycle. A command, not a skill (per promotion-policy). Designed end-to-end
+  through the harness lifecycle under
+  [`projects/praxis/specs/idea-command/`](projects/praxis/specs/idea-command/).
+
 ### Changed
 
 - **Harness mode is now always on (was opt-in).** Harness behavior is praxis's

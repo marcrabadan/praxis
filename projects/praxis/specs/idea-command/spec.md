@@ -2,7 +2,7 @@
 id: idea-command
 project: praxis
 title: "/idea — idea intake & triage command"
-status: draft
+status: accepted
 source: DISC-idea-command
 traces: RES-idea-command
 ---

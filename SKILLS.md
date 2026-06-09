@@ -40,6 +40,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `/fix-bug` | Run a bug through the corrective lifecycle — triage → reproduce → diagnose → fix → verify — consulting QA and the Developer (and Security if it's a vulnerabili… |
 | `/frontend-architect` | Consult the Frontend Architect — framework/meta-framework choice, rendering strategy (CSR/SSR/SSG/ISR/RSC), state and data architecture, routing and code-split… |
 | `/frontend` | Consult the Frontend Engineer — building and composing components, client/server state, data fetching, forms, styling, frontend TypeScript, re-render/performan… |
+| `/idea` | Triage a raw idea — clarify it, classify it as a feature, bug, or refinement (or not worth doing), capture it as a pending note in the memory ledger, and recom… |
 | `/learn` | Turn a knowledge gap discovered during work into durable skill knowledge — capture an org convention, runbook, or rule, or refine an existing skill, by routing… |
 | `/memory` | Manage the project's working-memory ledger — record plans/decisions/implementations, review what's pending, accept or reject entries, and roll back a snapshott… |
 | `/ml` | Consult the ML/AI Engineer — problem framing & metric selection, ML-ready features (leakage, train/serve skew, feature stores), training & model selection, rig… |
