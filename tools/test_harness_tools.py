@@ -141,6 +141,88 @@ class WorkflowManifestTests(unittest.TestCase):
         self.assertTrue(any("onContinue" in e for e in errors), errors)
 
 
+class ExperienceContractTests(unittest.TestCase):
+    def _spec_with_contract(self, tmp: Path, contract: dict | None, *,
+                            frontmatter: dict | None = None) -> tuple[Path, dict]:
+        spec = tmp / "feature-x"
+        (spec / "experience").mkdir(parents=True)
+        if contract is not None:
+            (spec / "experience" / "main.contract.json").write_text(
+                json.dumps(contract), encoding="utf-8")
+        return spec, (frontmatter or {})
+
+    def _valid_contract(self) -> dict:
+        return {
+            "schemaVersion": "1.0.0",
+            "contractType": "experience-contract",
+            "spec": "feature-x",
+            "surface": "main",
+            "experienceType": "screen",
+            "filesOwned": ["src/main.tsx"],
+            "verification": [{"gate": "G-build", "passCriteria": "exit 0"}],
+            "status": "draft",
+        }
+
+    def test_valid_contract_passes(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            spec, fm = self._spec_with_contract(Path(d), self._valid_contract())
+            errors: list[str] = []
+            vh._check_experience_contracts(spec, "feature-x", fm, "p/specs/feature-x", errors)
+            self.assertEqual(errors, [])
+
+    def test_bad_experience_type_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            c = self._valid_contract(); c["experienceType"] = "widget"
+            spec, fm = self._spec_with_contract(Path(d), c)
+            errors: list[str] = []
+            vh._check_experience_contracts(spec, "feature-x", fm, "lbl", errors)
+            self.assertTrue(any("experienceType" in e for e in errors), errors)
+
+    def test_empty_files_owned_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            c = self._valid_contract(); c["filesOwned"] = []
+            spec, fm = self._spec_with_contract(Path(d), c)
+            errors: list[str] = []
+            vh._check_experience_contracts(spec, "feature-x", fm, "lbl", errors)
+            self.assertTrue(any("filesOwned" in e for e in errors), errors)
+
+    def test_verification_needs_gate_id(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            c = self._valid_contract(); c["verification"] = [{"gate": "build", "passCriteria": "x"}]
+            spec, fm = self._spec_with_contract(Path(d), c)
+            errors: list[str] = []
+            vh._check_experience_contracts(spec, "feature-x", fm, "lbl", errors)
+            self.assertTrue(any("^G-" in e or "gate" in e for e in errors), errors)
+
+    def test_spec_mismatch_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            c = self._valid_contract(); c["spec"] = "other"
+            spec, fm = self._spec_with_contract(Path(d), c)
+            errors: list[str] = []
+            vh._check_experience_contracts(spec, "feature-x", fm, "lbl", errors)
+            self.assertTrue(any("does not match the owning spec" in e for e in errors), errors)
+
+    def test_inventory_coverage_missing_files_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            # frontmatter declares a surface but no contract/md exists for it
+            spec, fm = self._spec_with_contract(
+                Path(d), None,
+                frontmatter={"experienceInventory": [
+                    {"id": "EXP-001", "type": "screen", "surface": "checkout"}]})
+            errors: list[str] = []
+            vh._check_experience_contracts(spec, "feature-x", fm, "lbl", errors)
+            self.assertTrue(any("checkout" in e and "missing" in e for e in errors), errors)
+
+    def test_no_surfaces_is_inert(self) -> None:
+        # a spec with no experience dir contents and no inventory adds no errors
+        with tempfile.TemporaryDirectory() as d:
+            spec = Path(d) / "logic-only"
+            spec.mkdir()
+            errors: list[str] = []
+            vh._check_experience_contracts(spec, "logic-only", {}, "lbl", errors)
+            self.assertEqual(errors, [])
+
+
 class ConfigValidationTests(unittest.TestCase):
     def test_missing_project_id_fails(self) -> None:
         errors: list[str] = []

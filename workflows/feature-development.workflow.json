@@ -1,11 +1,12 @@
 {
   "id": "feature-development",
   "name": "Feature development",
-  "steps": ["discovery", "research", "spec", "plan", "tasks", "build", "verify", "release"],
+  "steps": ["discovery", "research", "spec", "experience", "plan", "tasks", "build", "verify", "release"],
   "gates": {
     "research": ["discovery"],
     "spec": ["approved-discovery"],
-    "plan": ["approved-spec"],
+    "experience": ["approved-spec"],
+    "plan": ["approved-spec", "experience-complete"],
     "tasks": ["approved-plan"],
     "build": ["tasks"],
     "verify": ["build", "test-evidence"],
@@ -15,6 +16,7 @@
     "discovery": ["discovery/discovery-report.md"],
     "research": ["research/research-report.md", "research/evidence-log.md", "research/alternatives.md"],
     "spec": ["spec.md"],
+    "experience": ["experience/<surface>.md", "experience/<surface>.contract.json"],
     "plan": ["plans/implementation-plan.md"],
     "tasks": ["tasks/tasks.md"],
     "verify": ["reports/verify/report.md"],

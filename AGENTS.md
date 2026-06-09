@@ -94,14 +94,15 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
   corrective and quality-only lifecycles behind `/fix-bug` and `/refine`.
 - [workflows/](workflows/registry.json) — machine-readable lifecycles (steps,
   gates, stop conditions). `feature-development` is the full
-  `discovery → research → spec → plan → tasks → build → verify → release` chain
-  with four HITL gates; `bug-fix` is `triage → reproduce → diagnose → fix →
+  `discovery → research → spec → experience → plan → tasks → build → verify →
+  release` chain with four HITL gates (the optional `experience` step contracts
+  each surface the spec declares); `bug-fix` is `triage → reproduce → diagnose → fix →
   verify`; `refinement` is `assess → plan → change → verify`. Each `verify` step
   runs as a bounded **convergence loop** (`loops.verify`; see
   [rules/loop-control.md](rules/loop-control.md)) — iterate to the predicate or
   escalate, never spin.
 - [schemas/](schemas/) — `project`, `praxis-config`, `spec`, `workflow`,
-  `session-state`, `assumption`, and `loop` JSON shapes.
+  `session-state`, `assumption`, `loop`, and `experience-contract` JSON shapes.
 - [runtime/](runtime/README.md) — disposable session state (git-ignored), via
   `tools/runtime.py`. Durable decisions never live only here.
 - [tools/](tools/validate_harness.py) — `validate_harness.py` (run

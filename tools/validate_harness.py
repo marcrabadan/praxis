@@ -35,8 +35,11 @@ from validate_frontmatter import _read_frontmatter  # noqa: E402
 
 SLUG = re.compile(r"^[a-z0-9-]{1,64}$")
 SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
+GATE_ID = re.compile(r"^G-[a-z0-9-]{1,48}$")
 PROJECT_STATUSES = {"active", "paused", "archived"}
 SPEC_STATUSES = {"draft", "accepted", "superseded", "done"}
+EXPERIENCE_TYPES = {"screen", "flow", "api", "job", "cli", "data", "integration"}
+EXPERIENCE_STATUSES = {"draft", "accepted", "superseded"}
 CONFIG_MODES = {"local", "central"}
 
 # Files every project folder (and the template) must contain.
@@ -53,6 +56,7 @@ REQUIRED_SCHEMAS = [
     "workflow.schema.json",
     "session-state.schema.json",
     "spec.schema.json",
+    "experience-contract.schema.json",
 ]
 
 
@@ -152,6 +156,73 @@ def _check_project_specs(project_dir: Path, project_id: str, errors: list[str]) 
             errors.append(
                 f"{label}/spec.md: 'status' must be one of {sorted(SPEC_STATUSES)} (got: {status!r})"
             )
+
+        _check_experience_contracts(spec, spec_id, data, label, errors)
+
+
+def _check_experience_contracts(
+    spec_dir: Path, spec_id: str, frontmatter: dict, label: str, errors: list[str]
+) -> None:
+    """Validate per-surface experience contracts (schemas/experience-contract.schema.json).
+
+    Two deterministic checks:
+      * every experience/*.contract.json present is structurally well-formed; and
+      * when the spec frontmatter declares an `experienceInventory`, each listed
+        surface has both its markdown and its companion contract (coverage).
+    Both are inert for specs that declare no surfaces, so existing specs are
+    unaffected.
+    """
+    exp_dir = spec_dir / "experience"
+
+    # 1. structural validation of any contract present
+    if exp_dir.is_dir():
+        for contract in sorted(exp_dir.glob("*.contract.json")):
+            clabel = f"{label}/experience/{contract.name}"
+            try:
+                data = json.loads(contract.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                errors.append(f"{clabel} is not valid JSON: {exc}")
+                continue
+            if not isinstance(data, dict):
+                errors.append(f"{clabel} must be a JSON object")
+                continue
+            if data.get("contractType") != "experience-contract":
+                errors.append(f"{clabel}: 'contractType' must be 'experience-contract'")
+            if data.get("spec") != spec_id:
+                errors.append(f"{clabel}: 'spec' {data.get('spec')!r} does not match the owning spec {spec_id!r}")
+            if not (isinstance(data.get("surface"), str) and SLUG.match(data.get("surface", ""))):
+                errors.append(f"{clabel}: 'surface' must be a slug")
+            if data.get("experienceType") not in EXPERIENCE_TYPES:
+                errors.append(f"{clabel}: 'experienceType' must be one of {sorted(EXPERIENCE_TYPES)}")
+            if data.get("status") not in EXPERIENCE_STATUSES:
+                errors.append(f"{clabel}: 'status' must be one of {sorted(EXPERIENCE_STATUSES)}")
+            files_owned = data.get("filesOwned")
+            if not (isinstance(files_owned, list) and files_owned):
+                errors.append(f"{clabel}: 'filesOwned' must be a non-empty array (it scopes verification)")
+            verification = data.get("verification")
+            if not (isinstance(verification, list) and verification):
+                errors.append(f"{clabel}: 'verification' must be a non-empty array (an unverifiable surface must not be built)")
+            else:
+                for v in verification:
+                    if not (isinstance(v, dict) and GATE_ID.match(str(v.get("gate", "")))):
+                        errors.append(f"{clabel}: each verification entry needs a gate id matching ^G-* (got {v.get('gate') if isinstance(v, dict) else v!r})")
+
+    # 2. coverage when the spec declares its surfaces
+    inventory = frontmatter.get("experienceInventory")
+    if isinstance(inventory, list):
+        for entry in inventory:
+            if not isinstance(entry, dict):
+                continue
+            surface = entry.get("surface")
+            if not (isinstance(surface, str) and SLUG.match(surface)):
+                errors.append(f"{label}: experienceInventory surface {surface!r} is not a slug")
+                continue
+            md = exp_dir / f"{surface}.md"
+            contract = exp_dir / f"{surface}.contract.json"
+            if not md.is_file():
+                errors.append(f"{label}: experienceInventory declares surface {surface!r} but experience/{surface}.md is missing")
+            if not contract.is_file():
+                errors.append(f"{label}: experienceInventory declares surface {surface!r} but experience/{surface}.contract.json is missing")
 
 
 def _parse_index_ids(index_path: Path) -> set[str]:

@@ -12,13 +12,20 @@ source of truth once written; discovery and research are what earn it.
 ## The full lifecycle
 
 ```
-Idea → Discovery → Research → Spec → Plan → Tasks → Build → Verify → Release
+Idea → Discovery → Research → Spec → Experience → Plan → Tasks → Build → Verify → Release
 ```
 
 No spec is written before research; no research happens before discovery frames
 the problem; no build happens before an accepted spec and plan. This encodes the
-operating philosophy: understand → research → specify → plan → build → validate →
-release.
+operating philosophy: understand → research → specify → contract the surfaces →
+plan → build → validate → release.
+
+The **`experience` step is optional**: for each surface the spec declares (its
+experience inventory) it produces an executable per-surface contract
+(`experience/<surface>.md` + a validating `experience/<surface>.contract.json`,
+see [`../../schemas/experience-contract.schema.json`](../../schemas/experience-contract.schema.json))
+that plan, tasks, build, and verify enforce. A pure logic/refactor spec that
+declares no surfaces skips it (record that it was skipped).
 
 ## Where artifacts live
 
@@ -32,7 +39,10 @@ projects/<project>/specs/<spec>/
     research-report.md          # investigate: findings, recommendation
     evidence-log.md             # one row per source backing a finding
     alternatives.md             # options weighed; the chosen direction
-  spec.md                       # what & why (frontmatter: id, title, project, status)
+  spec.md                       # what & why (frontmatter: id, title, project, status, experienceInventory?)
+  experience/                   # optional: one executable contract per surface
+    <surface>.md                #   the contract (behaviour, files-owned, gates)
+    <surface>.contract.json     #   companion, validates against experience-contract.schema.json
   decisions/                    # typed decisions (mini-ADRs) for this spec
   plans/
     implementation-plan.md      # how: components, files, ordered tasks
@@ -49,16 +59,17 @@ copy it to `projects/<project>/specs/<spec>/`.
 
 ## The steps and what authorizes the next one
 
-The workflow is `discovery → research → spec → plan → tasks → build → verify →
-release`. Each step is **gated** by an artifact from a previous step reaching an
-authorizing status:
+The workflow is `discovery → research → spec → experience → plan → tasks → build
+→ verify → release`. Each step is **gated** by an artifact from a previous step
+reaching an authorizing status:
 
 | Step | Produces | Gate to enter | HITL gate |
 |------|----------|---------------|-----------|
 | `discovery` | `discovery/discovery-report.md` | — (entry point) | — |
 | `research` | `research/*` | discovery report exists | — |
 | `spec` | `spec.md` | `approved-discovery` — discovery + research accepted | **Gate 1** |
-| `plan` | `plans/implementation-plan.md` | `approved-spec` — `spec.md` status is `accepted` | **Gate 2** |
+| `experience` | `experience/<surface>.{md,contract.json}` | `approved-spec` | — (per-surface `accepted`) |
+| `plan` | `plans/implementation-plan.md` | `approved-spec` **and** `experience-complete` | **Gate 2** |
 | `tasks` | `tasks/tasks.md` | `approved-plan` — the plan decision is `accepted` | (Gate 3 if architecture) |
 | `build` | code (in the product repo) | `tasks` exist | — |
 | `verify` | `reports/verify/report.md` | build done **and** `test-evidence` present | — |
