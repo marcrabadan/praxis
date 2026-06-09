@@ -48,6 +48,21 @@ you would otherwise make and why it is material. Record the resolution where it
 belongs (project decision or memory ledger) once the user answers — do not let
 the answer live only in chat.
 
+## Deterministic stop conditions (the catalog)
+
+The conditions above are **judgement** calls — ambiguity that *would change*
+something material, so you ask. Beside them is the *hard-blocker* half:
+[stop-conditions-catalog.md](stop-conditions-catalog.md) enumerates observable
+triggers (`U-1…U-10`, plus per-project `P-*` and per-spec `S-*`) with the exact
+`STOP[...]` text to surface and the gate that resolves each. Those are not "ask if
+unclear" — an undefined value, an unresolvable asset, a gate that cannot run, a
+self-certified gate: the agent halts, writes a [run log](../projects/_template/specs/_template/runs/_run-log.md),
+and resumes only on the resolution gate.
+
+The three mechanisms partition cleanly: a **soft, low-confidence guess** →
+[assumptions ledger](never-assume.md); **material judgement ambiguity** → this
+file; a **hard observable blocker** → the catalog.
+
 ## What is *not* a stop condition
 
 Do not stop for choices with a conventional default you can verify from the

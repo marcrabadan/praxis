@@ -67,6 +67,20 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
   generated vs runtime, and the authority order to follow on conflict.
 - [rules/stop-conditions.md](rules/stop-conditions.md) — when an agent must stop
   and ask instead of guessing.
+- [rules/stop-conditions-catalog.md](rules/stop-conditions-catalog.md) — the
+  *hard-blocker* half: an enumerated catalog (`U-1…U-10`, per-project `P-*`,
+  per-spec `S-*`) of observable triggers with exact `STOP[...]` text and a
+  resolution gate; a fired condition halts the step and writes a run log. The
+  soft-guess half is the assumptions ledger.
+- [rules/never-assume.md](rules/never-assume.md) — *never assume, always
+  validate*: low-stakes, reversible guesses are logged to the assumptions ledger
+  (`tools/assumptions.py`), replayed to the user as a question-flow (`sweep`),
+  then resolved into a decision and — when they generalise — a *pending*,
+  human-gated promotion to a rule/guardrail/eval/gate.
+- [rules/loop-control.md](rules/loop-control.md) — *keep iterating, but bounded*:
+  a build → verify → fix loop must declare a terminal predicate and a budget, so
+  it converges (`done`) or escalates to the user — it never spins. Driven by
+  `tools/loop.py`; verdicts come from a closed set (`continue / done / escalate`).
 - [rules/traceability.md](rules/traceability.md) — typed ids and `source:` /
   `traces:` links that keep the chain `IDEA → DISC → RES → SPEC → … → REL`
   navigable in both directions (advisory validator: `make validate-traceability`).
@@ -85,15 +99,26 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
   corrective and quality-only lifecycles behind `/fix-bug` and `/refine`.
 - [workflows/](workflows/registry.json) — machine-readable lifecycles (steps,
   gates, stop conditions). `feature-development` is the full
-  `discovery → research → spec → plan → tasks → build → verify → release` chain
-  with four HITL gates; `bug-fix` is `triage → reproduce → diagnose → fix →
-  verify`; `refinement` is `assess → plan → change → verify`.
-- [schemas/](schemas/) — `project`, `praxis-config`, `spec`, `workflow`, and
-  `session-state` JSON shapes.
+  `discovery → research → spec → experience → plan → tasks → build → verify →
+  release` chain with four HITL gates (the optional `experience` step contracts
+  each surface the spec declares); `bug-fix` is `triage → reproduce → diagnose → fix →
+  verify`; `refinement` is `assess → plan → change → verify`. Each `verify` step
+  runs as a bounded **convergence loop** (`loops.verify`; see
+  [rules/loop-control.md](rules/loop-control.md)) — iterate to the predicate or
+  escalate, never spin.
+- [schemas/](schemas/) — `project`, `praxis-config`, `spec`, `workflow`,
+  `session-state`, `assumption`, `loop`, and `experience-contract` JSON shapes.
 - [runtime/](runtime/README.md) — disposable session state (git-ignored), via
   `tools/runtime.py`. Durable decisions never live only here.
 - [tools/](tools/validate_harness.py) — `validate_harness.py` (run
-  `make validate-harness`; CI enforces it), `install_adapter.py`, `runtime.py`.
+  `make validate-harness`; CI enforces it), `install_adapter.py`, `runtime.py`,
+  `assumptions.py` (the assumptions ledger behind *never assume, always
+  validate*), `loop.py` (the bounded loop controller behind *loop control*),
+  `promote.py` (the human-gated promotion executor: validated assumption →
+  `pending` rule/gate/eval/guardrail in the memory ledger, routed via
+  skill-learner), `check_tasks.py` (advisory lint that every task in a tasks.md
+  names its Forbidden / Gate / Output and each surface group declares
+  files-owned — deterministic anti-drift; `make check-tasks FILE=…`).
 
 A repo opts in by adding `.praxis/config.json` pointing at this harness and a
 project id (scaffold it with `tools/install_adapter.py`). If the project id can't
@@ -138,7 +163,7 @@ praxis/
 │     ├─ scripts/      # repo-level tooling (catalog generator)
 │     └─ validators/   # deterministic Python validators
 ├─ integrations/       # opt-in, copy-in wiring for consuming repos
-│  ├─ github-actions/, hooks/   # CI + local-hook templates for /review-changes
+│  ├─ github-actions/, hooks/   # CI + local-hook templates (/review-changes, memory, validation)
 │  ├─ cursor/, codex/, intellij/  # the experts re-expressed for other agents (generated)
 │  └─ scripts/         # build_integrations.py — regenerates the three above from .claude/
 └─ dist/               # scratch space for one-off produced output (gitignored)

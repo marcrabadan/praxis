@@ -35,8 +35,11 @@ from validate_frontmatter import _read_frontmatter  # noqa: E402
 
 SLUG = re.compile(r"^[a-z0-9-]{1,64}$")
 SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
+GATE_ID = re.compile(r"^G-[a-z0-9-]{1,48}$")
 PROJECT_STATUSES = {"active", "paused", "archived"}
 SPEC_STATUSES = {"draft", "accepted", "superseded", "done"}
+EXPERIENCE_TYPES = {"screen", "flow", "api", "job", "cli", "data", "integration"}
+EXPERIENCE_STATUSES = {"draft", "accepted", "superseded"}
 CONFIG_MODES = {"local", "central"}
 
 # Files every project folder (and the template) must contain.
@@ -53,7 +56,11 @@ REQUIRED_SCHEMAS = [
     "workflow.schema.json",
     "session-state.schema.json",
     "spec.schema.json",
+    "experience-contract.schema.json",
+    "stop-conditions.schema.json",
 ]
+
+STOP_ID = re.compile(r"^(P|S)-\d{1,4}$")
 
 
 def _check_schemas(root: Path, errors: list[str]) -> None:
@@ -152,6 +159,122 @@ def _check_project_specs(project_dir: Path, project_id: str, errors: list[str]) 
             errors.append(
                 f"{label}/spec.md: 'status' must be one of {sorted(SPEC_STATUSES)} (got: {status!r})"
             )
+
+        _check_experience_contracts(spec, spec_id, data, label, errors)
+        _check_stop_conditions(spec, spec_id, label, errors)
+
+
+def _check_experience_contracts(
+    spec_dir: Path, spec_id: str, frontmatter: dict, label: str, errors: list[str]
+) -> None:
+    """Validate per-surface experience contracts (schemas/experience-contract.schema.json).
+
+    Two deterministic checks:
+      * every experience/*.contract.json present is structurally well-formed; and
+      * when the spec frontmatter declares an `experienceInventory`, each listed
+        surface has both its markdown and its companion contract (coverage).
+    Both are inert for specs that declare no surfaces, so existing specs are
+    unaffected.
+    """
+    exp_dir = spec_dir / "experience"
+
+    # 1. structural validation of any contract present
+    if exp_dir.is_dir():
+        for contract in sorted(exp_dir.glob("*.contract.json")):
+            clabel = f"{label}/experience/{contract.name}"
+            try:
+                data = json.loads(contract.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                errors.append(f"{clabel} is not valid JSON: {exc}")
+                continue
+            if not isinstance(data, dict):
+                errors.append(f"{clabel} must be a JSON object")
+                continue
+            if data.get("contractType") != "experience-contract":
+                errors.append(f"{clabel}: 'contractType' must be 'experience-contract'")
+            if data.get("spec") != spec_id:
+                errors.append(f"{clabel}: 'spec' {data.get('spec')!r} does not match the owning spec {spec_id!r}")
+            if not (isinstance(data.get("surface"), str) and SLUG.match(data.get("surface", ""))):
+                errors.append(f"{clabel}: 'surface' must be a slug")
+            if data.get("experienceType") not in EXPERIENCE_TYPES:
+                errors.append(f"{clabel}: 'experienceType' must be one of {sorted(EXPERIENCE_TYPES)}")
+            if data.get("status") not in EXPERIENCE_STATUSES:
+                errors.append(f"{clabel}: 'status' must be one of {sorted(EXPERIENCE_STATUSES)}")
+            files_owned = data.get("filesOwned")
+            if not (isinstance(files_owned, list) and files_owned):
+                errors.append(f"{clabel}: 'filesOwned' must be a non-empty array (it scopes verification)")
+            verification = data.get("verification")
+            if not (isinstance(verification, list) and verification):
+                errors.append(f"{clabel}: 'verification' must be a non-empty array (an unverifiable surface must not be built)")
+            else:
+                for v in verification:
+                    if not (isinstance(v, dict) and GATE_ID.match(str(v.get("gate", "")))):
+                        errors.append(f"{clabel}: each verification entry needs a gate id matching ^G-* (got {v.get('gate') if isinstance(v, dict) else v!r})")
+
+    # 2. coverage when the spec declares its surfaces
+    inventory = frontmatter.get("experienceInventory")
+    if isinstance(inventory, list):
+        for entry in inventory:
+            if not isinstance(entry, dict):
+                continue
+            surface = entry.get("surface")
+            if not (isinstance(surface, str) and SLUG.match(surface)):
+                errors.append(f"{label}: experienceInventory surface {surface!r} is not a slug")
+                continue
+            md = exp_dir / f"{surface}.md"
+            contract = exp_dir / f"{surface}.contract.json"
+            if not md.is_file():
+                errors.append(f"{label}: experienceInventory declares surface {surface!r} but experience/{surface}.md is missing")
+            if not contract.is_file():
+                errors.append(f"{label}: experienceInventory declares surface {surface!r} but experience/{surface}.contract.json is missing")
+
+
+def _check_stop_conditions(spec_dir: Path, spec_id: str, label: str, errors: list[str]) -> None:
+    """Validate an optional per-spec stop-conditions.json (schemas/stop-conditions.schema.json).
+
+    The universal U-* conditions live in rules/stop-conditions-catalog.md and are
+    inherited; this file declares only project (P-*) and spec (S-*) additions, each
+    with a deterministic trigger, exact STOP[...] surfaced text, and a resolution
+    gate. Inert when the file is absent.
+    """
+    path = spec_dir / "stop-conditions.json"
+    if not path.is_file():
+        return
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"{label}/stop-conditions.json is not valid JSON: {exc}")
+        return
+    if not isinstance(data, dict):
+        errors.append(f"{label}/stop-conditions.json must be a JSON object")
+        return
+    if data.get("spec") != spec_id:
+        errors.append(f"{label}/stop-conditions.json: 'spec' {data.get('spec')!r} does not match the owning spec {spec_id!r}")
+    if not isinstance(data.get("inheritsUniversal"), bool):
+        errors.append(f"{label}/stop-conditions.json: 'inheritsUniversal' must be a boolean (a spec cannot silently weaken the universal catalog)")
+    conditions = data.get("conditions")
+    if not isinstance(conditions, list):
+        errors.append(f"{label}/stop-conditions.json: 'conditions' must be an array")
+        return
+    seen: set[str] = set()
+    for c in conditions:
+        if not isinstance(c, dict):
+            errors.append(f"{label}/stop-conditions.json: each condition must be an object")
+            continue
+        cid = c.get("id")
+        if not (isinstance(cid, str) and STOP_ID.match(cid)):
+            errors.append(f"{label}/stop-conditions.json: condition id {cid!r} must match ^(P|S)-\\d+")
+        elif cid in seen:
+            errors.append(f"{label}/stop-conditions.json: duplicate condition id {cid!r}")
+        else:
+            seen.add(cid)
+        if not (isinstance(c.get("trigger"), str) and c["trigger"].strip()):
+            errors.append(f"{label}/stop-conditions.json: condition {cid!r} needs a non-empty 'trigger'")
+        surfaced = c.get("surfacedAs")
+        if not (isinstance(surfaced, str) and surfaced.startswith("STOP[")):
+            errors.append(f"{label}/stop-conditions.json: condition {cid!r} 'surfacedAs' must start with 'STOP['")
+        if not (isinstance(c.get("resolutionGate"), str) and c["resolutionGate"].strip()):
+            errors.append(f"{label}/stop-conditions.json: condition {cid!r} needs a non-empty 'resolutionGate'")
 
 
 def _parse_index_ids(index_path: Path) -> set[str]:
@@ -341,7 +464,7 @@ def _check_workflow_manifest(path: Path, errors: list[str]) -> None:
         errors.append(f"{label}: 'steps' contains duplicates")
     step_set = set(steps)
 
-    for section in ("gates", "artifacts", "validation"):
+    for section in ("gates", "artifacts", "validation", "loops"):
         block = data.get(section)
         if block is None:
             continue
@@ -353,6 +476,76 @@ def _check_workflow_manifest(path: Path, errors: list[str]) -> None:
                 errors.append(
                     f"{label}: '{section}' references unknown step {key!r}"
                 )
+
+    catalog_ids = _check_gate_catalog(label, data.get("gateCatalog"), errors)
+    _check_workflow_loops(label, data.get("loops"), step_set, catalog_ids, errors)
+
+
+def _check_gate_catalog(label: str, catalog: Any, errors: list[str]) -> set[str]:
+    """Validate the optional 'gateCatalog' (typed verification gates). Returns the
+    set of valid gate ids so callers can check references resolve."""
+    if catalog is None:
+        return set()
+    if not isinstance(catalog, dict):
+        errors.append(f"{label}: 'gateCatalog' must be an object")
+        return set()
+    ids: set[str] = set()
+    for gid, spec in catalog.items():
+        where = f"{label}: gateCatalog[{gid!r}]"
+        if not GATE_ID.match(str(gid)):
+            errors.append(f"{where}: gate id must match ^G-[a-z0-9-]+")
+            continue
+        if not isinstance(spec, dict):
+            errors.append(f"{where} must be an object")
+            continue
+        if not (isinstance(spec.get("description"), str) and spec["description"].strip()):
+            errors.append(f"{where}: 'description' is required")
+        if not (isinstance(spec.get("passCriteria"), str) and spec["passCriteria"].strip()):
+            errors.append(f"{where}: 'passCriteria' is required")
+        if "conditional" in spec and not isinstance(spec["conditional"], bool):
+            errors.append(f"{where}: 'conditional' must be a boolean")
+        ids.add(gid)
+    return ids
+
+
+def _check_workflow_loops(
+    label: str, loops: Any, step_set: set[str], catalog_ids: set[str], errors: list[str]
+) -> None:
+    """Validate the optional 'loops' block (rules/loop-control.md).
+
+    Each looped step must carry a non-empty terminal predicate; the budget and
+    patience guards must be positive integers; onContinue must name a real step;
+    and any referenced gates must resolve to the gate catalog — a loop with no
+    predicate, a dangling back-edge, or a phantom gate defeats the rule.
+    """
+    if loops is None:
+        return
+    if not isinstance(loops, dict):
+        return  # already reported as "must be an object" above
+    for step, spec in loops.items():
+        where = f"{label}: loops[{step!r}]"
+        if not isinstance(spec, dict):
+            errors.append(f"{where} must be an object")
+            continue
+        predicate = spec.get("predicate")
+        if (
+            not isinstance(predicate, list)
+            or not predicate
+            or not all(isinstance(c, str) and c.strip() for c in predicate)
+        ):
+            errors.append(
+                f"{where}: 'predicate' must be a non-empty array of strings "
+                "(a step with no predicate could loop forever)"
+            )
+        for guard in ("maxIterations", "patience"):
+            if guard in spec and (not isinstance(spec[guard], int) or isinstance(spec[guard], bool) or spec[guard] < 1):
+                errors.append(f"{where}: '{guard}' must be an integer >= 1")
+        cont = spec.get("onContinue")
+        if cont is not None and cont not in step_set:
+            errors.append(f"{where}: 'onContinue' references unknown step {cont!r}")
+        for g in spec.get("gates", []) or []:
+            if catalog_ids and g not in catalog_ids:
+                errors.append(f"{where}: gate {g!r} is not defined in gateCatalog")
 
 
 def _validate_config_data(

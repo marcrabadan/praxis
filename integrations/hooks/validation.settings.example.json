@@ -1,0 +1,33 @@
+{
+  "// description": "Opt-in Claude Code hooks that make praxis VALIDATION ambient: open assumptions (never-assume) and escalated/running loops (loop-control) are surfaced automatically instead of only when a tool is run by hand. Copy the `hooks` block into a CONSUMING repo's .claude/settings.json (merge if it already has hooks). praxis ships this as a template and does not enable it on itself. Nudges only — exit 0 always; never blocks.",
+
+  "// path resolution": "The validation tools live in the harness `tools/` dir, not in an exported skill, so each hook first resolves the tools dir: it reads harnessRoot from the consuming repo's .praxis/config.json (relative to the repo), and falls back to $CLAUDE_PROJECT_DIR/tools for harness self-development. Requires python3 (already a hard dependency of every praxis tool).",
+
+  "// SessionStart": "Begin each session by surfacing what still needs validation: `assumptions.py open --brief` lists low-confidence guesses awaiting a sweep, and `loop.py brief` flags any loop that ESCALATED (a guard tripped and is waiting on your guidance) or is still in progress. Both are silent when there is nothing to report, so a clean repo adds no noise. Printed to stdout so it lands in context.",
+
+  "// PreToolUse.git-commit-push": "Before a commit or push lands — the lightweight 'advancing a gate' moment — re-surface open assumptions and escalated loops as a stderr nudge, so you validate before shipping work built on an unconfirmed guess. A reminder, not a gate.",
+
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "PRAXIS_T=\"$(python3 -c 'import json,os;d=os.environ.get(\"CLAUDE_PROJECT_DIR\",\".\");c=os.path.join(d,\".praxis\",\"config.json\");print(os.path.normpath(os.path.join(d,json.load(open(c)).get(\"harnessRoot\",\".\"),\"tools\")) if os.path.exists(c) else os.path.join(d,\"tools\"))' 2>/dev/null)\"; [ -n \"$PRAXIS_T\" ] && { python3 \"$PRAXIS_T/assumptions.py\" open --brief 2>/dev/null; python3 \"$PRAXIS_T/loop.py\" brief 2>/dev/null; }; exit 0"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "grep -Eq 'git[[:space:]]+(commit|push)' <<< \"$CLAUDE_TOOL_INPUT_COMMAND\" || exit 0; PRAXIS_T=\"$(python3 -c 'import json,os;d=os.environ.get(\"CLAUDE_PROJECT_DIR\",\".\");c=os.path.join(d,\".praxis\",\"config.json\");print(os.path.normpath(os.path.join(d,json.load(open(c)).get(\"harnessRoot\",\".\"),\"tools\")) if os.path.exists(c) else os.path.join(d,\"tools\"))' 2>/dev/null)\"; [ -n \"$PRAXIS_T\" ] && { python3 \"$PRAXIS_T/assumptions.py\" open --brief 2>/dev/null; python3 \"$PRAXIS_T/loop.py\" brief 2>/dev/null; } >&2; exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}

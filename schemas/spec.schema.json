@@ -27,6 +27,34 @@
       "type": "string",
       "enum": ["draft", "accepted", "superseded", "done"],
       "description": "Spec lifecycle from the closed set. 'accepted' satisfies the workflow's approved-spec gate; 'draft' does not authorize downstream steps."
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Optional semantic version of the spec frontmatter shape."
+    },
+    "summary": {
+      "type": "string",
+      "description": "Optional one- or two-sentence scope statement."
+    },
+    "experienceInventory": {
+      "type": "array",
+      "description": "Optional, machine-readable list of the surfaces this spec delivers. When present, the experience step must produce an accepted contract per surface, and the harness validator checks that coverage. A spec with no surfaces (pure logic/refactor) may omit it or leave it empty.",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "surface"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^EXP-\\d{1,4}$", "description": "Stable surface id, EXP-001, EXP-002, ..." },
+          "type": {
+            "type": "string",
+            "enum": ["screen", "flow", "api", "job", "cli", "data", "integration"],
+            "description": "Surface type."
+          },
+          "surface": { "type": "string", "pattern": "^[a-z0-9-]{1,64}$", "description": "Surface slug. Matches experience/<surface>.md and the plan/tasks surface group." },
+          "priority": { "type": "string", "enum": ["P1", "P2", "P3"], "description": "Optional priority." }
+        }
+      }
     }
   }
 }

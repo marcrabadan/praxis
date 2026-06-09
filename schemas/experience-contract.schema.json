@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://praxis/schemas/experience-contract.schema.json",
+  "title": "Experience contract",
+  "description": "An executable, per-surface contract that sits between the spec and the plan in feature-development. It locks one user- or system-facing surface (screen/flow/api/job/cli/data/integration) in enough verifiable detail that planning, tasks, implementation, and verify can enforce it. The companion to the markdown experience doc; this JSON is the machine-checkable half. Lives at projects/<project>/specs/<spec>/experience/<surface>.contract.json.",
+  "type": "object",
+  "required": ["schemaVersion", "contractType", "spec", "surface", "experienceType", "status", "filesOwned", "verification"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of this contract shape."
+    },
+    "contractType": {
+      "const": "experience-contract",
+      "description": "Discriminator. Always 'experience-contract'."
+    },
+    "spec": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{1,64}$",
+      "description": "The owning spec id (matches the spec folder)."
+    },
+    "surface": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{1,64}$",
+      "description": "Surface slug. Matches the experience markdown file stem and the plan/tasks surface group."
+    },
+    "experienceType": {
+      "type": "string",
+      "enum": ["screen", "flow", "api", "job", "cli", "data", "integration"],
+      "description": "What kind of surface this is. Drives which verification gates apply."
+    },
+    "route": {
+      "type": "string",
+      "description": "Route, endpoint, command invocation, job trigger, or entry point for the surface."
+    },
+    "sourceOfTruth": {
+      "type": "array",
+      "description": "The authoritative references the surface is built from (Figma node, API doc, schema, fixture, screenshot). Every one must be reachable or committed before implementation, or stop condition U-1 fires.",
+      "items": {
+        "type": "object",
+        "required": ["kind", "ref"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "type": "string", "description": "figma | api-doc | schema | fixture | screenshot | doc | other." },
+          "ref": { "type": "string", "description": "URL, node id, or identifier." },
+          "committedPath": { "type": "string", "description": "Repo-relative path to a committed copy/snapshot, when applicable." }
+        }
+      }
+    },
+    "filesOwned": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Paths this surface owns, scoping the verifier and the tasks' allowed edit surface. Cross-cutting files belong to scaffold/cross-cutting, not here. Empty ownership means verification cannot scope this surface."
+    },
+    "components": {
+      "type": "array",
+      "description": "Dependency map: every named primitive, module, endpoint, or dependency must resolve to an existing source or an explicitly planned new local artifact. A named substitution at implementation time is stop condition U-9.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "source"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^c-\\d+$", "description": "Stable id, c-1, c-2, ..." },
+          "name": { "type": "string" },
+          "source": { "type": "string", "description": "design-system | app | local | external." },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "verification": {
+      "type": "array",
+      "minItems": 1,
+      "description": "How this surface is proven. Each entry names a gate (from the workflow gate catalog), the evidence that runs it, and the pass criteria. A surface that cannot be verified must not be built (stop condition U-7).",
+      "items": {
+        "type": "object",
+        "required": ["gate", "passCriteria"],
+        "additionalProperties": false,
+        "properties": {
+          "gate": { "type": "string", "pattern": "^G-[a-z0-9-]{1,48}$", "description": "Gate id from the workflow gate catalog, e.g. G-build, G-routes-200." },
+          "evidence": { "type": "string", "description": "The command, test, or manual protocol that produces the result." },
+          "passCriteria": { "type": "string", "description": "What counts as pass." }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "accepted", "superseded"],
+      "description": "Lifecycle, from a closed set. 'accepted' is what authorizes the plan step for this surface. Pending is not approval."
+    },
+    "openQuestions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Unresolved questions. A non-empty list gates the surface: it cannot be 'accepted' until cleared or explicitly deferred by a decision."
+    }
+  }
+}

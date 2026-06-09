@@ -40,6 +40,14 @@ copy it to `projects/<project>/refinements/<ref-id>/`.
 | `change` | the change (in the product repo) | `approved-plan` |
 | `verify` | `reports/verify/report.md` | `change` done **and** `behavior-preserving-evidence` |
 
+`verify` runs as a bounded **convergence loop** (see
+[`../../rules/loop-control.md`](../../rules/loop-control.md) and the
+`loops.verify` block in the manifest): it iterates against a terminal predicate —
+observable behavior still matches the baseline, the suite is green, and no
+public API or behavior changed — returning to `change` (`onContinue`) on each
+`continue` verdict, and **escalating** rather than spinning if a guard trips.
+Drive it with [`../../tools/loop.py`](../../tools/loop.py).
+
 **HITL:** routine refinements need only the verify/close gate. Escalate to
 **Gate 3 (Architecture)** when the refinement is structurally significant (moves
 a boundary, changes a pattern) — then record an `ADR-` and get architecture

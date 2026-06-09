@@ -29,6 +29,30 @@ criteria. Link the BA/PO artifacts rather than duplicating them.
 
 What this spec explicitly does not cover.
 
+## Experience inventory
+
+Every user- or system-facing surface this spec delivers. Each gets an
+[experience contract](experience/_surface.md) in the optional `experience` step
+(after the spec is accepted, before the plan). Pure logic/refactor specs with no
+surfaces leave this empty and skip the step.
+
+| ID | Type | Surface (slug) | Priority |
+|----|------|----------------|----------|
+| EXP-001 | screen | `<surface-slug>` | P1 |
+
+For machine-checkable coverage, mirror this list in the frontmatter:
+
+```yaml
+experienceInventory:
+  - id: EXP-001
+    type: screen
+    surface: <surface-slug>
+    priority: P1
+```
+
+When present, the harness validator requires an `experience/<surface>.md` and a
+validating `experience/<surface>.contract.json` for each entry.
+
 ## Open questions
 
 Anything unresolved that gates the work. An open question that blocks a step is a

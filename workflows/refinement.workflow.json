@@ -12,6 +12,25 @@
     "plan": ["plans/refine-plan.md"],
     "verify": ["reports/verify/report.md"]
   },
+  "loops": {
+    "verify": {
+      "predicate": [
+        "observable behavior still matches the captured baseline",
+        "the full test suite passes with no regressions",
+        "no public API or behavior change was introduced"
+      ],
+      "maxIterations": 6,
+      "patience": 3,
+      "onContinue": "change",
+      "gates": ["G-behavior-preserved", "G-no-api-change", "G-tests", "G-build"]
+    }
+  },
+  "gateCatalog": {
+    "G-behavior-preserved": { "description": "Observable behavior still matches the captured baseline.", "runner": "<baseline comparison>", "passCriteria": "behavior matches the recorded baseline" },
+    "G-no-api-change": { "description": "No public API or behavior change was introduced.", "runner": "manual", "passCriteria": "public surface is unchanged" },
+    "G-tests": { "description": "Full suite passes with no regressions.", "runner": "<repo test command>", "passCriteria": "all tests pass" },
+    "G-build": { "description": "Build command succeeds.", "runner": "<repo build command>", "passCriteria": "exit 0" }
+  },
   "stopConditions": [
     "the current behavior to preserve is not captured as a baseline",
     "the refinement would change observable behavior (then it is a feature or a bug fix, not a refinement)",

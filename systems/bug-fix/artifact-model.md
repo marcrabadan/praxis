@@ -42,6 +42,14 @@ copy it to `projects/<project>/bugs/<bug-id>/`.
 | `fix` | `plans/fix-plan.md` + the change | `root-cause-accepted` |
 | `verify` | `reports/verify/report.md` | `fix` done **and** `regression-test` present |
 
+`verify` runs as a bounded **convergence loop** (see
+[`../../rules/loop-control.md`](../../rules/loop-control.md) and the
+`loops.verify` block in the manifest): it iterates against a terminal predicate —
+the original failure no longer reproduces, a regression test covers it and
+passes, and the suite is green — returning to `fix` (`onContinue`) on each
+`continue` verdict, and **escalating** rather than spinning if a guard trips.
+Drive it with [`../../tools/loop.py`](../../tools/loop.py).
+
 **HITL:** bugs are usually low-ceremony — the only routine gate is verify/close.
 Escalate to a human earlier when severity is high, when the fix changes behavior
 beyond restoring the expected one, or when the bug is a **security** issue (then
