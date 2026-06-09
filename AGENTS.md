@@ -54,14 +54,20 @@ Beyond the SDLC roster, the repo ships one **utility skill**: [.claude/skills/me
 
 Do not invent a new top-level skill when an existing workflow in `skill-creator` covers the use case.
 
-## Harness mode (experimental)
+## Harness mode (always on)
 
 Beyond the skill factory, praxis has an **agent-harness** layer that gives agents
 a reliable operating environment — source-of-truth authority, project memory,
 durable spec artifacts, workflow gates, runtime state, and deterministic
-validators. All harness behavior in commands is **opt-in**: it activates only
-when a repo has a `.praxis/config.json` that resolves a project, so non-harness
-repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
+validators. **Harness mode is praxis's default and only operating mode** — there
+is no opt-in and no non-harness fallback. Any repo praxis runs in is a harness
+repo. If a repo has no `.praxis/config.json`, or it does not yet resolve a
+project, the harness **auto-bootstraps** one on the first command (a `local`
+project derived from the repo name, via `python tools/ensure_harness.py`, which
+is idempotent) and continues — it never degrades to a non-harness path. The one
+hard stop is a config that is *present but broken* (a `projectId` that does not
+resolve): then the agent stops and asks rather than guessing or overwriting.
+Start at [docs/harness-mode.md](docs/harness-mode.md).
 
 - [rules/source-of-truth.md](rules/source-of-truth.md) — what is canonical vs
   generated vs runtime, and the authority order to follow on conflict.

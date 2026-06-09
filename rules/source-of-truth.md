@@ -5,9 +5,11 @@ canonical, what is generated, what is runtime state, and where durable decisions
 and production code live. Procedures belong in skills and workflows; authority
 lives here.
 
-Read this before editing anything when a repo runs in **harness mode** (it has a
-`.praxis/config.json`). See [../docs/harness-mode.md](../docs/harness-mode.md)
-for the read order and how to opt in.
+Read this before editing anything. Praxis **always runs in harness mode** — if a
+repo has no `.praxis/config.json`, the harness auto-bootstraps one
+(`tools/ensure_harness.py`) rather than running without it. See
+[../docs/harness-mode.md](../docs/harness-mode.md) for the read order and how
+bootstrap works.
 
 ## What praxis (the harness) owns
 

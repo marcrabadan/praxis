@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "1.0.0",
+  "harnessRoot": ".",
+  "projectId": "praxis",
+  "mode": "central",
+  "activeSpec": null,
+  "generatedBy": "tools/ensure_harness.py"
+}

@@ -11,6 +11,26 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+### Changed
+
+- **Harness mode is now always on (was opt-in).** Harness behavior is praxis's
+  default and only operating mode — the `if not in harness mode, behave as before`
+  fallback is gone from `/new-feature`, `/fix-bug`, `/refine`, and
+  `/review-changes`. A missing `.praxis/config.json` is no longer treated as
+  "no harness"; it is **auto-bootstrapped**.
+  - New [`tools/ensure_harness.py`](tools/ensure_harness.py) (`make harness-init`)
+    — idempotent, stdlib-only. On the first lifecycle command it derives a project
+    id from the repo name and writes the config + project memory: `central` mode
+    under `projects/<id>/` for the harness repo itself, `local` mode under
+    `.praxis/project/` for a consuming repo. A no-op once initialized.
+  - **Stop conditions narrowed:** a *missing* config is not a hard block (it is
+    bootstrapped); only a config that is *present but broken* (malformed, or a
+    `projectId` that does not resolve) stops the agent — it asks rather than
+    overwriting. Updated [`rules/stop-conditions.md`](rules/stop-conditions.md)
+    and [`rules/source-of-truth.md`](rules/source-of-truth.md).
+  - Doctrine + docs updated throughout (AGENTS.md, README, `docs/harness-mode.md`,
+    the GitHub page) from "opt-in / experimental" to "always on".
+
 ## [1.9.0] - 2026-06-09
 
 ### Added

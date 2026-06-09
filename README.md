@@ -11,7 +11,7 @@ It has three parts:
 2. **Thirteen SDLC expert skills** — one per role in the software delivery lifecycle (Business Analyst, Product Owner, Software Architect, Developer, QA Engineer, DevOps Engineer, Security Engineer, Cybersecurity Architect, UX/UI Engineer, Frontend Architect, Frontend Engineer, Data Engineer, ML/AI Engineer), each built with that pattern.
 3. **`memory`** — a versioned *memory ledger* that records the plans, decisions (from any role, not just the architect), implementations, and artifacts the experts produce, each with a status from a closed set — `pending → accepted | rejected | rolled-back` (plus `superseded`) — so the record survives across sessions and changes can be rolled back. `pending` is a proposal awaiting your call, not approval to act.
 
-On top of these, an experimental **[harness mode](#harness-mode-experimental)** gives agents a reliable *operating environment*, not just skills — a source-of-truth authority model, per-project memory, explicit stop conditions, machine-readable lifecycles with human-in-the-loop gates (`/new-feature`, `/fix-bug`, `/refine`), bidirectional traceability, and deterministic validators. It's **opt-in**: the harness behavior activates only when a repo carries a `.praxis/config.json` that resolves a project.
+On top of these, **[harness mode](#harness-mode-always-on)** gives agents a reliable *operating environment*, not just skills — a source-of-truth authority model, per-project memory, explicit stop conditions, machine-readable lifecycles with human-in-the-loop gates (`/new-feature`, `/fix-bug`, `/refine`), bidirectional traceability, and deterministic validators. It is **always on**: harness mode is praxis's default and only operating mode, and if a repo has no `.praxis/config.json`, the harness **auto-bootstraps** one (`tools/ensure_harness.py`) on the first command instead of falling back to a non-harness path.
 
 **Just want to use it?** Jump to [Install & integrate](#install--integrate) for Claude Code, Cursor, IntelliJ, and Codex. **Want to see the output first?** Browse [`examples/`](examples/README.md) for sample transcripts. Otherwise: **PMs, designers, stakeholders** read from the top; **developers writing or shipping a skill** skip to the [Developer guide](#developer-guide).
 
@@ -219,9 +219,9 @@ The experts produce plans, decisions, and code — `memory` makes that output **
 
 ---
 
-## Harness mode (experimental)
+## Harness mode (always on)
 
-Praxis began as a **skill factory + SDLC expert pack + memory ledger**. Harness mode turns it into a fuller **agent harness**: a reliable operating environment that tells an agent *where to read first, what is canonical, where durable decisions go, how project context is resolved, and when to stop and ask*. It carries the authority model **and** the full delivery lifecycle — discovery, research, specs, plans, tasks, verification, and release, plus lighter lifecycles for bugs and refinements. All of it is **opt-in**: it activates only when a `.praxis/config.json` resolves a project, so non-harness repos are unaffected. See [`docs/harness-mode.md`](docs/harness-mode.md) for the full guide.
+Praxis began as a **skill factory + SDLC expert pack + memory ledger**. Harness mode turns it into a fuller **agent harness**: a reliable operating environment that tells an agent *where to read first, what is canonical, where durable decisions go, how project context is resolved, and when to stop and ask*. It carries the authority model **and** the full delivery lifecycle — discovery, research, specs, plans, tasks, verification, and release, plus lighter lifecycles for bugs and refinements. **It is praxis's default and only operating mode** — there is no opt-in and no non-harness fallback. If a repo has no `.praxis/config.json`, the harness **auto-bootstraps** one (a `local` project derived from the repo name, via `python tools/ensure_harness.py` — idempotent) on the first command and continues; the one hard stop is a config that is *present but broken*. See [`docs/harness-mode.md`](docs/harness-mode.md) for the full guide.
 
 What it adds (all repo-level, alongside the factory):
 
@@ -256,7 +256,7 @@ python tools/validate_harness.py --config ../checkout/.praxis/config.json
 
 **Read order** in a harness-mode repo: repo `AGENTS.md` → `.praxis/config.json` → harness `AGENTS.md` → `rules/source-of-truth.md` → `projects/<project>/PROJECT.md` → `current-state.md` → `open-questions.md` → active spec → relevant skills. The generated Cursor / Codex / IntelliJ entry docs embed the same order, so every agent resolves context the same way.
 
-**What harness mode now includes** (all opt-in — they activate only when a project resolves):
+**What harness mode now includes** (always on — a missing project is auto-bootstrapped, never a fallback):
 
 - **The full feature lifecycle.** In harness mode, `/new-feature` runs `discovery → research → product-definition → spec → experience → plan → tasks → build → verify → release-candidate → release` and writes the durable, typed artifacts under `projects/<project>/specs/<spec>/` — `discovery/`, `research/` (report + evidence log + alternatives), the PO-owned `product-definition` (MVP/scope/metrics), `spec.md`, optional `experience/` contracts, `plans/implementation-plan.md`, `tasks/tasks.md`, `decisions/`, `reports/verify/`, and `reports/release/` (with `release-candidate` separating *proven-correct* from *decided-to-ship*) — instead of leaving the plan only in chat. **Research precedes the spec.** Doctrine: [`systems/feature-development/artifact-model.md`](systems/feature-development/artifact-model.md).
 - **Executable surface contracts + typed gates.** The optional `experience` step turns each surface a spec declares (screen/flow/api/job/cli/data/integration) into a verifiable contract — markdown + a companion JSON validated against [`schemas/experience-contract.schema.json`](schemas/experience-contract.schema.json) — that names its source of truth, files-owned, dependency map, and the `G-*` gates that prove it. The workflow's `gateCatalog` defines those gates; the verify report records a pass/fail result per gate with reviewer sign-off and **forbids self-certification**. Tasks carry per-task **Forbidden / Gate / Output** fields + files-owned for deterministic anti-drift (lint: `make check-tasks FILE=…`).
@@ -268,7 +268,7 @@ python tools/validate_harness.py --config ../checkout/.praxis/config.json
 - **Continuous learning — a pattern miner.** `make patterns` / `/patterns` ([`tools/patterns.py`](tools/patterns.py)) sweeps the memory ledger and stop-condition run logs for recurring tags, sources, and stop conditions, and surfaces them as **human-gated promotion candidates** routed into `/learn`. The reactive half of the learning loop (`promote.py`) captures gaps as they happen; the miner is the proactive half that asks "what keeps happening?".
 - **Traceability.** Every artifact carries a typed id and links via `source:` / `traces:`, so the chain `IDEA → DISC → RES → SPEC → … → REL` is navigable both ways. Convention: [`rules/traceability.md`](rules/traceability.md); advisory check: `make validate-traceability`.
 - **Project-aware review.** In harness mode, `/review-changes` loads the project's authority, accepted decisions, and active spec, flags diffs that contradict them, and records outcomes only as `pending` memory entries.
-- **Adapter install.** [`tools/install_adapter.py`](tools/install_adapter.py) scaffolds a repo's `.praxis/config.json` + `.praxis/current-spec.md` deterministically.
+- **Always-on bootstrap.** [`tools/ensure_harness.py`](tools/ensure_harness.py) is the idempotent guarantee that harness mode is always on: run at the start of every lifecycle command, it auto-bootstraps a project (config + project memory) derived from the repo name when none resolves, and is a no-op once initialized. [`tools/install_adapter.py`](tools/install_adapter.py) is the explicit variant for wiring a consuming repo to a *named, pre-existing* project (`.praxis/config.json` + `.praxis/current-spec.md`).
 - **Runtime state.** [`runtime/`](runtime/README.md) holds disposable session glue (last active project/repo/spec) via [`tools/runtime.py`](tools/runtime.py) — git-ignored, never the home of a durable decision.
 
 ### Try harness mode end to end
@@ -380,7 +380,7 @@ praxis/
 ├─ workflows/             # harness mode: machine-readable lifecycles (steps, gates, gate catalog, loops)
 ├─ schemas/               # harness mode: project/config/spec/workflow/session + experience-contract/assumption/loop/stop-conditions
 ├─ runtime/               # harness mode: disposable session state (git-ignored)
-├─ tools/                 # harness mode: validate_harness / install_adapter / runtime / assumptions / loop / promote / check_tasks
+├─ tools/                 # harness mode: ensure_harness (always-on bootstrap) / validate_harness / install_adapter / runtime / assumptions / loop / promote / check_tasks
 ├─ .claude-plugin/        # marketplace.json (lists the single praxis plugin)
 ├─ plugin-praxis/         # plugin: symlinks to every expert + skill-creator + skill-learner + memory + factory + their commands
 ├─ .claude/               # the real source of truth (used when this repo is the workspace)

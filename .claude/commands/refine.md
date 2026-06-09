@@ -29,9 +29,9 @@ Run each phase in its **own subagent** (`Agent`, `subagent_type: general-purpose
 - **Opus** — the assess/plan/change reasoning (Developer, and Architect if structural).
 - **Sonnet** — verification (QA).
 
-## Harness mode — durable artifacts (conditional)
+## Harness mode — durable artifacts
 
-If the repo is in **harness mode** — a `.praxis/config.json` exists and resolves a `projectId` — write the durable artifacts under the owning project, following the `refinement` workflow. Doctrine: the harness `systems/refinement/artifact-model.md`; gates: `workflows/refinement.workflow.json` (resolve via the config's `harnessRoot`).
+Praxis **always runs in harness mode**. At the start, **ensure the harness is initialized** with `python tools/ensure_harness.py` (idempotent; auto-bootstraps a project derived from the repo if none resolves). Then write the durable artifacts under the owning project, following the `refinement` workflow. Doctrine: the harness `systems/refinement/artifact-model.md`; gates: `workflows/refinement.workflow.json`. There is no non-harness fallback.
 
 ```
 projects/<projectId>/refinements/<ref-id>/
@@ -42,8 +42,7 @@ projects/<projectId>/refinements/<ref-id>/
 
 - Copy the harness's `projects/_template/refinements/_template/` as the starting shape. Assign a `REF-<NNN>` id and link the affected `SPEC-`/code area (see `rules/traceability.md`).
 - **Respect the gates.** Structurally significant refinements need an `ADR-` and **Gate 3 (Architecture)** approval before the change. **Pending is not approval.**
-- **Stop condition:** if the `projectId` does not resolve, stop and ask.
-- If the repo is **not** in harness mode, skip this section: make the change and a short summary, and record it in the memory ledger.
+- **Stop condition:** auto-bootstrap covers a *missing* config. If a config is *present* but its `projectId` does not resolve, stop and ask — do not overwrite it.
 
 ## Memory
 

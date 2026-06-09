@@ -1,10 +1,17 @@
-# Harness Mode (experimental)
+# Harness Mode (always on)
 
 Praxis began as a **skill factory + SDLC expert pack + memory ledger + generated
-integrations**. Harness mode is the first step toward a fuller **agent harness**:
-a reliable operating environment that tells an agent where to read first, where
-source of truth lives, where durable decisions go, how project context is
-resolved, and when to stop and ask.
+integrations**. Harness mode turns it into a fuller **agent harness**: a reliable
+operating environment that tells an agent where to read first, where source of
+truth lives, where durable decisions go, how project context is resolved, and
+when to stop and ask.
+
+**Harness mode is praxis's default and only operating mode.** There is no opt-in
+and no non-harness fallback: any repo praxis runs in is a harness repo. When a
+repo has no `.praxis/config.json` (or it does not yet resolve a project), the
+first lifecycle command **auto-bootstraps** one — a `local` project derived from
+the repo name, written by the idempotent `tools/ensure_harness.py` — and
+continues. The only hard stop is a config that is *present but broken*.
 
 It carries two layers. The *authority model* — projects, source-of-truth rules,
 stop conditions, adapter config, and a deterministic validator — and the
@@ -13,8 +20,8 @@ gates, durable typed artifacts, bidirectional traceability, and runtime state.
 The feature lifecycle runs `discovery → research → product-definition → spec →
 experience → plan → tasks → build → verify → release-candidate → release`, gated by
 a **Validation Orchestrator**; lighter `bug-fix` and `refinement` lifecycles handle
-corrective and quality-only work. All of it is **opt-in** — it activates only when a
-`.praxis/config.json` resolves a project, so non-harness repos are unaffected.
+corrective and quality-only work. None of it is opt-in — it is always on, with a
+missing project auto-bootstrapped rather than treated as "no harness".
 
 ## What harness mode adds
 
@@ -64,9 +71,9 @@ tools/
 
 It does **not** add production application code or a full SDD Kit clone. The
 skill factory is unchanged; `/new-feature`, `/fix-bug`, `/refine`, and
-`/review-changes` gain **opt-in** harness behavior that only activates when a
-`.praxis/config.json` resolves a project (otherwise they behave exactly as
-before). See [`../AGENTS.md`](../AGENTS.md) for the skill factory doctrine.
+`/review-changes` **always** run their harness behavior — they call
+`tools/ensure_harness.py` first, so a project always resolves (auto-bootstrapped
+if absent). See [`../AGENTS.md`](../AGENTS.md) for the skill factory doctrine.
 
 ## Per-repo vs central (the authority choice)
 
@@ -100,9 +107,13 @@ Split into multiple projects only when the repos are genuinely independent
 products. For collaborating with **1→many people or several teams** without mixing
 or duplicating SPEC/REQ, see [`teamwork.md`](teamwork.md).
 
-## Opting a repo in
+## Initializing a repo
 
-Add a `.praxis/config.json` to the consuming repo (see
+You do not have to opt in — harness mode is always on. On the first lifecycle
+command, `tools/ensure_harness.py` writes a `.praxis/config.json` and a `local`
+project derived from the repo name. You only write a config by hand when you want
+to **control** the wiring — point at a *named, pre-existing* project, switch to
+`central` mode, or set `harnessRoot` explicitly (see
 [`../examples/praxis-config.example.json`](../examples/praxis-config.example.json)
 and [`../schemas/praxis-config.schema.json`](../schemas/praxis-config.schema.json)):
 
@@ -116,8 +127,17 @@ and [`../schemas/praxis-config.schema.json`](../schemas/praxis-config.schema.jso
 }
 ```
 
-If `projectId` cannot be resolved to a project, the agent **stops** (see
+A **missing** config is auto-bootstrapped, not an error. A config that is
+*present but broken* — malformed, or a `projectId` that does not resolve — is the
+one hard stop: the agent stops and asks rather than overwriting it (see
 [`../rules/stop-conditions.md`](../rules/stop-conditions.md)).
+
+To bootstrap (or check) the harness explicitly:
+
+```sh
+python tools/ensure_harness.py            # idempotent: bootstrap if needed
+python tools/ensure_harness.py --check    # exit 1 if not yet initialized
+```
 
 ## Read order (harness mode)
 
@@ -325,9 +345,9 @@ HITL gates and a Validation Orchestrator, a typed verify-gate catalog (mandatory
 `G-security`, conditional `G-performance`) with a failure protocol, the lighter
 `bug-fix` and `refinement` lifecycles (`/fix-bug`, `/refine`), bidirectional
 traceability, runtime state, a continuous-learning pattern miner (`/patterns`),
-and a project-aware `/review-changes`. All harness behavior in commands is
-**opt-in** — it activates only when a `.praxis/config.json` resolves a project, so
-non-harness repos are unaffected.
+and a project-aware `/review-changes`. Harness mode is **always on** — every
+lifecycle command runs its harness behavior, auto-bootstrapping a project via
+`tools/ensure_harness.py` when a repo has none, so there is no non-harness path.
 
 Deliberately still out of scope (add on evidence, not anticipation): a full SDD
 Kit, central-mode sync tooling, and extending the mandatory security/performance
