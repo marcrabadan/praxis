@@ -13,6 +13,34 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- **PSDOS gap-closure: mandatory security/performance gates, criteria-checked
+  gates, front-half states, failure transitions, a Validation Orchestrator, and
+  a pattern miner.** Brings the `feature-development` harness lifecycle closer to
+  a faithful PSDOS implementation:
+  - **Mandatory `G-security` + conditional `G-performance` verify gates**
+    ([`workflows/feature-development.workflow.json`](workflows/feature-development.workflow.json))
+    — a feature can no longer reach `release` without a recorded security review;
+    high/critical findings are fixed or carry an approved risk-acceptance
+    decision. Wired into `loops.verify` and the verify-report template.
+  - **Criteria-checked gates** (`gateCriteria`) — HITL approval tokens
+    (`approved-discovery`, `approved-product-definition`, `approved-spec`,
+    `architecture-validated`, `release-candidate-ready`) now carry explicit,
+    checkable criteria, so an approval is a checklist not a vibe.
+    `architecture-validated` gives architecture its own pass/fail via
+    [`plans/architecture-review.md`](projects/_template/specs/_template/plans/architecture-review.md).
+  - **Front-half + back-half states** — `product-definition` (PO-owned MVP/scope/
+    metrics) and `release-candidate` (proven-correct vs decided-to-ship) are now
+    explicit states with their own artifacts.
+  - **Failure protocol** (`transitions.onGateFailure`) — a failed gate routes
+    back to its mapped rework state (root-cause → return → revalidate), never a
+    bypass. Validated by `tools/validate_harness.py`.
+  - **Validation Orchestrator** ([`.claude/skills/validation-orchestrator/`](.claude/skills/validation-orchestrator/SKILL.md),
+    `/validation-orchestrator`) — the standing role with sole authority to halt
+    progression; adjudicates each gate to a closed-set verdict
+    (`advance | block | escalate`).
+  - **Continuous-learning pattern miner** ([`tools/patterns.py`](tools/patterns.py),
+    `make patterns`) — sweeps the ledger + run logs for recurring tags, sources,
+    and stop conditions and surfaces them as human-gated promotion candidates.
 - **Spec-driven verification spine + self-evolving doctrine.** A set of
   opt-in harness capabilities that make "iterate until it's actually correct"
   deterministic and bounded, and let the harness learn under a human gate:

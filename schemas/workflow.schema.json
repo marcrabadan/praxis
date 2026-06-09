@@ -32,6 +32,27 @@
         "items": { "type": "string", "minLength": 1 }
       }
     },
+    "gateCriteria": {
+      "type": "object",
+      "description": "Optional map of gate token (a value used in `gates`, e.g. 'approved-spec') -> the explicit, checkable criteria that gate proves. Turns an HITL approval token into a criteria-checked gate: a human approves only when every criterion holds. Keys are gate tokens, not steps.",
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string", "minLength": 1 }
+      }
+    },
+    "transitions": {
+      "type": "object",
+      "description": "Optional failure-protocol transitions: where the workflow returns when a gate fails (root-cause, return to the failing state, revalidate). Distinct from the forward order in `steps` and the verify loop's `onContinue`.",
+      "additionalProperties": false,
+      "properties": {
+        "onGateFailure": {
+          "type": "object",
+          "description": "Map of gate token -> the step to return to for rework when that gate fails. Each target must be a step in this workflow.",
+          "additionalProperties": { "type": "string", "pattern": "^[a-z0-9-]{1,64}$" }
+        }
+      }
+    },
     "stopConditions": {
       "type": "array",
       "items": { "type": "string", "minLength": 1 },

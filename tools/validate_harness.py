@@ -479,6 +479,48 @@ def _check_workflow_manifest(path: Path, errors: list[str]) -> None:
 
     catalog_ids = _check_gate_catalog(label, data.get("gateCatalog"), errors)
     _check_workflow_loops(label, data.get("loops"), step_set, catalog_ids, errors)
+    _check_gate_criteria(label, data.get("gateCriteria"), errors)
+    _check_transitions(label, data.get("transitions"), step_set, errors)
+
+
+def _check_gate_criteria(label: str, criteria: Any, errors: list[str]) -> None:
+    """Validate the optional 'gateCriteria' block: each gate token maps to a
+    non-empty list of criterion strings (an empty criteria list is a gate that
+    proves nothing)."""
+    if criteria is None:
+        return
+    if not isinstance(criteria, dict):
+        errors.append(f"{label}: 'gateCriteria' must be an object")
+        return
+    for token, items in criteria.items():
+        where = f"{label}: gateCriteria[{token!r}]"
+        if (
+            not isinstance(items, list)
+            or not items
+            or not all(isinstance(c, str) and c.strip() for c in items)
+        ):
+            errors.append(f"{where} must be a non-empty array of criterion strings")
+
+
+def _check_transitions(label: str, transitions: Any, step_set: set[str], errors: list[str]) -> None:
+    """Validate the optional 'transitions' block: onGateFailure must map gate
+    tokens to real steps — a dangling return target defeats the failure protocol."""
+    if transitions is None:
+        return
+    if not isinstance(transitions, dict):
+        errors.append(f"{label}: 'transitions' must be an object")
+        return
+    on_fail = transitions.get("onGateFailure")
+    if on_fail is None:
+        return
+    if not isinstance(on_fail, dict):
+        errors.append(f"{label}: 'transitions.onGateFailure' must be an object")
+        return
+    for token, target in on_fail.items():
+        if not isinstance(target, str) or target not in step_set:
+            errors.append(
+                f"{label}: transitions.onGateFailure[{token!r}] references unknown step {target!r}"
+            )
 
 
 def _check_gate_catalog(label: str, catalog: Any, errors: list[str]) -> set[str]:

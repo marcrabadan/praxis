@@ -29,6 +29,48 @@ commands/new-feature.md
   -> skills/<SDLC expert>                          (the work)
 ```
 
+## Lifecycle states, criteria-checked gates, and the failure protocol
+
+The full chain is:
+
+```
+discovery → research → product-definition → spec → experience → plan
+  → tasks → build → verify → release-candidate → release
+```
+
+Two states make the front and back halves explicit rather than folded away:
+
+- **product-definition** (routed to the **product-owner**) bounds the *what/why*
+  — MVP scope, prioritised requirements, success metrics — before the spec pins
+  behaviour. Its artifact is [`product/product-definition.md`](../../projects/_template/specs/_template/product/product-definition.md).
+- **release-candidate** separates "proven correct" (`verify` passed) from
+  "decided to ship" (`release-approved`). Its artifact is
+  [`reports/release/release-candidate.md`](../../projects/_template/specs/_template/reports/release/release-candidate.md).
+
+### Gates are criteria-checked, not vibes
+
+A gate token in the manifest's `gates` (e.g. `approved-spec`, `architecture-validated`)
+is no longer a bare human thumbs-up. The manifest's **`gateCriteria`** block lists
+the explicit, checkable criteria each gate proves; a human approves *only when
+every criterion holds*. This closes the difference between an HITL approval and a
+validator — the criteria are the validator, the human runs them. Notably,
+**`architecture-validated`** gives architecture its own pass/fail (NFRs met,
+maintainable/modular, unfamiliar architecture justified by an ADR,
+security-relevant design identified) via
+[`plans/architecture-review.md`](../../projects/_template/specs/_template/plans/architecture-review.md),
+instead of leaving it implicit inside the plan. **Pending is not approved** — a
+gate whose decision is still pending is a stop condition.
+
+### The failure protocol: return to the failing state
+
+When a gate fails, the workflow does not limp forward or silently retry in place.
+The manifest's **`transitions.onGateFailure`** map says exactly which state to
+return to for rework: a failed `architecture-validated` routes back to `plan`, a
+failed `approved-spec` back to `spec`, a failed `verify-passed` back to `build`
+(the same back-edge the verify loop's `onContinue` uses), and so on. The protocol
+is: **stop → root-cause → return to the mapped state → fix → revalidate.** Letting
+a failed gate be bypassed instead of routed back is itself a stop condition.
+
 ## The verify step is a convergence loop
 
 `verify` does not run once — it iterates until the change actually meets its

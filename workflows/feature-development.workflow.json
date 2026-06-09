@@ -1,25 +1,70 @@
 {
   "id": "feature-development",
   "name": "Feature development",
-  "steps": ["discovery", "research", "spec", "experience", "plan", "tasks", "build", "verify", "release"],
+  "steps": ["discovery", "research", "product-definition", "spec", "experience", "plan", "tasks", "build", "verify", "release-candidate", "release"],
   "gates": {
     "research": ["discovery"],
-    "spec": ["approved-discovery"],
+    "product-definition": ["approved-discovery", "research"],
+    "spec": ["approved-product-definition"],
     "experience": ["approved-spec"],
     "plan": ["approved-spec", "experience-complete"],
-    "tasks": ["approved-plan"],
+    "tasks": ["approved-plan", "architecture-validated"],
     "build": ["tasks"],
     "verify": ["build", "test-evidence"],
-    "release": ["verify-passed", "release-approved"]
+    "release-candidate": ["verify-passed"],
+    "release": ["release-candidate-ready", "release-approved"]
+  },
+  "gateCriteria": {
+    "approved-discovery": [
+      "the problem is stated and falsifiable",
+      "the target user or segment is named",
+      "the desired outcome and a success signal are defined",
+      "the opportunity is sized well enough to justify continuing"
+    ],
+    "approved-product-definition": [
+      "the MVP scope is bounded — in-scope and out-of-scope are explicit",
+      "requirements are prioritised (e.g. MoSCoW) with a stated rationale",
+      "each requirement traces to a discovery need",
+      "measurable success criteria or target metrics are defined"
+    ],
+    "approved-spec": [
+      "every requirement has testable acceptance criteria",
+      "scope and target user are unambiguous",
+      "the spec is consistent with the approved product definition (no contradiction)",
+      "open questions are resolved or logged as assumptions with an owner"
+    ],
+    "architecture-validated": [
+      "the design meets the spec's non-functional requirements (scalability, availability, latency) with stated evidence or rationale",
+      "it is maintainable and modular — clear boundaries, no needless coupling",
+      "any architecture new to the project is justified by an ADR (else the unfamiliar-architecture stop condition fires)",
+      "security-relevant design choices (trust boundaries, authz, data handling) are identified for the security gate"
+    ],
+    "release-candidate-ready": [
+      "the verify report's overall-result is pass with accepted sign-off",
+      "release notes or a changelog entry are drafted",
+      "no open high or critical security finding remains"
+    ]
+  },
+  "transitions": {
+    "onGateFailure": {
+      "approved-discovery": "discovery",
+      "approved-product-definition": "product-definition",
+      "approved-spec": "spec",
+      "architecture-validated": "plan",
+      "verify-passed": "build",
+      "release-candidate-ready": "verify"
+    }
   },
   "artifacts": {
     "discovery": ["discovery/discovery-report.md"],
     "research": ["research/research-report.md", "research/evidence-log.md", "research/alternatives.md"],
+    "product-definition": ["product/product-definition.md"],
     "spec": ["spec.md"],
     "experience": ["experience/<surface>.md", "experience/<surface>.contract.json"],
-    "plan": ["plans/implementation-plan.md"],
+    "plan": ["plans/implementation-plan.md", "plans/architecture-review.md"],
     "tasks": ["tasks/tasks.md"],
     "verify": ["reports/verify/report.md"],
+    "release-candidate": ["reports/release/release-candidate.md"],
     "release": ["reports/release/release-notes.md"]
   },
   "loops": {
@@ -53,10 +98,14 @@
   },
   "stopConditions": [
     "the problem, target user, or desired outcome is unclear after discovery",
+    "product definition is attempted before discovery is approved",
     "specification is attempted before research findings are recorded (research must precede spec)",
+    "a spec requirement does not trace to an approved product-definition need",
     "spec scope or target user is ambiguous",
+    "task decomposition is attempted before architecture is validated",
     "the plan would commit to an architecture the project has not used",
     "a gate's required decision is still pending (pending is not approved)",
+    "a gate fails and work continues without returning to its mapped state for rework (a failed gate must route back via transitions.onGateFailure, never be bypassed)",
     "release is attempted with an unaddressed high or critical security finding and no approved risk-acceptance decision",
     "release is attempted before the verify report shows acceptance criteria are met"
   ],
