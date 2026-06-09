@@ -147,6 +147,8 @@ To run a feature through the **full lifecycle** — `discovery → research → 
 
 Not every change is a greenfield feature. For a defect, `/fix-bug <bug>` runs the **corrective** lifecycle — `triage → reproduce → diagnose → fix → verify` — to produce a minimal, regression-tested fix without the discovery/research/spec ceremony. For internal quality work, `/refine <target>` runs the **behavior-preserving** lifecycle — `assess → plan → change → verify` — to refactor, pay down debt, or improve performance while keeping observable behavior unchanged. Both are orchestrated the same way as `/new-feature`, just lighter.
 
+Not sure which of these a raw idea is? `/idea <a half-formed thought>` is the **intake & triage front door**: it clarifies (≤2 questions), classifies the idea (feature / bug / refinement / not-worth-doing), captures it as a `pending` note in the memory ledger, and recommends the right lifecycle command to run next — it triages and routes, it does not plan.
+
 **Token-efficient by construction.** Beyond context isolation, `/new-feature` keeps cost down two more ways. An optional **context digest** step gathers the relevant codebase/PRD context *once* on a cheap model (Haiku) and feeds that digest to every later phase, so experts stop re-reading the same material. And each phase runs at the **model tier its work needs** — Opus for the deep design/build reasoning (architect, developer, domain experts), Sonnet for the artifact-transforming phases (BA, PO, QA, devops), Haiku for retrieval only — so you pay top-tier prices only where depth actually pays off.
 
 ### See it in action
