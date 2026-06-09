@@ -67,6 +67,11 @@ repos are unaffected. Start at [docs/harness-mode.md](docs/harness-mode.md).
   generated vs runtime, and the authority order to follow on conflict.
 - [rules/stop-conditions.md](rules/stop-conditions.md) — when an agent must stop
   and ask instead of guessing.
+- [rules/stop-conditions-catalog.md](rules/stop-conditions-catalog.md) — the
+  *hard-blocker* half: an enumerated catalog (`U-1…U-10`, per-project `P-*`,
+  per-spec `S-*`) of observable triggers with exact `STOP[...]` text and a
+  resolution gate; a fired condition halts the step and writes a run log. The
+  soft-guess half is the assumptions ledger.
 - [rules/never-assume.md](rules/never-assume.md) — *never assume, always
   validate*: low-stakes, reversible guesses are logged to the assumptions ledger
   (`tools/assumptions.py`), replayed to the user as a question-flow (`sweep`),

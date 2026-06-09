@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://praxis/schemas/stop-conditions.schema.json",
+  "title": "Per-spec stop-conditions catalog",
+  "description": "A spec's deterministic stop-condition catalog. It inherits the universal U-* conditions from rules/stop-conditions-catalog.md and adds project (P-*) and spec (S-*) entries. Lives at projects/<project>/specs/<spec>/stop-conditions.json. Each entry is an observable trigger with the exact STOP[...] text to surface and the gate that must be met to resume.",
+  "type": "object",
+  "required": ["spec", "inheritsUniversal", "conditions"],
+  "additionalProperties": false,
+  "properties": {
+    "spec": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{1,64}$",
+      "description": "The owning spec id."
+    },
+    "inheritsUniversal": {
+      "type": "boolean",
+      "description": "Whether the universal U-* conditions apply. Should be true; a spec cannot silently weaken the universal catalog."
+    },
+    "conditions": {
+      "type": "array",
+      "description": "Project (P-*) and spec (S-*) additions. Universal U-* conditions are inherited, not redeclared here.",
+      "items": {
+        "type": "object",
+        "required": ["id", "trigger", "surfacedAs", "resolutionGate"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^(P|S)-\\d{1,4}$",
+            "description": "P-* for recurring project failure modes, S-* for feature-local hazards."
+          },
+          "trigger": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A deterministic, observable signal — not a feeling of uncertainty."
+          },
+          "surfacedAs": {
+            "type": "string",
+            "pattern": "^STOP\\[",
+            "description": "The exact text to write when it fires, e.g. 'STOP[P-1]: <message>.'"
+          },
+          "resolutionGate": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The artifact, command result, decision, or file state required to resume."
+          }
+        }
+      }
+    }
+  }
+}

@@ -249,6 +249,72 @@ class ExperienceContractTests(unittest.TestCase):
             self.assertEqual(errors, [])
 
 
+class StopConditionsTests(unittest.TestCase):
+    def _spec(self, tmp: Path, catalog: dict | None) -> Path:
+        spec = tmp / "feature-x"
+        spec.mkdir(parents=True)
+        if catalog is not None:
+            (spec / "stop-conditions.json").write_text(json.dumps(catalog), encoding="utf-8")
+        return spec
+
+    def _valid(self) -> dict:
+        return {
+            "spec": "feature-x",
+            "inheritsUniversal": True,
+            "conditions": [
+                {"id": "P-1", "trigger": "migration without a down step",
+                 "surfacedAs": "STOP[P-1]: migration <name> has no down step.",
+                 "resolutionGate": "down step added or waiver decision recorded"}
+            ],
+        }
+
+    def test_valid_catalog_passes(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            spec = self._spec(Path(d), self._valid())
+            errors: list[str] = []
+            vh._check_stop_conditions(spec, "feature-x", "lbl", errors)
+            self.assertEqual(errors, [])
+
+    def test_absent_file_is_inert(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            spec = self._spec(Path(d), None)
+            errors: list[str] = []
+            vh._check_stop_conditions(spec, "feature-x", "lbl", errors)
+            self.assertEqual(errors, [])
+
+    def test_bad_condition_id_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            c = self._valid(); c["conditions"][0]["id"] = "U-1"  # universal, not redeclared here
+            spec = self._spec(Path(d), c)
+            errors: list[str] = []
+            vh._check_stop_conditions(spec, "feature-x", "lbl", errors)
+            self.assertTrue(any("must match ^(P|S)" in e for e in errors), errors)
+
+    def test_surfaced_text_must_start_with_stop(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            c = self._valid(); c["conditions"][0]["surfacedAs"] = "migration broke"
+            spec = self._spec(Path(d), c)
+            errors: list[str] = []
+            vh._check_stop_conditions(spec, "feature-x", "lbl", errors)
+            self.assertTrue(any("surfacedAs" in e for e in errors), errors)
+
+    def test_inherits_universal_must_be_bool(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            c = self._valid(); c["inheritsUniversal"] = "yes"
+            spec = self._spec(Path(d), c)
+            errors: list[str] = []
+            vh._check_stop_conditions(spec, "feature-x", "lbl", errors)
+            self.assertTrue(any("inheritsUniversal" in e for e in errors), errors)
+
+    def test_spec_mismatch_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            c = self._valid(); c["spec"] = "other"
+            spec = self._spec(Path(d), c)
+            errors: list[str] = []
+            vh._check_stop_conditions(spec, "feature-x", "lbl", errors)
+            self.assertTrue(any("does not match the owning spec" in e for e in errors), errors)
+
+
 class ConfigValidationTests(unittest.TestCase):
     def test_missing_project_id_fails(self) -> None:
         errors: list[str] = []

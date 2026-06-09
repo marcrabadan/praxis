@@ -57,7 +57,10 @@ REQUIRED_SCHEMAS = [
     "session-state.schema.json",
     "spec.schema.json",
     "experience-contract.schema.json",
+    "stop-conditions.schema.json",
 ]
+
+STOP_ID = re.compile(r"^(P|S)-\d{1,4}$")
 
 
 def _check_schemas(root: Path, errors: list[str]) -> None:
@@ -158,6 +161,7 @@ def _check_project_specs(project_dir: Path, project_id: str, errors: list[str]) 
             )
 
         _check_experience_contracts(spec, spec_id, data, label, errors)
+        _check_stop_conditions(spec, spec_id, label, errors)
 
 
 def _check_experience_contracts(
@@ -223,6 +227,54 @@ def _check_experience_contracts(
                 errors.append(f"{label}: experienceInventory declares surface {surface!r} but experience/{surface}.md is missing")
             if not contract.is_file():
                 errors.append(f"{label}: experienceInventory declares surface {surface!r} but experience/{surface}.contract.json is missing")
+
+
+def _check_stop_conditions(spec_dir: Path, spec_id: str, label: str, errors: list[str]) -> None:
+    """Validate an optional per-spec stop-conditions.json (schemas/stop-conditions.schema.json).
+
+    The universal U-* conditions live in rules/stop-conditions-catalog.md and are
+    inherited; this file declares only project (P-*) and spec (S-*) additions, each
+    with a deterministic trigger, exact STOP[...] surfaced text, and a resolution
+    gate. Inert when the file is absent.
+    """
+    path = spec_dir / "stop-conditions.json"
+    if not path.is_file():
+        return
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"{label}/stop-conditions.json is not valid JSON: {exc}")
+        return
+    if not isinstance(data, dict):
+        errors.append(f"{label}/stop-conditions.json must be a JSON object")
+        return
+    if data.get("spec") != spec_id:
+        errors.append(f"{label}/stop-conditions.json: 'spec' {data.get('spec')!r} does not match the owning spec {spec_id!r}")
+    if not isinstance(data.get("inheritsUniversal"), bool):
+        errors.append(f"{label}/stop-conditions.json: 'inheritsUniversal' must be a boolean (a spec cannot silently weaken the universal catalog)")
+    conditions = data.get("conditions")
+    if not isinstance(conditions, list):
+        errors.append(f"{label}/stop-conditions.json: 'conditions' must be an array")
+        return
+    seen: set[str] = set()
+    for c in conditions:
+        if not isinstance(c, dict):
+            errors.append(f"{label}/stop-conditions.json: each condition must be an object")
+            continue
+        cid = c.get("id")
+        if not (isinstance(cid, str) and STOP_ID.match(cid)):
+            errors.append(f"{label}/stop-conditions.json: condition id {cid!r} must match ^(P|S)-\\d+")
+        elif cid in seen:
+            errors.append(f"{label}/stop-conditions.json: duplicate condition id {cid!r}")
+        else:
+            seen.add(cid)
+        if not (isinstance(c.get("trigger"), str) and c["trigger"].strip()):
+            errors.append(f"{label}/stop-conditions.json: condition {cid!r} needs a non-empty 'trigger'")
+        surfaced = c.get("surfacedAs")
+        if not (isinstance(surfaced, str) and surfaced.startswith("STOP[")):
+            errors.append(f"{label}/stop-conditions.json: condition {cid!r} 'surfacedAs' must start with 'STOP['")
+        if not (isinstance(c.get("resolutionGate"), str) and c["resolutionGate"].strip()):
+            errors.append(f"{label}/stop-conditions.json: condition {cid!r} needs a non-empty 'resolutionGate'")
 
 
 def _parse_index_ids(index_path: Path) -> set[str]:
