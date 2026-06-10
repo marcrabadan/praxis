@@ -115,7 +115,7 @@ a { color: inherit; text-decoration: none; }
   display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px;
   background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #1a1108; font-size: 1rem; font-weight: 700;
 }
-.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links { display: flex; align-items: center; gap: 22px; }
 .nav-links a { position: relative; display: inline-flex; align-items: center; min-height: 40px; color: var(--text-muted); font-size: 0.94rem; font-weight: 500; transition: color .15s; }
 .nav-links a:hover { color: var(--text); }
 .nav-links .btn { color: var(--text); }
@@ -331,7 +331,17 @@ code { font-family: var(--mono); font-size: 0.86em; background: var(--surface-2)
 .to-top svg { width: 20px; height: 20px; }
 
 /* ===================== RESPONSIVE ===================== */
+/* Narrow-desktop: tighten the nav gaps/size so the nine links plus the GitHub
+   button still fit before the header collapses to the mobile menu at 960px. */
+@media (max-width: 1040px) and (min-width: 961px) {
+  .nav-links { gap: 14px; }
+  .nav-links a { font-size: 0.88rem; }
+}
 @media (max-width: 960px) {
+  /* Below this, the horizontal nav can't fit — switch to the mobile menu. */
+  .nav-links { display: none; }
+  .nav-toggle { display: flex; }
+  .mobile-menu:not([hidden]) { display: flex; }
   .hero-grid, .how-grid, .memory-wrap { grid-template-columns: 1fr; gap: 40px; }
   .hero-terminal, .memory-wrap .code-panel { order: 2; }
   .experts-grid { grid-template-columns: repeat(2, 1fr); }
@@ -340,9 +350,6 @@ code { font-family: var(--mono); font-size: 0.86em; background: var(--surface-2)
   .footer-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 720px) {
-  .nav-links { display: none; }
-  .nav-toggle { display: flex; }
-  .mobile-menu:not([hidden]) { display: flex; }
   .experts-meta { grid-template-columns: 1fr; }
   .section { padding: 60px 0; }
   .hero { padding: 56px 0 48px; }
