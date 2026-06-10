@@ -412,8 +412,10 @@ aggregate (a module that quietly became a god-object, a dependency direction
 that quietly reversed).
 
 `/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
-that recurs across several `implementation` ledger entries. Treat 3+
-specs/refinements touching the same file or module as a trigger to re-run the
+that recurs across several distinct specs/refinements (deduplicated by the
+originating `source:` decision/spec, so iterative implementation snapshots of
+one spec count once, not once per snapshot). Treat 3+ specs/refinements
+touching the same file or module as a trigger to re-run the
 "Simplicity and reversibility" checklist for that area — even though each
 change passed review on its own — and decide whether a `/refine` (extract a
 boundary, split a responsibility) is now justified by the accumulated evidence.

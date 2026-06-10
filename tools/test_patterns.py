@@ -90,6 +90,39 @@ class MineTests(unittest.TestCase):
             hits = pt.scan_touched_files(entries, entries_dir)
             self.assertEqual(hits, [("src/foo.py", "e1"), ("src/bar.py", "e1")])
 
+    def test_scan_touched_files_dedupes_snapshots_from_same_spec(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            entries_dir = Path(d)
+            for i in range(1, 4):
+                (entries_dir / f"e{i}.md").write_text(
+                    "**Files touched:**\n\n- `src/foo.py`\n", encoding="utf-8"
+                )
+            entries = [
+                _entry(f"e{i}", type="implementation", tags=["source:D1"])
+                for i in range(1, 4)
+            ]
+            hits = pt.scan_touched_files(entries, entries_dir)
+            # Three iterative snapshots of the same spec (shared `source:`
+            # tag) collapse to a single (file, spec) pair, so they don't
+            # look like 3+ distinct specs touching the file.
+            self.assertEqual(hits, [("src/foo.py", "D1")])
+
+    def test_scan_touched_files_distinct_specs_without_source_tag(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            entries_dir = Path(d)
+            for i in range(1, 4):
+                (entries_dir / f"e{i}.md").write_text(
+                    "**Files touched:**\n\n- `src/foo.py`\n", encoding="utf-8"
+                )
+            entries = [_entry(f"e{i}", type="implementation") for i in range(1, 4)]
+            hits = pt.scan_touched_files(entries, entries_dir)
+            # No `source:` tag to group by: each entry is its own spec, so
+            # all three count as distinct specs touching the file.
+            self.assertEqual(
+                hits,
+                [("src/foo.py", "e1"), ("src/foo.py", "e2"), ("src/foo.py", "e3")],
+            )
+
     def test_scan_touched_files_skips_non_implementation_entries(self) -> None:
         with tempfile.TemporaryDirectory() as d:
             entries_dir = Path(d)

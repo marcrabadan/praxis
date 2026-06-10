@@ -1,0 +1,211 @@
+diff --git a/.claude/skills/software-architect/references/practices.md b/.claude/skills/software-architect/references/practices.md
+index 6e0cb9e..0271aa5 100644
+--- a/.claude/skills/software-architect/references/practices.md
++++ b/.claude/skills/software-architect/references/practices.md
+@@ -347,8 +347,10 @@ aggregate (a module that quietly became a god-object, a dependency direction
+ that quietly reversed).
+ 
+ `/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
+-that recurs across several `implementation` ledger entries. Treat 3+
+-specs/refinements touching the same file or module as a trigger to re-run the
++that recurs across several distinct specs/refinements (deduplicated by the
++originating `source:` decision/spec, so iterative implementation snapshots of
++one spec count once, not once per snapshot). Treat 3+ specs/refinements
++touching the same file or module as a trigger to re-run the
+ "Simplicity and reversibility" checklist for that area — even though each
+ change passed review on its own — and decide whether a `/refine` (extract a
+ boundary, split a responsibility) is now justified by the accumulated evidence.
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 507a939..156fe96 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -30,12 +30,15 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
+ 
+ - **Systemic-complexity hotspot detection in `/patterns`** — the pattern miner
+   (`tools/patterns.py`) now also reads `implementation` ledger entries' "Files
+-  touched" lists and surfaces a file/module recurring across 3+
+-  specs/refinements as a **hotspot**: a candidate for `/refine`. The
+-  software-architect's "Avoiding over-engineering and accidental complexity"
+-  practice gains a new "Systemic complexity" subsection covering this
+-  evidence-based, no-new-gate signal, and the architecture review checklist
+-  gains item 8.6 to act on it.
++  touched" lists and surfaces a file/module recurring across 3+ *distinct*
++  specs/refinements as a **hotspot**: a candidate for `/refine`. Touched files
++  are deduplicated by the originating spec/refinement (the `source:<id>` tag
++  on the implementation entry, falling back to the entry's own id), so several
++  iterative implementation snapshots of one spec collapse to a single hit
++  instead of inflating the count once per snapshot. The software-architect's
++  "Avoiding over-engineering and accidental complexity" practice gains a new
++  "Systemic complexity" subsection covering this evidence-based, no-new-gate
++  signal, and the architecture review checklist gains item 8.6 to act on it.
+ 
+ ## [1.11.0] - 2026-06-10
+ 
+diff --git a/integrations/codex/.praxis/software-architect.md b/integrations/codex/.praxis/software-architect.md
+index 5f1eeff..6ec2d06 100644
+--- a/integrations/codex/.praxis/software-architect.md
++++ b/integrations/codex/.praxis/software-architect.md
+@@ -412,8 +412,10 @@ aggregate (a module that quietly became a god-object, a dependency direction
+ that quietly reversed).
+ 
+ `/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
+-that recurs across several `implementation` ledger entries. Treat 3+
+-specs/refinements touching the same file or module as a trigger to re-run the
++that recurs across several distinct specs/refinements (deduplicated by the
++originating `source:` decision/spec, so iterative implementation snapshots of
++one spec count once, not once per snapshot). Treat 3+ specs/refinements
++touching the same file or module as a trigger to re-run the
+ "Simplicity and reversibility" checklist for that area — even though each
+ change passed review on its own — and decide whether a `/refine` (extract a
+ boundary, split a responsibility) is now justified by the accumulated evidence.
+diff --git a/integrations/cursor/.cursor/rules/praxis-software-architect.mdc b/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
+index 5a82b21..126100e 100644
+--- a/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
+@@ -416,8 +416,10 @@ aggregate (a module that quietly became a god-object, a dependency direction
+ that quietly reversed).
+ 
+ `/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
+-that recurs across several `implementation` ledger entries. Treat 3+
+-specs/refinements touching the same file or module as a trigger to re-run the
++that recurs across several distinct specs/refinements (deduplicated by the
++originating `source:` decision/spec, so iterative implementation snapshots of
++one spec count once, not once per snapshot). Treat 3+ specs/refinements
++touching the same file or module as a trigger to re-run the
+ "Simplicity and reversibility" checklist for that area — even though each
+ change passed review on its own — and decide whether a `/refine` (extract a
+ boundary, split a responsibility) is now justified by the accumulated evidence.
+diff --git a/integrations/intellij/.junie/praxis/software-architect.md b/integrations/intellij/.junie/praxis/software-architect.md
+index 5f1eeff..6ec2d06 100644
+--- a/integrations/intellij/.junie/praxis/software-architect.md
++++ b/integrations/intellij/.junie/praxis/software-architect.md
+@@ -412,8 +412,10 @@ aggregate (a module that quietly became a god-object, a dependency direction
+ that quietly reversed).
+ 
+ `/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
+-that recurs across several `implementation` ledger entries. Treat 3+
+-specs/refinements touching the same file or module as a trigger to re-run the
++that recurs across several distinct specs/refinements (deduplicated by the
++originating `source:` decision/spec, so iterative implementation snapshots of
++one spec count once, not once per snapshot). Treat 3+ specs/refinements
++touching the same file or module as a trigger to re-run the
+ "Simplicity and reversibility" checklist for that area — even though each
+ change passed review on its own — and decide whether a `/refine` (extract a
+ boundary, split a responsibility) is now justified by the accumulated evidence.
+diff --git a/tools/patterns.py b/tools/patterns.py
+index 4b32f7e..86119d5 100644
+--- a/tools/patterns.py
++++ b/tools/patterns.py
+@@ -10,9 +10,11 @@ them as **candidates**. It proposes; it never mutates. Promotion stays human-
+ gated, routed through `tools/promote.py` / `skill-learner`.
+ 
+ It also reads `implementation` entries' "Files touched" lists: a file or module
+-that recurs across several specs/refinements surfaces as a complexity
+-**hotspot** — a systemic-complexity signal that no single change was big enough
+-to trip on its own, and a candidate for `/refine`.
++that recurs across several *distinct* specs/refinements surfaces as a
++complexity **hotspot** — a systemic-complexity signal that no single change was
++big enough to trip on its own, and a candidate for `/refine`. Iterative
++snapshots of the same spec (sharing a `source:<id>` tag) collapse to one hit,
++so repeated polishing of one spec doesn't masquerade as 3+ separate specs.
+ 
+ Deterministic, stdlib-only. It reads; it does not write to the ledger.
+ 
+@@ -98,14 +100,26 @@ FILES_TOUCHED_RE = re.compile(r"^- `([^`\n]+)`\s*$", re.MULTILINE)
+ def scan_touched_files(
+     entries: list[dict[str, Any]], entries_dir: Path
+ ) -> list[tuple[str, str]]:
+-    """Return (file_path, entry_id) pairs from `implementation` entries' "Files
+-    touched" lists, so a file or module repeatedly changed across entries
+-    surfaces as a complexity hotspot."""
++    """Return deduplicated (file_path, spec_id) pairs from `implementation`
++    entries' "Files touched" lists, so a file or module repeatedly changed
++    across distinct specs/refinements surfaces as a complexity hotspot.
++
++    `spec_id` identifies the originating spec/refinement: the `source:<id>`
++    tag on the implementation entry if present, else the entry's own id.
++    Several iterative snapshots of the same spec share a `source:` tag and
++    therefore collapse to a single (file, spec_id) pair, so iterative work
++    on one spec does not look like 3+ separate specs touching the file."""
++    seen: set[tuple[str, str]] = set()
+     found: list[tuple[str, str]] = []
+     for e in entries:
+         if e.get("type") != "implementation":
+             continue
+         eid = str(e.get("id", "?"))
++        spec_id = eid
++        for tag in e.get("tags", []) or []:
++            if isinstance(tag, str) and tag.startswith("source:"):
++                spec_id = tag[len("source:") :]
++                break
+         try:
+             text = (entries_dir / f"{eid}.md").read_text(encoding="utf-8")
+         except OSError:
+@@ -114,7 +128,11 @@ def scan_touched_files(
+         if not after:
+             continue
+         for m in FILES_TOUCHED_RE.finditer(after):
+-            found.append((m.group(1), eid))
++            key = (m.group(1), spec_id)
++            if key in seen:
++                continue
++            seen.add(key)
++            found.append(key)
+     return found
+ 
+ 
+@@ -159,8 +177,8 @@ def mine_patterns(
+     for cid, path in stop_hits:
+         _bump("stop-condition", cid, path)
+ 
+-    for path, eid in touched_files or []:
+-        _bump("hotspot", path, eid)
++    for path, spec_id in touched_files or []:
++        _bump("hotspot", path, spec_id)
+ 
+     result: dict[str, list[dict[str, Any]]] = {}
+     for kind, counter in counters.items():
+diff --git a/tools/test_patterns.py b/tools/test_patterns.py
+index 4427233..0db08c5 100644
+--- a/tools/test_patterns.py
++++ b/tools/test_patterns.py
+@@ -90,6 +90,39 @@ class MineTests(unittest.TestCase):
+             hits = pt.scan_touched_files(entries, entries_dir)
+             self.assertEqual(hits, [("src/foo.py", "e1"), ("src/bar.py", "e1")])
+ 
++    def test_scan_touched_files_dedupes_snapshots_from_same_spec(self) -> None:
++        with tempfile.TemporaryDirectory() as d:
++            entries_dir = Path(d)
++            for i in range(1, 4):
++                (entries_dir / f"e{i}.md").write_text(
++                    "**Files touched:**\n\n- `src/foo.py`\n", encoding="utf-8"
++                )
++            entries = [
++                _entry(f"e{i}", type="implementation", tags=["source:D1"])
++                for i in range(1, 4)
++            ]
++            hits = pt.scan_touched_files(entries, entries_dir)
++            # Three iterative snapshots of the same spec (shared `source:`
++            # tag) collapse to a single (file, spec) pair, so they don't
++            # look like 3+ distinct specs touching the file.
++            self.assertEqual(hits, [("src/foo.py", "D1")])
++
++    def test_scan_touched_files_distinct_specs_without_source_tag(self) -> None:
++        with tempfile.TemporaryDirectory() as d:
++            entries_dir = Path(d)
++            for i in range(1, 4):
++                (entries_dir / f"e{i}.md").write_text(
++                    "**Files touched:**\n\n- `src/foo.py`\n", encoding="utf-8"
++                )
++            entries = [_entry(f"e{i}", type="implementation") for i in range(1, 4)]
++            hits = pt.scan_touched_files(entries, entries_dir)
++            # No `source:` tag to group by: each entry is its own spec, so
++            # all three count as distinct specs touching the file.
++            self.assertEqual(
++                hits,
++                [("src/foo.py", "e1"), ("src/foo.py", "e2"), ("src/foo.py", "e3")],
++            )
++
+     def test_scan_touched_files_skips_non_implementation_entries(self) -> None:
+         with tempfile.TemporaryDirectory() as d:
+             entries_dir = Path(d)

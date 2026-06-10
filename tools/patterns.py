@@ -10,9 +10,11 @@ them as **candidates**. It proposes; it never mutates. Promotion stays human-
 gated, routed through `tools/promote.py` / `skill-learner`.
 
 It also reads `implementation` entries' "Files touched" lists: a file or module
-that recurs across several specs/refinements surfaces as a complexity
-**hotspot** — a systemic-complexity signal that no single change was big enough
-to trip on its own, and a candidate for `/refine`.
+that recurs across several *distinct* specs/refinements surfaces as a
+complexity **hotspot** — a systemic-complexity signal that no single change was
+big enough to trip on its own, and a candidate for `/refine`. Iterative
+snapshots of the same spec (sharing a `source:<id>` tag) collapse to one hit,
+so repeated polishing of one spec doesn't masquerade as 3+ separate specs.
 
 Deterministic, stdlib-only. It reads; it does not write to the ledger.
 
@@ -98,14 +100,26 @@ FILES_TOUCHED_RE = re.compile(r"^- `([^`\n]+)`\s*$", re.MULTILINE)
 def scan_touched_files(
     entries: list[dict[str, Any]], entries_dir: Path
 ) -> list[tuple[str, str]]:
-    """Return (file_path, entry_id) pairs from `implementation` entries' "Files
-    touched" lists, so a file or module repeatedly changed across entries
-    surfaces as a complexity hotspot."""
+    """Return deduplicated (file_path, spec_id) pairs from `implementation`
+    entries' "Files touched" lists, so a file or module repeatedly changed
+    across distinct specs/refinements surfaces as a complexity hotspot.
+
+    `spec_id` identifies the originating spec/refinement: the `source:<id>`
+    tag on the implementation entry if present, else the entry's own id.
+    Several iterative snapshots of the same spec share a `source:` tag and
+    therefore collapse to a single (file, spec_id) pair, so iterative work
+    on one spec does not look like 3+ separate specs touching the file."""
+    seen: set[tuple[str, str]] = set()
     found: list[tuple[str, str]] = []
     for e in entries:
         if e.get("type") != "implementation":
             continue
         eid = str(e.get("id", "?"))
+        spec_id = eid
+        for tag in e.get("tags", []) or []:
+            if isinstance(tag, str) and tag.startswith("source:"):
+                spec_id = tag[len("source:") :]
+                break
         try:
             text = (entries_dir / f"{eid}.md").read_text(encoding="utf-8")
         except OSError:
@@ -114,7 +128,11 @@ def scan_touched_files(
         if not after:
             continue
         for m in FILES_TOUCHED_RE.finditer(after):
-            found.append((m.group(1), eid))
+            key = (m.group(1), spec_id)
+            if key in seen:
+                continue
+            seen.add(key)
+            found.append(key)
     return found
 
 
@@ -159,8 +177,8 @@ def mine_patterns(
     for cid, path in stop_hits:
         _bump("stop-condition", cid, path)
 
-    for path, eid in touched_files or []:
-        _bump("hotspot", path, eid)
+    for path, spec_id in touched_files or []:
+        _bump("hotspot", path, spec_id)
 
     result: dict[str, list[dict[str, Any]]] = {}
     for kind, counter in counters.items():
