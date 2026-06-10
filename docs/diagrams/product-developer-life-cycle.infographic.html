@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  :root{
+    --ink:#0f172a; --muted:#475569; --line:#e2e8f0;
+    --c1:#2563eb; --c1d:#1e3a8a; --c1s:#eff6ff;
+    --teal:#0d9488; --teals:#ecfdf5;
+    --amber:#d97706; --ambers:#fffbeb; --amberink:#7c2d12;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#f8fafc}
+  body{
+    width:1240px;
+    font-family:'Segoe UI',-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); padding:56px 64px 60px;
+    background:
+      radial-gradient(1100px 520px at 88% -8%, rgba(37,99,235,.10), transparent 60%),
+      radial-gradient(900px 480px at -6% 108%, rgba(13,148,136,.10), transparent 60%),
+      #f8fafc;
+  }
+  .kicker{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.16em;
+    text-transform:uppercase;font-size:13px;color:var(--c1)}
+  .kicker .dot{width:9px;height:9px;border-radius:50%;background:var(--c1)}
+  h1{font-size:46px;line-height:1.05;margin:14px 0 10px;letter-spacing:-.02em}
+  h1 .accent{color:var(--c1)}
+  .sub{font-size:17px;color:var(--muted);max-width:880px;line-height:1.5}
+  .phase-of{margin-top:14px;display:inline-flex;align-items:center;gap:8px;font-size:13px;
+    font-weight:600;color:var(--teal);background:var(--teals);border:1px solid #99f6e4;
+    padding:6px 12px;border-radius:999px}
+
+  .flow{position:relative;margin-top:38px;padding-left:78px}
+  .flow::before{content:"";position:absolute;left:31px;top:18px;bottom:30px;width:4px;
+    border-radius:4px;background:linear-gradient(180deg,var(--c1),var(--teal))}
+
+  .row{position:relative;margin-bottom:20px}
+  .node{position:absolute;left:-62px;top:18px;width:60px;height:60px;border-radius:16px;
+    display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;
+    background:linear-gradient(135deg,var(--c1),#3b82f6);
+    box-shadow:0 10px 22px rgba(37,99,235,.30);border:3px solid #fff}
+  .node .ico{font-size:24px;line-height:1}
+  .node .n{position:absolute;top:-9px;right:-9px;width:24px;height:24px;border-radius:50%;
+    background:#0f172a;color:#fff;font-size:12px;display:grid;place-items:center;border:2px solid #fff}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:20px 24px;box-shadow:0 6px 16px rgba(15,23,42,.06)}
+  .card.star{border-color:#bfdbfe;box-shadow:0 10px 26px rgba(37,99,235,.16)}
+  .card h3{font-size:21px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+    padding:3px 9px;border-radius:999px;background:var(--c1s);color:var(--c1)}
+  .tag.opt{background:#f1f5f9;color:#64748b}
+  .tag.sot{background:#fef9c3;color:#854d0e}
+  .card p{margin-top:7px;color:var(--muted);font-size:15px;line-height:1.5}
+  .chips{margin-top:13px;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:12.5px;font-weight:600;color:var(--c1d);background:var(--c1s);
+    border:1px solid #dbeafe;padding:5px 11px;border-radius:8px}
+  .chip .role{opacity:.6;font-weight:700;margin-right:6px}
+
+  .gate{margin:0 0 20px 0;display:flex;align-items:center;gap:14px;
+    background:var(--ambers);border:1.5px dashed var(--amber);border-radius:14px;
+    padding:13px 20px}
+  .gate .glyph{font-size:20px}
+  .gate b{color:var(--amberink);font-size:15px}
+  .gate span{color:#92400e;font-size:14px}
+  .gate .hitl{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.06em;
+    text-transform:uppercase;color:#fff;background:var(--amber);padding:4px 10px;border-radius:999px}
+
+  .handoff{margin-top:8px;display:flex;align-items:center;gap:16px;
+    background:linear-gradient(135deg,#065f46,#0d9488);color:#fff;border-radius:18px;
+    padding:20px 26px;box-shadow:0 12px 28px rgba(13,148,136,.28)}
+  .handoff .ho-ico{font-size:30px}
+  .handoff b{font-size:19px;display:block;margin-bottom:2px}
+  .handoff small{opacity:.9;font-size:14px}
+
+  .footer{margin-top:34px;display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid var(--line);padding-top:18px;color:#64748b;font-size:13px}
+  .legend{display:flex;gap:20px;flex-wrap:wrap}
+  .legend i{font-style:normal;display:inline-flex;align-items:center;gap:7px}
+  .sw{width:14px;height:14px;border-radius:4px;display:inline-block}
+  .brand{font-weight:800;color:#0f172a;letter-spacing:.02em}
+  .brand .px{color:var(--c1)}
+</style>
+</head>
+<body>
+  <div class="kicker"><span class="dot"></span> Praxis · Feature Lifecycle — Front Half</div>
+  <h1>Product Developer <span class="accent">Life&nbsp;Cycle</span></h1>
+  <p class="sub">The <b>what &amp; why</b>. Understand the problem, earn the spec with research, define the product, then contract the surfaces — before a line of code is written. Each gate is human-in-the-loop; the spec is the single source of truth.</p>
+  <div class="phase-of">◆ Phases 1–5 of the praxis <code style="font-family:inherit">discovery → … → release</code> lifecycle</div>
+
+  <div class="flow">
+    <!-- 1 -->
+    <div class="row">
+      <div class="node"><span class="ico">🔍</span><span class="n">1</span></div>
+      <div class="card">
+        <h3>Discovery <span class="tag">Understand</span></h3>
+        <p>Frame a falsifiable problem, name the target user, and define the desired outcome with a success signal.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>Business Analyst</span><span class="chip">→ discovery-report.md</span></div>
+      </div>
+    </div>
+    <!-- 2 -->
+    <div class="row">
+      <div class="node"><span class="ico">📚</span><span class="n">2</span></div>
+      <div class="card">
+        <h3>Research <span class="tag">Investigate</span></h3>
+        <p>Gather findings, weigh alternatives, and back every claim with an evidence log. Research precedes the spec.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>Business Analyst</span><span class="chip"><span class="role">+</span>Software Architect</span><span class="chip">→ research/*</span></div>
+      </div>
+    </div>
+    <!-- Gate 1 -->
+    <div class="gate">
+      <span class="glyph">🛡️</span>
+      <span><b>Gate 1 — Discovery &amp; Research approved.</b> Problem, user &amp; outcome are clear and the opportunity is sized.</span>
+      <span class="hitl">HITL</span>
+    </div>
+    <!-- 3 -->
+    <div class="row">
+      <div class="node"><span class="ico">🎯</span><span class="n">3</span></div>
+      <div class="card">
+        <h3>Product Definition <span class="tag">Define</span></h3>
+        <p>Bound the MVP — explicit in / out of scope — prioritise with MoSCoW, and set measurable success metrics.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>Product Owner</span><span class="chip">→ product-definition.md</span></div>
+      </div>
+    </div>
+    <!-- 4 -->
+    <div class="row">
+      <div class="node"><span class="ico">📋</span><span class="n">4</span></div>
+      <div class="card star">
+        <h3>Spec <span class="tag sot">★ Source of truth</span></h3>
+        <p>Every requirement gets testable acceptance criteria; scope and target user are unambiguous. The spec governs everything downstream.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>Product Owner</span><span class="chip"><span class="role">+</span>Business Analyst</span><span class="chip">→ spec.md</span></div>
+      </div>
+    </div>
+    <!-- Gate 2 -->
+    <div class="gate">
+      <span class="glyph">🛡️</span>
+      <span><b>Gate 2 — Spec approved.</b> Acceptance criteria are testable and consistent with the product definition.</span>
+      <span class="hitl">HITL</span>
+    </div>
+    <!-- 5 -->
+    <div class="row">
+      <div class="node"><span class="ico">🎨</span><span class="n">5</span></div>
+      <div class="card">
+        <h3>Experience <span class="tag opt">Optional · per surface</span></h3>
+        <p>For each surface the spec declares, produce one executable contract (behaviour, files-owned, gates) that plan, build &amp; verify enforce.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>UX/UI Engineer</span><span class="chip">→ experience/&lt;surface&gt;</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="handoff">
+    <span class="ho-ico">🤝</span>
+    <div><b>Hand-off to the Software Developer Life Cycle</b><small>An approved Spec + Experience contracts open planning &amp; the build.</small></div>
+  </div>
+
+  <div class="footer">
+    <div class="legend">
+      <i><span class="sw" style="background:linear-gradient(135deg,#2563eb,#3b82f6)"></span>Phase (owned by a role)</i>
+      <i><span class="sw" style="background:#d97706"></span>Human-in-the-loop gate</i>
+      <i><span class="sw" style="background:linear-gradient(135deg,#065f46,#0d9488)"></span>Hand-off</i>
+    </div>
+    <div class="brand"><span class="px">praxis</span> · pending ≠ approval</div>
+  </div>
+</body>
+</html>
