@@ -354,3 +354,13 @@ change passed review on its own — and decide whether a `/refine` (extract a
 boundary, split a responsibility) is now justified by the accumulated evidence.
 This is evidence-based by construction: nothing is restructured until the
 recurrence is observed, never in anticipation of it.
+
+### Quantitative thresholds: code-quality metrics
+
+Checklist items 8.6 (hotspot) and 8.7 (maintainability rating) are judgment
+calls grounded in numbers, not vibes. `rules/code-quality-metrics.md` gives
+the shared vocabulary and default min/max thresholds — Maintainability
+Rating, Technical Debt Ratio, Cyclomatic/Cognitive Complexity, Coverage,
+Duplicated Lines — aligned to SonarQube's default Quality Gate. Use the repo's
+own configured quality gate when one exists; fall back to these defaults when
+it does not.

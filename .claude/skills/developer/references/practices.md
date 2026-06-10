@@ -46,6 +46,7 @@ These principles are heuristics, not laws. Apply them when the benefit is clear;
 - Extract duplication when three identical or structurally identical fragments exist and are clearly the same concept. Two copies can be a coincidence.
 - DRY applies to *knowledge*, not just text. Two pieces of code that look similar but represent different concepts should stay separate.
 - Over-applying DRY produces premature abstractions that are harder to change than the duplication they replaced.
+- Default thresholds: keep duplicated lines under ~3% of a file and cyclomatic/cognitive complexity of a function under ~10/15 (see `rules/code-quality-metrics.md`, or the repo's configured quality gate). Treat repeated trips above either as a signal to extract or simplify, not just a number to track.
 
 ### YAGNI (You Aren't Gonna Need It)
 - Do not build for requirements that do not yet exist. Speculative features add complexity, maintenance cost, and testing surface with no near-term payoff.

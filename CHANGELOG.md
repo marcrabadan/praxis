@@ -13,6 +13,21 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- **SonarQube-aligned code-quality metrics rule** (`rules/code-quality-metrics.md`)
+  — a new harness rule giving `developer`, `qa-engineer`, `software-architect`,
+  and `security-engineer` a shared vocabulary and default min/max thresholds
+  (Coverage on new code >= 80%, Duplicated Lines on new code <= 3%,
+  Maintainability/Reliability/Security Rating = A, Security Hotspots Reviewed
+  = 100%, Cyclomatic Complexity <= 10, Cognitive Complexity <= 15, with the
+  Technical Debt Ratio bands behind the Maintainability Rating), aligned to
+  SonarQube's default "Sonar way" Quality Gate. The rule is explicit that a
+  repo's own configured quality gate is binding when one exists — these are
+  defaults and a shared vocabulary, not a new mandatory gate. Wired into
+  `developer` (DRY/complexity practices and pre-merge checklist),
+  `qa-engineer` (test-readiness coverage item), `software-architect`
+  (checklist item 8.7, alongside the 8.6 hotspot signal), and
+  `security-engineer` (pipeline-gates checklist, ahead of `G-security`).
+
 - **Systemic-complexity hotspot detection in `/patterns`** — the pattern miner
   (`tools/patterns.py`) now also reads `implementation` ledger entries' "Files
   touched" lists and surfaces a file/module recurring across 3+
