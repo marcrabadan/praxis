@@ -101,7 +101,7 @@ State what makes this decision necessary and what changes if the decision is wro
 - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
 - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
 - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
-- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
+- The ADR is the home for design rationale — the team's rule against non-functional inline comments depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
 
 ---
 

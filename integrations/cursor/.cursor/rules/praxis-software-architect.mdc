@@ -170,7 +170,7 @@ State what makes this decision necessary and what changes if the decision is wro
 - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
 - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
 - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
-- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
+- The ADR is the home for design rationale — the team's rule against non-functional inline comments depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
 
 ---
 
@@ -437,7 +437,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
 | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
 | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
 | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
-| 2.6 | **Team rule — comment-free code:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
+| 2.6 | **Team rule — no non-functional inline comments:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
 
 ---
 

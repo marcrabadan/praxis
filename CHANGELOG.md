@@ -14,8 +14,10 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 ### Added
 
 - **Team conventions captured into four role experts** (via `/learn`, accepted
-  ledger decision `20260610-181128-01db`): **comment-free code** — code
-  self-explains; the only permitted comment states a constraint the code cannot
+  ledger decision `20260610-181128-01db`, refined by `20260610-181909-202f`):
+  **no non-functional inline comments** — code self-explains; functional tool
+  directives (`noqa`, `eslint-disable`, pragmas) are code, not commentary; the
+  one permitted informative comment states a constraint the code cannot
   express (invariant, external requirement, deliberate trade-off, security
   warning); no commented-out code or inline TODO/FIXME; docstrings on public
   APIs and ADRs remain the documented homes for interface docs and design

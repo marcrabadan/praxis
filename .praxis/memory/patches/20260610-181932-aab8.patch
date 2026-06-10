@@ -1,0 +1,221 @@
+diff --git a/.claude/skills/developer/references/checklist.md b/.claude/skills/developer/references/checklist.md
+index 8d1f6da..acf098f 100644
+--- a/.claude/skills/developer/references/checklist.md
++++ b/.claude/skills/developer/references/checklist.md
+@@ -27,7 +27,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ ## 3. Code quality
+ 
+ - [ ] No dead code: unused variables, unreachable branches, or commented-out code are removed.
+-- [ ] **Team rule — comment-free code:** no narrative comments; every comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning).
++- [ ] **Team rule — no non-functional inline comments:** no narrative comments; every non-functional comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning). Tool directives (`noqa`, `eslint-disable`, pragmas) are fine, scoped as narrowly as possible.
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+ - [ ] Functions do one thing; any function that grew during this change is still within reason.
+diff --git a/.claude/skills/developer/references/practices.md b/.claude/skills/developer/references/practices.md
+index efbdc76..9e82471 100644
+--- a/.claude/skills/developer/references/practices.md
++++ b/.claude/skills/developer/references/practices.md
+@@ -21,9 +21,10 @@ Readable code is the default; clever code is the exception that must justify its
+ - Prefer fewer parameters. Beyond three or four, group related parameters into a named struct or object.
+ - Avoid flag parameters (`process(order, true)`). Model the two behaviors as two named functions.
+ 
+-### Comments — team rule: comment-free code
+-- **Default: no comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
+-- **The only permitted comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
++### Comments — team rule: no non-functional inline comments
++- **Default: no inline comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
++- **Functional comments are not commentary.** Directives the toolchain consumes — `# noqa`, `// eslint-disable`, `@ts-ignore`, pragmas, coverage markers — are code; use them when needed, each scoped as narrowly as possible and never to mute a warning that should be fixed.
++- **The one permitted informative comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
+ - Design rationale lives in ADRs (`docs/decisions/`), never inline. Docstrings on public/exported APIs are interface documentation, not narrative comments — they stay.
+ - Delete commented-out code (source control preserves history) and inline `TODO`/`FIXME` markers (track them in tickets).
+ - Keep the rare permitted comment current. A stale comment is worse than none because it actively misleads.
+diff --git a/.claude/skills/software-architect/references/checklist.md b/.claude/skills/software-architect/references/checklist.md
+index 41d74a6..f72a44c 100644
+--- a/.claude/skills/software-architect/references/checklist.md
++++ b/.claude/skills/software-architect/references/checklist.md
+@@ -27,7 +27,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
+ | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
+ | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
+-| 2.6 | **Team rule — comment-free code:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
++| 2.6 | **Team rule — no non-functional inline comments:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
+ 
+ ---
+ 
+diff --git a/.claude/skills/software-architect/references/practices.md b/.claude/skills/software-architect/references/practices.md
+index 309123b..dd61cbb 100644
+--- a/.claude/skills/software-architect/references/practices.md
++++ b/.claude/skills/software-architect/references/practices.md
+@@ -101,7 +101,7 @@ State what makes this decision necessary and what changes if the decision is wro
+ - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
+ - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
+ - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
+-- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
++- The ADR is the home for design rationale — the team's rule against non-functional inline comments depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
+ 
+ ---
+ 
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 3ce3d56..810da1d 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -14,8 +14,10 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
+ ### Added
+ 
+ - **Team conventions captured into four role experts** (via `/learn`, accepted
+-  ledger decision `20260610-181128-01db`): **comment-free code** — code
+-  self-explains; the only permitted comment states a constraint the code cannot
++  ledger decision `20260610-181128-01db`, refined by `20260610-181909-202f`):
++  **no non-functional inline comments** — code self-explains; functional tool
++  directives (`noqa`, `eslint-disable`, pragmas) are code, not commentary; the
++  one permitted informative comment states a constraint the code cannot
+   express (invariant, external requirement, deliberate trade-off, security
+   warning); no commented-out code or inline TODO/FIXME; docstrings on public
+   APIs and ADRs remain the documented homes for interface docs and design
+diff --git a/integrations/codex/.praxis/developer.md b/integrations/codex/.praxis/developer.md
+index 0247783..f62edbe 100644
+--- a/integrations/codex/.praxis/developer.md
++++ b/integrations/codex/.praxis/developer.md
+@@ -89,9 +89,10 @@ Readable code is the default; clever code is the exception that must justify its
+ - Prefer fewer parameters. Beyond three or four, group related parameters into a named struct or object.
+ - Avoid flag parameters (`process(order, true)`). Model the two behaviors as two named functions.
+ 
+-### Comments — team rule: comment-free code
+-- **Default: no comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
+-- **The only permitted comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
++### Comments — team rule: no non-functional inline comments
++- **Default: no inline comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
++- **Functional comments are not commentary.** Directives the toolchain consumes — `# noqa`, `// eslint-disable`, `@ts-ignore`, pragmas, coverage markers — are code; use them when needed, each scoped as narrowly as possible and never to mute a warning that should be fixed.
++- **The one permitted informative comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
+ - Design rationale lives in ADRs (`docs/decisions/`), never inline. Docstrings on public/exported APIs are interface documentation, not narrative comments — they stay.
+ - Delete commented-out code (source control preserves history) and inline `TODO`/`FIXME` markers (track them in tickets).
+ - Keep the rare permitted comment current. A stale comment is worse than none because it actively misleads.
+@@ -365,7 +366,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ ## 3. Code quality
+ 
+ - [ ] No dead code: unused variables, unreachable branches, or commented-out code are removed.
+-- [ ] **Team rule — comment-free code:** no narrative comments; every comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning).
++- [ ] **Team rule — no non-functional inline comments:** no narrative comments; every non-functional comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning). Tool directives (`noqa`, `eslint-disable`, pragmas) are fine, scoped as narrowly as possible.
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+ - [ ] Functions do one thing; any function that grew during this change is still within reason.
+diff --git a/integrations/codex/.praxis/software-architect.md b/integrations/codex/.praxis/software-architect.md
+index 18dd946..b2553ae 100644
+--- a/integrations/codex/.praxis/software-architect.md
++++ b/integrations/codex/.praxis/software-architect.md
+@@ -166,7 +166,7 @@ State what makes this decision necessary and what changes if the decision is wro
+ - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
+ - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
+ - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
+-- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
++- The ADR is the home for design rationale — the team's rule against non-functional inline comments depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
+ 
+ ---
+ 
+@@ -433,7 +433,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
+ | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
+ | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
+-| 2.6 | **Team rule — comment-free code:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
++| 2.6 | **Team rule — no non-functional inline comments:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
+ 
+ ---
+ 
+diff --git a/integrations/cursor/.cursor/rules/praxis-developer.mdc b/integrations/cursor/.cursor/rules/praxis-developer.mdc
+index eb506f1..2e38094 100644
+--- a/integrations/cursor/.cursor/rules/praxis-developer.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-developer.mdc
+@@ -93,9 +93,10 @@ Readable code is the default; clever code is the exception that must justify its
+ - Prefer fewer parameters. Beyond three or four, group related parameters into a named struct or object.
+ - Avoid flag parameters (`process(order, true)`). Model the two behaviors as two named functions.
+ 
+-### Comments — team rule: comment-free code
+-- **Default: no comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
+-- **The only permitted comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
++### Comments — team rule: no non-functional inline comments
++- **Default: no inline comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
++- **Functional comments are not commentary.** Directives the toolchain consumes — `# noqa`, `// eslint-disable`, `@ts-ignore`, pragmas, coverage markers — are code; use them when needed, each scoped as narrowly as possible and never to mute a warning that should be fixed.
++- **The one permitted informative comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
+ - Design rationale lives in ADRs (`docs/decisions/`), never inline. Docstrings on public/exported APIs are interface documentation, not narrative comments — they stay.
+ - Delete commented-out code (source control preserves history) and inline `TODO`/`FIXME` markers (track them in tickets).
+ - Keep the rare permitted comment current. A stale comment is worse than none because it actively misleads.
+@@ -369,7 +370,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ ## 3. Code quality
+ 
+ - [ ] No dead code: unused variables, unreachable branches, or commented-out code are removed.
+-- [ ] **Team rule — comment-free code:** no narrative comments; every comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning).
++- [ ] **Team rule — no non-functional inline comments:** no narrative comments; every non-functional comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning). Tool directives (`noqa`, `eslint-disable`, pragmas) are fine, scoped as narrowly as possible.
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+ - [ ] Functions do one thing; any function that grew during this change is still within reason.
+diff --git a/integrations/cursor/.cursor/rules/praxis-software-architect.mdc b/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
+index 2551733..d695cb2 100644
+--- a/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
+@@ -170,7 +170,7 @@ State what makes this decision necessary and what changes if the decision is wro
+ - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
+ - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
+ - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
+-- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
++- The ADR is the home for design rationale — the team's rule against non-functional inline comments depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
+ 
+ ---
+ 
+@@ -437,7 +437,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
+ | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
+ | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
+-| 2.6 | **Team rule — comment-free code:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
++| 2.6 | **Team rule — no non-functional inline comments:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
+ 
+ ---
+ 
+diff --git a/integrations/intellij/.junie/praxis/developer.md b/integrations/intellij/.junie/praxis/developer.md
+index 0247783..f62edbe 100644
+--- a/integrations/intellij/.junie/praxis/developer.md
++++ b/integrations/intellij/.junie/praxis/developer.md
+@@ -89,9 +89,10 @@ Readable code is the default; clever code is the exception that must justify its
+ - Prefer fewer parameters. Beyond three or four, group related parameters into a named struct or object.
+ - Avoid flag parameters (`process(order, true)`). Model the two behaviors as two named functions.
+ 
+-### Comments — team rule: comment-free code
+-- **Default: no comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
+-- **The only permitted comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
++### Comments — team rule: no non-functional inline comments
++- **Default: no inline comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
++- **Functional comments are not commentary.** Directives the toolchain consumes — `# noqa`, `// eslint-disable`, `@ts-ignore`, pragmas, coverage markers — are code; use them when needed, each scoped as narrowly as possible and never to mute a warning that should be fixed.
++- **The one permitted informative comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
+ - Design rationale lives in ADRs (`docs/decisions/`), never inline. Docstrings on public/exported APIs are interface documentation, not narrative comments — they stay.
+ - Delete commented-out code (source control preserves history) and inline `TODO`/`FIXME` markers (track them in tickets).
+ - Keep the rare permitted comment current. A stale comment is worse than none because it actively misleads.
+@@ -365,7 +366,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ ## 3. Code quality
+ 
+ - [ ] No dead code: unused variables, unreachable branches, or commented-out code are removed.
+-- [ ] **Team rule — comment-free code:** no narrative comments; every comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning).
++- [ ] **Team rule — no non-functional inline comments:** no narrative comments; every non-functional comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning). Tool directives (`noqa`, `eslint-disable`, pragmas) are fine, scoped as narrowly as possible.
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+ - [ ] Functions do one thing; any function that grew during this change is still within reason.
+diff --git a/integrations/intellij/.junie/praxis/software-architect.md b/integrations/intellij/.junie/praxis/software-architect.md
+index 18dd946..b2553ae 100644
+--- a/integrations/intellij/.junie/praxis/software-architect.md
++++ b/integrations/intellij/.junie/praxis/software-architect.md
+@@ -166,7 +166,7 @@ State what makes this decision necessary and what changes if the decision is wro
+ - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
+ - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
+ - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
+-- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
++- The ADR is the home for design rationale — the team's rule against non-functional inline comments depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
+ 
+ ---
+ 
+@@ -433,7 +433,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
+ | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
+ | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
+-| 2.6 | **Team rule — comment-free code:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
++| 2.6 | **Team rule — no non-functional inline comments:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
+ 
+ ---
+ 

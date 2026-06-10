@@ -27,7 +27,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
 | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
 | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
 | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
-| 2.6 | **Team rule — comment-free code:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
+| 2.6 | **Team rule — no non-functional inline comments:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
 
 ---
 

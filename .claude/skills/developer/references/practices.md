@@ -21,9 +21,10 @@ Readable code is the default; clever code is the exception that must justify its
 - Prefer fewer parameters. Beyond three or four, group related parameters into a named struct or object.
 - Avoid flag parameters (`process(order, true)`). Model the two behaviors as two named functions.
 
-### Comments — team rule: comment-free code
-- **Default: no comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
-- **The only permitted comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
+### Comments — team rule: no non-functional inline comments
+- **Default: no inline comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
+- **Functional comments are not commentary.** Directives the toolchain consumes — `# noqa`, `// eslint-disable`, `@ts-ignore`, pragmas, coverage markers — are code; use them when needed, each scoped as narrowly as possible and never to mute a warning that should be fixed.
+- **The one permitted informative comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
 - Design rationale lives in ADRs (`docs/decisions/`), never inline. Docstrings on public/exported APIs are interface documentation, not narrative comments — they stay.
 - Delete commented-out code (source control preserves history) and inline `TODO`/`FIXME` markers (track them in tickets).
 - Keep the rare permitted comment current. A stale comment is worse than none because it actively misleads.
