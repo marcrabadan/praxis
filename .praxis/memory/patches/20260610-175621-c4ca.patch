@@ -1,0 +1,503 @@
+diff --git a/.claude/commands/analyst.md b/.claude/commands/analyst.md
+index e65018f..a6a8321 100644
+--- a/.claude/commands/analyst.md
++++ b/.claude/commands/analyst.md
+@@ -17,4 +17,6 @@ When the answer contains a substantial set of requirements, user stories, or a p
+ - Write or update the Purpose, Feature Catalogue, and User Journeys sections of `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded requirement set stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build against it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick requirement clarifications or short scoping answers.
+diff --git a/.claude/commands/architect.md b/.claude/commands/architect.md
+index f3687d4..af26615 100644
+--- a/.claude/commands/architect.md
++++ b/.claude/commands/architect.md
+@@ -18,4 +18,6 @@ When the answer contains a significant architectural decision or design:
+ - If the design involves multiple services or components, also generate an L2 architecture diagram to `docs/diagrams/architecture-<slug>.md`.
+ - Record both as `pending` artifact entries in the memory ledger with `source:` tags pointing to any related decision entries.
+ 
++A recorded ADR or decision stays `pending` — a proposal, not a green light (stop condition `U-11`). Do **not** implement what it documents until the user explicitly accepts it (`/memory accept <id>`); if they ask you to proceed, accept the entry first, then act. **Pending is not approval.**
++
+ Skip file generation for quick clarifications or one-liner answers where no durable decision was made.
+diff --git a/.claude/commands/developer.md b/.claude/commands/developer.md
+index 214f572..17b2320 100644
+--- a/.claude/commands/developer.md
++++ b/.claude/commands/developer.md
+@@ -17,4 +17,6 @@ When the answer contains a substantial implementation plan, a module breakdown,
+ - Write or update the Module Map, Implementation Notes, or API Reference section of `docs/technical-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded plan or design stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** implement it until the user explicitly accepts it (`/memory accept <id>`); if they ask you to proceed, accept the entry first, then act. **Pending is not approval.**
++
+ Skip for bug fixes, one-line code questions, or quick refactoring answers.
+diff --git a/.claude/commands/devops.md b/.claude/commands/devops.md
+index bf7f954..0f8b69a 100644
+--- a/.claude/commands/devops.md
++++ b/.claude/commands/devops.md
+@@ -18,4 +18,6 @@ When the answer contains a deployment design, a pipeline definition, or a runboo
+ - If the CI/CD pipeline has more than two stages, also generate a flow diagram to `docs/diagrams/flow-deploy-<slug>.md`.
+ - Record each file as a `pending` artifact in the memory ledger.
+ 
++A recorded deployment design or runbook stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** execute it (no pipeline changes, no deploys) until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick config questions, one-off CLI answers, or simple troubleshooting steps.
+diff --git a/.claude/commands/product.md b/.claude/commands/product.md
+index 14d0d3b..ad77e4b 100644
+--- a/.claude/commands/product.md
++++ b/.claude/commands/product.md
+@@ -17,4 +17,6 @@ When the answer contains a prioritized backlog, a sprint goal, or a roadmap slic
+ - Append a Priorities and Sprint Goal section to `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded prioritization or sprint goal stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** drive work from it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick priority questions or single-item sizing answers.
+diff --git a/.claude/commands/qa.md b/.claude/commands/qa.md
+index f0145be..5368c33 100644
+--- a/.claude/commands/qa.md
++++ b/.claude/commands/qa.md
+@@ -17,4 +17,6 @@ When the answer contains a test strategy, a full test suite design, or a risk-ba
+ - Write it to `docs/test-strategy.md` (or append a section if the file exists).
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded test strategy stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** gate or drive work from it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for single test-case questions, bug triage, or quick coverage gap answers.
+diff --git a/.claude/commands/security.md b/.claude/commands/security.md
+index bdfef3b..598bfe0 100644
+--- a/.claude/commands/security.md
++++ b/.claude/commands/security.md
+@@ -17,4 +17,6 @@ When the answer contains a threat model, a set of significant findings, or a sec
+ - Append a Security Architecture or Security Findings section to `docs/technical-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded threat model or security decision stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** implement its controls or treat its risks as accepted until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick one-off vulnerability questions or single CVE triage answers.
+diff --git a/.claude/commands/ux.md b/.claude/commands/ux.md
+index 599d649..52592fa 100644
+--- a/.claude/commands/ux.md
++++ b/.claude/commands/ux.md
+@@ -17,4 +17,6 @@ When the answer contains a UI design, a user journey, or an accessibility/design
+ - Write or update the UI Guide section (screens, navigation, accessibility notes) of `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded design specification stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build the UI it specifies until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick token lookups, minor style fixes, or single-component answers.
+diff --git a/.claude/skills/memory/references/automation.md b/.claude/skills/memory/references/automation.md
+index 373f2bf..3b07162 100644
+--- a/.claude/skills/memory/references/automation.md
++++ b/.claude/skills/memory/references/automation.md
+@@ -23,6 +23,12 @@ This skill ships both halves; the hook is opt-in per consuming repo.
+      on-install step), otherwise it reports how much is on record — and
+      `pending --brief` surfaces entries still awaiting accept/reject. All injected
+      into context so nothing is forgotten between sessions.
++   - **PreToolUse (git commit/push)** → `ledger.py pending --brief` to stderr.
++     Just before work ships, the entries still awaiting accept/reject are
++     re-surfaced, so work whose only authorization is a `pending` decision or
++     plan gets caught at the door (**pending is not approval** — stop condition
++     `U-11`). A nudge, never a block: planning runs legitimately commit with
++     everything pending.
+    - **Stop** → `ledger.py snapshot --source auto`. When the agent finishes a
+      turn with uncommitted changes, it captures a de-duplicated, rollback-able
+      snapshot automatically — so even unrecorded implementations can be undone.
+diff --git a/.claude/skills/validation-orchestrator/SKILL.md b/.claude/skills/validation-orchestrator/SKILL.md
+index 3fb05b8..b8c203a 100644
+--- a/.claude/skills/validation-orchestrator/SKILL.md
++++ b/.claude/skills/validation-orchestrator/SKILL.md
+@@ -27,7 +27,7 @@ It does not produce product or code. It validates and decides.
+   the **verify report**, with real gate results and reviewer sign-off, and
+   decides whether that verdict is authoritative.
+ - **Pending is not approved.** A gate whose required decision is still `pending`
+-  blocks; do not advance on it.
++  blocks; do not advance on it (hard stop `U-11`).
+ 
+ ## The verdict is a closed set
+ 
+diff --git a/AGENTS.md b/AGENTS.md
+index 673da2b..52dd87e 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -74,7 +74,7 @@ Start at [docs/harness-mode.md](docs/harness-mode.md).
+ - [rules/stop-conditions.md](rules/stop-conditions.md) — when an agent must stop
+   and ask instead of guessing.
+ - [rules/stop-conditions-catalog.md](rules/stop-conditions-catalog.md) — the
+-  *hard-blocker* half: an enumerated catalog (`U-1…U-10`, per-project `P-*`,
++  *hard-blocker* half: an enumerated catalog (`U-1…U-11`, per-project `P-*`,
+   per-spec `S-*`) of observable triggers with exact `STOP[...]` text and a
+   resolution gate; a fired condition halts the step and writes a run log. The
+   soft-guess half is the assumptions ledger.
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 03a6e81..2e56c5b 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -13,6 +13,21 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
+ 
+ ### Added
+ 
++- **`U-11` — executing on a pending authorization is now a catalogued hard stop**
++  ([`rules/stop-conditions-catalog.md`](rules/stop-conditions-catalog.md)) —
++  work whose only authorization is a still-`pending` artifact (a memory-ledger
++  decision/plan, a `spec.md` at `status: draft`, an ungiven HITL gate approval)
++  halts with `STOP[U-11]` until the user explicitly accepts or rejects it.
++  "Pending is not approval" was already doctrine throughout; it now also has a
++  deterministic catalog id, cited by the validation-orchestrator and by the
++  judgement half in [`rules/stop-conditions.md`](rules/stop-conditions.md).
++- **Memory hook: pre-ship pending nudge**
++  ([`integrations/hooks/memory.settings.example.json`](integrations/hooks/memory.settings.example.json))
++  — a `PreToolUse` hook on `git commit` / `git push` re-surfaces the ledger
++  entries still awaiting accept/reject (`ledger.py pending --brief`), so work
++  built on an unaccepted proposal is caught before it ships. A stderr nudge,
++  never a block (exit 0 always) — planning runs legitimately commit with
++  everything pending.
+ - **`/idea` — intake & triage front door** ([`.claude/commands/idea.md`](.claude/commands/idea.md))
+   — a thin command that takes a raw idea, clarifies it (≤2 questions), classifies
+   it (`feature` → `/new-feature`, `bug` → `/fix-bug`, `refinement` → `/refine`,
+@@ -25,6 +40,15 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
+ 
+ ### Changed
+ 
++- **Consult commands now restate the acceptance gate.** The eight expert
++  commands that record `pending` artifacts (`/analyst`, `/architect`,
++  `/developer`, `/devops`, `/product`, `/qa`, `/security`, `/ux`) now close
++  their *Always-on docs* section with the rule that a recorded ADR / plan /
++  strategy is a proposal, not authorization: do not implement it until the user
++  explicitly accepts it (`/memory accept <id>`) — pending is not approval
++  (`U-11`). Previously the rule lived only in the memory skill,
++  `rules/stop-conditions.md`, and the lifecycle commands, so a consult command
++  followed by "ok, do it" had no in-command guard.
+ - **Harness mode is now always on (was opt-in).** Harness behavior is praxis's
+   default and only operating mode — the `if not in harness mode, behave as before`
+   fallback is gone from `/new-feature`, `/fix-bug`, `/refine`, and
+diff --git a/integrations/codex/prompts/praxis-analyst.md b/integrations/codex/prompts/praxis-analyst.md
+index 1a8f7f1..2dc4faf 100644
+--- a/integrations/codex/prompts/praxis-analyst.md
++++ b/integrations/codex/prompts/praxis-analyst.md
+@@ -14,4 +14,6 @@ When the answer contains a substantial set of requirements, user stories, or a p
+ - Write or update the Purpose, Feature Catalogue, and User Journeys sections of `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded requirement set stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build against it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick requirement clarifications or short scoping answers.
+diff --git a/integrations/codex/prompts/praxis-architect.md b/integrations/codex/prompts/praxis-architect.md
+index 4e89206..9ff419e 100644
+--- a/integrations/codex/prompts/praxis-architect.md
++++ b/integrations/codex/prompts/praxis-architect.md
+@@ -15,4 +15,6 @@ When the answer contains a significant architectural decision or design:
+ - If the design involves multiple services or components, also generate an L2 architecture diagram to `docs/diagrams/architecture-<slug>.md`.
+ - Record both as `pending` artifact entries in the memory ledger with `source:` tags pointing to any related decision entries.
+ 
++A recorded ADR or decision stays `pending` — a proposal, not a green light (stop condition `U-11`). Do **not** implement what it documents until the user explicitly accepts it (`/memory accept <id>`); if they ask you to proceed, accept the entry first, then act. **Pending is not approval.**
++
+ Skip file generation for quick clarifications or one-liner answers where no durable decision was made.
+diff --git a/integrations/codex/prompts/praxis-developer.md b/integrations/codex/prompts/praxis-developer.md
+index f4c2d2a..ba2d153 100644
+--- a/integrations/codex/prompts/praxis-developer.md
++++ b/integrations/codex/prompts/praxis-developer.md
+@@ -14,4 +14,6 @@ When the answer contains a substantial implementation plan, a module breakdown,
+ - Write or update the Module Map, Implementation Notes, or API Reference section of `docs/technical-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded plan or design stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** implement it until the user explicitly accepts it (`/memory accept <id>`); if they ask you to proceed, accept the entry first, then act. **Pending is not approval.**
++
+ Skip for bug fixes, one-line code questions, or quick refactoring answers.
+diff --git a/integrations/codex/prompts/praxis-devops.md b/integrations/codex/prompts/praxis-devops.md
+index 22d4175..465636b 100644
+--- a/integrations/codex/prompts/praxis-devops.md
++++ b/integrations/codex/prompts/praxis-devops.md
+@@ -15,4 +15,6 @@ When the answer contains a deployment design, a pipeline definition, or a runboo
+ - If the CI/CD pipeline has more than two stages, also generate a flow diagram to `docs/diagrams/flow-deploy-<slug>.md`.
+ - Record each file as a `pending` artifact in the memory ledger.
+ 
++A recorded deployment design or runbook stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** execute it (no pipeline changes, no deploys) until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick config questions, one-off CLI answers, or simple troubleshooting steps.
+diff --git a/integrations/codex/prompts/praxis-product.md b/integrations/codex/prompts/praxis-product.md
+index ac69c85..796db37 100644
+--- a/integrations/codex/prompts/praxis-product.md
++++ b/integrations/codex/prompts/praxis-product.md
+@@ -14,4 +14,6 @@ When the answer contains a prioritized backlog, a sprint goal, or a roadmap slic
+ - Append a Priorities and Sprint Goal section to `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded prioritization or sprint goal stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** drive work from it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick priority questions or single-item sizing answers.
+diff --git a/integrations/codex/prompts/praxis-qa.md b/integrations/codex/prompts/praxis-qa.md
+index 5db67e7..33d7b16 100644
+--- a/integrations/codex/prompts/praxis-qa.md
++++ b/integrations/codex/prompts/praxis-qa.md
+@@ -14,4 +14,6 @@ When the answer contains a test strategy, a full test suite design, or a risk-ba
+ - Write it to `docs/test-strategy.md` (or append a section if the file exists).
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded test strategy stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** gate or drive work from it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for single test-case questions, bug triage, or quick coverage gap answers.
+diff --git a/integrations/codex/prompts/praxis-security.md b/integrations/codex/prompts/praxis-security.md
+index 2ac314d..dd7c00f 100644
+--- a/integrations/codex/prompts/praxis-security.md
++++ b/integrations/codex/prompts/praxis-security.md
+@@ -14,4 +14,6 @@ When the answer contains a threat model, a set of significant findings, or a sec
+ - Append a Security Architecture or Security Findings section to `docs/technical-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded threat model or security decision stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** implement its controls or treat its risks as accepted until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick one-off vulnerability questions or single CVE triage answers.
+diff --git a/integrations/codex/prompts/praxis-ux.md b/integrations/codex/prompts/praxis-ux.md
+index c77230b..f983ed3 100644
+--- a/integrations/codex/prompts/praxis-ux.md
++++ b/integrations/codex/prompts/praxis-ux.md
+@@ -14,4 +14,6 @@ When the answer contains a UI design, a user journey, or an accessibility/design
+ - Write or update the UI Guide section (screens, navigation, accessibility notes) of `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded design specification stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build the UI it specifies until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick token lookups, minor style fixes, or single-component answers.
+diff --git a/integrations/cursor/.cursor/commands/analyst.md b/integrations/cursor/.cursor/commands/analyst.md
+index 3a91074..5ca0dfa 100644
+--- a/integrations/cursor/.cursor/commands/analyst.md
++++ b/integrations/cursor/.cursor/commands/analyst.md
+@@ -14,4 +14,6 @@ When the answer contains a substantial set of requirements, user stories, or a p
+ - Write or update the Purpose, Feature Catalogue, and User Journeys sections of `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded requirement set stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build against it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick requirement clarifications or short scoping answers.
+diff --git a/integrations/cursor/.cursor/commands/architect.md b/integrations/cursor/.cursor/commands/architect.md
+index 8c6c112..df0df4b 100644
+--- a/integrations/cursor/.cursor/commands/architect.md
++++ b/integrations/cursor/.cursor/commands/architect.md
+@@ -15,4 +15,6 @@ When the answer contains a significant architectural decision or design:
+ - If the design involves multiple services or components, also generate an L2 architecture diagram to `docs/diagrams/architecture-<slug>.md`.
+ - Record both as `pending` artifact entries in the memory ledger with `source:` tags pointing to any related decision entries.
+ 
++A recorded ADR or decision stays `pending` — a proposal, not a green light (stop condition `U-11`). Do **not** implement what it documents until the user explicitly accepts it (`/memory accept <id>`); if they ask you to proceed, accept the entry first, then act. **Pending is not approval.**
++
+ Skip file generation for quick clarifications or one-liner answers where no durable decision was made.
+diff --git a/integrations/cursor/.cursor/commands/developer.md b/integrations/cursor/.cursor/commands/developer.md
+index 7839b9a..987710f 100644
+--- a/integrations/cursor/.cursor/commands/developer.md
++++ b/integrations/cursor/.cursor/commands/developer.md
+@@ -14,4 +14,6 @@ When the answer contains a substantial implementation plan, a module breakdown,
+ - Write or update the Module Map, Implementation Notes, or API Reference section of `docs/technical-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded plan or design stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** implement it until the user explicitly accepts it (`/memory accept <id>`); if they ask you to proceed, accept the entry first, then act. **Pending is not approval.**
++
+ Skip for bug fixes, one-line code questions, or quick refactoring answers.
+diff --git a/integrations/cursor/.cursor/commands/devops.md b/integrations/cursor/.cursor/commands/devops.md
+index 291b167..2501207 100644
+--- a/integrations/cursor/.cursor/commands/devops.md
++++ b/integrations/cursor/.cursor/commands/devops.md
+@@ -15,4 +15,6 @@ When the answer contains a deployment design, a pipeline definition, or a runboo
+ - If the CI/CD pipeline has more than two stages, also generate a flow diagram to `docs/diagrams/flow-deploy-<slug>.md`.
+ - Record each file as a `pending` artifact in the memory ledger.
+ 
++A recorded deployment design or runbook stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** execute it (no pipeline changes, no deploys) until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick config questions, one-off CLI answers, or simple troubleshooting steps.
+diff --git a/integrations/cursor/.cursor/commands/product.md b/integrations/cursor/.cursor/commands/product.md
+index 936fbdf..f3fa549 100644
+--- a/integrations/cursor/.cursor/commands/product.md
++++ b/integrations/cursor/.cursor/commands/product.md
+@@ -14,4 +14,6 @@ When the answer contains a prioritized backlog, a sprint goal, or a roadmap slic
+ - Append a Priorities and Sprint Goal section to `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded prioritization or sprint goal stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** drive work from it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick priority questions or single-item sizing answers.
+diff --git a/integrations/cursor/.cursor/commands/qa.md b/integrations/cursor/.cursor/commands/qa.md
+index 6d64cba..94696c0 100644
+--- a/integrations/cursor/.cursor/commands/qa.md
++++ b/integrations/cursor/.cursor/commands/qa.md
+@@ -14,4 +14,6 @@ When the answer contains a test strategy, a full test suite design, or a risk-ba
+ - Write it to `docs/test-strategy.md` (or append a section if the file exists).
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded test strategy stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** gate or drive work from it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for single test-case questions, bug triage, or quick coverage gap answers.
+diff --git a/integrations/cursor/.cursor/commands/security.md b/integrations/cursor/.cursor/commands/security.md
+index 1e9c625..6a8a172 100644
+--- a/integrations/cursor/.cursor/commands/security.md
++++ b/integrations/cursor/.cursor/commands/security.md
+@@ -14,4 +14,6 @@ When the answer contains a threat model, a set of significant findings, or a sec
+ - Append a Security Architecture or Security Findings section to `docs/technical-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded threat model or security decision stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** implement its controls or treat its risks as accepted until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick one-off vulnerability questions or single CVE triage answers.
+diff --git a/integrations/cursor/.cursor/commands/ux.md b/integrations/cursor/.cursor/commands/ux.md
+index abf832c..50d1800 100644
+--- a/integrations/cursor/.cursor/commands/ux.md
++++ b/integrations/cursor/.cursor/commands/ux.md
+@@ -14,4 +14,6 @@ When the answer contains a UI design, a user journey, or an accessibility/design
+ - Write or update the UI Guide section (screens, navigation, accessibility notes) of `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded design specification stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build the UI it specifies until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick token lookups, minor style fixes, or single-component answers.
+diff --git a/integrations/hooks/memory.settings.example.json b/integrations/hooks/memory.settings.example.json
+index 59310b4..52bdec2 100644
+--- a/integrations/hooks/memory.settings.example.json
++++ b/integrations/hooks/memory.settings.example.json
+@@ -5,6 +5,8 @@
+ 
+   "// Stop": "When a turn ends with uncommitted changes, capture a de-duplicated, rollback-able snapshot automatically. Combined with the doctrine in the memory skill (which records the WHY of decisions), this guarantees a durable record across every command and skill.",
+ 
++  "// PreToolUse.git-commit-push": "Before a commit or push lands — the moment work is about to ship — re-surface the ledger entries still pending accept/reject as a stderr nudge, so work authorized only by a pending decision or plan is caught before it ships (pending is not approval; stop condition U-11). A reminder, not a gate: exit 0 always, never blocks — planning runs legitimately commit with everything pending.",
++
+   "hooks": {
+     "SessionStart": [
+       {
+@@ -16,6 +18,17 @@
+         ]
+       }
+     ],
++    "PreToolUse": [
++      {
++        "matcher": "Bash",
++        "hooks": [
++          {
++            "type": "command",
++            "command": "grep -Eq 'git[[:space:]]+(commit|push)' <<< \"$CLAUDE_TOOL_INPUT_COMMAND\" || exit 0; python3 \"$CLAUDE_PROJECT_DIR/.claude/skills/memory/scripts/ledger.py\" pending --brief 2>/dev/null >&2; exit 0"
++          }
++        ]
++      }
++    ],
+     "Stop": [
+       {
+         "hooks": [
+diff --git a/integrations/intellij/prompts/analyst.md b/integrations/intellij/prompts/analyst.md
+index 80b4649..228cb6e 100644
+--- a/integrations/intellij/prompts/analyst.md
++++ b/integrations/intellij/prompts/analyst.md
+@@ -14,4 +14,6 @@ When the answer contains a substantial set of requirements, user stories, or a p
+ - Write or update the Purpose, Feature Catalogue, and User Journeys sections of `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded requirement set stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build against it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick requirement clarifications or short scoping answers.
+diff --git a/integrations/intellij/prompts/architect.md b/integrations/intellij/prompts/architect.md
+index 0611757..f1e2dfa 100644
+--- a/integrations/intellij/prompts/architect.md
++++ b/integrations/intellij/prompts/architect.md
+@@ -15,4 +15,6 @@ When the answer contains a significant architectural decision or design:
+ - If the design involves multiple services or components, also generate an L2 architecture diagram to `docs/diagrams/architecture-<slug>.md`.
+ - Record both as `pending` artifact entries in the memory ledger with `source:` tags pointing to any related decision entries.
+ 
++A recorded ADR or decision stays `pending` — a proposal, not a green light (stop condition `U-11`). Do **not** implement what it documents until the user explicitly accepts it (`/memory accept <id>`); if they ask you to proceed, accept the entry first, then act. **Pending is not approval.**
++
+ Skip file generation for quick clarifications or one-liner answers where no durable decision was made.
+diff --git a/integrations/intellij/prompts/developer.md b/integrations/intellij/prompts/developer.md
+index eb90905..5151e32 100644
+--- a/integrations/intellij/prompts/developer.md
++++ b/integrations/intellij/prompts/developer.md
+@@ -14,4 +14,6 @@ When the answer contains a substantial implementation plan, a module breakdown,
+ - Write or update the Module Map, Implementation Notes, or API Reference section of `docs/technical-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded plan or design stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** implement it until the user explicitly accepts it (`/memory accept <id>`); if they ask you to proceed, accept the entry first, then act. **Pending is not approval.**
++
+ Skip for bug fixes, one-line code questions, or quick refactoring answers.
+diff --git a/integrations/intellij/prompts/devops.md b/integrations/intellij/prompts/devops.md
+index d7d2288..3b0114b 100644
+--- a/integrations/intellij/prompts/devops.md
++++ b/integrations/intellij/prompts/devops.md
+@@ -15,4 +15,6 @@ When the answer contains a deployment design, a pipeline definition, or a runboo
+ - If the CI/CD pipeline has more than two stages, also generate a flow diagram to `docs/diagrams/flow-deploy-<slug>.md`.
+ - Record each file as a `pending` artifact in the memory ledger.
+ 
++A recorded deployment design or runbook stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** execute it (no pipeline changes, no deploys) until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick config questions, one-off CLI answers, or simple troubleshooting steps.
+diff --git a/integrations/intellij/prompts/product.md b/integrations/intellij/prompts/product.md
+index 321ddf0..a96d653 100644
+--- a/integrations/intellij/prompts/product.md
++++ b/integrations/intellij/prompts/product.md
+@@ -14,4 +14,6 @@ When the answer contains a prioritized backlog, a sprint goal, or a roadmap slic
+ - Append a Priorities and Sprint Goal section to `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded prioritization or sprint goal stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** drive work from it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick priority questions or single-item sizing answers.
+diff --git a/integrations/intellij/prompts/qa.md b/integrations/intellij/prompts/qa.md
+index cb08567..732e808 100644
+--- a/integrations/intellij/prompts/qa.md
++++ b/integrations/intellij/prompts/qa.md
+@@ -14,4 +14,6 @@ When the answer contains a test strategy, a full test suite design, or a risk-ba
+ - Write it to `docs/test-strategy.md` (or append a section if the file exists).
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded test strategy stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** gate or drive work from it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for single test-case questions, bug triage, or quick coverage gap answers.
+diff --git a/integrations/intellij/prompts/security.md b/integrations/intellij/prompts/security.md
+index 738da6e..38026a4 100644
+--- a/integrations/intellij/prompts/security.md
++++ b/integrations/intellij/prompts/security.md
+@@ -14,4 +14,6 @@ When the answer contains a threat model, a set of significant findings, or a sec
+ - Append a Security Architecture or Security Findings section to `docs/technical-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded threat model or security decision stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** implement its controls or treat its risks as accepted until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick one-off vulnerability questions or single CVE triage answers.
+diff --git a/integrations/intellij/prompts/ux.md b/integrations/intellij/prompts/ux.md
+index 64bdae3..ce6af2d 100644
+--- a/integrations/intellij/prompts/ux.md
++++ b/integrations/intellij/prompts/ux.md
+@@ -14,4 +14,6 @@ When the answer contains a UI design, a user journey, or an accessibility/design
+ - Write or update the UI Guide section (screens, navigation, accessibility notes) of `docs/functional-manual.md`.
+ - Record the file as a `pending` artifact in the memory ledger.
+ 
++A recorded design specification stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build the UI it specifies until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
++
+ Skip for quick token lookups, minor style fixes, or single-component answers.
+diff --git a/rules/stop-conditions-catalog.md b/rules/stop-conditions-catalog.md
+index 7c6788a..8ec50e7 100644
+--- a/rules/stop-conditions-catalog.md
++++ b/rules/stop-conditions-catalog.md
+@@ -37,6 +37,7 @@ These apply to every spec. A spec's own catalog inherits them
+ | U-8 | An implementation note would claim a gate is green without a verify-report result (self-certification). | `STOP[U-8]: Cannot self-mark gate <G-name> green.` | The gate runs and the verify report records the result, or the note is rewritten to state the gate is unrun. |
+ | U-9 | A named entity (asset, primitive, route, endpoint, provider, module) is substituted for a differently named one. | `STOP[U-9]: Named substitution detected: contract names <X>, implementation uses <Y>.` | Implementation uses the named entity, or the contract is amended with a decision trace. |
+ | U-10 | A block marked locked/verbatim is rewritten. | `STOP[U-10]: Locked block <name> rewritten at <file>:<line>.` | Implementation matches the lock exactly, or the lock is removed by an approved amendment. |
++| U-11 | Work is about to execute whose only authorization is a `pending` artifact — a memory-ledger decision/plan still `pending`, a `spec.md` still `status: draft`, or a gate's HITL approval not yet given. Pending is not approval. | `STOP[U-11]: Authorizing artifact <id or path> is still pending. Pending is not approval.` | The user explicitly accepts the artifact (`/memory accept <id>`, spec `status: accepted`, or the gate's recorded approval) — or rejects it and the work is cancelled. |
+ 
+ ## Project- and spec-specific conditions
+ 
+diff --git a/rules/stop-conditions.md b/rules/stop-conditions.md
+index 2ad3a88..d39f612 100644
+--- a/rules/stop-conditions.md
++++ b/rules/stop-conditions.md
+@@ -24,7 +24,8 @@ conditions on top of these.
+   it is not already declared.
+ - **Whether a pending decision is approved** — a `pending` entry is a proposal,
+   **not** authorization. Do not execute the work it authorizes until the user
+-  accepts it.
++  accepts it. When the work is observably about to execute on a still-pending
++  authorization, this hardens into catalog condition `U-11`.
+ 
+ ## Hard blocks (cannot proceed at all)
+ 
+@@ -58,7 +59,7 @@ the answer live only in chat.
+ The conditions above are **judgement** calls — ambiguity that *would change*
+ something material, so you ask. Beside them is the *hard-blocker* half:
+ [stop-conditions-catalog.md](stop-conditions-catalog.md) enumerates observable
+-triggers (`U-1…U-10`, plus per-project `P-*` and per-spec `S-*`) with the exact
++triggers (`U-1…U-11`, plus per-project `P-*` and per-spec `S-*`) with the exact
+ `STOP[...]` text to surface and the gate that resolves each. Those are not "ask if
+ unclear" — an undefined value, an unresolvable asset, a gate that cannot run, a
+ self-certified gate: the agent halts, writes a [run log](../projects/_template/specs/_template/runs/_run-log.md),

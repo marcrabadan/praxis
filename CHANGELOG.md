@@ -11,6 +11,66 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-06-10
+
+### Added
+
+- **Team conventions captured into four role experts** (via `/learn`, accepted
+  ledger decision `20260610-181128-01db`, refined by `20260610-181909-202f`):
+  **no non-functional inline comments** — code self-explains; functional tool
+  directives (`noqa`, `eslint-disable`, pragmas) are code, not commentary; the
+  one permitted informative comment states a constraint the code cannot
+  express (invariant, external requirement, deliberate trade-off, security
+  warning); no commented-out code or inline TODO/FIXME; docstrings on public
+  APIs and ADRs remain the documented homes for interface docs and design
+  rationale — and **test-first for complex logic** — unit tests are written
+  before implementing observably complex logic (non-trivial conditionals,
+  calculations, parsing, state machines, concurrency, security-sensitive
+  paths); bug fixes start with the failing regression test; trivial glue may
+  be test-after, but no complex logic merges untested. Landed in the
+  `developer` practices + checklist, the `qa-engineer`, `security-engineer`,
+  and `software-architect` checklists, and the architect's testability NFR
+  and ADR discipline.
+
+- **`U-11` — executing on a pending authorization is now a catalogued hard stop**
+  ([`rules/stop-conditions-catalog.md`](rules/stop-conditions-catalog.md)) —
+  work whose only authorization is a still-`pending` artifact (a memory-ledger
+  decision/plan, a `spec.md` at `status: draft`, an ungiven HITL gate approval)
+  halts with `STOP[U-11]` until the user explicitly accepts or rejects it.
+  "Pending is not approval" was already doctrine throughout; it now also has a
+  deterministic catalog id, cited by the validation-orchestrator and by the
+  judgement half in [`rules/stop-conditions.md`](rules/stop-conditions.md).
+- **Memory hook: pre-ship pending nudge**
+  ([`integrations/hooks/memory.settings.example.json`](integrations/hooks/memory.settings.example.json))
+  — a `PreToolUse` hook on `git commit` / `git push` re-surfaces the ledger
+  entries still awaiting accept/reject (`ledger.py pending --brief`), so work
+  built on an unaccepted proposal is caught before it ships. A stderr nudge,
+  never a block (exit 0 always) — planning runs legitimately commit with
+  everything pending.
+
+### Changed
+
+- **Accept is the trigger — accepting an entry now drives execution.** The
+  mirror of "pending is not approval": when the user accepts a `plan`,
+  `decision`, `test-strategy`, or `rollout` whose work has not been done yet,
+  that acceptance is the green light and the work is carried out in the same
+  turn — the user does not have to ask twice. Codified in the memory skill's
+  rules and review workflow, the `/memory` command's accept route, and the
+  eight consult-command reminders; `ledger.py accept` now prints an explicit
+  "acceptance is the green light — carry it out now" nudge for actionable
+  entry types (with tests).
+- **Consult commands now restate the acceptance gate.** The eight expert
+  commands that record `pending` artifacts (`/analyst`, `/architect`,
+  `/developer`, `/devops`, `/product`, `/qa`, `/security`, `/ux`) now close
+  their *Always-on docs* section with the rule that a recorded ADR / plan /
+  strategy is a proposal, not authorization: do not implement it until the user
+  explicitly accepts it (`/memory accept <id>`) — pending is not approval
+  (`U-11`). Previously the rule lived only in the memory skill,
+  `rules/stop-conditions.md`, and the lifecycle commands, so a consult command
+  followed by "ok, do it" had no in-command guard.
+
+## [1.10.0] - 2026-06-09
+
 ### Added
 
 - **`/idea` — intake & triage front door** ([`.claude/commands/idea.md`](.claude/commands/idea.md))

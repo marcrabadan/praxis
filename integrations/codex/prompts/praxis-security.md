@@ -14,4 +14,6 @@ When the answer contains a threat model, a set of significant findings, or a sec
 - Append a Security Architecture or Security Findings section to `docs/technical-manual.md`.
 - Record the file as a `pending` artifact in the memory ledger.
 
+A recorded threat model or security decision stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** implement its controls or treat its risks as accepted until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval — and accept is the trigger:** once accepted, carry the work out in that same turn without waiting to be asked again.
+
 Skip for quick one-off vulnerability questions or single CVE triage answers.

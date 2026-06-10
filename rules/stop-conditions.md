@@ -24,7 +24,8 @@ conditions on top of these.
   it is not already declared.
 - **Whether a pending decision is approved** — a `pending` entry is a proposal,
   **not** authorization. Do not execute the work it authorizes until the user
-  accepts it.
+  accepts it. When the work is observably about to execute on a still-pending
+  authorization, this hardens into catalog condition `U-11`.
 
 ## Hard blocks (cannot proceed at all)
 
@@ -58,7 +59,7 @@ the answer live only in chat.
 The conditions above are **judgement** calls — ambiguity that *would change*
 something material, so you ask. Beside them is the *hard-blocker* half:
 [stop-conditions-catalog.md](stop-conditions-catalog.md) enumerates observable
-triggers (`U-1…U-10`, plus per-project `P-*` and per-spec `S-*`) with the exact
+triggers (`U-1…U-11`, plus per-project `P-*` and per-spec `S-*`) with the exact
 `STOP[...]` text to surface and the gate that resolves each. Those are not "ask if
 unclear" — an undefined value, an unresolvable asset, a gate that cannot run, a
 self-certified gate: the agent halts, writes a [run log](../projects/_template/specs/_template/runs/_run-log.md),

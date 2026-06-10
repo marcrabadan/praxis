@@ -55,7 +55,7 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
 - [ ] Encryption is authenticated (AES-GCM / ChaCha20-Poly1305); no ECB; nonces/IVs are never reused with a key.
 - [ ] All randomness for tokens/salts/keys uses a CSPRNG, not a general-purpose RNG.
 - [ ] Keys live in a KMS or secrets manager, are separated by purpose/environment, and have a rotation plan.
-- [ ] **No secrets are committed** to source control, config, or logs; any leaked secret is rotated immediately.
+- [ ] **No secrets are committed** to source control, config, or logs — including in code comments; any leaked secret is rotated immediately.
 - [ ] Data is encrypted in transit (TLS, validated certs, modern versions/ciphers) and sensitive data at rest.
 
 ---
@@ -89,6 +89,8 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
 
 ## 10. Findings and sign-off
 
+- [ ] **Team rule — test-first:** security-sensitive code (authn/authz, input validation, crypto, session/token handling) is always treated as complex logic — its unit tests, including negative and abuse cases, are written *before* the implementation.
+- [ ] No security control is disabled by commenting it out; removal of a control requires a recorded decision, never a comment.
 - [ ] Every finding has a vulnerability class (CWE where useful), a severity (CVSS where a numeric score is warranted, with the vector recorded), and a concrete fix.
 - [ ] Each fix has a regression test or check that proves it.
 - [ ] Every open finding ends in a decision: fix, mitigate, accept (with owner + expiry + rationale), or false positive (suppressed with a reason).

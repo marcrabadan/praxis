@@ -195,6 +195,18 @@ class TestAcceptReject(LedgerTestCase):
         code, _ = self.run_cmd("accept", "does-not-exist")
         self.assertEqual(code, 1)
 
+    def test_accept_actionable_type_prints_execute_nudge(self):
+        entry_id = self.log_entry(type_="plan")
+        code, out = self.run_cmd("accept", entry_id)
+        self.assertEqual(code, 0)
+        self.assertIn("green light", out)
+
+    def test_accept_non_actionable_type_prints_no_execute_nudge(self):
+        entry_id = self.log_entry(type_="note")
+        code, out = self.run_cmd("accept", entry_id)
+        self.assertEqual(code, 0)
+        self.assertNotIn("green light", out)
+
 
 # ---------------------------------------------------------------------------
 # supersede

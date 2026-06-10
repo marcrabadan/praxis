@@ -17,4 +17,6 @@ When the answer contains a test strategy, a full test suite design, or a risk-ba
 - Write it to `docs/test-strategy.md` (or append a section if the file exists).
 - Record the file as a `pending` artifact in the memory ledger.
 
+A recorded test strategy stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** gate or drive work from it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval — and accept is the trigger:** once accepted, carry the work out in that same turn without waiting to be asked again.
+
 Skip for single test-case questions, bug triage, or quick coverage gap answers.

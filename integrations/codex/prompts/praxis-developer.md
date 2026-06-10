@@ -14,4 +14,6 @@ When the answer contains a substantial implementation plan, a module breakdown, 
 - Write or update the Module Map, Implementation Notes, or API Reference section of `docs/technical-manual.md`.
 - Record the file as a `pending` artifact in the memory ledger.
 
+A recorded plan or design stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** implement it until the user explicitly accepts it (`/memory accept <id>`); if they ask you to proceed, accept the entry first, then act. **Pending is not approval — and accept is the trigger:** the moment the user accepts, carry the work out in that same turn without waiting to be asked again.
+
 Skip for bug fixes, one-line code questions, or quick refactoring answers.

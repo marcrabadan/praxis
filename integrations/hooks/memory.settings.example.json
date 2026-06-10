@@ -5,6 +5,8 @@
 
   "// Stop": "When a turn ends with uncommitted changes, capture a de-duplicated, rollback-able snapshot automatically. Combined with the doctrine in the memory skill (which records the WHY of decisions), this guarantees a durable record across every command and skill.",
 
+  "// PreToolUse.git-commit-push": "Before a commit or push lands — the moment work is about to ship — re-surface the ledger entries still pending accept/reject as a stderr nudge, so work authorized only by a pending decision or plan is caught before it ships (pending is not approval; stop condition U-11). A reminder, not a gate: exit 0 always, never blocks — planning runs legitimately commit with everything pending.",
+
   "hooks": {
     "SessionStart": [
       {
@@ -12,6 +14,17 @@
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/skills/memory/scripts/ledger.py\" init >/dev/null 2>&1; python3 \"$CLAUDE_PROJECT_DIR/.claude/skills/memory/scripts/ledger.py\" bootstrap --brief 2>/dev/null; python3 \"$CLAUDE_PROJECT_DIR/.claude/skills/memory/scripts/ledger.py\" pending --brief 2>/dev/null; exit 0"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "grep -Eq 'git[[:space:]]+(commit|push)' <<< \"$CLAUDE_TOOL_INPUT_COMMAND\" || exit 0; python3 \"$CLAUDE_PROJECT_DIR/.claude/skills/memory/scripts/ledger.py\" pending --brief 2>/dev/null >&2; exit 0"
           }
         ]
       }

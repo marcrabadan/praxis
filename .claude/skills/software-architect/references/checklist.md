@@ -14,6 +14,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
 | 1.4 | Availability SLOs are stated (e.g. 99.9% uptime = 44 min/month downtime). The design's failure modes have been compared against these SLOs. | | |
 | 1.5 | Latency targets (p50/p95/p99) exist for user-facing synchronous operations. | | |
 | 1.6 | A peak-load estimate and a growth horizon (e.g. 6 months, 2 years) have been stated and the design validated against them. | | |
+| 1.7 | **Team rule — testability:** boundaries and dependencies are designed so complex domain logic can be unit-tested in isolation (test-first is the team norm); no component requires integration infrastructure to test its core logic. | | |
 
 ---
 
@@ -26,6 +27,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
 | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
 | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
 | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
+| 2.6 | **Team rule — no non-functional inline comments:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
 
 ---
 
