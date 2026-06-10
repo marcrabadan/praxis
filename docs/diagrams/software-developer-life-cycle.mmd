@@ -1,0 +1,33 @@
+%% Praxis — Software Developer Life Cycle (SDLC)
+%% The "how" half of the praxis feature-development lifecycle:
+%% plan -> tasks -> build -> verify (bounded loop) -> release.
+flowchart TD
+    IN([" From PDLC →<br/>approved Spec + Experience "]):::entry
+
+    subgraph SDLC["SOFTWARE DEVELOPER LIFE CYCLE — how"]
+        direction TB
+        PLAN["6 · Plan<br/><i>implementation plan · architecture review</i>"]:::stage
+        G3{{"Gate 3 — HITL (conditional)<br/>Architecture validated"}}:::gate
+        TASKS["7 · Tasks<br/><i>checklist · files-owned · per-task gates</i>"]:::stage
+        BUILD["8 · Build<br/><i>code in the product repo</i>"]:::stage
+        VERIFY["9 · Verify  (bounded loop)<br/><i>acceptance · tests · G-security · G-performance</i>"]:::stage
+        RC["10 · Release Candidate<br/><i>verify passed · release notes drafted</i>"]:::stage
+        G4{{"Gate 4 — HITL<br/>Release approved"}}:::gate
+        REL["11 · Release<br/><i>release notes · rollback plan</i>"]:::stage
+
+        PLAN --> G3 --> TASKS --> BUILD --> VERIFY
+        VERIFY -->|"fail · rework (bounded)"| BUILD
+        VERIFY -->|pass| RC --> G4 --> REL
+    end
+
+    IN --> PLAN
+    REL --> DONE([" Shipped "]):::exit
+
+    ROLES["Owning roles:  Software Architect · Developer · QA Engineer · DevOps Engineer · Security Engineer"]:::roles
+    SDLC -.-> ROLES
+
+    classDef entry fill:#1d4ed8,color:#fff,stroke:#1e3a8a,stroke-width:1px;
+    classDef exit fill:#047857,color:#fff,stroke:#065f46,stroke-width:1px;
+    classDef stage fill:#f5f3ff,color:#0f172a,stroke:#8b5cf6,stroke-width:1.5px;
+    classDef gate fill:#fef3c7,color:#7c2d12,stroke:#d97706,stroke-width:1.5px;
+    classDef roles fill:#f1f5f9,color:#334155,stroke:#94a3b8,stroke-dasharray:4 3;

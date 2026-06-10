@@ -1,0 +1,30 @@
+%% Praxis — Product Developer Life Cycle (PDLC)
+%% The "what & why" half of the praxis feature-development lifecycle:
+%% understand -> research -> define -> specify -> contract the surfaces.
+flowchart TD
+    IDEA([" Idea / PRD "]):::entry
+
+    subgraph PDLC["PRODUCT DEVELOPER LIFE CYCLE — what &amp; why"]
+        direction TB
+        DISC["1 · Discovery<br/><i>problem · target user · outcome &amp; success signal</i>"]:::stage
+        RES["2 · Research<br/><i>findings · alternatives · evidence log</i>"]:::stage
+        G1{{"Gate 1 — HITL<br/>Discovery &amp; Research approved"}}:::gate
+        PD["3 · Product Definition<br/><i>MVP scope · MoSCoW priorities · success metrics</i>"]:::stage
+        SPEC["4 · Spec  ★ source of truth<br/><i>testable acceptance criteria per requirement</i>"]:::stage
+        G2{{"Gate 2 — HITL<br/>Spec approved"}}:::gate
+        EXP["5 · Experience  (optional)<br/><i>one executable contract per surface</i>"]:::stage
+
+        DISC --> RES --> G1 --> PD --> SPEC --> G2 --> EXP
+    end
+
+    IDEA --> DISC
+    EXP --> HANDOFF([" Hand-off to SDLC →<br/>approved Spec + Experience "]):::exit
+
+    ROLES["Owning roles:  Business Analyst · Product Owner · UX/UI Engineer<br/>(Software Architect consulted at Spec)"]:::roles
+    PDLC -.-> ROLES
+
+    classDef entry fill:#1d4ed8,color:#fff,stroke:#1e3a8a,stroke-width:1px;
+    classDef exit fill:#047857,color:#fff,stroke:#065f46,stroke-width:1px;
+    classDef stage fill:#eff6ff,color:#0f172a,stroke:#3b82f6,stroke-width:1.5px;
+    classDef gate fill:#fef3c7,color:#7c2d12,stroke:#d97706,stroke-width:1.5px;
+    classDef roles fill:#f1f5f9,color:#334155,stroke:#94a3b8,stroke-dasharray:4 3;
