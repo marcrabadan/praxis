@@ -242,7 +242,7 @@ Praxis splits its full feature lifecycle into two halves — a **Product Develop
 </tr>
 </table>
 
-Sources: [`docs/diagrams/`](docs/diagrams/) (versioned Mermaid `.mmd` + rendered PNG). The full step and gate definitions live in [`workflows/feature-development.workflow.json`](workflows/feature-development.workflow.json) and [`systems/feature-development/artifact-model.md`](systems/feature-development/artifact-model.md).
+Sources: [`docs/diagrams/`](docs/diagrams/) — the PNGs render from the `*.infographic.html` posters via [`render.js`](docs/diagrams/render.js); a plain Mermaid `.mmd` variant of each sits alongside. The full step and gate definitions live in [`workflows/feature-development.workflow.json`](workflows/feature-development.workflow.json) and [`systems/feature-development/artifact-model.md`](systems/feature-development/artifact-model.md).
 
 What it adds (all repo-level, alongside the factory):
 

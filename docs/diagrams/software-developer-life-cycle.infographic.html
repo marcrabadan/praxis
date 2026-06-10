@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  :root{
+    --ink:#0f172a; --muted:#475569; --line:#e7e5f0;
+    --c1:#7c3aed; --c1d:#5b21b6; --c1s:#f5f3ff;
+    --indigo:#4f46e5;
+    --amber:#d97706; --ambers:#fffbeb; --amberink:#7c2d12;
+    --rose:#e11d48; --roses:#fff1f2;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#f8fafc}
+  body{
+    width:1240px;
+    font-family:'Segoe UI',-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); padding:56px 64px 60px;
+    background:
+      radial-gradient(1100px 520px at 88% -8%, rgba(124,58,237,.10), transparent 60%),
+      radial-gradient(900px 480px at -6% 108%, rgba(79,70,229,.10), transparent 60%),
+      #f8fafc;
+  }
+  .kicker{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.16em;
+    text-transform:uppercase;font-size:13px;color:var(--c1)}
+  .kicker .dot{width:9px;height:9px;border-radius:50%;background:var(--c1)}
+  h1{font-size:46px;line-height:1.05;margin:14px 0 10px;letter-spacing:-.02em}
+  h1 .accent{color:var(--c1)}
+  .sub{font-size:17px;color:var(--muted);max-width:880px;line-height:1.5}
+  .phase-of{margin-top:14px;display:inline-flex;align-items:center;gap:8px;font-size:13px;
+    font-weight:600;color:var(--indigo);background:#eef2ff;border:1px solid #c7d2fe;
+    padding:6px 12px;border-radius:999px}
+
+  .intake{margin-bottom:22px;display:flex;align-items:center;gap:16px;
+    background:linear-gradient(135deg,#3730a3,#6d28d9);color:#fff;border-radius:18px;
+    padding:18px 24px;box-shadow:0 12px 28px rgba(109,40,217,.26)}
+  .intake .ho-ico{font-size:28px}
+  .intake b{font-size:18px;display:block}
+  .intake small{opacity:.9;font-size:14px}
+
+  .flow{position:relative;padding-left:78px}
+  .flow::before{content:"";position:absolute;left:31px;top:18px;bottom:30px;width:4px;
+    border-radius:4px;background:linear-gradient(180deg,var(--c1),var(--indigo))}
+
+  .row{position:relative;margin-bottom:20px}
+  .node{position:absolute;left:-62px;top:18px;width:60px;height:60px;border-radius:16px;
+    display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;
+    background:linear-gradient(135deg,var(--c1),#8b5cf6);
+    box-shadow:0 10px 22px rgba(124,58,237,.30);border:3px solid #fff}
+  .node .ico{font-size:24px;line-height:1}
+  .node .n{position:absolute;top:-9px;right:-9px;width:24px;height:24px;border-radius:50%;
+    background:#0f172a;color:#fff;font-size:12px;display:grid;place-items:center;border:2px solid #fff}
+  .node.loop{background:linear-gradient(135deg,#e11d48,#f43f5e);box-shadow:0 10px 22px rgba(225,29,72,.30)}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:20px 24px;box-shadow:0 6px 16px rgba(15,23,42,.06)}
+  .card.loopcard{border-color:#fecdd3;box-shadow:0 10px 26px rgba(225,29,72,.14)}
+  .card h3{font-size:21px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+  .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+    padding:3px 9px;border-radius:999px;background:var(--c1s);color:var(--c1)}
+  .tag.loop{background:var(--roses);color:var(--rose)}
+  .card p{margin-top:7px;color:var(--muted);font-size:15px;line-height:1.5}
+  .chips{margin-top:13px;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:12.5px;font-weight:600;color:var(--c1d);background:var(--c1s);
+    border:1px solid #ede9fe;padding:5px 11px;border-radius:8px}
+  .chip .role{opacity:.6;font-weight:700;margin-right:6px}
+  .chip.g{background:#ecfdf5;color:#047857;border-color:#a7f3d0}
+
+  .loopback{margin:-8px 0 16px 0;display:flex;align-items:center;gap:10px;
+    color:var(--rose);font-size:13.5px;font-weight:600;padding-left:2px}
+  .loopback .arc{font-size:18px}
+
+  .gate{margin:0 0 20px 0;display:flex;align-items:center;gap:14px;
+    background:var(--ambers);border:1.5px dashed var(--amber);border-radius:14px;
+    padding:13px 20px}
+  .gate .glyph{font-size:20px}
+  .gate b{color:var(--amberink);font-size:15px}
+  .gate span{color:#92400e;font-size:14px}
+  .gate .hitl{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.06em;
+    text-transform:uppercase;color:#fff;background:var(--amber);padding:4px 10px;border-radius:999px}
+  .gate .hitl.cond{background:#a16207}
+
+  .ship{margin-top:8px;display:flex;align-items:center;gap:16px;
+    background:linear-gradient(135deg,#047857,#10b981);color:#fff;border-radius:18px;
+    padding:20px 26px;box-shadow:0 12px 28px rgba(16,185,129,.28)}
+  .ship .ho-ico{font-size:30px}
+  .ship b{font-size:19px;display:block;margin-bottom:2px}
+  .ship small{opacity:.9;font-size:14px}
+
+  .footer{margin-top:34px;display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid var(--line);padding-top:18px;color:#64748b;font-size:13px}
+  .legend{display:flex;gap:20px;flex-wrap:wrap}
+  .legend i{font-style:normal;display:inline-flex;align-items:center;gap:7px}
+  .sw{width:14px;height:14px;border-radius:4px;display:inline-block}
+  .brand{font-weight:800;color:#0f172a;letter-spacing:.02em}
+  .brand .px{color:var(--c1)}
+</style>
+</head>
+<body>
+  <div class="kicker"><span class="dot"></span> Praxis · Feature Lifecycle — Back Half</div>
+  <h1>Software Developer <span class="accent">Life&nbsp;Cycle</span></h1>
+  <p class="sub">The <b>how</b>. Turn an approved spec into shipped software — plan the architecture, decompose into gated tasks, build, then converge in a bounded verify loop before a human-approved release.</p>
+  <div class="phase-of">◆ Phases 6–11 of the praxis <code style="font-family:inherit">discovery → … → release</code> lifecycle</div>
+
+  <div class="intake">
+    <span class="ho-ico">📥</span>
+    <div><b>From the Product Developer Life Cycle</b><small>Enters with an approved Spec + Experience contracts.</small></div>
+  </div>
+
+  <div class="flow">
+    <!-- 6 -->
+    <div class="row">
+      <div class="node"><span class="ico">🧭</span><span class="n">6</span></div>
+      <div class="card">
+        <h3>Plan <span class="tag">Design</span></h3>
+        <p>Produce the implementation plan and an architecture review — components, boundaries, and the NFRs the design must meet.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>Software Architect</span><span class="chip">→ implementation-plan.md</span></div>
+      </div>
+    </div>
+    <!-- Gate 3 -->
+    <div class="gate">
+      <span class="glyph">🏛️</span>
+      <span><b>Gate 3 — Architecture validated.</b> Fires only when a structurally significant decision exists (else an ADR is required).</span>
+      <span class="hitl cond">HITL · conditional</span>
+    </div>
+    <!-- 7 -->
+    <div class="row">
+      <div class="node"><span class="ico">✅</span><span class="n">7</span></div>
+      <div class="card">
+        <h3>Tasks <span class="tag">Decompose</span></h3>
+        <p>Break the plan into a checklist — each task naming its Forbidden / Gate / Output and the files it owns, for deterministic anti-drift.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>Developer</span><span class="chip">→ tasks.md</span></div>
+      </div>
+    </div>
+    <!-- 8 -->
+    <div class="row">
+      <div class="node"><span class="ico">🛠️</span><span class="n">8</span></div>
+      <div class="card">
+        <h3>Build <span class="tag">Implement</span></h3>
+        <p>Write the code in the product repo, following the tasks and honouring each surface's experience contract.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>Developer</span><span class="chip">→ code (product repo)</span></div>
+      </div>
+    </div>
+    <!-- 9 -->
+    <div class="row">
+      <div class="node loop"><span class="ico">🔬</span><span class="n">9</span></div>
+      <div class="card loopcard">
+        <h3>Verify <span class="tag loop">⟳ Bounded loop</span></h3>
+        <p>Prove every acceptance criterion against a typed gate catalog. Iterates to its predicate or escalates — it never spins. Self-certification is forbidden.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>QA Engineer</span><span class="chip"><span class="role">+</span>Security Engineer</span><span class="chip g">G-security · mandatory</span><span class="chip g">G-performance · conditional</span></div>
+      </div>
+    </div>
+    <div class="loopback"><span class="arc">↺</span> on fail → route back to <b>&nbsp;Build</b>&nbsp; (bounded: max iterations, then escalate)</div>
+    <!-- 10 -->
+    <div class="row">
+      <div class="node"><span class="ico">📦</span><span class="n">10</span></div>
+      <div class="card">
+        <h3>Release Candidate <span class="tag">Proven correct</span></h3>
+        <p>Verify passed with sign-off; release notes drafted; no open high/critical security finding. Separates <i>proven-correct</i> from <i>decided-to-ship</i>.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>DevOps Engineer</span><span class="chip">→ release-candidate.md</span></div>
+      </div>
+    </div>
+    <!-- Gate 4 -->
+    <div class="gate">
+      <span class="glyph">🛡️</span>
+      <span><b>Gate 4 — Release approved.</b> The human decision to ship the proven candidate.</span>
+      <span class="hitl">HITL</span>
+    </div>
+    <!-- 11 -->
+    <div class="row">
+      <div class="node"><span class="ico">🚀</span><span class="n">11</span></div>
+      <div class="card">
+        <h3>Release <span class="tag">Ship</span></h3>
+        <p>Publish with release notes and a rollback plan; record acceptance met and what shipped.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>DevOps Engineer</span><span class="chip">→ release-notes.md</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ship">
+    <span class="ho-ico">🎉</span>
+    <div><b>Shipped — traceable end to end</b><small>IDEA → DISC → RES → SPEC → … → REL stays navigable both ways.</small></div>
+  </div>
+
+  <div class="footer">
+    <div class="legend">
+      <i><span class="sw" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6)"></span>Phase (owned by a role)</i>
+      <i><span class="sw" style="background:linear-gradient(135deg,#e11d48,#f43f5e)"></span>Bounded verify loop</i>
+      <i><span class="sw" style="background:#d97706"></span>Human-in-the-loop gate</i>
+    </div>
+    <div class="brand"><span class="px">praxis</span> · a failed gate routes back, never bypasses</div>
+  </div>
+</body>
+</html>
