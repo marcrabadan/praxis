@@ -32,9 +32,21 @@ accept or reject recorded entries.
 
    Ids accept an unambiguous prefix, so a user can pass the first few characters.
 
-4. **Summarize.** After a status change, confirm the entry's new state. When
-   listing, give a short human summary (e.g. "3 pending decisions, 1 accepted
-   implementation") rather than only dumping the raw list.
+4. **Accept is the trigger — execute on it.** Accepting is not just bookkeeping:
+   it is the green light the pending status was waiting for. When the user
+   accepts a `plan`, `decision`, `test-strategy`, or `rollout` whose work has
+   not been done yet, **carry that work out in the same turn** (`show <id>` for
+   the full body) — don't make the user ask a second time. If the authorized
+   work is large or its scope is ambiguous, confirm the scope with one focused
+   question, then execute. A `reject` is the opposite signal: do not act, and
+   do not re-propose the same thing unchanged. Accepting an `implementation`,
+   `artifact`, or `note` usually just ratifies something that already exists —
+   nothing further to run.
+
+5. **Summarize.** After a status change, confirm the entry's new state and —
+   when acceptance triggered work — what was executed. When listing, give a
+   short human summary (e.g. "3 pending decisions, 1 accepted implementation")
+   rather than only dumping the raw list.
 
 ## Notes
 

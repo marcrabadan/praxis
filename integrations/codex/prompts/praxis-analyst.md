@@ -14,6 +14,6 @@ When the answer contains a substantial set of requirements, user stories, or a p
 - Write or update the Purpose, Feature Catalogue, and User Journeys sections of `docs/functional-manual.md`.
 - Record the file as a `pending` artifact in the memory ledger.
 
-A recorded requirement set stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build against it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
+A recorded requirement set stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build against it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval — and accept is the trigger:** once accepted, carry the work out in that same turn without waiting to be asked again.
 
 Skip for quick requirement clarifications or short scoping answers.

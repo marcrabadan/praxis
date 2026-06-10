@@ -74,6 +74,11 @@ hand-edit it — which you must not do.
   carrying out the work it authorizes; recording a decision is not the same as
   being allowed to act on it. (Planning-only runs like `/new-feature` legitimately
   end with everything `pending` — they propose, they don't ship.)
+- **Accept is the trigger — execute on it.** The mirror rule: when the user
+  accepts a `plan`, `decision`, `test-strategy`, or `rollout` whose work is not
+  yet done, that acceptance *is* the authorization the entry was waiting for —
+  carry the work out in the same turn rather than making the user ask again
+  (confirm scope first only when it is large or ambiguous).
 - Use `--supersedes` when a new decision replaces an old one — the old entry flips
   to `superseded` automatically; keep the history, don't delete.
 - `rolled-back` is reserved for implementations that were actually reverted via

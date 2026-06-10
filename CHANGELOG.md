@@ -40,6 +40,15 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Changed
 
+- **Accept is the trigger — accepting an entry now drives execution.** The
+  mirror of "pending is not approval": when the user accepts a `plan`,
+  `decision`, `test-strategy`, or `rollout` whose work has not been done yet,
+  that acceptance is the green light and the work is carried out in the same
+  turn — the user does not have to ask twice. Codified in the memory skill's
+  rules and review workflow, the `/memory` command's accept route, and the
+  eight consult-command reminders; `ledger.py accept` now prints an explicit
+  "acceptance is the green light — carry it out now" nudge for actionable
+  entry types (with tests).
 - **Consult commands now restate the acceptance gate.** The eight expert
   commands that record `pending` artifacts (`/analyst`, `/architect`,
   `/developer`, `/devops`, `/product`, `/qa`, `/security`, `/ux`) now close

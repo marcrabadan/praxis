@@ -14,6 +14,6 @@ When the answer contains a UI design, a user journey, or an accessibility/design
 - Write or update the UI Guide section (screens, navigation, accessibility notes) of `docs/functional-manual.md`.
 - Record the file as a `pending` artifact in the memory ledger.
 
-A recorded design specification stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build the UI it specifies until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
+A recorded design specification stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** build the UI it specifies until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval — and accept is the trigger:** once accepted, carry the work out in that same turn without waiting to be asked again.
 
 Skip for quick token lookups, minor style fixes, or single-component answers.

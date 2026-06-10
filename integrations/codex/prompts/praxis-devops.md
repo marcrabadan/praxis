@@ -15,6 +15,6 @@ When the answer contains a deployment design, a pipeline definition, or a runboo
 - If the CI/CD pipeline has more than two stages, also generate a flow diagram to `docs/diagrams/flow-deploy-<slug>.md`.
 - Record each file as a `pending` artifact in the memory ledger.
 
-A recorded deployment design or runbook stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** execute it (no pipeline changes, no deploys) until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
+A recorded deployment design or runbook stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** execute it (no pipeline changes, no deploys) until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval — and accept is the trigger:** once accepted, carry the work out in that same turn without waiting to be asked again.
 
 Skip for quick config questions, one-off CLI answers, or simple troubleshooting steps.

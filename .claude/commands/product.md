@@ -17,6 +17,6 @@ When the answer contains a prioritized backlog, a sprint goal, or a roadmap slic
 - Append a Priorities and Sprint Goal section to `docs/functional-manual.md`.
 - Record the file as a `pending` artifact in the memory ledger.
 
-A recorded prioritization or sprint goal stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** drive work from it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval**.
+A recorded prioritization or sprint goal stays `pending` — a proposal, not authorization (stop condition `U-11`). Do **not** drive work from it until the user explicitly accepts it (`/memory accept <id>`); **pending is not approval — and accept is the trigger:** once accepted, carry the work out in that same turn without waiting to be asked again.
 
 Skip for quick priority questions or single-item sizing answers.

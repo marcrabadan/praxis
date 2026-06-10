@@ -60,6 +60,9 @@ MEMORY_EXCLUDE = ":(exclude,glob).praxis/memory/**"
 TYPES = ("plan", "decision", "implementation", "artifact", "test-strategy", "rollout", "note")
 STATUSES = ("pending", "accepted", "rejected", "rolled-back", "superseded")
 OPEN_STATUSES = ("pending", "accepted")
+# entry types whose body typically authorizes work still to be executed;
+# accepting one is the green light to carry that work out.
+ACTIONABLE_TYPES = ("plan", "decision", "test-strategy", "rollout")
 
 
 # --------------------------------------------------------------------------- #
@@ -565,6 +568,10 @@ def cmd_accept(args) -> int:
         print(f"error: no entry matching {args.id!r}", file=sys.stderr)
         return 1
     print(f"accepted {entry['id']}")
+    if entry.get("type") in ACTIONABLE_TYPES:
+        print(f"→ acceptance is the green light: if the work this "
+              f"{entry['type']} authorizes is not yet done, carry it out now "
+              f"(`show {entry['id']}` for the full body).")
     return 0
 
 

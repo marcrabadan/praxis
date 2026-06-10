@@ -28,7 +28,11 @@ Load the `memory` skill and route on the request above. The skill's CLI is
   filter. Follow [.claude/skills/memory/workflows/review.md](../skills/memory/workflows/review.md).
 - **"show <id>"** → print the entry's full body.
 - **"accept <id>" / "reject <id>"** → advance the lifecycle. Only on explicit
-  user intent; confirm the new status.
+  user intent; confirm the new status. **Accept is the trigger:** when the
+  accepted entry is a `plan`, `decision`, `test-strategy`, or `rollout` whose
+  work is not yet done, execute that work in the same turn (`show <id>` for the
+  body; confirm scope first only if it is large or ambiguous). Reject means do
+  not act.
 - **"rollback <id>"** → follow
   [.claude/skills/memory/workflows/rollback.md](../skills/memory/workflows/rollback.md):
   dry-run first, revert the working tree only, never commit, then tell the user to
