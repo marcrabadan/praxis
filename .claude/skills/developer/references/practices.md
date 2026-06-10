@@ -21,10 +21,12 @@ Readable code is the default; clever code is the exception that must justify its
 - Prefer fewer parameters. Beyond three or four, group related parameters into a named struct or object.
 - Avoid flag parameters (`process(order, true)`). Model the two behaviors as two named functions.
 
-### Comments
-- Comment the *why*, not the *what*. Code shows what; the comment explains the constraint, trade-off, or non-obvious invariant.
-- Delete commented-out code. Source control preserves history. Dead code confuses readers.
-- Keep comments current. A stale comment is worse than no comment because it actively misleads.
+### Comments — team rule: comment-free code
+- **Default: no comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
+- **The only permitted comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
+- Design rationale lives in ADRs (`docs/decisions/`), never inline. Docstrings on public/exported APIs are interface documentation, not narrative comments — they stay.
+- Delete commented-out code (source control preserves history) and inline `TODO`/`FIXME` markers (track them in tickets).
+- Keep the rare permitted comment current. A stale comment is worse than none because it actively misleads.
 
 ---
 
@@ -54,6 +56,11 @@ These principles are heuristics, not laws. Apply them when the benefit is clear;
 ## 3. Test-first / TDD and the test pyramid
 
 Tests are the safety net that makes change safe. Writing them before the code sharpens thinking about the interface before the implementation locks it in.
+
+### Team rule: test-first for complex logic
+- **Before implementing complex logic, write the unit tests first** (red → green → refactor). "Complex" is observable, not a feeling: non-trivial conditionals, calculations (money, dates, rounding), parsing/serialization, state machines, concurrency, and security-sensitive paths (authn/authz, input validation, crypto). Every bug fix starts with the failing regression test.
+- Trivial glue, configuration, or passthrough code may be tested with or after the change — but **no complex logic merges without unit tests** covering positive, negative, and boundary cases.
+- If the test is hard to write, the interface is wrong; discovering that before the implementation exists is the point of writing the test first.
 
 ### Test-first workflow
 1. Write a failing test that expresses the desired behavior clearly.

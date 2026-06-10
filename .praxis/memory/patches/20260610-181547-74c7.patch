@@ -1,0 +1,566 @@
+diff --git a/.claude/skills/developer/references/checklist.md b/.claude/skills/developer/references/checklist.md
+index 710dabb..8d1f6da 100644
+--- a/.claude/skills/developer/references/checklist.md
++++ b/.claude/skills/developer/references/checklist.md
+@@ -17,6 +17,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ 
+ - [ ] All existing tests pass locally (`make test`, `npm test`, `pytest`, or the project equivalent).
+ - [ ] New code is covered by at least one test that exercises the changed behavior.
++- [ ] **Team rule — test-first:** complex logic (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) had its unit tests written *before* the implementation, and a bug fix includes the regression test that failed before it.
+ - [ ] Edge cases are covered: empty inputs, boundary values, error paths, and unexpected inputs.
+ - [ ] No tests have been skipped or disabled to make the suite green.
+ - [ ] Integration or end-to-end tests that touch the changed path have been run (or a reason is noted why they were not).
+@@ -26,6 +27,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ ## 3. Code quality
+ 
+ - [ ] No dead code: unused variables, unreachable branches, or commented-out code are removed.
++- [ ] **Team rule — comment-free code:** no narrative comments; every comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning).
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+ - [ ] Functions do one thing; any function that grew during this change is still within reason.
+@@ -74,10 +76,10 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ 
+ ## 8. Documentation
+ 
+-- [ ] Public APIs, exported functions, and non-obvious module contracts have up-to-date docstrings or comments.
++- [ ] Public APIs and exported functions have up-to-date docstrings (interface documentation — the comment-free rule does not apply to them).
+ - [ ] Any user-facing behavior change is reflected in the relevant README, changelog, or docs page.
+-- [ ] Architecture decision records (ADRs) are updated if a significant architectural decision was made.
+-- [ ] Inline `TODO` or `FIXME` comments reference a ticket ID so they do not become orphaned.
++- [ ] Architecture decision records (ADRs) are updated if a significant architectural decision was made — design rationale lives there, not in inline comments.
++- [ ] No inline `TODO` or `FIXME` comments remain; outstanding work is tracked in tickets.
+ 
+ ---
+ 
+diff --git a/.claude/skills/developer/references/practices.md b/.claude/skills/developer/references/practices.md
+index a1b9b63..efbdc76 100644
+--- a/.claude/skills/developer/references/practices.md
++++ b/.claude/skills/developer/references/practices.md
+@@ -21,10 +21,12 @@ Readable code is the default; clever code is the exception that must justify its
+ - Prefer fewer parameters. Beyond three or four, group related parameters into a named struct or object.
+ - Avoid flag parameters (`process(order, true)`). Model the two behaviors as two named functions.
+ 
+-### Comments
+-- Comment the *why*, not the *what*. Code shows what; the comment explains the constraint, trade-off, or non-obvious invariant.
+-- Delete commented-out code. Source control preserves history. Dead code confuses readers.
+-- Keep comments current. A stale comment is worse than no comment because it actively misleads.
++### Comments — team rule: comment-free code
++- **Default: no comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
++- **The only permitted comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
++- Design rationale lives in ADRs (`docs/decisions/`), never inline. Docstrings on public/exported APIs are interface documentation, not narrative comments — they stay.
++- Delete commented-out code (source control preserves history) and inline `TODO`/`FIXME` markers (track them in tickets).
++- Keep the rare permitted comment current. A stale comment is worse than none because it actively misleads.
+ 
+ ---
+ 
+@@ -55,6 +57,11 @@ These principles are heuristics, not laws. Apply them when the benefit is clear;
+ 
+ Tests are the safety net that makes change safe. Writing them before the code sharpens thinking about the interface before the implementation locks it in.
+ 
++### Team rule: test-first for complex logic
++- **Before implementing complex logic, write the unit tests first** (red → green → refactor). "Complex" is observable, not a feeling: non-trivial conditionals, calculations (money, dates, rounding), parsing/serialization, state machines, concurrency, and security-sensitive paths (authn/authz, input validation, crypto). Every bug fix starts with the failing regression test.
++- Trivial glue, configuration, or passthrough code may be tested with or after the change — but **no complex logic merges without unit tests** covering positive, negative, and boundary cases.
++- If the test is hard to write, the interface is wrong; discovering that before the implementation exists is the point of writing the test first.
++
+ ### Test-first workflow
+ 1. Write a failing test that expresses the desired behavior clearly.
+ 2. Write the minimal code that makes it pass. Resist adding more than the test requires.
+diff --git a/.claude/skills/qa-engineer/references/checklist.md b/.claude/skills/qa-engineer/references/checklist.md
+index 22d42fe..2464044 100644
+--- a/.claude/skills/qa-engineer/references/checklist.md
++++ b/.claude/skills/qa-engineer/references/checklist.md
+@@ -23,6 +23,7 @@ Use this checklist before declaring a feature, sprint, or release ready to progr
+ - [ ] Every AC that involves input validation, error handling, or business rules has at least one negative test case.
+ - [ ] Boundary values are tested for every numeric, date, or length-limited field.
+ - [ ] High-risk areas (new code, integrations, changed business logic) have positive + negative + boundary + exploratory coverage.
++- [ ] **Team rule — test-first:** complex logic in the change (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) carries unit tests written *before* the implementation; complex logic without unit tests is flagged as a release risk, and every fixed defect has the regression test that failed before the fix.
+ - [ ] Exploratory testing has been performed with a documented session charter and notes.
+ - [ ] Any gaps in coverage are documented and risk-accepted by the product owner in writing.
+ 
+diff --git a/.claude/skills/security-engineer/references/checklist.md b/.claude/skills/security-engineer/references/checklist.md
+index 68830f3..b1e28b8 100644
+--- a/.claude/skills/security-engineer/references/checklist.md
++++ b/.claude/skills/security-engineer/references/checklist.md
+@@ -55,7 +55,7 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ - [ ] Encryption is authenticated (AES-GCM / ChaCha20-Poly1305); no ECB; nonces/IVs are never reused with a key.
+ - [ ] All randomness for tokens/salts/keys uses a CSPRNG, not a general-purpose RNG.
+ - [ ] Keys live in a KMS or secrets manager, are separated by purpose/environment, and have a rotation plan.
+-- [ ] **No secrets are committed** to source control, config, or logs; any leaked secret is rotated immediately.
++- [ ] **No secrets are committed** to source control, config, or logs — including in code comments; any leaked secret is rotated immediately.
+ - [ ] Data is encrypted in transit (TLS, validated certs, modern versions/ciphers) and sensitive data at rest.
+ 
+ ---
+@@ -89,6 +89,8 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ 
+ ## 10. Findings and sign-off
+ 
++- [ ] **Team rule — test-first:** security-sensitive code (authn/authz, input validation, crypto, session/token handling) is always treated as complex logic — its unit tests, including negative and abuse cases, are written *before* the implementation.
++- [ ] No security control is disabled by commenting it out; removal of a control requires a recorded decision, never a comment.
+ - [ ] Every finding has a vulnerability class (CWE where useful), a severity (CVSS where a numeric score is warranted, with the vector recorded), and a concrete fix.
+ - [ ] Each fix has a regression test or check that proves it.
+ - [ ] Every open finding ends in a decision: fix, mitigate, accept (with owner + expiry + rationale), or false positive (suppressed with a reason).
+diff --git a/.claude/skills/software-architect/references/checklist.md b/.claude/skills/software-architect/references/checklist.md
+index 3d5375b..41d74a6 100644
+--- a/.claude/skills/software-architect/references/checklist.md
++++ b/.claude/skills/software-architect/references/checklist.md
+@@ -14,6 +14,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 1.4 | Availability SLOs are stated (e.g. 99.9% uptime = 44 min/month downtime). The design's failure modes have been compared against these SLOs. | | |
+ | 1.5 | Latency targets (p50/p95/p99) exist for user-facing synchronous operations. | | |
+ | 1.6 | A peak-load estimate and a growth horizon (e.g. 6 months, 2 years) have been stated and the design validated against them. | | |
++| 1.7 | **Team rule — testability:** boundaries and dependencies are designed so complex domain logic can be unit-tested in isolation (test-first is the team norm); no component requires integration infrastructure to test its core logic. | | |
+ 
+ ---
+ 
+@@ -26,6 +27,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
+ | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
+ | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
++| 2.6 | **Team rule — comment-free code:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
+ 
+ ---
+ 
+diff --git a/.claude/skills/software-architect/references/practices.md b/.claude/skills/software-architect/references/practices.md
+index d4905c2..309123b 100644
+--- a/.claude/skills/software-architect/references/practices.md
++++ b/.claude/skills/software-architect/references/practices.md
+@@ -17,6 +17,7 @@ Non-functional requirements (NFRs) constrain *how well* a system performs rather
+ | **Latency** | What are the p50/p95/p99 targets at the API boundary? Are there synchronous user-facing interactions with hard latency ceilings? |
+ | **Security** | What data classification applies (PII, PCI, PHI)? What are the authentication and authorization boundaries? What compliance mandates apply (GDPR, PCI-DSS, SOC 2)? |
+ | **Maintainability** | What is the team size and tenure? What is the expected change rate? Is the codebase shared across teams? |
++| **Testability** | Can complex domain logic be unit-tested in isolation (clear boundaries, ports/adapters, injected dependencies)? The team's test-first rule depends on it: a design whose complex logic cannot have its tests written first is not an acceptable design. |
+ | **Cost** | What is the infrastructure budget? Are there burst-cost risks (traffic spikes, large batch jobs)? Is vendor lock-in a cost risk? |
+ 
+ ### Capturing NFRs concretely
+@@ -100,6 +101,7 @@ State what makes this decision necessary and what changes if the decision is wro
+ - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
+ - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
+ - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
++- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
+ 
+ ---
+ 
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 136ed2d..3ce3d56 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -13,6 +13,21 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
+ 
+ ### Added
+ 
++- **Team conventions captured into four role experts** (via `/learn`, accepted
++  ledger decision `20260610-181128-01db`): **comment-free code** — code
++  self-explains; the only permitted comment states a constraint the code cannot
++  express (invariant, external requirement, deliberate trade-off, security
++  warning); no commented-out code or inline TODO/FIXME; docstrings on public
++  APIs and ADRs remain the documented homes for interface docs and design
++  rationale — and **test-first for complex logic** — unit tests are written
++  before implementing observably complex logic (non-trivial conditionals,
++  calculations, parsing, state machines, concurrency, security-sensitive
++  paths); bug fixes start with the failing regression test; trivial glue may
++  be test-after, but no complex logic merges untested. Landed in the
++  `developer` practices + checklist, the `qa-engineer`, `security-engineer`,
++  and `software-architect` checklists, and the architect's testability NFR
++  and ADR discipline.
++
+ - **`U-11` — executing on a pending authorization is now a catalogued hard stop**
+   ([`rules/stop-conditions-catalog.md`](rules/stop-conditions-catalog.md)) —
+   work whose only authorization is a still-`pending` artifact (a memory-ledger
+diff --git a/integrations/codex/.praxis/developer.md b/integrations/codex/.praxis/developer.md
+index c5058b5..0247783 100644
+--- a/integrations/codex/.praxis/developer.md
++++ b/integrations/codex/.praxis/developer.md
+@@ -89,10 +89,12 @@ Readable code is the default; clever code is the exception that must justify its
+ - Prefer fewer parameters. Beyond three or four, group related parameters into a named struct or object.
+ - Avoid flag parameters (`process(order, true)`). Model the two behaviors as two named functions.
+ 
+-### Comments
+-- Comment the *why*, not the *what*. Code shows what; the comment explains the constraint, trade-off, or non-obvious invariant.
+-- Delete commented-out code. Source control preserves history. Dead code confuses readers.
+-- Keep comments current. A stale comment is worse than no comment because it actively misleads.
++### Comments — team rule: comment-free code
++- **Default: no comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
++- **The only permitted comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
++- Design rationale lives in ADRs (`docs/decisions/`), never inline. Docstrings on public/exported APIs are interface documentation, not narrative comments — they stay.
++- Delete commented-out code (source control preserves history) and inline `TODO`/`FIXME` markers (track them in tickets).
++- Keep the rare permitted comment current. A stale comment is worse than none because it actively misleads.
+ 
+ ---
+ 
+@@ -123,6 +125,11 @@ These principles are heuristics, not laws. Apply them when the benefit is clear;
+ 
+ Tests are the safety net that makes change safe. Writing them before the code sharpens thinking about the interface before the implementation locks it in.
+ 
++### Team rule: test-first for complex logic
++- **Before implementing complex logic, write the unit tests first** (red → green → refactor). "Complex" is observable, not a feeling: non-trivial conditionals, calculations (money, dates, rounding), parsing/serialization, state machines, concurrency, and security-sensitive paths (authn/authz, input validation, crypto). Every bug fix starts with the failing regression test.
++- Trivial glue, configuration, or passthrough code may be tested with or after the change — but **no complex logic merges without unit tests** covering positive, negative, and boundary cases.
++- If the test is hard to write, the interface is wrong; discovering that before the implementation exists is the point of writing the test first.
++
+ ### Test-first workflow
+ 1. Write a failing test that expresses the desired behavior clearly.
+ 2. Write the minimal code that makes it pass. Resist adding more than the test requires.
+@@ -348,6 +355,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ 
+ - [ ] All existing tests pass locally (`make test`, `npm test`, `pytest`, or the project equivalent).
+ - [ ] New code is covered by at least one test that exercises the changed behavior.
++- [ ] **Team rule — test-first:** complex logic (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) had its unit tests written *before* the implementation, and a bug fix includes the regression test that failed before it.
+ - [ ] Edge cases are covered: empty inputs, boundary values, error paths, and unexpected inputs.
+ - [ ] No tests have been skipped or disabled to make the suite green.
+ - [ ] Integration or end-to-end tests that touch the changed path have been run (or a reason is noted why they were not).
+@@ -357,6 +365,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ ## 3. Code quality
+ 
+ - [ ] No dead code: unused variables, unreachable branches, or commented-out code are removed.
++- [ ] **Team rule — comment-free code:** no narrative comments; every comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning).
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+ - [ ] Functions do one thing; any function that grew during this change is still within reason.
+@@ -405,10 +414,10 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ 
+ ## 8. Documentation
+ 
+-- [ ] Public APIs, exported functions, and non-obvious module contracts have up-to-date docstrings or comments.
++- [ ] Public APIs and exported functions have up-to-date docstrings (interface documentation — the comment-free rule does not apply to them).
+ - [ ] Any user-facing behavior change is reflected in the relevant README, changelog, or docs page.
+-- [ ] Architecture decision records (ADRs) are updated if a significant architectural decision was made.
+-- [ ] Inline `TODO` or `FIXME` comments reference a ticket ID so they do not become orphaned.
++- [ ] Architecture decision records (ADRs) are updated if a significant architectural decision was made — design rationale lives there, not in inline comments.
++- [ ] No inline `TODO` or `FIXME` comments remain; outstanding work is tracked in tickets.
+ 
+ ---
+ 
+diff --git a/integrations/codex/.praxis/qa-engineer.md b/integrations/codex/.praxis/qa-engineer.md
+index f7f14d2..64f4084 100644
+--- a/integrations/codex/.praxis/qa-engineer.md
++++ b/integrations/codex/.praxis/qa-engineer.md
+@@ -350,6 +350,7 @@ Use this checklist before declaring a feature, sprint, or release ready to progr
+ - [ ] Every AC that involves input validation, error handling, or business rules has at least one negative test case.
+ - [ ] Boundary values are tested for every numeric, date, or length-limited field.
+ - [ ] High-risk areas (new code, integrations, changed business logic) have positive + negative + boundary + exploratory coverage.
++- [ ] **Team rule — test-first:** complex logic in the change (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) carries unit tests written *before* the implementation; complex logic without unit tests is flagged as a release risk, and every fixed defect has the regression test that failed before the fix.
+ - [ ] Exploratory testing has been performed with a documented session charter and notes.
+ - [ ] Any gaps in coverage are documented and risk-accepted by the product owner in writing.
+ 
+diff --git a/integrations/codex/.praxis/security-engineer.md b/integrations/codex/.praxis/security-engineer.md
+index 0909cda..b25aa65 100644
+--- a/integrations/codex/.praxis/security-engineer.md
++++ b/integrations/codex/.praxis/security-engineer.md
+@@ -283,7 +283,7 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ - [ ] Encryption is authenticated (AES-GCM / ChaCha20-Poly1305); no ECB; nonces/IVs are never reused with a key.
+ - [ ] All randomness for tokens/salts/keys uses a CSPRNG, not a general-purpose RNG.
+ - [ ] Keys live in a KMS or secrets manager, are separated by purpose/environment, and have a rotation plan.
+-- [ ] **No secrets are committed** to source control, config, or logs; any leaked secret is rotated immediately.
++- [ ] **No secrets are committed** to source control, config, or logs — including in code comments; any leaked secret is rotated immediately.
+ - [ ] Data is encrypted in transit (TLS, validated certs, modern versions/ciphers) and sensitive data at rest.
+ 
+ ---
+@@ -317,6 +317,8 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ 
+ ## 10. Findings and sign-off
+ 
++- [ ] **Team rule — test-first:** security-sensitive code (authn/authz, input validation, crypto, session/token handling) is always treated as complex logic — its unit tests, including negative and abuse cases, are written *before* the implementation.
++- [ ] No security control is disabled by commenting it out; removal of a control requires a recorded decision, never a comment.
+ - [ ] Every finding has a vulnerability class (CWE where useful), a severity (CVSS where a numeric score is warranted, with the vector recorded), and a concrete fix.
+ - [ ] Each fix has a regression test or check that proves it.
+ - [ ] Every open finding ends in a decision: fix, mitigate, accept (with owner + expiry + rationale), or false positive (suppressed with a reason).
+diff --git a/integrations/codex/.praxis/software-architect.md b/integrations/codex/.praxis/software-architect.md
+index d6e3836..18dd946 100644
+--- a/integrations/codex/.praxis/software-architect.md
++++ b/integrations/codex/.praxis/software-architect.md
+@@ -82,6 +82,7 @@ Non-functional requirements (NFRs) constrain *how well* a system performs rather
+ | **Latency** | What are the p50/p95/p99 targets at the API boundary? Are there synchronous user-facing interactions with hard latency ceilings? |
+ | **Security** | What data classification applies (PII, PCI, PHI)? What are the authentication and authorization boundaries? What compliance mandates apply (GDPR, PCI-DSS, SOC 2)? |
+ | **Maintainability** | What is the team size and tenure? What is the expected change rate? Is the codebase shared across teams? |
++| **Testability** | Can complex domain logic be unit-tested in isolation (clear boundaries, ports/adapters, injected dependencies)? The team's test-first rule depends on it: a design whose complex logic cannot have its tests written first is not an acceptable design. |
+ | **Cost** | What is the infrastructure budget? Are there burst-cost risks (traffic spikes, large batch jobs)? Is vendor lock-in a cost risk? |
+ 
+ ### Capturing NFRs concretely
+@@ -165,6 +166,7 @@ State what makes this decision necessary and what changes if the decision is wro
+ - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
+ - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
+ - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
++- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
+ 
+ ---
+ 
+@@ -418,6 +420,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 1.4 | Availability SLOs are stated (e.g. 99.9% uptime = 44 min/month downtime). The design's failure modes have been compared against these SLOs. | | |
+ | 1.5 | Latency targets (p50/p95/p99) exist for user-facing synchronous operations. | | |
+ | 1.6 | A peak-load estimate and a growth horizon (e.g. 6 months, 2 years) have been stated and the design validated against them. | | |
++| 1.7 | **Team rule — testability:** boundaries and dependencies are designed so complex domain logic can be unit-tested in isolation (test-first is the team norm); no component requires integration infrastructure to test its core logic. | | |
+ 
+ ---
+ 
+@@ -430,6 +433,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
+ | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
+ | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
++| 2.6 | **Team rule — comment-free code:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
+ 
+ ---
+ 
+diff --git a/integrations/cursor/.cursor/rules/praxis-developer.mdc b/integrations/cursor/.cursor/rules/praxis-developer.mdc
+index a2681e4..eb506f1 100644
+--- a/integrations/cursor/.cursor/rules/praxis-developer.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-developer.mdc
+@@ -93,10 +93,12 @@ Readable code is the default; clever code is the exception that must justify its
+ - Prefer fewer parameters. Beyond three or four, group related parameters into a named struct or object.
+ - Avoid flag parameters (`process(order, true)`). Model the two behaviors as two named functions.
+ 
+-### Comments
+-- Comment the *why*, not the *what*. Code shows what; the comment explains the constraint, trade-off, or non-obvious invariant.
+-- Delete commented-out code. Source control preserves history. Dead code confuses readers.
+-- Keep comments current. A stale comment is worse than no comment because it actively misleads.
++### Comments — team rule: comment-free code
++- **Default: no comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
++- **The only permitted comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
++- Design rationale lives in ADRs (`docs/decisions/`), never inline. Docstrings on public/exported APIs are interface documentation, not narrative comments — they stay.
++- Delete commented-out code (source control preserves history) and inline `TODO`/`FIXME` markers (track them in tickets).
++- Keep the rare permitted comment current. A stale comment is worse than none because it actively misleads.
+ 
+ ---
+ 
+@@ -127,6 +129,11 @@ These principles are heuristics, not laws. Apply them when the benefit is clear;
+ 
+ Tests are the safety net that makes change safe. Writing them before the code sharpens thinking about the interface before the implementation locks it in.
+ 
++### Team rule: test-first for complex logic
++- **Before implementing complex logic, write the unit tests first** (red → green → refactor). "Complex" is observable, not a feeling: non-trivial conditionals, calculations (money, dates, rounding), parsing/serialization, state machines, concurrency, and security-sensitive paths (authn/authz, input validation, crypto). Every bug fix starts with the failing regression test.
++- Trivial glue, configuration, or passthrough code may be tested with or after the change — but **no complex logic merges without unit tests** covering positive, negative, and boundary cases.
++- If the test is hard to write, the interface is wrong; discovering that before the implementation exists is the point of writing the test first.
++
+ ### Test-first workflow
+ 1. Write a failing test that expresses the desired behavior clearly.
+ 2. Write the minimal code that makes it pass. Resist adding more than the test requires.
+@@ -352,6 +359,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ 
+ - [ ] All existing tests pass locally (`make test`, `npm test`, `pytest`, or the project equivalent).
+ - [ ] New code is covered by at least one test that exercises the changed behavior.
++- [ ] **Team rule — test-first:** complex logic (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) had its unit tests written *before* the implementation, and a bug fix includes the regression test that failed before it.
+ - [ ] Edge cases are covered: empty inputs, boundary values, error paths, and unexpected inputs.
+ - [ ] No tests have been skipped or disabled to make the suite green.
+ - [ ] Integration or end-to-end tests that touch the changed path have been run (or a reason is noted why they were not).
+@@ -361,6 +369,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ ## 3. Code quality
+ 
+ - [ ] No dead code: unused variables, unreachable branches, or commented-out code are removed.
++- [ ] **Team rule — comment-free code:** no narrative comments; every comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning).
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+ - [ ] Functions do one thing; any function that grew during this change is still within reason.
+@@ -409,10 +418,10 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ 
+ ## 8. Documentation
+ 
+-- [ ] Public APIs, exported functions, and non-obvious module contracts have up-to-date docstrings or comments.
++- [ ] Public APIs and exported functions have up-to-date docstrings (interface documentation — the comment-free rule does not apply to them).
+ - [ ] Any user-facing behavior change is reflected in the relevant README, changelog, or docs page.
+-- [ ] Architecture decision records (ADRs) are updated if a significant architectural decision was made.
+-- [ ] Inline `TODO` or `FIXME` comments reference a ticket ID so they do not become orphaned.
++- [ ] Architecture decision records (ADRs) are updated if a significant architectural decision was made — design rationale lives there, not in inline comments.
++- [ ] No inline `TODO` or `FIXME` comments remain; outstanding work is tracked in tickets.
+ 
+ ---
+ 
+diff --git a/integrations/cursor/.cursor/rules/praxis-qa-engineer.mdc b/integrations/cursor/.cursor/rules/praxis-qa-engineer.mdc
+index b339547..83ceae3 100644
+--- a/integrations/cursor/.cursor/rules/praxis-qa-engineer.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-qa-engineer.mdc
+@@ -354,6 +354,7 @@ Use this checklist before declaring a feature, sprint, or release ready to progr
+ - [ ] Every AC that involves input validation, error handling, or business rules has at least one negative test case.
+ - [ ] Boundary values are tested for every numeric, date, or length-limited field.
+ - [ ] High-risk areas (new code, integrations, changed business logic) have positive + negative + boundary + exploratory coverage.
++- [ ] **Team rule — test-first:** complex logic in the change (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) carries unit tests written *before* the implementation; complex logic without unit tests is flagged as a release risk, and every fixed defect has the regression test that failed before the fix.
+ - [ ] Exploratory testing has been performed with a documented session charter and notes.
+ - [ ] Any gaps in coverage are documented and risk-accepted by the product owner in writing.
+ 
+diff --git a/integrations/cursor/.cursor/rules/praxis-security-engineer.mdc b/integrations/cursor/.cursor/rules/praxis-security-engineer.mdc
+index 66bd52b..2c82aa8 100644
+--- a/integrations/cursor/.cursor/rules/praxis-security-engineer.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-security-engineer.mdc
+@@ -287,7 +287,7 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ - [ ] Encryption is authenticated (AES-GCM / ChaCha20-Poly1305); no ECB; nonces/IVs are never reused with a key.
+ - [ ] All randomness for tokens/salts/keys uses a CSPRNG, not a general-purpose RNG.
+ - [ ] Keys live in a KMS or secrets manager, are separated by purpose/environment, and have a rotation plan.
+-- [ ] **No secrets are committed** to source control, config, or logs; any leaked secret is rotated immediately.
++- [ ] **No secrets are committed** to source control, config, or logs — including in code comments; any leaked secret is rotated immediately.
+ - [ ] Data is encrypted in transit (TLS, validated certs, modern versions/ciphers) and sensitive data at rest.
+ 
+ ---
+@@ -321,6 +321,8 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ 
+ ## 10. Findings and sign-off
+ 
++- [ ] **Team rule — test-first:** security-sensitive code (authn/authz, input validation, crypto, session/token handling) is always treated as complex logic — its unit tests, including negative and abuse cases, are written *before* the implementation.
++- [ ] No security control is disabled by commenting it out; removal of a control requires a recorded decision, never a comment.
+ - [ ] Every finding has a vulnerability class (CWE where useful), a severity (CVSS where a numeric score is warranted, with the vector recorded), and a concrete fix.
+ - [ ] Each fix has a regression test or check that proves it.
+ - [ ] Every open finding ends in a decision: fix, mitigate, accept (with owner + expiry + rationale), or false positive (suppressed with a reason).
+diff --git a/integrations/cursor/.cursor/rules/praxis-software-architect.mdc b/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
+index 64faee8..2551733 100644
+--- a/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
+@@ -86,6 +86,7 @@ Non-functional requirements (NFRs) constrain *how well* a system performs rather
+ | **Latency** | What are the p50/p95/p99 targets at the API boundary? Are there synchronous user-facing interactions with hard latency ceilings? |
+ | **Security** | What data classification applies (PII, PCI, PHI)? What are the authentication and authorization boundaries? What compliance mandates apply (GDPR, PCI-DSS, SOC 2)? |
+ | **Maintainability** | What is the team size and tenure? What is the expected change rate? Is the codebase shared across teams? |
++| **Testability** | Can complex domain logic be unit-tested in isolation (clear boundaries, ports/adapters, injected dependencies)? The team's test-first rule depends on it: a design whose complex logic cannot have its tests written first is not an acceptable design. |
+ | **Cost** | What is the infrastructure budget? Are there burst-cost risks (traffic spikes, large batch jobs)? Is vendor lock-in a cost risk? |
+ 
+ ### Capturing NFRs concretely
+@@ -169,6 +170,7 @@ State what makes this decision necessary and what changes if the decision is wro
+ - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
+ - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
+ - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
++- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
+ 
+ ---
+ 
+@@ -422,6 +424,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 1.4 | Availability SLOs are stated (e.g. 99.9% uptime = 44 min/month downtime). The design's failure modes have been compared against these SLOs. | | |
+ | 1.5 | Latency targets (p50/p95/p99) exist for user-facing synchronous operations. | | |
+ | 1.6 | A peak-load estimate and a growth horizon (e.g. 6 months, 2 years) have been stated and the design validated against them. | | |
++| 1.7 | **Team rule — testability:** boundaries and dependencies are designed so complex domain logic can be unit-tested in isolation (test-first is the team norm); no component requires integration infrastructure to test its core logic. | | |
+ 
+ ---
+ 
+@@ -434,6 +437,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
+ | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
+ | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
++| 2.6 | **Team rule — comment-free code:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
+ 
+ ---
+ 
+diff --git a/integrations/intellij/.junie/praxis/developer.md b/integrations/intellij/.junie/praxis/developer.md
+index c5058b5..0247783 100644
+--- a/integrations/intellij/.junie/praxis/developer.md
++++ b/integrations/intellij/.junie/praxis/developer.md
+@@ -89,10 +89,12 @@ Readable code is the default; clever code is the exception that must justify its
+ - Prefer fewer parameters. Beyond three or four, group related parameters into a named struct or object.
+ - Avoid flag parameters (`process(order, true)`). Model the two behaviors as two named functions.
+ 
+-### Comments
+-- Comment the *why*, not the *what*. Code shows what; the comment explains the constraint, trade-off, or non-obvious invariant.
+-- Delete commented-out code. Source control preserves history. Dead code confuses readers.
+-- Keep comments current. A stale comment is worse than no comment because it actively misleads.
++### Comments — team rule: comment-free code
++- **Default: no comments.** Code self-explains through names, small functions, and structure. Needing a comment to explain *what* code does is a refactoring signal — rename or extract until the comment is unnecessary.
++- **The only permitted comment** states a constraint the code cannot express: a non-obvious invariant, an external or legal requirement, a deliberate trade-off, or a security warning. One line, stating the *why*.
++- Design rationale lives in ADRs (`docs/decisions/`), never inline. Docstrings on public/exported APIs are interface documentation, not narrative comments — they stay.
++- Delete commented-out code (source control preserves history) and inline `TODO`/`FIXME` markers (track them in tickets).
++- Keep the rare permitted comment current. A stale comment is worse than none because it actively misleads.
+ 
+ ---
+ 
+@@ -123,6 +125,11 @@ These principles are heuristics, not laws. Apply them when the benefit is clear;
+ 
+ Tests are the safety net that makes change safe. Writing them before the code sharpens thinking about the interface before the implementation locks it in.
+ 
++### Team rule: test-first for complex logic
++- **Before implementing complex logic, write the unit tests first** (red → green → refactor). "Complex" is observable, not a feeling: non-trivial conditionals, calculations (money, dates, rounding), parsing/serialization, state machines, concurrency, and security-sensitive paths (authn/authz, input validation, crypto). Every bug fix starts with the failing regression test.
++- Trivial glue, configuration, or passthrough code may be tested with or after the change — but **no complex logic merges without unit tests** covering positive, negative, and boundary cases.
++- If the test is hard to write, the interface is wrong; discovering that before the implementation exists is the point of writing the test first.
++
+ ### Test-first workflow
+ 1. Write a failing test that expresses the desired behavior clearly.
+ 2. Write the minimal code that makes it pass. Resist adding more than the test requires.
+@@ -348,6 +355,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ 
+ - [ ] All existing tests pass locally (`make test`, `npm test`, `pytest`, or the project equivalent).
+ - [ ] New code is covered by at least one test that exercises the changed behavior.
++- [ ] **Team rule — test-first:** complex logic (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) had its unit tests written *before* the implementation, and a bug fix includes the regression test that failed before it.
+ - [ ] Edge cases are covered: empty inputs, boundary values, error paths, and unexpected inputs.
+ - [ ] No tests have been skipped or disabled to make the suite green.
+ - [ ] Integration or end-to-end tests that touch the changed path have been run (or a reason is noted why they were not).
+@@ -357,6 +365,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ ## 3. Code quality
+ 
+ - [ ] No dead code: unused variables, unreachable branches, or commented-out code are removed.
++- [ ] **Team rule — comment-free code:** no narrative comments; every comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning).
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+ - [ ] Functions do one thing; any function that grew during this change is still within reason.
+@@ -405,10 +414,10 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ 
+ ## 8. Documentation
+ 
+-- [ ] Public APIs, exported functions, and non-obvious module contracts have up-to-date docstrings or comments.
++- [ ] Public APIs and exported functions have up-to-date docstrings (interface documentation — the comment-free rule does not apply to them).
+ - [ ] Any user-facing behavior change is reflected in the relevant README, changelog, or docs page.
+-- [ ] Architecture decision records (ADRs) are updated if a significant architectural decision was made.
+-- [ ] Inline `TODO` or `FIXME` comments reference a ticket ID so they do not become orphaned.
++- [ ] Architecture decision records (ADRs) are updated if a significant architectural decision was made — design rationale lives there, not in inline comments.
++- [ ] No inline `TODO` or `FIXME` comments remain; outstanding work is tracked in tickets.
+ 
+ ---
+ 
+diff --git a/integrations/intellij/.junie/praxis/qa-engineer.md b/integrations/intellij/.junie/praxis/qa-engineer.md
+index f7f14d2..64f4084 100644
+--- a/integrations/intellij/.junie/praxis/qa-engineer.md
++++ b/integrations/intellij/.junie/praxis/qa-engineer.md
+@@ -350,6 +350,7 @@ Use this checklist before declaring a feature, sprint, or release ready to progr
+ - [ ] Every AC that involves input validation, error handling, or business rules has at least one negative test case.
+ - [ ] Boundary values are tested for every numeric, date, or length-limited field.
+ - [ ] High-risk areas (new code, integrations, changed business logic) have positive + negative + boundary + exploratory coverage.
++- [ ] **Team rule — test-first:** complex logic in the change (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) carries unit tests written *before* the implementation; complex logic without unit tests is flagged as a release risk, and every fixed defect has the regression test that failed before the fix.
+ - [ ] Exploratory testing has been performed with a documented session charter and notes.
+ - [ ] Any gaps in coverage are documented and risk-accepted by the product owner in writing.
+ 
+diff --git a/integrations/intellij/.junie/praxis/security-engineer.md b/integrations/intellij/.junie/praxis/security-engineer.md
+index 0909cda..b25aa65 100644
+--- a/integrations/intellij/.junie/praxis/security-engineer.md
++++ b/integrations/intellij/.junie/praxis/security-engineer.md
+@@ -283,7 +283,7 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ - [ ] Encryption is authenticated (AES-GCM / ChaCha20-Poly1305); no ECB; nonces/IVs are never reused with a key.
+ - [ ] All randomness for tokens/salts/keys uses a CSPRNG, not a general-purpose RNG.
+ - [ ] Keys live in a KMS or secrets manager, are separated by purpose/environment, and have a rotation plan.
+-- [ ] **No secrets are committed** to source control, config, or logs; any leaked secret is rotated immediately.
++- [ ] **No secrets are committed** to source control, config, or logs — including in code comments; any leaked secret is rotated immediately.
+ - [ ] Data is encrypted in transit (TLS, validated certs, modern versions/ciphers) and sensitive data at rest.
+ 
+ ---
+@@ -317,6 +317,8 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ 
+ ## 10. Findings and sign-off
+ 
++- [ ] **Team rule — test-first:** security-sensitive code (authn/authz, input validation, crypto, session/token handling) is always treated as complex logic — its unit tests, including negative and abuse cases, are written *before* the implementation.
++- [ ] No security control is disabled by commenting it out; removal of a control requires a recorded decision, never a comment.
+ - [ ] Every finding has a vulnerability class (CWE where useful), a severity (CVSS where a numeric score is warranted, with the vector recorded), and a concrete fix.
+ - [ ] Each fix has a regression test or check that proves it.
+ - [ ] Every open finding ends in a decision: fix, mitigate, accept (with owner + expiry + rationale), or false positive (suppressed with a reason).
+diff --git a/integrations/intellij/.junie/praxis/software-architect.md b/integrations/intellij/.junie/praxis/software-architect.md
+index d6e3836..18dd946 100644
+--- a/integrations/intellij/.junie/praxis/software-architect.md
++++ b/integrations/intellij/.junie/praxis/software-architect.md
+@@ -82,6 +82,7 @@ Non-functional requirements (NFRs) constrain *how well* a system performs rather
+ | **Latency** | What are the p50/p95/p99 targets at the API boundary? Are there synchronous user-facing interactions with hard latency ceilings? |
+ | **Security** | What data classification applies (PII, PCI, PHI)? What are the authentication and authorization boundaries? What compliance mandates apply (GDPR, PCI-DSS, SOC 2)? |
+ | **Maintainability** | What is the team size and tenure? What is the expected change rate? Is the codebase shared across teams? |
++| **Testability** | Can complex domain logic be unit-tested in isolation (clear boundaries, ports/adapters, injected dependencies)? The team's test-first rule depends on it: a design whose complex logic cannot have its tests written first is not an acceptable design. |
+ | **Cost** | What is the infrastructure budget? Are there burst-cost risks (traffic spikes, large batch jobs)? Is vendor lock-in a cost risk? |
+ 
+ ### Capturing NFRs concretely
+@@ -165,6 +166,7 @@ State what makes this decision necessary and what changes if the decision is wro
+ - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
+ - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
+ - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
++- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
+ 
+ ---
+ 
+@@ -418,6 +420,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 1.4 | Availability SLOs are stated (e.g. 99.9% uptime = 44 min/month downtime). The design's failure modes have been compared against these SLOs. | | |
+ | 1.5 | Latency targets (p50/p95/p99) exist for user-facing synchronous operations. | | |
+ | 1.6 | A peak-load estimate and a growth horizon (e.g. 6 months, 2 years) have been stated and the design validated against them. | | |
++| 1.7 | **Team rule — testability:** boundaries and dependencies are designed so complex domain logic can be unit-tested in isolation (test-first is the team norm); no component requires integration infrastructure to test its core logic. | | |
+ 
+ ---
+ 
+@@ -430,6 +433,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
+ | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
+ | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
++| 2.6 | **Team rule — comment-free code:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
+ 
+ ---
+ 

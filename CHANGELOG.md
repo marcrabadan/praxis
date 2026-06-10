@@ -13,6 +13,21 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- **Team conventions captured into four role experts** (via `/learn`, accepted
+  ledger decision `20260610-181128-01db`): **comment-free code** — code
+  self-explains; the only permitted comment states a constraint the code cannot
+  express (invariant, external requirement, deliberate trade-off, security
+  warning); no commented-out code or inline TODO/FIXME; docstrings on public
+  APIs and ADRs remain the documented homes for interface docs and design
+  rationale — and **test-first for complex logic** — unit tests are written
+  before implementing observably complex logic (non-trivial conditionals,
+  calculations, parsing, state machines, concurrency, security-sensitive
+  paths); bug fixes start with the failing regression test; trivial glue may
+  be test-after, but no complex logic merges untested. Landed in the
+  `developer` practices + checklist, the `qa-engineer`, `security-engineer`,
+  and `software-architect` checklists, and the architect's testability NFR
+  and ADR discipline.
+
 - **`U-11` — executing on a pending authorization is now a catalogued hard stop**
   ([`rules/stop-conditions-catalog.md`](rules/stop-conditions-catalog.md)) —
   work whose only authorization is a still-`pending` artifact (a memory-ledger

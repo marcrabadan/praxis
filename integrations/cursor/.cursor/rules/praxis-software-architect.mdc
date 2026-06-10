@@ -86,6 +86,7 @@ Non-functional requirements (NFRs) constrain *how well* a system performs rather
 | **Latency** | What are the p50/p95/p99 targets at the API boundary? Are there synchronous user-facing interactions with hard latency ceilings? |
 | **Security** | What data classification applies (PII, PCI, PHI)? What are the authentication and authorization boundaries? What compliance mandates apply (GDPR, PCI-DSS, SOC 2)? |
 | **Maintainability** | What is the team size and tenure? What is the expected change rate? Is the codebase shared across teams? |
+| **Testability** | Can complex domain logic be unit-tested in isolation (clear boundaries, ports/adapters, injected dependencies)? The team's test-first rule depends on it: a design whose complex logic cannot have its tests written first is not an acceptable design. |
 | **Cost** | What is the infrastructure budget? Are there burst-cost risks (traffic spikes, large batch jobs)? Is vendor lock-in a cost risk? |
 
 ### Capturing NFRs concretely
@@ -169,6 +170,7 @@ State what makes this decision necessary and what changes if the decision is wro
 - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
 - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
 - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
+- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
 
 ---
 
@@ -422,6 +424,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
 | 1.4 | Availability SLOs are stated (e.g. 99.9% uptime = 44 min/month downtime). The design's failure modes have been compared against these SLOs. | | |
 | 1.5 | Latency targets (p50/p95/p99) exist for user-facing synchronous operations. | | |
 | 1.6 | A peak-load estimate and a growth horizon (e.g. 6 months, 2 years) have been stated and the design validated against them. | | |
+| 1.7 | **Team rule — testability:** boundaries and dependencies are designed so complex domain logic can be unit-tested in isolation (test-first is the team norm); no component requires integration infrastructure to test its core logic. | | |
 
 ---
 
@@ -434,6 +437,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
 | 2.3 | Rejected options are documented in each ADR so the decision cannot be relitigated without new information. | | |
 | 2.4 | ADRs are stored in version control alongside the code they govern. | | |
 | 2.5 | Build-vs-buy decisions for non-trivial components are documented in an ADR with a cost-of-ownership estimate. | | |
+| 2.6 | **Team rule — comment-free code:** design rationale lives in ADRs, not inline comments; no decision in the design relies on a code comment as its only record. | | |
 
 ---
 

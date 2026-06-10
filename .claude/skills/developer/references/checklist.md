@@ -17,6 +17,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
 
 - [ ] All existing tests pass locally (`make test`, `npm test`, `pytest`, or the project equivalent).
 - [ ] New code is covered by at least one test that exercises the changed behavior.
+- [ ] **Team rule — test-first:** complex logic (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) had its unit tests written *before* the implementation, and a bug fix includes the regression test that failed before it.
 - [ ] Edge cases are covered: empty inputs, boundary values, error paths, and unexpected inputs.
 - [ ] No tests have been skipped or disabled to make the suite green.
 - [ ] Integration or end-to-end tests that touch the changed path have been run (or a reason is noted why they were not).
@@ -26,6 +27,7 @@ A self-review checklist a developer runs before opening or merging a pull reques
 ## 3. Code quality
 
 - [ ] No dead code: unused variables, unreachable branches, or commented-out code are removed.
+- [ ] **Team rule — comment-free code:** no narrative comments; every comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning).
 - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
 - [ ] Names are clear and consistent with surrounding code.
 - [ ] Functions do one thing; any function that grew during this change is still within reason.
@@ -74,10 +76,10 @@ A self-review checklist a developer runs before opening or merging a pull reques
 
 ## 8. Documentation
 
-- [ ] Public APIs, exported functions, and non-obvious module contracts have up-to-date docstrings or comments.
+- [ ] Public APIs and exported functions have up-to-date docstrings (interface documentation — the comment-free rule does not apply to them).
 - [ ] Any user-facing behavior change is reflected in the relevant README, changelog, or docs page.
-- [ ] Architecture decision records (ADRs) are updated if a significant architectural decision was made.
-- [ ] Inline `TODO` or `FIXME` comments reference a ticket ID so they do not become orphaned.
+- [ ] Architecture decision records (ADRs) are updated if a significant architectural decision was made — design rationale lives there, not in inline comments.
+- [ ] No inline `TODO` or `FIXME` comments remain; outstanding work is tracked in tickets.
 
 ---
 

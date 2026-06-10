@@ -350,6 +350,7 @@ Use this checklist before declaring a feature, sprint, or release ready to progr
 - [ ] Every AC that involves input validation, error handling, or business rules has at least one negative test case.
 - [ ] Boundary values are tested for every numeric, date, or length-limited field.
 - [ ] High-risk areas (new code, integrations, changed business logic) have positive + negative + boundary + exploratory coverage.
+- [ ] **Team rule — test-first:** complex logic in the change (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) carries unit tests written *before* the implementation; complex logic without unit tests is flagged as a release risk, and every fixed defect has the regression test that failed before the fix.
 - [ ] Exploratory testing has been performed with a documented session charter and notes.
 - [ ] Any gaps in coverage are documented and risk-accepted by the product owner in writing.
 

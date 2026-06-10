@@ -17,6 +17,7 @@ Non-functional requirements (NFRs) constrain *how well* a system performs rather
 | **Latency** | What are the p50/p95/p99 targets at the API boundary? Are there synchronous user-facing interactions with hard latency ceilings? |
 | **Security** | What data classification applies (PII, PCI, PHI)? What are the authentication and authorization boundaries? What compliance mandates apply (GDPR, PCI-DSS, SOC 2)? |
 | **Maintainability** | What is the team size and tenure? What is the expected change rate? Is the codebase shared across teams? |
+| **Testability** | Can complex domain logic be unit-tested in isolation (clear boundaries, ports/adapters, injected dependencies)? The team's test-first rule depends on it: a design whose complex logic cannot have its tests written first is not an acceptable design. |
 | **Cost** | What is the infrastructure budget? Are there burst-cost risks (traffic spikes, large batch jobs)? Is vendor lock-in a cost risk? |
 
 ### Capturing NFRs concretely
@@ -100,6 +101,7 @@ State what makes this decision necessary and what changes if the decision is wro
 - Store ADRs in version control alongside the code they govern (e.g. `docs/decisions/`).
 - One decision per ADR. If two decisions are coupled, write two ADRs and cross-reference them.
 - Keep the "Options considered" section even after a decision is made. Future readers need to know what was rejected and why, or they will relitigate the same decision.
+- The ADR is the home for design rationale — the team's comment-free-code rule depends on it. The *why* behind a structure, boundary, or trade-off lives in an ADR, never in inline code comments; if an explanation is begging to be written next to the code, it is an ADR (or a rename) waiting to happen.
 
 ---
 
