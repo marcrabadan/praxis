@@ -402,6 +402,24 @@ Accepted risks must be explicitly acknowledged by the appropriate decision-maker
 - Apply the "simplest thing that could possibly work" test: would a simpler approach satisfy all the stated ASRs? If yes, choose the simpler approach and record the decision.
 - Prefer reversible decisions over irreversible ones. An architecture that can be evolved incrementally is safer than one that front-loads all complexity.
 
+### Systemic complexity: what accumulates across many small, individually-fine changes
+
+Over-engineering is one path to unjustified complexity; the other is the
+opposite — many individually reasonable changes, each passing its own review,
+that together erode the architecture. No single change is big enough to trip
+checklist item 8.5; the cost is systemic, not local, and shows up only in
+aggregate (a module that quietly became a god-object, a dependency direction
+that quietly reversed).
+
+`/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
+that recurs across several `implementation` ledger entries. Treat 3+
+specs/refinements touching the same file or module as a trigger to re-run the
+"Simplicity and reversibility" checklist for that area — even though each
+change passed review on its own — and decide whether a `/refine` (extract a
+boundary, split a responsibility) is now justified by the accumulated evidence.
+This is evidence-based by construction: nothing is restructured until the
+recurrence is observed, never in anticipation of it.
+
 ---
 
 # Architecture Review Checklist
@@ -509,6 +527,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
 | 8.3 | Irreversible decisions (storage technology, public API contracts, event schema commitments) are identified. The team has explicitly accepted the lock-in implications. | | |
 | 8.4 | The design can be evolved incrementally. If requirements change, the first increment of change is achievable without a full rewrite. | | |
 | 8.5 | Operational complexity (number of services to deploy, infrastructure components to manage, runbooks to maintain) is proportionate to the team's size and operational maturity. | | |
+| 8.6 | **Systemic complexity:** if `/patterns` flags this area as a recurring hotspot (3+ specs/refinements touching the same file or module), the team has re-reviewed it and either planned a `/refine` to extract a boundary or explicitly accepted the continued churn with a reason. | | |
 
 ---
 

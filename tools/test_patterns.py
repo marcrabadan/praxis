@@ -62,6 +62,44 @@ class MineTests(unittest.TestCase):
             hits = pt.scan_run_logs([log])
             self.assertEqual(hits, [("U-2", str(log))])
 
+    def test_hotspot_recurring_file_at_threshold(self) -> None:
+        hits = [
+            ("src/foo.py", "e1"),
+            ("src/foo.py", "e2"),
+            ("src/foo.py", "e3"),
+            ("src/bar.py", "e1"),
+        ]
+        out = pt.mine_patterns([], [], hits, min_count=3)
+        vals = {r["value"]: r["count"] for r in out["hotspot"]}
+        self.assertEqual(vals.get("src/foo.py"), 3)
+        self.assertNotIn("src/bar.py", vals)
+
+    def test_scan_touched_files_parses_files_touched_section(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            entries_dir = Path(d)
+            (entries_dir / "e1.md").write_text(
+                "---\nid: e1\ntype: implementation\n---\n\n"
+                "Automatic snapshot.\n\n"
+                "**Files touched:**\n\n"
+                "- `src/foo.py`\n"
+                "- `src/bar.py`\n\n"
+                "```\n src/foo.py | 2 +-\n```\n",
+                encoding="utf-8",
+            )
+            entries = [_entry("e1", type="implementation")]
+            hits = pt.scan_touched_files(entries, entries_dir)
+            self.assertEqual(hits, [("src/foo.py", "e1"), ("src/bar.py", "e1")])
+
+    def test_scan_touched_files_skips_non_implementation_entries(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            entries_dir = Path(d)
+            (entries_dir / "e1.md").write_text(
+                "**Files touched:**\n\n- `src/foo.py`\n", encoding="utf-8"
+            )
+            entries = [_entry("e1", type="decision")]
+            hits = pt.scan_touched_files(entries, entries_dir)
+            self.assertEqual(hits, [])
+
     def test_run_on_full_root(self) -> None:
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
@@ -76,7 +114,9 @@ class MineTests(unittest.TestCase):
             self.assertTrue(any(r["value"] == "harness" for r in report["patterns"]["tag"]))
 
     def test_format_report_handles_empty(self) -> None:
-        text = pt.format_report({"tag": [], "source": [], "type": [], "stop-condition": []}, 0, 0, 3)
+        text = pt.format_report(
+            {"tag": [], "source": [], "type": [], "stop-condition": [], "hotspot": []}, 0, 0, 3
+        )
         self.assertIn("No recurring patterns", text)
 
 

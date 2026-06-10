@@ -9,6 +9,11 @@ and the stop-condition run logs — for things that keep happening, and surfaces
 them as **candidates**. It proposes; it never mutates. Promotion stays human-
 gated, routed through `tools/promote.py` / `skill-learner`.
 
+It also reads `implementation` entries' "Files touched" lists: a file or module
+that recurs across several specs/refinements surfaces as a complexity
+**hotspot** — a systemic-complexity signal that no single change was big enough
+to trip on its own, and a candidate for `/refine`.
+
 Deterministic, stdlib-only. It reads; it does not write to the ledger.
 
 Usage:
@@ -39,6 +44,7 @@ DEFAULT_MIN = 3
 # purpose — a hint for a human, not an auto-rule.
 PROMOTION_HINT = {
     "stop-condition": "a recurring blocker — consider promoting a P-* stop condition, gate, or guardrail",
+    "hotspot": "a file/area changed across many entries — consider a /refine to extract a boundary or reduce coupling before the next feature adds to it",
     "tag": "a recurring theme — consider a rule or a dedicated skill",
     "source": "a heavily-used command/skill — consider codifying its repeated decisions as a rule",
     "type": "a recurring artifact kind — informational",
@@ -86,9 +92,36 @@ def scan_run_logs(runs_paths: list[Path]) -> list[tuple[str, str]]:
     return found
 
 
+FILES_TOUCHED_RE = re.compile(r"^- `([^`\n]+)`\s*$", re.MULTILINE)
+
+
+def scan_touched_files(
+    entries: list[dict[str, Any]], entries_dir: Path
+) -> list[tuple[str, str]]:
+    """Return (file_path, entry_id) pairs from `implementation` entries' "Files
+    touched" lists, so a file or module repeatedly changed across entries
+    surfaces as a complexity hotspot."""
+    found: list[tuple[str, str]] = []
+    for e in entries:
+        if e.get("type") != "implementation":
+            continue
+        eid = str(e.get("id", "?"))
+        try:
+            text = (entries_dir / f"{eid}.md").read_text(encoding="utf-8")
+        except OSError:
+            continue
+        _, _, after = text.partition("**Files touched:**")
+        if not after:
+            continue
+        for m in FILES_TOUCHED_RE.finditer(after):
+            found.append((m.group(1), eid))
+    return found
+
+
 def mine_patterns(
     entries: list[dict[str, Any]],
     stop_hits: list[tuple[str, str]],
+    touched_files: list[tuple[str, str]] | None = None,
     min_count: int = DEFAULT_MIN,
 ) -> dict[str, list[dict[str, Any]]]:
     """Count recurring dimensions and return those at/above min_count.
@@ -100,6 +133,7 @@ def mine_patterns(
         "source": Counter(),
         "type": Counter(),
         "stop-condition": Counter(),
+        "hotspot": Counter(),
     }
     examples: dict[str, dict[str, list[str]]] = {
         k: defaultdict(list) for k in counters
@@ -124,6 +158,9 @@ def mine_patterns(
 
     for cid, path in stop_hits:
         _bump("stop-condition", cid, path)
+
+    for path, eid in touched_files or []:
+        _bump("hotspot", path, eid)
 
     result: dict[str, list[dict[str, Any]]] = {}
     for kind, counter in counters.items():
@@ -155,12 +192,13 @@ def format_report(
     ]
     titles = {
         "stop-condition": "Recurring stop conditions",
+        "hotspot": "Recurring touched files (complexity hotspots)",
         "tag": "Recurring tags",
         "source": "Recurring sources (commands/skills)",
         "type": "Recurring artifact types",
     }
     any_found = False
-    for kind in ("stop-condition", "tag", "source", "type"):
+    for kind in ("stop-condition", "hotspot", "tag", "source", "type"):
         rows = patterns.get(kind, [])
         lines.append(f"## {titles[kind]}")
         if not rows:
@@ -199,11 +237,12 @@ def _default_run_logs(root: Path) -> list[Path]:
 
 
 def run(root: Path, min_count: int) -> dict[str, Any]:
-    ledger = root / ".praxis" / "memory" / "ledger.jsonl"
-    entries = load_ledger(ledger)
+    mem = root / ".praxis" / "memory"
+    entries = load_ledger(mem / "ledger.jsonl")
     run_logs = _default_run_logs(root)
     stop_hits = scan_run_logs(run_logs)
-    patterns = mine_patterns(entries, stop_hits, min_count)
+    touched_files = scan_touched_files(entries, mem / "entries")
+    patterns = mine_patterns(entries, stop_hits, touched_files, min_count)
     return {
         "n_entries": len(entries),
         "n_logs": len(run_logs),

@@ -103,6 +103,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
 | 8.3 | Irreversible decisions (storage technology, public API contracts, event schema commitments) are identified. The team has explicitly accepted the lock-in implications. | | |
 | 8.4 | The design can be evolved incrementally. If requirements change, the first increment of change is achievable without a full rewrite. | | |
 | 8.5 | Operational complexity (number of services to deploy, infrastructure components to manage, runbooks to maintain) is proportionate to the team's size and operational maturity. | | |
+| 8.6 | **Systemic complexity:** if `/patterns` flags this area as a recurring hotspot (3+ specs/refinements touching the same file or module), the team has re-reviewed it and either planned a `/refine` to extract a boundary or explicitly accepted the continued churn with a reason. | | |
 
 ---
 

@@ -11,6 +11,17 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+### Added
+
+- **Systemic-complexity hotspot detection in `/patterns`** — the pattern miner
+  (`tools/patterns.py`) now also reads `implementation` ledger entries' "Files
+  touched" lists and surfaces a file/module recurring across 3+
+  specs/refinements as a **hotspot**: a candidate for `/refine`. The
+  software-architect's "Avoiding over-engineering and accidental complexity"
+  practice gains a new "Systemic complexity" subsection covering this
+  evidence-based, no-new-gate signal, and the architecture review checklist
+  gains item 8.6 to act on it.
+
 ## [1.11.0] - 2026-06-10
 
 ### Added
