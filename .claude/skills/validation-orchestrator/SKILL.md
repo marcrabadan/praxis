@@ -27,7 +27,7 @@ It does not produce product or code. It validates and decides.
   the **verify report**, with real gate results and reviewer sign-off, and
   decides whether that verdict is authoritative.
 - **Pending is not approved.** A gate whose required decision is still `pending`
-  blocks; do not advance on it.
+  blocks; do not advance on it (hard stop `U-11`).
 
 ## The verdict is a closed set
 

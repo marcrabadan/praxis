@@ -74,7 +74,7 @@ Start at [docs/harness-mode.md](docs/harness-mode.md).
 - [rules/stop-conditions.md](rules/stop-conditions.md) — when an agent must stop
   and ask instead of guessing.
 - [rules/stop-conditions-catalog.md](rules/stop-conditions-catalog.md) — the
-  *hard-blocker* half: an enumerated catalog (`U-1…U-10`, per-project `P-*`,
+  *hard-blocker* half: an enumerated catalog (`U-1…U-11`, per-project `P-*`,
   per-spec `S-*`) of observable triggers with exact `STOP[...]` text and a
   resolution gate; a fired condition halts the step and writes a run log. The
   soft-guess half is the assumptions ledger.

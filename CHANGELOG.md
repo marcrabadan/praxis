@@ -13,6 +13,21 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Added
 
+- **`U-11` — executing on a pending authorization is now a catalogued hard stop**
+  ([`rules/stop-conditions-catalog.md`](rules/stop-conditions-catalog.md)) —
+  work whose only authorization is a still-`pending` artifact (a memory-ledger
+  decision/plan, a `spec.md` at `status: draft`, an ungiven HITL gate approval)
+  halts with `STOP[U-11]` until the user explicitly accepts or rejects it.
+  "Pending is not approval" was already doctrine throughout; it now also has a
+  deterministic catalog id, cited by the validation-orchestrator and by the
+  judgement half in [`rules/stop-conditions.md`](rules/stop-conditions.md).
+- **Memory hook: pre-ship pending nudge**
+  ([`integrations/hooks/memory.settings.example.json`](integrations/hooks/memory.settings.example.json))
+  — a `PreToolUse` hook on `git commit` / `git push` re-surfaces the ledger
+  entries still awaiting accept/reject (`ledger.py pending --brief`), so work
+  built on an unaccepted proposal is caught before it ships. A stderr nudge,
+  never a block (exit 0 always) — planning runs legitimately commit with
+  everything pending.
 - **`/idea` — intake & triage front door** ([`.claude/commands/idea.md`](.claude/commands/idea.md))
   — a thin command that takes a raw idea, clarifies it (≤2 questions), classifies
   it (`feature` → `/new-feature`, `bug` → `/fix-bug`, `refinement` → `/refine`,
@@ -25,6 +40,15 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ### Changed
 
+- **Consult commands now restate the acceptance gate.** The eight expert
+  commands that record `pending` artifacts (`/analyst`, `/architect`,
+  `/developer`, `/devops`, `/product`, `/qa`, `/security`, `/ux`) now close
+  their *Always-on docs* section with the rule that a recorded ADR / plan /
+  strategy is a proposal, not authorization: do not implement it until the user
+  explicitly accepts it (`/memory accept <id>`) — pending is not approval
+  (`U-11`). Previously the rule lived only in the memory skill,
+  `rules/stop-conditions.md`, and the lifecycle commands, so a consult command
+  followed by "ok, do it" had no in-command guard.
 - **Harness mode is now always on (was opt-in).** Harness behavior is praxis's
   default and only operating mode — the `if not in harness mode, behave as before`
   fallback is gone from `/new-feature`, `/fix-bug`, `/refine`, and

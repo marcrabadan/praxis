@@ -23,6 +23,12 @@ This skill ships both halves; the hook is opt-in per consuming repo.
      on-install step), otherwise it reports how much is on record — and
      `pending --brief` surfaces entries still awaiting accept/reject. All injected
      into context so nothing is forgotten between sessions.
+   - **PreToolUse (git commit/push)** → `ledger.py pending --brief` to stderr.
+     Just before work ships, the entries still awaiting accept/reject are
+     re-surfaced, so work whose only authorization is a `pending` decision or
+     plan gets caught at the door (**pending is not approval** — stop condition
+     `U-11`). A nudge, never a block: planning runs legitimately commit with
+     everything pending.
    - **Stop** → `ledger.py snapshot --source auto`. When the agent finishes a
      turn with uncommitted changes, it captures a de-duplicated, rollback-able
      snapshot automatically — so even unrecorded implementations can be undone.

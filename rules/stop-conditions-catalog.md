@@ -37,6 +37,7 @@ These apply to every spec. A spec's own catalog inherits them
 | U-8 | An implementation note would claim a gate is green without a verify-report result (self-certification). | `STOP[U-8]: Cannot self-mark gate <G-name> green.` | The gate runs and the verify report records the result, or the note is rewritten to state the gate is unrun. |
 | U-9 | A named entity (asset, primitive, route, endpoint, provider, module) is substituted for a differently named one. | `STOP[U-9]: Named substitution detected: contract names <X>, implementation uses <Y>.` | Implementation uses the named entity, or the contract is amended with a decision trace. |
 | U-10 | A block marked locked/verbatim is rewritten. | `STOP[U-10]: Locked block <name> rewritten at <file>:<line>.` | Implementation matches the lock exactly, or the lock is removed by an approved amendment. |
+| U-11 | Work is about to execute whose only authorization is a `pending` artifact — a memory-ledger decision/plan still `pending`, a `spec.md` still `status: draft`, or a gate's HITL approval not yet given. Pending is not approval. | `STOP[U-11]: Authorizing artifact <id or path> is still pending. Pending is not approval.` | The user explicitly accepts the artifact (`/memory accept <id>`, spec `status: accepted`, or the gate's recorded approval) — or rejects it and the work is cancelled. |
 
 ## Project- and spec-specific conditions
 
