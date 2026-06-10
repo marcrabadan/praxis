@@ -97,6 +97,7 @@
         <a href="#docs-diagrams">Docs &amp; Diagrams</a>
         <a href="#memory">Memory</a>
         <a href="#harness">Harness</a>
+        <a href="#lifecycle">Lifecycle</a>
         <a href="#install">Install</a>
         <a class="btn btn-ghost" href="https://github.com/marcrabadan/praxis" target="_blank" rel="noopener">
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -119,6 +120,7 @@
       <a href="#docs-diagrams">Docs &amp; Diagrams</a>
       <a href="#memory">Memory</a>
       <a href="#harness">Harness</a>
+      <a href="#lifecycle">Lifecycle</a>
       <a href="#install">Install</a>
       <a href="https://github.com/marcrabadan/praxis" target="_blank" rel="noopener">GitHub ↗</a>
     </div>
@@ -794,8 +796,26 @@ landing-zone convention" — accept to apply.</code></pre>
       </div>
     </section>
 
+    <!-- ===================== LIFECYCLE DIAGRAMS ===================== -->
+    <section class="section" id="lifecycle" aria-labelledby="lifecycle-title">
+      <div class="container">
+        <h2 id="lifecycle-title" class="section-title">Two halves of one <span class="accent">delivery lifecycle</span></h2>
+        <p class="section-sub">Praxis splits its full feature lifecycle into a <strong>Product Developer Life Cycle</strong> (the <em>what &amp; why</em>) and a <strong>Software Developer Life Cycle</strong> (the <em>how</em>) — each phase owned by a role, each gate human-in-the-loop.</p>
+        <div style="display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:32px;">
+          <figure style="margin:0;background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;">
+            <img src="diagrams/product-developer-life-cycle.png" alt="Praxis Product Developer Life Cycle: Idea, Discovery, Research, Gate 1, Product Definition, Spec, Gate 2, Experience — owned by Business Analyst, Product Owner and UX/UI Engineer." loading="lazy" style="display:block;width:100%;height:auto;" />
+            <figcaption style="margin-top:14px;color:var(--text-muted);font-size:0.9rem;text-align:center;"><strong style="color:var(--text);">Product Developer Life Cycle</strong> — discovery → research → product&nbsp;definition → spec → experience. BA · PO · UX.</figcaption>
+          </figure>
+          <figure style="margin:0;background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;">
+            <img src="diagrams/software-developer-life-cycle.png" alt="Praxis Software Developer Life Cycle: Plan, Gate 3, Tasks, Build, Verify bounded loop, Release Candidate, Gate 4, Release — owned by Architect, Developer, QA, DevOps and Security." loading="lazy" style="display:block;width:100%;height:auto;" />
+            <figcaption style="margin-top:14px;color:var(--text-muted);font-size:0.9rem;text-align:center;"><strong style="color:var(--text);">Software Developer Life Cycle</strong> — plan → tasks → build → verify&nbsp;loop → release&nbsp;candidate → release. Architect · Dev · QA · DevOps · Security.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
     <!-- ===================== INSTALL ===================== -->
-    <section class="section" id="install" aria-labelledby="install-title">
+    <section class="section section-alt" id="install" aria-labelledby="install-title">
       <div class="container">
         <h2 id="install-title" class="section-title">Install into <span class="accent">your tool</span></h2>
         <p class="section-sub">The experts are native to Claude Code; the same personas are generated for Cursor, IntelliJ and Codex.</p>

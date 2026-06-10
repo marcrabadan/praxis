@@ -225,6 +225,25 @@ The experts produce plans, decisions, and code — `memory` makes that output **
 
 Praxis began as a **skill factory + SDLC expert pack + memory ledger**. Harness mode turns it into a fuller **agent harness**: a reliable operating environment that tells an agent *where to read first, what is canonical, where durable decisions go, how project context is resolved, and when to stop and ask*. It carries the authority model **and** the full delivery lifecycle — discovery, research, specs, plans, tasks, verification, and release, plus lighter lifecycles for bugs and refinements. **It is praxis's default and only operating mode** — there is no opt-in and no non-harness fallback. If a repo has no `.praxis/config.json`, the harness **auto-bootstraps** one (a `local` project derived from the repo name, via `python tools/ensure_harness.py` — idempotent) on the first command and continues; the one hard stop is a config that is *present but broken*. See [`docs/harness-mode.md`](docs/harness-mode.md) for the full guide.
 
+### The lifecycle at a glance
+
+Praxis splits its full feature lifecycle into two halves — a **Product Developer Life Cycle** (the *what & why*: discovery → research → product definition → spec → experience) and a **Software Developer Life Cycle** (the *how*: plan → tasks → build → verify → release). Each phase is owned by a role and every gate is human-in-the-loop.
+
+<table>
+<tr>
+<td width="50%" valign="top" align="center">
+<a href="docs/diagrams/product-developer-life-cycle.png"><img src="docs/diagrams/product-developer-life-cycle.png" alt="Praxis Product Developer Life Cycle: Idea, Discovery, Research, Gate 1, Product Definition, Spec, Gate 2, Experience — owned by Business Analyst, Product Owner and UX/UI Engineer." /></a>
+<br /><sub><b>Product Developer Life Cycle</b> — BA · PO · UX</sub>
+</td>
+<td width="50%" valign="top" align="center">
+<a href="docs/diagrams/software-developer-life-cycle.png"><img src="docs/diagrams/software-developer-life-cycle.png" alt="Praxis Software Developer Life Cycle: Plan, Gate 3, Tasks, Build, Verify bounded loop, Release Candidate, Gate 4, Release — owned by Architect, Developer, QA, DevOps and Security." /></a>
+<br /><sub><b>Software Developer Life Cycle</b> — Architect · Dev · QA · DevOps · Security</sub>
+</td>
+</tr>
+</table>
+
+Sources: [`docs/diagrams/`](docs/diagrams/) (versioned Mermaid `.mmd` + rendered PNG). The full step and gate definitions live in [`workflows/feature-development.workflow.json`](workflows/feature-development.workflow.json) and [`systems/feature-development/artifact-model.md`](systems/feature-development/artifact-model.md).
+
 What it adds (all repo-level, alongside the factory):
 
 | Path | Purpose |
