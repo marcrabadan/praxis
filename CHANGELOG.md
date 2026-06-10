@@ -11,6 +11,8 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-06-10
+
 ### Added
 
 - **Team conventions captured into four role experts** (via `/learn`, accepted
@@ -45,15 +47,6 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
   built on an unaccepted proposal is caught before it ships. A stderr nudge,
   never a block (exit 0 always) — planning runs legitimately commit with
   everything pending.
-- **`/idea` — intake & triage front door** ([`.claude/commands/idea.md`](.claude/commands/idea.md))
-  — a thin command that takes a raw idea, clarifies it (≤2 questions), classifies
-  it (`feature` → `/new-feature`, `bug` → `/fix-bug`, `refinement` → `/refine`,
-  `not-worth-doing` → no route), captures a `pending` note in the memory ledger
-  (`--source /idea --tags intake,<class>`), and recommends the next command. It
-  classifies, captures, and recommends — it never plans, specs, or runs the
-  lifecycle. A command, not a skill (per promotion-policy). Designed end-to-end
-  through the harness lifecycle under
-  [`projects/praxis/specs/idea-command/`](projects/praxis/specs/idea-command/).
 
 ### Changed
 
@@ -75,6 +68,23 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
   (`U-11`). Previously the rule lived only in the memory skill,
   `rules/stop-conditions.md`, and the lifecycle commands, so a consult command
   followed by "ok, do it" had no in-command guard.
+
+## [1.10.0] - 2026-06-09
+
+### Added
+
+- **`/idea` — intake & triage front door** ([`.claude/commands/idea.md`](.claude/commands/idea.md))
+  — a thin command that takes a raw idea, clarifies it (≤2 questions), classifies
+  it (`feature` → `/new-feature`, `bug` → `/fix-bug`, `refinement` → `/refine`,
+  `not-worth-doing` → no route), captures a `pending` note in the memory ledger
+  (`--source /idea --tags intake,<class>`), and recommends the next command. It
+  classifies, captures, and recommends — it never plans, specs, or runs the
+  lifecycle. A command, not a skill (per promotion-policy). Designed end-to-end
+  through the harness lifecycle under
+  [`projects/praxis/specs/idea-command/`](projects/praxis/specs/idea-command/).
+
+### Changed
+
 - **Harness mode is now always on (was opt-in).** Harness behavior is praxis's
   default and only operating mode — the `if not in harness mode, behave as before`
   fallback is gone from `/new-feature`, `/fix-bug`, `/refine`, and
