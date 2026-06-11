@@ -11,6 +11,8 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+## [1.12.0] - 2026-06-11
+
 ### Added
 
 - **SonarQube-aligned code-quality metrics rule** (`rules/code-quality-metrics.md`)
