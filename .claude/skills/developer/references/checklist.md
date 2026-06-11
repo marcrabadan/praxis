@@ -30,8 +30,8 @@ A self-review checklist a developer runs before opening or merging a pull reques
 - [ ] **Team rule — no non-functional inline comments:** no narrative comments; every non-functional comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning). Tool directives (`noqa`, `eslint-disable`, pragmas) are fine, scoped as narrowly as possible.
 - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
 - [ ] Names are clear and consistent with surrounding code.
-- [ ] Functions do one thing; any function that grew during this change is still within reason.
-- [ ] No obvious duplication that violates DRY without a stated reason.
+- [ ] Functions do one thing; any function that grew during this change is still within reason (cyclomatic/cognitive complexity within the defaults in `rules/code-quality-metrics.md`, or justified).
+- [ ] No obvious duplication that violates DRY without a stated reason; duplicated lines stay under the default in `rules/code-quality-metrics.md`.
 - [ ] Code matches the surrounding style (indentation, naming conventions, error-handling patterns).
 
 ---

@@ -272,8 +272,13 @@ command ([`../tools/patterns.py`](../tools/patterns.py)) — sweeps the memory
 ledger and the stop-condition run logs for recurring tags, sources, artifact
 types, and stop conditions, and surfaces them as **human-gated promotion
 candidates**: a repeated blocker becomes a candidate `P-*` stop condition or
-guardrail, a repeated theme a candidate rule or skill. Nothing is promoted
-automatically — the miner asks "what keeps happening?" and the user decides.
+guardrail, a repeated theme a candidate rule or skill. It also reads
+`implementation` entries' "Files touched" lists: a file or module that recurs
+across several specs/refinements surfaces as a complexity **hotspot** — a
+candidate for `/refine`, owned by `software-architect`'s "Systemic complexity"
+practice ([`../.claude/skills/software-architect/references/practices.md`](../.claude/skills/software-architect/references/practices.md)
+§10). Nothing is promoted automatically — the miner asks "what keeps
+happening?" and the user decides.
 
 ## Trying harness mode end to end
 

@@ -1,0 +1,237 @@
+diff --git a/.claude/skills/software-architect/references/practices.md b/.claude/skills/software-architect/references/practices.md
+index 0271aa5..4309b3c 100644
+--- a/.claude/skills/software-architect/references/practices.md
++++ b/.claude/skills/software-architect/references/practices.md
+@@ -349,13 +349,18 @@ that quietly reversed).
+ `/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
+ that recurs across several distinct specs/refinements (deduplicated by the
+ originating `source:` decision/spec, so iterative implementation snapshots of
+-one spec count once, not once per snapshot). Treat 3+ specs/refinements
+-touching the same file or module as a trigger to re-run the
+-"Simplicity and reversibility" checklist for that area — even though each
+-change passed review on its own — and decide whether a `/refine` (extract a
+-boundary, split a responsibility) is now justified by the accumulated evidence.
+-This is evidence-based by construction: nothing is restructured until the
+-recurrence is observed, never in anticipation of it.
++one spec count once, not once per snapshot). `CHANGELOG.md` and the generated
++`SKILLS.md` / `integrations/**` bundles are excluded from this signal — they
++are touched by nearly every change and would otherwise dominate the list
++without indicating anything. Treat 3+ specs/refinements touching the same file
++or module as a trigger to re-run the "Simplicity and reversibility" checklist
++for that area — even though each change passed review on its own — and decide
++whether a `/refine` (extract a boundary, split a responsibility) is now
++justified by the accumulated evidence, or whether the recurrence is itself
++justified (e.g. a shared reference doc that several independent cross-cutting
++rules legitimately extend) and the churn can be explicitly accepted with a
++reason. This is evidence-based by construction: nothing is restructured until
++the recurrence is observed, never in anticipation of it.
+ 
+ ### Quantitative thresholds: code-quality metrics
+ 
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 156fe96..467852b 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -35,7 +35,10 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
+   are deduplicated by the originating spec/refinement (the `source:<id>` tag
+   on the implementation entry, falling back to the entry's own id), so several
+   iterative implementation snapshots of one spec collapse to a single hit
+-  instead of inflating the count once per snapshot. The software-architect's
++  instead of inflating the count once per snapshot. `CHANGELOG.md` and the
++  generated `SKILLS.md` / `integrations/**` bundles are excluded from the
++  signal — they are touched by nearly every change and would otherwise
++  dominate the list without indicating anything. The software-architect's
+   "Avoiding over-engineering and accidental complexity" practice gains a new
+   "Systemic complexity" subsection covering this evidence-based, no-new-gate
+   signal, and the architecture review checklist gains item 8.6 to act on it.
+diff --git a/integrations/codex/.praxis/software-architect.md b/integrations/codex/.praxis/software-architect.md
+index 6ec2d06..623cab4 100644
+--- a/integrations/codex/.praxis/software-architect.md
++++ b/integrations/codex/.praxis/software-architect.md
+@@ -414,13 +414,18 @@ that quietly reversed).
+ `/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
+ that recurs across several distinct specs/refinements (deduplicated by the
+ originating `source:` decision/spec, so iterative implementation snapshots of
+-one spec count once, not once per snapshot). Treat 3+ specs/refinements
+-touching the same file or module as a trigger to re-run the
+-"Simplicity and reversibility" checklist for that area — even though each
+-change passed review on its own — and decide whether a `/refine` (extract a
+-boundary, split a responsibility) is now justified by the accumulated evidence.
+-This is evidence-based by construction: nothing is restructured until the
+-recurrence is observed, never in anticipation of it.
++one spec count once, not once per snapshot). `CHANGELOG.md` and the generated
++`SKILLS.md` / `integrations/**` bundles are excluded from this signal — they
++are touched by nearly every change and would otherwise dominate the list
++without indicating anything. Treat 3+ specs/refinements touching the same file
++or module as a trigger to re-run the "Simplicity and reversibility" checklist
++for that area — even though each change passed review on its own — and decide
++whether a `/refine` (extract a boundary, split a responsibility) is now
++justified by the accumulated evidence, or whether the recurrence is itself
++justified (e.g. a shared reference doc that several independent cross-cutting
++rules legitimately extend) and the churn can be explicitly accepted with a
++reason. This is evidence-based by construction: nothing is restructured until
++the recurrence is observed, never in anticipation of it.
+ 
+ ### Quantitative thresholds: code-quality metrics
+ 
+diff --git a/integrations/cursor/.cursor/rules/praxis-software-architect.mdc b/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
+index 126100e..2fd133f 100644
+--- a/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
+@@ -418,13 +418,18 @@ that quietly reversed).
+ `/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
+ that recurs across several distinct specs/refinements (deduplicated by the
+ originating `source:` decision/spec, so iterative implementation snapshots of
+-one spec count once, not once per snapshot). Treat 3+ specs/refinements
+-touching the same file or module as a trigger to re-run the
+-"Simplicity and reversibility" checklist for that area — even though each
+-change passed review on its own — and decide whether a `/refine` (extract a
+-boundary, split a responsibility) is now justified by the accumulated evidence.
+-This is evidence-based by construction: nothing is restructured until the
+-recurrence is observed, never in anticipation of it.
++one spec count once, not once per snapshot). `CHANGELOG.md` and the generated
++`SKILLS.md` / `integrations/**` bundles are excluded from this signal — they
++are touched by nearly every change and would otherwise dominate the list
++without indicating anything. Treat 3+ specs/refinements touching the same file
++or module as a trigger to re-run the "Simplicity and reversibility" checklist
++for that area — even though each change passed review on its own — and decide
++whether a `/refine` (extract a boundary, split a responsibility) is now
++justified by the accumulated evidence, or whether the recurrence is itself
++justified (e.g. a shared reference doc that several independent cross-cutting
++rules legitimately extend) and the churn can be explicitly accepted with a
++reason. This is evidence-based by construction: nothing is restructured until
++the recurrence is observed, never in anticipation of it.
+ 
+ ### Quantitative thresholds: code-quality metrics
+ 
+diff --git a/integrations/intellij/.junie/praxis/software-architect.md b/integrations/intellij/.junie/praxis/software-architect.md
+index 6ec2d06..623cab4 100644
+--- a/integrations/intellij/.junie/praxis/software-architect.md
++++ b/integrations/intellij/.junie/praxis/software-architect.md
+@@ -414,13 +414,18 @@ that quietly reversed).
+ `/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
+ that recurs across several distinct specs/refinements (deduplicated by the
+ originating `source:` decision/spec, so iterative implementation snapshots of
+-one spec count once, not once per snapshot). Treat 3+ specs/refinements
+-touching the same file or module as a trigger to re-run the
+-"Simplicity and reversibility" checklist for that area — even though each
+-change passed review on its own — and decide whether a `/refine` (extract a
+-boundary, split a responsibility) is now justified by the accumulated evidence.
+-This is evidence-based by construction: nothing is restructured until the
+-recurrence is observed, never in anticipation of it.
++one spec count once, not once per snapshot). `CHANGELOG.md` and the generated
++`SKILLS.md` / `integrations/**` bundles are excluded from this signal — they
++are touched by nearly every change and would otherwise dominate the list
++without indicating anything. Treat 3+ specs/refinements touching the same file
++or module as a trigger to re-run the "Simplicity and reversibility" checklist
++for that area — even though each change passed review on its own — and decide
++whether a `/refine` (extract a boundary, split a responsibility) is now
++justified by the accumulated evidence, or whether the recurrence is itself
++justified (e.g. a shared reference doc that several independent cross-cutting
++rules legitimately extend) and the churn can be explicitly accepted with a
++reason. This is evidence-based by construction: nothing is restructured until
++the recurrence is observed, never in anticipation of it.
+ 
+ ### Quantitative thresholds: code-quality metrics
+ 
+diff --git a/tools/patterns.py b/tools/patterns.py
+index 86119d5..4a7afa4 100644
+--- a/tools/patterns.py
++++ b/tools/patterns.py
+@@ -15,6 +15,9 @@ complexity **hotspot** — a systemic-complexity signal that no single change wa
+ big enough to trip on its own, and a candidate for `/refine`. Iterative
+ snapshots of the same spec (sharing a `source:<id>` tag) collapse to one hit,
+ so repeated polishing of one spec doesn't masquerade as 3+ separate specs.
++Files that are structurally touched by nearly every change — `CHANGELOG.md`
++and the generated `SKILLS.md` / `integrations/**` bundles — are excluded from
++the hotspot signal so it stays focused on areas with genuine recurring change.
+ 
+ Deterministic, stdlib-only. It reads; it does not write to the ledger.
+ 
+@@ -42,6 +45,19 @@ from typing import Any
+ STOP_ID_RE = re.compile(r"\b([UPS]-\d{1,3})\b")
+ DEFAULT_MIN = 3
+ 
++# Files touched by nearly every change, so recurrence there is expected and
++# not a complexity signal: the running changelog, and catalog/integration
++# bundles regenerated by `make catalog` / `make integrations` from
++# .claude/skills + .claude/commands.
++HOTSPOT_EXCLUDE_EXACT = {"CHANGELOG.md", "SKILLS.md"}
++HOTSPOT_EXCLUDE_PREFIXES = ("integrations/",)
++
++
++def _is_hotspot_excluded(path: str) -> bool:
++    if path in HOTSPOT_EXCLUDE_EXACT:
++        return True
++    return path.startswith(HOTSPOT_EXCLUDE_PREFIXES)
++
+ # Which recurring dimensions suggest which kind of promotion. Conservative on
+ # purpose — a hint for a human, not an auto-rule.
+ PROMOTION_HINT = {
+@@ -108,7 +124,11 @@ def scan_touched_files(
+     tag on the implementation entry if present, else the entry's own id.
+     Several iterative snapshots of the same spec share a `source:` tag and
+     therefore collapse to a single (file, spec_id) pair, so iterative work
+-    on one spec does not look like 3+ separate specs touching the file."""
++    on one spec does not look like 3+ separate specs touching the file.
++
++    Files matching HOTSPOT_EXCLUDE_EXACT / HOTSPOT_EXCLUDE_PREFIXES are
++    skipped entirely: they are touched by nearly every change and would
++    otherwise dominate the hotspot list without signalling anything."""
+     seen: set[tuple[str, str]] = set()
+     found: list[tuple[str, str]] = []
+     for e in entries:
+@@ -128,7 +148,10 @@ def scan_touched_files(
+         if not after:
+             continue
+         for m in FILES_TOUCHED_RE.finditer(after):
+-            key = (m.group(1), spec_id)
++            path = m.group(1)
++            if _is_hotspot_excluded(path):
++                continue
++            key = (path, spec_id)
+             if key in seen:
+                 continue
+             seen.add(key)
+diff --git a/tools/test_patterns.py b/tools/test_patterns.py
+index 0db08c5..7b238ea 100644
+--- a/tools/test_patterns.py
++++ b/tools/test_patterns.py
+@@ -123,6 +123,37 @@ class MineTests(unittest.TestCase):
+                 [("src/foo.py", "e1"), ("src/foo.py", "e2"), ("src/foo.py", "e3")],
+             )
+ 
++    def test_scan_touched_files_excludes_changelog_and_catalog(self) -> None:
++        with tempfile.TemporaryDirectory() as d:
++            entries_dir = Path(d)
++            (entries_dir / "e1.md").write_text(
++                "**Files touched:**\n\n"
++                "- `CHANGELOG.md`\n"
++                "- `SKILLS.md`\n"
++                "- `src/foo.py`\n",
++                encoding="utf-8",
++            )
++            entries = [_entry("e1", type="implementation")]
++            hits = pt.scan_touched_files(entries, entries_dir)
++            # CHANGELOG.md and SKILLS.md are touched by nearly every change
++            # and would otherwise dominate the hotspot list.
++            self.assertEqual(hits, [("src/foo.py", "e1")])
++
++    def test_scan_touched_files_excludes_generated_integrations(self) -> None:
++        with tempfile.TemporaryDirectory() as d:
++            entries_dir = Path(d)
++            (entries_dir / "e1.md").write_text(
++                "**Files touched:**\n\n"
++                "- `integrations/codex/.praxis/developer.md`\n"
++                "- `.claude/skills/developer/references/practices.md`\n",
++                encoding="utf-8",
++            )
++            entries = [_entry("e1", type="implementation")]
++            hits = pt.scan_touched_files(entries, entries_dir)
++            self.assertEqual(
++                hits, [(".claude/skills/developer/references/practices.md", "e1")]
++            )
++
+     def test_scan_touched_files_skips_non_implementation_entries(self) -> None:
+         with tempfile.TemporaryDirectory() as d:
+             entries_dir = Path(d)

@@ -1,0 +1,412 @@
+diff --git a/.claude/skills/developer/references/checklist.md b/.claude/skills/developer/references/checklist.md
+index acf098f..ce873d8 100644
+--- a/.claude/skills/developer/references/checklist.md
++++ b/.claude/skills/developer/references/checklist.md
+@@ -30,8 +30,8 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ - [ ] **Team rule — no non-functional inline comments:** no narrative comments; every non-functional comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning). Tool directives (`noqa`, `eslint-disable`, pragmas) are fine, scoped as narrowly as possible.
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+-- [ ] Functions do one thing; any function that grew during this change is still within reason.
+-- [ ] No obvious duplication that violates DRY without a stated reason.
++- [ ] Functions do one thing; any function that grew during this change is still within reason (cyclomatic/cognitive complexity within the defaults in `rules/code-quality-metrics.md`, or justified).
++- [ ] No obvious duplication that violates DRY without a stated reason; duplicated lines stay under the default in `rules/code-quality-metrics.md`.
+ - [ ] Code matches the surrounding style (indentation, naming conventions, error-handling patterns).
+ 
+ ---
+diff --git a/.claude/skills/developer/references/practices.md b/.claude/skills/developer/references/practices.md
+index 9e82471..1197ef9 100644
+--- a/.claude/skills/developer/references/practices.md
++++ b/.claude/skills/developer/references/practices.md
+@@ -46,6 +46,7 @@ These principles are heuristics, not laws. Apply them when the benefit is clear;
+ - Extract duplication when three identical or structurally identical fragments exist and are clearly the same concept. Two copies can be a coincidence.
+ - DRY applies to *knowledge*, not just text. Two pieces of code that look similar but represent different concepts should stay separate.
+ - Over-applying DRY produces premature abstractions that are harder to change than the duplication they replaced.
++- Default thresholds: keep duplicated lines under ~3% of a file and cyclomatic/cognitive complexity of a function under ~10/15 (see `rules/code-quality-metrics.md`, or the repo's configured quality gate). Treat repeated trips above either as a signal to extract or simplify, not just a number to track.
+ 
+ ### YAGNI (You Aren't Gonna Need It)
+ - Do not build for requirements that do not yet exist. Speculative features add complexity, maintenance cost, and testing surface with no near-term payoff.
+diff --git a/.claude/skills/qa-engineer/references/checklist.md b/.claude/skills/qa-engineer/references/checklist.md
+index 2464044..401468b 100644
+--- a/.claude/skills/qa-engineer/references/checklist.md
++++ b/.claude/skills/qa-engineer/references/checklist.md
+@@ -25,6 +25,7 @@ Use this checklist before declaring a feature, sprint, or release ready to progr
+ - [ ] High-risk areas (new code, integrations, changed business logic) have positive + negative + boundary + exploratory coverage.
+ - [ ] **Team rule — test-first:** complex logic in the change (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) carries unit tests written *before* the implementation; complex logic without unit tests is flagged as a release risk, and every fixed defect has the regression test that failed before the fix.
+ - [ ] Exploratory testing has been performed with a documented session charter and notes.
++- [ ] Code coverage on new/changed code meets the default in `rules/code-quality-metrics.md` (>= 80%) or the repo's configured quality gate; shortfalls are documented as a gap below.
+ - [ ] Any gaps in coverage are documented and risk-accepted by the product owner in writing.
+ 
+ ### C. Defect status
+diff --git a/.claude/skills/security-engineer/references/checklist.md b/.claude/skills/security-engineer/references/checklist.md
+index b1e28b8..b6671fe 100644
+--- a/.claude/skills/security-engineer/references/checklist.md
++++ b/.claude/skills/security-engineer/references/checklist.md
+@@ -72,6 +72,7 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ ## 8. Pipeline gates (DevSecOps)
+ 
+ - [ ] Secret scanning, SAST, and SCA run on this change in CI; blocking severities are enforced by policy.
++- [ ] Security Rating and Security Hotspots Reviewed meet the defaults in `rules/code-quality-metrics.md` (Rating = A, Hotspots Reviewed = 100%) or the repo's configured quality gate before this change is marked ready for `G-security`.
+ - [ ] IaC and container images (if changed) are scanned for misconfiguration and vulnerable base images.
+ - [ ] Suppressed findings have an explicit reason and an owner (no silent ignores).
+ - [ ] The pipeline itself uses least-privilege tokens and pinned action/image digests; secrets do not appear in logs.
+diff --git a/.claude/skills/software-architect/references/checklist.md b/.claude/skills/software-architect/references/checklist.md
+index 49f411b..9f5b587 100644
+--- a/.claude/skills/software-architect/references/checklist.md
++++ b/.claude/skills/software-architect/references/checklist.md
+@@ -104,6 +104,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 8.4 | The design can be evolved incrementally. If requirements change, the first increment of change is achievable without a full rewrite. | | |
+ | 8.5 | Operational complexity (number of services to deploy, infrastructure components to manage, runbooks to maintain) is proportionate to the team's size and operational maturity. | | |
+ | 8.6 | **Systemic complexity:** if `/patterns` flags this area as a recurring hotspot (3+ specs/refinements touching the same file or module), the team has re-reviewed it and either planned a `/refine` to extract a boundary or explicitly accepted the continued churn with a reason. | | |
++| 8.7 | **Maintainability rating:** the change keeps the codebase's Maintainability Rating / Technical Debt Ratio within the default in `rules/code-quality-metrics.md` (or the repo's configured quality gate); a regression below the threshold is justified or routed to `/refine`. | | |
+ 
+ ---
+ 
+diff --git a/.claude/skills/software-architect/references/practices.md b/.claude/skills/software-architect/references/practices.md
+index 791db94..6e0cb9e 100644
+--- a/.claude/skills/software-architect/references/practices.md
++++ b/.claude/skills/software-architect/references/practices.md
+@@ -354,3 +354,13 @@ change passed review on its own — and decide whether a `/refine` (extract a
+ boundary, split a responsibility) is now justified by the accumulated evidence.
+ This is evidence-based by construction: nothing is restructured until the
+ recurrence is observed, never in anticipation of it.
++
++### Quantitative thresholds: code-quality metrics
++
++Checklist items 8.6 (hotspot) and 8.7 (maintainability rating) are judgment
++calls grounded in numbers, not vibes. `rules/code-quality-metrics.md` gives
++the shared vocabulary and default min/max thresholds — Maintainability
++Rating, Technical Debt Ratio, Cyclomatic/Cognitive Complexity, Coverage,
++Duplicated Lines — aligned to SonarQube's default Quality Gate. Use the repo's
++own configured quality gate when one exists; fall back to these defaults when
++it does not.
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 6bb0bda..507a939 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -13,6 +13,21 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
+ 
+ ### Added
+ 
++- **SonarQube-aligned code-quality metrics rule** (`rules/code-quality-metrics.md`)
++  — a new harness rule giving `developer`, `qa-engineer`, `software-architect`,
++  and `security-engineer` a shared vocabulary and default min/max thresholds
++  (Coverage on new code >= 80%, Duplicated Lines on new code <= 3%,
++  Maintainability/Reliability/Security Rating = A, Security Hotspots Reviewed
++  = 100%, Cyclomatic Complexity <= 10, Cognitive Complexity <= 15, with the
++  Technical Debt Ratio bands behind the Maintainability Rating), aligned to
++  SonarQube's default "Sonar way" Quality Gate. The rule is explicit that a
++  repo's own configured quality gate is binding when one exists — these are
++  defaults and a shared vocabulary, not a new mandatory gate. Wired into
++  `developer` (DRY/complexity practices and pre-merge checklist),
++  `qa-engineer` (test-readiness coverage item), `software-architect`
++  (checklist item 8.7, alongside the 8.6 hotspot signal), and
++  `security-engineer` (pipeline-gates checklist, ahead of `G-security`).
++
+ - **Systemic-complexity hotspot detection in `/patterns`** — the pattern miner
+   (`tools/patterns.py`) now also reads `implementation` ledger entries' "Files
+   touched" lists and surfaces a file/module recurring across 3+
+diff --git a/integrations/codex/.praxis/developer.md b/integrations/codex/.praxis/developer.md
+index f62edbe..1c81b81 100644
+--- a/integrations/codex/.praxis/developer.md
++++ b/integrations/codex/.praxis/developer.md
+@@ -114,6 +114,7 @@ These principles are heuristics, not laws. Apply them when the benefit is clear;
+ - Extract duplication when three identical or structurally identical fragments exist and are clearly the same concept. Two copies can be a coincidence.
+ - DRY applies to *knowledge*, not just text. Two pieces of code that look similar but represent different concepts should stay separate.
+ - Over-applying DRY produces premature abstractions that are harder to change than the duplication they replaced.
++- Default thresholds: keep duplicated lines under ~3% of a file and cyclomatic/cognitive complexity of a function under ~10/15 (see `rules/code-quality-metrics.md`, or the repo's configured quality gate). Treat repeated trips above either as a signal to extract or simplify, not just a number to track.
+ 
+ ### YAGNI (You Aren't Gonna Need It)
+ - Do not build for requirements that do not yet exist. Speculative features add complexity, maintenance cost, and testing surface with no near-term payoff.
+@@ -369,8 +370,8 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ - [ ] **Team rule — no non-functional inline comments:** no narrative comments; every non-functional comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning). Tool directives (`noqa`, `eslint-disable`, pragmas) are fine, scoped as narrowly as possible.
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+-- [ ] Functions do one thing; any function that grew during this change is still within reason.
+-- [ ] No obvious duplication that violates DRY without a stated reason.
++- [ ] Functions do one thing; any function that grew during this change is still within reason (cyclomatic/cognitive complexity within the defaults in `rules/code-quality-metrics.md`, or justified).
++- [ ] No obvious duplication that violates DRY without a stated reason; duplicated lines stay under the default in `rules/code-quality-metrics.md`.
+ - [ ] Code matches the surrounding style (indentation, naming conventions, error-handling patterns).
+ 
+ ---
+diff --git a/integrations/codex/.praxis/qa-engineer.md b/integrations/codex/.praxis/qa-engineer.md
+index 64f4084..01fa3ee 100644
+--- a/integrations/codex/.praxis/qa-engineer.md
++++ b/integrations/codex/.praxis/qa-engineer.md
+@@ -352,6 +352,7 @@ Use this checklist before declaring a feature, sprint, or release ready to progr
+ - [ ] High-risk areas (new code, integrations, changed business logic) have positive + negative + boundary + exploratory coverage.
+ - [ ] **Team rule — test-first:** complex logic in the change (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) carries unit tests written *before* the implementation; complex logic without unit tests is flagged as a release risk, and every fixed defect has the regression test that failed before the fix.
+ - [ ] Exploratory testing has been performed with a documented session charter and notes.
++- [ ] Code coverage on new/changed code meets the default in `rules/code-quality-metrics.md` (>= 80%) or the repo's configured quality gate; shortfalls are documented as a gap below.
+ - [ ] Any gaps in coverage are documented and risk-accepted by the product owner in writing.
+ 
+ ### C. Defect status
+diff --git a/integrations/codex/.praxis/security-engineer.md b/integrations/codex/.praxis/security-engineer.md
+index b25aa65..aaa8a49 100644
+--- a/integrations/codex/.praxis/security-engineer.md
++++ b/integrations/codex/.praxis/security-engineer.md
+@@ -300,6 +300,7 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ ## 8. Pipeline gates (DevSecOps)
+ 
+ - [ ] Secret scanning, SAST, and SCA run on this change in CI; blocking severities are enforced by policy.
++- [ ] Security Rating and Security Hotspots Reviewed meet the defaults in `rules/code-quality-metrics.md` (Rating = A, Hotspots Reviewed = 100%) or the repo's configured quality gate before this change is marked ready for `G-security`.
+ - [ ] IaC and container images (if changed) are scanned for misconfiguration and vulnerable base images.
+ - [ ] Suppressed findings have an explicit reason and an owner (no silent ignores).
+ - [ ] The pipeline itself uses least-privilege tokens and pinned action/image digests; secrets do not appear in logs.
+diff --git a/integrations/codex/.praxis/software-architect.md b/integrations/codex/.praxis/software-architect.md
+index 9445c4f..5f1eeff 100644
+--- a/integrations/codex/.praxis/software-architect.md
++++ b/integrations/codex/.praxis/software-architect.md
+@@ -420,6 +420,16 @@ boundary, split a responsibility) is now justified by the accumulated evidence.
+ This is evidence-based by construction: nothing is restructured until the
+ recurrence is observed, never in anticipation of it.
+ 
++### Quantitative thresholds: code-quality metrics
++
++Checklist items 8.6 (hotspot) and 8.7 (maintainability rating) are judgment
++calls grounded in numbers, not vibes. `rules/code-quality-metrics.md` gives
++the shared vocabulary and default min/max thresholds — Maintainability
++Rating, Technical Debt Ratio, Cyclomatic/Cognitive Complexity, Coverage,
++Duplicated Lines — aligned to SonarQube's default Quality Gate. Use the repo's
++own configured quality gate when one exists; fall back to these defaults when
++it does not.
++
+ ---
+ 
+ # Architecture Review Checklist
+@@ -528,6 +538,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 8.4 | The design can be evolved incrementally. If requirements change, the first increment of change is achievable without a full rewrite. | | |
+ | 8.5 | Operational complexity (number of services to deploy, infrastructure components to manage, runbooks to maintain) is proportionate to the team's size and operational maturity. | | |
+ | 8.6 | **Systemic complexity:** if `/patterns` flags this area as a recurring hotspot (3+ specs/refinements touching the same file or module), the team has re-reviewed it and either planned a `/refine` to extract a boundary or explicitly accepted the continued churn with a reason. | | |
++| 8.7 | **Maintainability rating:** the change keeps the codebase's Maintainability Rating / Technical Debt Ratio within the default in `rules/code-quality-metrics.md` (or the repo's configured quality gate); a regression below the threshold is justified or routed to `/refine`. | | |
+ 
+ ---
+ 
+diff --git a/integrations/cursor/.cursor/rules/praxis-developer.mdc b/integrations/cursor/.cursor/rules/praxis-developer.mdc
+index 2e38094..40b968a 100644
+--- a/integrations/cursor/.cursor/rules/praxis-developer.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-developer.mdc
+@@ -118,6 +118,7 @@ These principles are heuristics, not laws. Apply them when the benefit is clear;
+ - Extract duplication when three identical or structurally identical fragments exist and are clearly the same concept. Two copies can be a coincidence.
+ - DRY applies to *knowledge*, not just text. Two pieces of code that look similar but represent different concepts should stay separate.
+ - Over-applying DRY produces premature abstractions that are harder to change than the duplication they replaced.
++- Default thresholds: keep duplicated lines under ~3% of a file and cyclomatic/cognitive complexity of a function under ~10/15 (see `rules/code-quality-metrics.md`, or the repo's configured quality gate). Treat repeated trips above either as a signal to extract or simplify, not just a number to track.
+ 
+ ### YAGNI (You Aren't Gonna Need It)
+ - Do not build for requirements that do not yet exist. Speculative features add complexity, maintenance cost, and testing surface with no near-term payoff.
+@@ -373,8 +374,8 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ - [ ] **Team rule — no non-functional inline comments:** no narrative comments; every non-functional comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning). Tool directives (`noqa`, `eslint-disable`, pragmas) are fine, scoped as narrowly as possible.
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+-- [ ] Functions do one thing; any function that grew during this change is still within reason.
+-- [ ] No obvious duplication that violates DRY without a stated reason.
++- [ ] Functions do one thing; any function that grew during this change is still within reason (cyclomatic/cognitive complexity within the defaults in `rules/code-quality-metrics.md`, or justified).
++- [ ] No obvious duplication that violates DRY without a stated reason; duplicated lines stay under the default in `rules/code-quality-metrics.md`.
+ - [ ] Code matches the surrounding style (indentation, naming conventions, error-handling patterns).
+ 
+ ---
+diff --git a/integrations/cursor/.cursor/rules/praxis-qa-engineer.mdc b/integrations/cursor/.cursor/rules/praxis-qa-engineer.mdc
+index 83ceae3..30f91f4 100644
+--- a/integrations/cursor/.cursor/rules/praxis-qa-engineer.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-qa-engineer.mdc
+@@ -356,6 +356,7 @@ Use this checklist before declaring a feature, sprint, or release ready to progr
+ - [ ] High-risk areas (new code, integrations, changed business logic) have positive + negative + boundary + exploratory coverage.
+ - [ ] **Team rule — test-first:** complex logic in the change (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) carries unit tests written *before* the implementation; complex logic without unit tests is flagged as a release risk, and every fixed defect has the regression test that failed before the fix.
+ - [ ] Exploratory testing has been performed with a documented session charter and notes.
++- [ ] Code coverage on new/changed code meets the default in `rules/code-quality-metrics.md` (>= 80%) or the repo's configured quality gate; shortfalls are documented as a gap below.
+ - [ ] Any gaps in coverage are documented and risk-accepted by the product owner in writing.
+ 
+ ### C. Defect status
+diff --git a/integrations/cursor/.cursor/rules/praxis-security-engineer.mdc b/integrations/cursor/.cursor/rules/praxis-security-engineer.mdc
+index 2c82aa8..a4dd8fd 100644
+--- a/integrations/cursor/.cursor/rules/praxis-security-engineer.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-security-engineer.mdc
+@@ -304,6 +304,7 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ ## 8. Pipeline gates (DevSecOps)
+ 
+ - [ ] Secret scanning, SAST, and SCA run on this change in CI; blocking severities are enforced by policy.
++- [ ] Security Rating and Security Hotspots Reviewed meet the defaults in `rules/code-quality-metrics.md` (Rating = A, Hotspots Reviewed = 100%) or the repo's configured quality gate before this change is marked ready for `G-security`.
+ - [ ] IaC and container images (if changed) are scanned for misconfiguration and vulnerable base images.
+ - [ ] Suppressed findings have an explicit reason and an owner (no silent ignores).
+ - [ ] The pipeline itself uses least-privilege tokens and pinned action/image digests; secrets do not appear in logs.
+diff --git a/integrations/cursor/.cursor/rules/praxis-software-architect.mdc b/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
+index 008997b..5a82b21 100644
+--- a/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
++++ b/integrations/cursor/.cursor/rules/praxis-software-architect.mdc
+@@ -424,6 +424,16 @@ boundary, split a responsibility) is now justified by the accumulated evidence.
+ This is evidence-based by construction: nothing is restructured until the
+ recurrence is observed, never in anticipation of it.
+ 
++### Quantitative thresholds: code-quality metrics
++
++Checklist items 8.6 (hotspot) and 8.7 (maintainability rating) are judgment
++calls grounded in numbers, not vibes. `rules/code-quality-metrics.md` gives
++the shared vocabulary and default min/max thresholds — Maintainability
++Rating, Technical Debt Ratio, Cyclomatic/Cognitive Complexity, Coverage,
++Duplicated Lines — aligned to SonarQube's default Quality Gate. Use the repo's
++own configured quality gate when one exists; fall back to these defaults when
++it does not.
++
+ ---
+ 
+ # Architecture Review Checklist
+@@ -532,6 +542,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 8.4 | The design can be evolved incrementally. If requirements change, the first increment of change is achievable without a full rewrite. | | |
+ | 8.5 | Operational complexity (number of services to deploy, infrastructure components to manage, runbooks to maintain) is proportionate to the team's size and operational maturity. | | |
+ | 8.6 | **Systemic complexity:** if `/patterns` flags this area as a recurring hotspot (3+ specs/refinements touching the same file or module), the team has re-reviewed it and either planned a `/refine` to extract a boundary or explicitly accepted the continued churn with a reason. | | |
++| 8.7 | **Maintainability rating:** the change keeps the codebase's Maintainability Rating / Technical Debt Ratio within the default in `rules/code-quality-metrics.md` (or the repo's configured quality gate); a regression below the threshold is justified or routed to `/refine`. | | |
+ 
+ ---
+ 
+diff --git a/integrations/intellij/.junie/praxis/developer.md b/integrations/intellij/.junie/praxis/developer.md
+index f62edbe..1c81b81 100644
+--- a/integrations/intellij/.junie/praxis/developer.md
++++ b/integrations/intellij/.junie/praxis/developer.md
+@@ -114,6 +114,7 @@ These principles are heuristics, not laws. Apply them when the benefit is clear;
+ - Extract duplication when three identical or structurally identical fragments exist and are clearly the same concept. Two copies can be a coincidence.
+ - DRY applies to *knowledge*, not just text. Two pieces of code that look similar but represent different concepts should stay separate.
+ - Over-applying DRY produces premature abstractions that are harder to change than the duplication they replaced.
++- Default thresholds: keep duplicated lines under ~3% of a file and cyclomatic/cognitive complexity of a function under ~10/15 (see `rules/code-quality-metrics.md`, or the repo's configured quality gate). Treat repeated trips above either as a signal to extract or simplify, not just a number to track.
+ 
+ ### YAGNI (You Aren't Gonna Need It)
+ - Do not build for requirements that do not yet exist. Speculative features add complexity, maintenance cost, and testing surface with no near-term payoff.
+@@ -369,8 +370,8 @@ A self-review checklist a developer runs before opening or merging a pull reques
+ - [ ] **Team rule — no non-functional inline comments:** no narrative comments; every non-functional comment that remains states a constraint the code cannot express (invariant, external requirement, deliberate trade-off, security warning). Tool directives (`noqa`, `eslint-disable`, pragmas) are fine, scoped as narrowly as possible.
+ - [ ] No debug output (`console.log`, `print`, `fmt.Println`, breakpoints) left in the code.
+ - [ ] Names are clear and consistent with surrounding code.
+-- [ ] Functions do one thing; any function that grew during this change is still within reason.
+-- [ ] No obvious duplication that violates DRY without a stated reason.
++- [ ] Functions do one thing; any function that grew during this change is still within reason (cyclomatic/cognitive complexity within the defaults in `rules/code-quality-metrics.md`, or justified).
++- [ ] No obvious duplication that violates DRY without a stated reason; duplicated lines stay under the default in `rules/code-quality-metrics.md`.
+ - [ ] Code matches the surrounding style (indentation, naming conventions, error-handling patterns).
+ 
+ ---
+diff --git a/integrations/intellij/.junie/praxis/qa-engineer.md b/integrations/intellij/.junie/praxis/qa-engineer.md
+index 64f4084..01fa3ee 100644
+--- a/integrations/intellij/.junie/praxis/qa-engineer.md
++++ b/integrations/intellij/.junie/praxis/qa-engineer.md
+@@ -352,6 +352,7 @@ Use this checklist before declaring a feature, sprint, or release ready to progr
+ - [ ] High-risk areas (new code, integrations, changed business logic) have positive + negative + boundary + exploratory coverage.
+ - [ ] **Team rule — test-first:** complex logic in the change (non-trivial conditionals, calculations, parsing/serialization, state machines, concurrency, security-sensitive paths) carries unit tests written *before* the implementation; complex logic without unit tests is flagged as a release risk, and every fixed defect has the regression test that failed before the fix.
+ - [ ] Exploratory testing has been performed with a documented session charter and notes.
++- [ ] Code coverage on new/changed code meets the default in `rules/code-quality-metrics.md` (>= 80%) or the repo's configured quality gate; shortfalls are documented as a gap below.
+ - [ ] Any gaps in coverage are documented and risk-accepted by the product owner in writing.
+ 
+ ### C. Defect status
+diff --git a/integrations/intellij/.junie/praxis/security-engineer.md b/integrations/intellij/.junie/praxis/security-engineer.md
+index b25aa65..aaa8a49 100644
+--- a/integrations/intellij/.junie/praxis/security-engineer.md
++++ b/integrations/intellij/.junie/praxis/security-engineer.md
+@@ -300,6 +300,7 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
+ ## 8. Pipeline gates (DevSecOps)
+ 
+ - [ ] Secret scanning, SAST, and SCA run on this change in CI; blocking severities are enforced by policy.
++- [ ] Security Rating and Security Hotspots Reviewed meet the defaults in `rules/code-quality-metrics.md` (Rating = A, Hotspots Reviewed = 100%) or the repo's configured quality gate before this change is marked ready for `G-security`.
+ - [ ] IaC and container images (if changed) are scanned for misconfiguration and vulnerable base images.
+ - [ ] Suppressed findings have an explicit reason and an owner (no silent ignores).
+ - [ ] The pipeline itself uses least-privilege tokens and pinned action/image digests; secrets do not appear in logs.
+diff --git a/integrations/intellij/.junie/praxis/software-architect.md b/integrations/intellij/.junie/praxis/software-architect.md
+index 9445c4f..5f1eeff 100644
+--- a/integrations/intellij/.junie/praxis/software-architect.md
++++ b/integrations/intellij/.junie/praxis/software-architect.md
+@@ -420,6 +420,16 @@ boundary, split a responsibility) is now justified by the accumulated evidence.
+ This is evidence-based by construction: nothing is restructured until the
+ recurrence is observed, never in anticipation of it.
+ 
++### Quantitative thresholds: code-quality metrics
++
++Checklist items 8.6 (hotspot) and 8.7 (maintainability rating) are judgment
++calls grounded in numbers, not vibes. `rules/code-quality-metrics.md` gives
++the shared vocabulary and default min/max thresholds — Maintainability
++Rating, Technical Debt Ratio, Cyclomatic/Cognitive Complexity, Coverage,
++Duplicated Lines — aligned to SonarQube's default Quality Gate. Use the repo's
++own configured quality gate when one exists; fall back to these defaults when
++it does not.
++
+ ---
+ 
+ # Architecture Review Checklist
+@@ -528,6 +538,7 @@ Run this checklist over a proposed design before sign-off. Mark each item **Pass
+ | 8.4 | The design can be evolved incrementally. If requirements change, the first increment of change is achievable without a full rewrite. | | |
+ | 8.5 | Operational complexity (number of services to deploy, infrastructure components to manage, runbooks to maintain) is proportionate to the team's size and operational maturity. | | |
+ | 8.6 | **Systemic complexity:** if `/patterns` flags this area as a recurring hotspot (3+ specs/refinements touching the same file or module), the team has re-reviewed it and either planned a `/refine` to extract a boundary or explicitly accepted the continued churn with a reason. | | |
++| 8.7 | **Maintainability rating:** the change keeps the codebase's Maintainability Rating / Technical Debt Ratio within the default in `rules/code-quality-metrics.md` (or the repo's configured quality gate); a regression below the threshold is justified or routed to `/refine`. | | |
+ 
+ ---
+ 
+diff --git a/rules/code-quality-metrics.md b/rules/code-quality-metrics.md
+new file mode 100644
+index 0000000..355f37c
+--- /dev/null
++++ b/rules/code-quality-metrics.md
+@@ -0,0 +1,71 @@
++# Code Quality Metrics
++
++This is a **harness rule**. It is short and behavior-changing. It gives every
++skill a shared vocabulary and a set of default min/max thresholds for
++code-quality metrics — aligned to SonarQube's default ("Sonar way") Quality
++Gate — so reviews and checklists across `developer`, `qa-engineer`,
++`software-architect`, and `security-engineer` measure the same things the same
++way.
++
++## Precedence
++
++These are **praxis defaults**, not a substitute for a repo's own configured
++quality gate. If the repo already has a configured SonarQube Quality Gate (or
++an equivalent — ESLint complexity rules, coverage thresholds enforced in CI,
++etc.), **that configuration is binding for that repo**; treat it as the
++operative threshold and use this rule only for the shared vocabulary. Use the
++defaults below when the repo has no such configuration.
++
++## Quality gate (new/changed code)
++
++| Metric | Default threshold |
++|---|---|
++| Coverage on new code | >= 80% |
++| Duplicated lines on new code | <= 3% |
++| Maintainability rating on new code | A |
++| Reliability rating on new code | A |
++| Security rating on new code | A |
++| Security hotspots reviewed | 100% |
++
++## Per-function / per-file thresholds
++
++| Metric | Default threshold | Action above threshold |
++|---|---|---|
++| Cyclomatic complexity (function) | <= 10 | refactor or justify |
++| Cognitive complexity (function) | <= 15 | refactor or justify |
++| Duplicated lines (file) | <= 3% | extract per the DRY 3+-copies rule |
++
++## Ratings derived from issues
++
++| Rating | Maintainability (Technical Debt Ratio) | Reliability / Security (worst issue found) |
++|---|---|---|
++| A | <= 5% | none |
++| B | <= 10% | Minor / Low |
++| C | <= 20% | Major / Medium |
++| D | <= 50% | Critical / High |
++| E | > 50% | Blocker |
++
++Technical Debt Ratio = remediation cost of all open Code Smells / estimated
++cost to develop the codebase from scratch.
++
++## How skills use this
++
++- **`developer`** — duplication and complexity thresholds during
++  implementation and pre-merge review (`practices.md` §2 DRY, `checklist.md`
++  §3 Code quality).
++- **`qa-engineer`** — coverage-on-new-code threshold as part of test
++  readiness (`checklist.md` §B Test coverage).
++- **`software-architect`** — Maintainability Rating / Technical Debt Ratio as
++  a quantitative companion to the `/patterns` hotspot signal (`checklist.md`
++  §8 Simplicity and reversibility).
++- **`security-engineer`** — Security Rating and Security Hotspots Reviewed as
++  evidence for `G-security` (`checklist.md` §8 Pipeline gates).
++
++## What this rule does not do
++
++- It does not add a new mandatory verify gate. `G-lint`, `G-tests`, and
++  `G-security` already cover this ground; this rule gives the skills that
++  prepare evidence for those gates concrete numbers and a shared vocabulary.
++- It does not require SonarQube specifically. Any tool that reports the same
++  metrics (CodeClimate, ESLint plus coverage tooling, etc.) satisfies the same
++  checklist items.

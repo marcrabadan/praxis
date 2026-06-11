@@ -72,6 +72,7 @@ A checklist a Security Engineer runs over a change, a feature, or a release befo
 ## 8. Pipeline gates (DevSecOps)
 
 - [ ] Secret scanning, SAST, and SCA run on this change in CI; blocking severities are enforced by policy.
+- [ ] Security Rating and Security Hotspots Reviewed meet the defaults in `rules/code-quality-metrics.md` (Rating = A, Hotspots Reviewed = 100%) or the repo's configured quality gate before this change is marked ready for `G-security`.
 - [ ] IaC and container images (if changed) are scanned for misconfiguration and vulnerable base images.
 - [ ] Suppressed findings have an explicit reason and an owner (no silent ignores).
 - [ ] The pipeline itself uses least-privilege tokens and pinned action/image digests; secrets do not appear in logs.

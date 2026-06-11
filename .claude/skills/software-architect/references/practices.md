@@ -336,3 +336,38 @@ Accepted risks must be explicitly acknowledged by the appropriate decision-maker
 - Estimate the adoption cost (engineering days) and compare it to the probability-weighted benefit.
 - Apply the "simplest thing that could possibly work" test: would a simpler approach satisfy all the stated ASRs? If yes, choose the simpler approach and record the decision.
 - Prefer reversible decisions over irreversible ones. An architecture that can be evolved incrementally is safer than one that front-loads all complexity.
+
+### Systemic complexity: what accumulates across many small, individually-fine changes
+
+Over-engineering is one path to unjustified complexity; the other is the
+opposite — many individually reasonable changes, each passing its own review,
+that together erode the architecture. No single change is big enough to trip
+checklist item 8.5; the cost is systemic, not local, and shows up only in
+aggregate (a module that quietly became a god-object, a dependency direction
+that quietly reversed).
+
+`/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
+that recurs across several distinct specs/refinements (deduplicated by the
+originating `source:` decision/spec, so iterative implementation snapshots of
+one spec count once, not once per snapshot). `CHANGELOG.md` and the generated
+`SKILLS.md` / `integrations/**` bundles are excluded from this signal — they
+are touched by nearly every change and would otherwise dominate the list
+without indicating anything. Treat 3+ specs/refinements touching the same file
+or module as a trigger to re-run the "Simplicity and reversibility" checklist
+for that area — even though each change passed review on its own — and decide
+whether a `/refine` (extract a boundary, split a responsibility) is now
+justified by the accumulated evidence, or whether the recurrence is itself
+justified (e.g. a shared reference doc that several independent cross-cutting
+rules legitimately extend) and the churn can be explicitly accepted with a
+reason. This is evidence-based by construction: nothing is restructured until
+the recurrence is observed, never in anticipation of it.
+
+### Quantitative thresholds: code-quality metrics
+
+Checklist items 8.6 (hotspot) and 8.7 (maintainability rating) are judgment
+calls grounded in numbers, not vibes. `rules/code-quality-metrics.md` gives
+the shared vocabulary and default min/max thresholds — Maintainability
+Rating, Technical Debt Ratio, Cyclomatic/Cognitive Complexity, Coverage,
+Duplicated Lines — aligned to SonarQube's default Quality Gate. Use the repo's
+own configured quality gate when one exists; fall back to these defaults when
+it does not.
