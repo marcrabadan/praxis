@@ -1,6 +1,6 @@
 ---
 name: docs
-description: Generate functional and technical manuals by routing each section to the right SDLC expert. The functional manual is written by the Business Analyst, Product Owner, and UX/UI Engineer; the technical manual by the Software Architect, Developer, and DevOps Engineer. Both draw from the memory ledger (decisions, plans, artifacts) and the codebase. Use when the user wants a complete, well-ordered manual — not a one-off answer.
+description: Generate functional and technical manuals by routing each section to the right SDLC expert — BA, Product Owner, and UX for the functional manual; Architect, Developer, and DevOps for the technical one — drawing on the memory ledger and the codebase. Use when the user wants a complete, well-ordered manual, not a one-off answer.
 tier: 3
 version: 1.0.0
 ---

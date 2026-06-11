@@ -30,8 +30,7 @@ Run each phase in its **own subagent** (`Agent`, `subagent_type: general-purpose
 
 ### Model tiers
 
-- **Opus** — diagnosis and the fix (Developer): root-cause reasoning is where depth pays.
-- **Sonnet** — reproduction and verification (QA): structured transformation of the report.
+Phases run on semantic tiers (`light` / `standard` / `deep`), resolved through the `models` map in `.praxis/config.json` — falling back to the runtime defaults — per [`rules/model-tiers.md`](../../rules/model-tiers.md). **Every phase defaults to `standard`**: reproduction and verification (QA) are structured transformation and stay there. Escalate diagnosis/fix (Developer) to `deep` only when the root cause proves genuinely hard, and tell the user when you do.
 
 ## Harness mode — durable artifacts
 

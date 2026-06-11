@@ -11,6 +11,32 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-06-11
+
+### Added
+
+- **Semantic model tiers** (`rules/model-tiers.md`) — lifecycle commands now
+  name `light` / `standard` / `deep` tiers instead of hardcoded vendor models,
+  so the doctrine ports across runtimes (Claude Code, Codex, Cursor, Junie) and
+  model generations. Tiers resolve through a new optional `models` map in
+  `.praxis/config.json` (added to `schemas/praxis-config.schema.json`); when
+  absent, runtimes fall back to their own defaults (Claude Code:
+  `haiku`/`sonnet`/`opus`, with `deep` remappable higher — e.g. `fable`).
+
+### Changed
+
+- **Cheap-by-default model policy** — `/new-feature`, `/fix-bug`, and `/refine`
+  now default *every* phase to the `standard` tier; a phase must *earn* `deep`
+  (a genuinely hard design, a complex root cause, a high-stakes domain
+  analysis), and the orchestrator reports which phases it escalated and why.
+  Previously the design/build phases ran on the frontier tier by reflex.
+- **Shorter skill and command descriptions** — all 19 skill frontmatter
+  descriptions, the most verbose command descriptions (`/idea`, `/learn`,
+  `/patterns`, `/ml`), and the plugin manifest were tightened (~45% smaller on
+  average) to cut the fixed per-request context cost the plugin adds to every
+  session, while keeping the triggering keywords intact. `SKILLS.md` and the
+  cursor/codex/intellij integrations regenerated to match.
+
 ## [1.12.0] - 2026-06-11
 
 ### Added

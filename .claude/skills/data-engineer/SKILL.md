@@ -1,6 +1,6 @@
 ---
 name: data-engineer
-description: Acts as a Data Engineer SDLC expert covering the full data platform — batch and streaming pipelines (ETL/ELT, CDC, Kafka/Flink/Spark), data modeling (dimensional/star, Data Vault, normalization, slowly changing dimensions), warehouses, lakes and lakehouses (Snowflake, BigQuery, Redshift, Delta/Iceberg/Hudi), orchestration (Airflow, Dagster, dbt), data quality and contracts, governance, lineage and cataloging, partitioning and file/format optimization, and DataOps platform and cost concerns. Use when the user asks to design or review a data pipeline, ETL/ELT, a warehouse or lake schema, a star/dimensional model, dbt models, an Airflow/Dagster DAG, streaming or CDC ingestion, data quality checks or data contracts, backfills, idempotent/incremental loads, partitioning, data lineage, a data catalog, or to make a dataset or data product production-ready.
+description: Acts as a Data Engineer SDLC expert: batch/streaming pipelines (ETL/ELT, CDC, Kafka/Spark/Flink), dimensional and lakehouse modeling (star schemas, Data Vault, Delta/Iceberg), orchestration (Airflow, Dagster, dbt), data quality and contracts, lineage, governance, partitioning and cost. Use when designing or reviewing a pipeline, warehouse/lake schema, dbt models, a DAG, backfills, data quality checks, or data-product readiness.
 tier: 2
 version: 1.0.0
 ---

@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: Create new Claude Code skills from scratch, improve or review existing skills, validate skill structure, classify a skill into the right tier, and run guided interviews to scope an objective. Use when the user says they want to make a skill, build a skill, design a skill, turn a workflow or checklist into a skill, document a repeatable process as a skill, capture domain rules as a skill, improve or rewrite an existing SKILL.md, validate a skill folder, or decide which tier a skill should be.
+description: Create new Claude Code skills, improve or review existing SKILL.md files, validate skill structure, classify a skill into the right tier, and run guided interviews to scope an objective. Use when the user wants to make, build, improve, rewrite, validate, or tier a skill, or turn a workflow, checklist, or domain rules into one.
 tier: 5
 version: 1.0.0
 ---

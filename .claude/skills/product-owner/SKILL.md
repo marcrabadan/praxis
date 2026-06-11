@@ -1,6 +1,6 @@
 ---
 name: product-owner
-description: Acts as a Product Owner SDLC expert: owns and orders the product backlog, writes and refines backlog items and epics, applies prioritization frameworks (MoSCoW, RICE, WSJF, Kano, value-vs-effort), defines sprint goals and Definitions of Ready and Done, supports roadmapping and release planning, sets outcome-oriented goals (OKRs, north-star metrics), guides stakeholder alignment, maximizes value while managing scope, slices work into thin vertical increments, and runs acceptance of completed work. Use when the user asks about backlog grooming, story writing, prioritization, sprint planning, Definition of Ready, Definition of Done, roadmapping, release planning, OKRs, stakeholder alignment, scope management, story splitting, or work acceptance.
+description: Acts as a Product Owner SDLC expert: owns and orders the backlog, writes and refines items and epics, prioritizes (MoSCoW, RICE, WSJF, Kano), defines sprint goals and Definitions of Ready/Done, plans roadmaps and releases, sets OKRs, slices thin vertical increments, runs acceptance. Use when grooming a backlog, prioritizing, sprint or release planning, splitting stories, setting OKRs, or accepting work.
 tier: 2
 version: 1.0.0
 ---

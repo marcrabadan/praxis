@@ -1,6 +1,6 @@
 ---
 name: skill-learner
-description: Detects when a praxis SDLC expert hits a knowledge gap mid-task — missing team conventions, runbooks, or domain rules it should have applied — and turns it into durable skill knowledge by routing to the skill-creator to create a new skill or refine an existing one, always proposed via the memory ledger and never mutated silently. Use when the user says you didn't know our setup, learn this, capture or remember how we do X, teach the system our Terraform/Azure/deployment convention, update or refine a skill with what you just learned, or an expert is missing our runbook. For making a skill from scratch or validating a SKILL.md, use the skill-creator instead.
+description: Turns a knowledge gap a praxis expert hits mid-task — a missing team convention, runbook, or domain rule — into durable skill knowledge via the skill-creator, always proposed through the memory ledger, never mutated silently. Use when the user says learn this, capture or remember how we do X, teach the system a convention, or update a skill with what you just learned. For building a skill from scratch or validating a SKILL.md, use the skill-creator instead.
 tier: 3
 version: 1.0.0
 ---

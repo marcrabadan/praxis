@@ -6,25 +6,25 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 
 | Skill | Version | Tier | Description |
 | ----- | ------- | ---- | ----------- |
-| `business-analyst` | 1.0.0 | 2 | Acts as a Business Analyst SDLC expert to elicit, structure, and validate requirements. Writes user stories with INVEST criteria and Gherkin acceptance criteri… |
-| `cybersecurity-architect` | 1.0.0 | 2 | Adopts the Cybersecurity Architect persona to design and review security architecture at the system and organization level — zero-trust and defense-in-depth de… |
-| `data-engineer` | 1.0.0 | 2 | Acts as a Data Engineer SDLC expert covering the full data platform — batch and streaming pipelines (ETL/ELT, CDC, Kafka/Flink/Spark), data modeling (dimension… |
-| `developer` | 1.0.0 | 2 | Acts as a Software Developer / Engineer SDLC expert covering clean code, SOLID/DRY/YAGNI principles, TDD and the test pyramid, commit discipline, branch and PR… |
-| `devops-engineer` | 1.0.0 | 2 | Acts as a DevOps Engineer SDLC expert: designs CI/CD pipelines, writes infrastructure as code, advises on containerization and Kubernetes, selects deployment s… |
-| `diagram` | 1.0.0 | 3 | Generate versioned, text-based diagrams (Mermaid by default, PlantUML on request) from architecture decisions, memory ledger entries, system design, data model… |
-| `docs` | 1.0.0 | 3 | Generate functional and technical manuals by routing each section to the right SDLC expert. The functional manual is written by the Business Analyst, Product O… |
-| `frontend-architect` | 1.0.0 | 2 | Adopts the Frontend Architect persona to make system-level frontend design decisions — framework and meta-framework selection (React/Vue/Svelte/Angular, Next/N… |
-| `frontend-engineer` | 1.0.0 | 2 | Acts as a Frontend Engineer SDLC expert covering component implementation and composition (presentational/container, compound components, custom hooks), state-… |
-| `memory` | 1.0.0 | 4 | Persist and manage the project's working memory — a versioned ledger of plans, decisions, implementations, and artifacts produced across the praxis SDLC expert… |
-| `ml-ai-engineer` | 1.0.0 | 2 | Acts as an ML/AI Engineer SDLC expert covering the full model lifecycle — problem framing and metric selection, ML-ready features (feature stores, leakage, tra… |
-| `product-owner` | 1.0.0 | 2 | Acts as a Product Owner SDLC expert: owns and orders the product backlog, writes and refines backlog items and epics, applies prioritization frameworks (MoSCoW… |
-| `qa-engineer` | 1.0.0 | 2 | Acts as a QA Engineer / Tester SDLC expert to design test strategies, write test cases, author bug reports, and assess release readiness. Applies the test auto… |
-| `security-engineer` | 1.0.0 | 2 | Acts as a Security Engineer / Application Security (AppSec) SDLC expert covering threat modeling (STRIDE), secure coding against the OWASP Top 10 and ASVS, SAS… |
-| `skill-creator` | 1.0.0 | 5 | Create new Claude Code skills from scratch, improve or review existing skills, validate skill structure, classify a skill into the right tier, and run guided i… |
-| `skill-learner` | 1.0.0 | 3 | Detects when a praxis SDLC expert hits a knowledge gap mid-task — missing team conventions, runbooks, or domain rules it should have applied — and turns it int… |
-| `software-architect` | 1.0.0 | 2 | Adopts the Software Architect persona to reason about system design, architectural trade-offs, non-functional requirements, architectural decision records (ADR… |
-| `ux-ui-engineer` | 1.0.0 | 2 | Acts as a UX/UI Engineer SDLC expert bridging design and code — design systems and component libraries, design tokens and theming, visual design (type scale, c… |
-| `validation-orchestrator` | 1.0.0 | 2 | The standing validation authority for harness-mode workflows — the agent that decides whether a workflow may advance past a gate, and the only role with author… |
+| `business-analyst` | 1.0.0 | 2 | Acts as a Business Analyst SDLC expert: elicits and structures requirements, writes INVEST user stories with Gherkin acceptance criteria, models processes, ana… |
+| `cybersecurity-architect` | 1.0.0 | 2 | Adopts the Cybersecurity Architect persona for system-level security architecture: zero trust, defense in depth, IAM/SSO/identity design, network segmentation,… |
+| `data-engineer` | 1.0.0 | 2 | Acts as a Data Engineer SDLC expert: batch/streaming pipelines (ETL/ELT, CDC, Kafka/Spark/Flink), dimensional and lakehouse modeling (star schemas, Data Vault,… |
+| `developer` | 1.0.0 | 2 | Acts as a Software Developer SDLC expert: clean code, SOLID/DRY/YAGNI, TDD and the test pyramid, commit/branch/PR hygiene, safe refactoring, error handling, in… |
+| `devops-engineer` | 1.0.0 | 2 | Acts as a DevOps Engineer SDLC expert: CI/CD pipelines, infrastructure as code (Terraform), containers and Kubernetes, deployment strategies (blue/green, canar… |
+| `diagram` | 1.0.0 | 3 | Generate versioned, text-based diagrams (Mermaid by default, PlantUML on request) — C4 architecture maps, sequence diagrams, ER diagrams, flow charts — from ar… |
+| `docs` | 1.0.0 | 3 | Generate functional and technical manuals by routing each section to the right SDLC expert — BA, Product Owner, and UX for the functional manual; Architect, De… |
+| `frontend-architect` | 1.0.0 | 2 | Adopts the Frontend Architect persona for system-level frontend decisions: framework/meta-framework selection, rendering strategy (CSR/SSR/SSG/ISR, RSC, island… |
+| `frontend-engineer` | 1.0.0 | 2 | Acts as a Frontend Engineer SDLC expert: component implementation and composition, hooks, state management (useState/Context, Redux Toolkit/Zustand, React Quer… |
+| `memory` | 1.0.0 | 4 | Persist and manage the project's working memory — a versioned ledger of plans, decisions, implementations, and artifacts from the praxis experts and commands,… |
+| `ml-ai-engineer` | 1.0.0 | 2 | Acts as an ML/AI Engineer SDLC expert across the model lifecycle: problem framing and metric selection, ML-ready features (leakage, train/serve skew, feature s… |
+| `product-owner` | 1.0.0 | 2 | Acts as a Product Owner SDLC expert: owns and orders the backlog, writes and refines items and epics, prioritizes (MoSCoW, RICE, WSJF, Kano), defines sprint go… |
+| `qa-engineer` | 1.0.0 | 2 | Acts as a QA Engineer / Tester SDLC expert: test strategies, test-case design (equivalence partitioning, boundary values, decision tables, state transition, pa… |
+| `security-engineer` | 1.0.0 | 2 | Acts as a Security Engineer / AppSec SDLC expert: STRIDE threat modeling, secure coding (OWASP Top 10, ASVS), SAST/DAST/SCA and dependency scanning, secrets ma… |
+| `skill-creator` | 1.0.0 | 5 | Create new Claude Code skills, improve or review existing SKILL.md files, validate skill structure, classify a skill into the right tier, and run guided interv… |
+| `skill-learner` | 1.0.0 | 3 | Turns a knowledge gap a praxis expert hits mid-task — a missing team convention, runbook, or domain rule — into durable skill knowledge via the skill-creator,… |
+| `software-architect` | 1.0.0 | 2 | Adopts the Software Architect persona for system design: architectural trade-offs, NFRs (scalability, availability, latency, security, cost), ADRs, pattern and… |
+| `ux-ui-engineer` | 1.0.0 | 2 | Acts as a UX/UI Engineer SDLC expert bridging design and code: design systems and component libraries, design tokens and theming, visual design (type scale, co… |
+| `validation-orchestrator` | 1.0.0 | 2 | The standing validation authority for harness-mode workflows: decides whether a workflow may advance past a gate, runs the gate criteria, the typed verify cata… |
 
 ## Commands
 
@@ -40,12 +40,12 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `/fix-bug` | Run a bug through the corrective lifecycle — triage → reproduce → diagnose → fix → verify — consulting QA and the Developer (and Security if it's a vulnerabili… |
 | `/frontend-architect` | Consult the Frontend Architect — framework/meta-framework choice, rendering strategy (CSR/SSR/SSG/ISR/RSC), state and data architecture, routing and code-split… |
 | `/frontend` | Consult the Frontend Engineer — building and composing components, client/server state, data fetching, forms, styling, frontend TypeScript, re-render/performan… |
-| `/idea` | Triage a raw idea — clarify it, classify it as a feature, bug, or refinement (or not worth doing), capture it as a pending note in the memory ledger, and recom… |
-| `/learn` | Turn a knowledge gap discovered during work into durable skill knowledge — capture an org convention, runbook, or rule, or refine an existing skill, by routing… |
+| `/idea` | Triage a raw idea — clarify it, classify it as a feature, bug, or refinement (or not worth doing), record it as a pending ledger note, and recommend the next l… |
+| `/learn` | Turn a knowledge gap discovered during work into durable skill knowledge — capture an org convention, runbook, or rule, or refine an existing skill, via the sk… |
 | `/memory` | Manage the project's working-memory ledger — record plans/decisions/implementations, review what's pending, accept or reject entries, and roll back a snapshott… |
-| `/ml` | Consult the ML/AI Engineer — problem framing & metric selection, ML-ready features (leakage, train/serve skew, feature stores), training & model selection, rig… |
+| `/ml` | Consult the ML/AI Engineer — problem framing and metrics, ML-ready features (leakage, train/serve skew), training and evaluation, experiment tracking, serving… |
 | `/new-feature` | Run a feature idea or PRD through the full SDLC, consulting each expert in order — Business Analyst, Product Owner, Software Architect, Developer, QA Engineer,… |
-| `/patterns` | Mine the memory ledger and stop-condition run logs for recurring patterns — repeated tags, sources, artifact types, stop conditions, and complexity hotspots (f… |
+| `/patterns` | Mine the memory ledger and stop-condition run logs for recurring patterns — repeated tags, sources, stop conditions, complexity hotspots — and surface them as… |
 | `/product` | Consult the Product Owner — backlog ordering, prioritization (MoSCoW/RICE/WSJF), sprint goals, Definition of Ready/Done, roadmapping, OKRs, story splitting, an… |
 | `/qa` | Consult the QA Engineer — test strategy, test-case design, edge cases, bug reports, regression and risk-based testing, coverage gaps, and release-quality asses… |
 | `/refine` | Run a quality-only improvement through the refinement lifecycle — assess → plan → change → verify — preserving observable behavior. Use to refactor, pay down t… |

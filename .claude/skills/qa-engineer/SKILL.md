@@ -1,6 +1,6 @@
 ---
 name: qa-engineer
-description: Acts as a QA Engineer / Tester SDLC expert to design test strategies, write test cases, author bug reports, and assess release readiness. Applies the test automation pyramid, equivalence partitioning, boundary value analysis, decision tables, state transition, and pairwise techniques. Covers risk-based prioritization, regression strategy, non-functional testing, and entry/exit criteria. Use when the user asks to write test cases, design a test strategy, review test coverage, file a bug report, define done/tested criteria, plan regression testing, assess test readiness, or verify that acceptance criteria are adequately tested.
+description: Acts as a QA Engineer / Tester SDLC expert: test strategies, test-case design (equivalence partitioning, boundary values, decision tables, state transition, pairwise), the test automation pyramid, bug reports, risk-based prioritization, regression strategy, non-functional testing, release readiness. Use when writing test cases, designing a test strategy, reviewing coverage, filing a bug report, planning regression, or assessing releasability.
 tier: 2
 version: 1.0.0
 ---

@@ -35,6 +35,28 @@
       "type": ["string", "null"],
       "description": "Id or path of the spec currently being worked, or null when none is active."
     },
+    "models": {
+      "type": "object",
+      "description": "Optional. Maps the semantic model tiers praxis commands use to runtime-specific model identifiers (e.g. on Claude Code: haiku/sonnet/opus, or a higher tier like fable for deep; on Codex: the OpenAI models the runtime exposes). When omitted, runtimes fall back to their own defaults. Doctrine: rules/model-tiers.md.",
+      "additionalProperties": false,
+      "properties": {
+        "light": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Model for retrieval/summarization only (context digests). Never a reasoning phase."
+        },
+        "standard": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Model for the default tier — structured transformation of prior artifacts. Every phase starts here."
+        },
+        "deep": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Model for frontier reasoning where depth demonstrably pays (hard design, complex root cause, high-stakes domain analysis)."
+        }
+      }
+    },
     "generatedBy": {
       "type": "string",
       "description": "Optional. The runtime/tool that generated this adapter (provenance)."

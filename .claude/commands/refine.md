@@ -26,8 +26,7 @@ Run each phase in its **own subagent** (`Agent`, `subagent_type: general-purpose
 
 ### Model tiers
 
-- **Opus** — the assess/plan/change reasoning (Developer, and Architect if structural).
-- **Sonnet** — verification (QA).
+Phases run on semantic tiers (`light` / `standard` / `deep`), resolved through the `models` map in `.praxis/config.json` — falling back to the runtime defaults — per [`rules/model-tiers.md`](../../rules/model-tiers.md). **Every phase defaults to `standard`**, verification (QA) included. Escalate the assess/plan/change reasoning (Developer, and Architect if structural) to `deep` only when the refactor is genuinely hard, and tell the user when you do.
 
 ## Harness mode — durable artifacts
 

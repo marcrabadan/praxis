@@ -1,5 +1,5 @@
 ---
-description: Mine the memory ledger and stop-condition run logs for recurring patterns — repeated tags, sources, artifact types, stop conditions, and complexity hotspots (files/areas touched by many specs) — and surface them as human-gated promotion candidates. The proactive half of continuous learning. Use to ask "what keeps happening?" or "what should we codify?".
+description: Mine the memory ledger and stop-condition run logs for recurring patterns — repeated tags, sources, stop conditions, complexity hotspots — and surface them as human-gated promotion candidates. Use to ask "what keeps happening?" or "what should we codify?".
 argument-hint: "[MIN=<n>] — recurrence threshold (default 3); omit to run with defaults"
 allowed-tools: Bash(make patterns), Bash(make patterns MIN=:*), Bash(python tools/patterns.py:*)
 ---

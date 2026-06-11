@@ -1,5 +1,5 @@
 ---
-description: Consult the ML/AI Engineer — problem framing & metric selection, ML-ready features (leakage, train/serve skew, feature stores), training & model selection, rigorous evaluation, experiment tracking, serving & deployment (batch/online, shadow/canary, A/B), MLOps, drift monitoring & retraining, responsible AI, and LLM/GenAI (RAG, prompting, fine-tuning, evals, guardrails).
+description: Consult the ML/AI Engineer — problem framing and metrics, ML-ready features (leakage, train/serve skew), training and evaluation, experiment tracking, serving and deployment, MLOps, drift and retraining, responsible AI, and LLM/GenAI (RAG, prompting, fine-tuning, evals, guardrails).
 argument-hint: <framing, features, training, evaluation, serving, monitoring, responsible-AI, or LLM/RAG question>
 ---
 

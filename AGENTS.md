@@ -90,6 +90,10 @@ Start at [docs/harness-mode.md](docs/harness-mode.md).
 - [rules/traceability.md](rules/traceability.md) — typed ids and `source:` /
   `traces:` links that keep the chain `IDEA → DISC → RES → SPEC → … → REL`
   navigable in both directions (advisory validator: `make validate-traceability`).
+- [rules/model-tiers.md](rules/model-tiers.md) — *semantic model tiers, never
+  vendor names*: commands name `light` / `standard` / `deep`; the per-repo
+  `.praxis/config.json` `models` map resolves each tier to whatever model the
+  runtime offers. Default `standard`; a phase *earns* `deep`.
 - [projects/](projects/projects-index.md) — per-project memory (current state,
   open questions, decisions) and `specs/`; copy `projects/_template/` to start one.
   For a product split across repos, use one **central-mode** project (worked

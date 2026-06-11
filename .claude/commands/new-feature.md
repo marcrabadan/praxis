@@ -15,7 +15,7 @@ Handle this yourself in the main conversation (subagents cannot talk to the user
 
 ## Phase 0.5 — Context digest (cheap, optional)
 
-If the feature touches an existing codebase or a long PRD, **gather the shared context once on a cheap model** instead of making every expert re-discover it. Dispatch a single `Agent` (`subagent_type: Explore`, `model: haiku`) to find the relevant files/conventions and condense the PRD into a **short factual digest** — paths, current behavior, key constraints, no opinions. Pass that digest into every later phase alongside the prior artifacts. This is retrieval, not reasoning, so the cheap tier costs little and the experts stop paying to re-read the same material. Skip for greenfield or trivial features.
+If the feature touches an existing codebase or a long PRD, **gather the shared context once on the `light` tier** instead of making every expert re-discover it. Dispatch a single `Agent` (`subagent_type: Explore`, `model:` resolved from the `light` tier — see *Model tiers* below) to find the relevant files/conventions and condense the PRD into a **short factual digest** — paths, current behavior, key constraints, no opinions. Pass that digest into every later phase alongside the prior artifacts. This is retrieval, not reasoning, so the cheap tier costs little and the experts stop paying to re-read the same material. Skip for greenfield or trivial features.
 
 ## Phase D — Discovery (understand before proposing)
 
@@ -127,13 +127,13 @@ If a subagent returns a blocking open question, surface it to the user (or resol
 
 ### Model tiers (cost vs. depth)
 
-Match the model to the work, not to reflex — token price is the lever, reasoning quality is the constraint:
+Phases run on **semantic tiers** — `light` / `standard` / `deep` — never on hardcoded vendor models. Resolve each tier through the `models` map in `.praxis/config.json` when present; otherwise fall back to the runtime defaults (on Claude Code: `haiku` / `sonnet` / `opus`). Doctrine: [`rules/model-tiers.md`](../../rules/model-tiers.md).
 
-- **Opus** — the design/build reasoning where depth pays off: Software Architect, Developer, and the domain experts (security, ML/AI, frontend/data architecture). Cheapening these trades quality for little saving, since their outputs are small.
-- **Sonnet** — the structured-but-shallower phases that mostly transform prior artifacts: Business Analyst, Product Owner, QA Engineer, DevOps Engineer.
-- **Haiku** — pure retrieval/summarization only (the Phase 0.5 digest). Never the reasoning phases.
+- **`standard` is the default for every phase.** The artifact-transforming work (Business Analyst, Product Owner, QA Engineer, DevOps Engineer) stays here — and so do the design/build phases unless the feature makes them genuinely hard.
+- **`deep`** must be earned, never given by reflex: escalate the Software Architect on a genuinely hard design, the Developer on a complex implementation plan, or a domain expert on a high-stakes surface (security, ML). Tell the user which phases you escalated and why.
+- **`light`** is pure retrieval/summarization only (the Phase 0.5 digest). Never a reasoning phase.
 
-Pass `model` to the `Agent` tool per phase. These are sensible defaults — keep a phase on Opus if the feature makes it genuinely hard (e.g. a compliance-heavy BA framing), and tell the user which tiers you chose.
+Pass the resolved model to the `Agent` tool per phase, and report the tiers you chose in the final summary.
 
 ## Checkpoint
 
