@@ -123,6 +123,37 @@ class MineTests(unittest.TestCase):
                 [("src/foo.py", "e1"), ("src/foo.py", "e2"), ("src/foo.py", "e3")],
             )
 
+    def test_scan_touched_files_excludes_changelog_and_catalog(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            entries_dir = Path(d)
+            (entries_dir / "e1.md").write_text(
+                "**Files touched:**\n\n"
+                "- `CHANGELOG.md`\n"
+                "- `SKILLS.md`\n"
+                "- `src/foo.py`\n",
+                encoding="utf-8",
+            )
+            entries = [_entry("e1", type="implementation")]
+            hits = pt.scan_touched_files(entries, entries_dir)
+            # CHANGELOG.md and SKILLS.md are touched by nearly every change
+            # and would otherwise dominate the hotspot list.
+            self.assertEqual(hits, [("src/foo.py", "e1")])
+
+    def test_scan_touched_files_excludes_generated_integrations(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            entries_dir = Path(d)
+            (entries_dir / "e1.md").write_text(
+                "**Files touched:**\n\n"
+                "- `integrations/codex/.praxis/developer.md`\n"
+                "- `.claude/skills/developer/references/practices.md`\n",
+                encoding="utf-8",
+            )
+            entries = [_entry("e1", type="implementation")]
+            hits = pt.scan_touched_files(entries, entries_dir)
+            self.assertEqual(
+                hits, [(".claude/skills/developer/references/practices.md", "e1")]
+            )
+
     def test_scan_touched_files_skips_non_implementation_entries(self) -> None:
         with tempfile.TemporaryDirectory() as d:
             entries_dir = Path(d)

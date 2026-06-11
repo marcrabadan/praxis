@@ -349,13 +349,18 @@ that quietly reversed).
 `/patterns` (`tools/patterns.py`) surfaces this as a **hotspot**: a file or area
 that recurs across several distinct specs/refinements (deduplicated by the
 originating `source:` decision/spec, so iterative implementation snapshots of
-one spec count once, not once per snapshot). Treat 3+ specs/refinements
-touching the same file or module as a trigger to re-run the
-"Simplicity and reversibility" checklist for that area — even though each
-change passed review on its own — and decide whether a `/refine` (extract a
-boundary, split a responsibility) is now justified by the accumulated evidence.
-This is evidence-based by construction: nothing is restructured until the
-recurrence is observed, never in anticipation of it.
+one spec count once, not once per snapshot). `CHANGELOG.md` and the generated
+`SKILLS.md` / `integrations/**` bundles are excluded from this signal — they
+are touched by nearly every change and would otherwise dominate the list
+without indicating anything. Treat 3+ specs/refinements touching the same file
+or module as a trigger to re-run the "Simplicity and reversibility" checklist
+for that area — even though each change passed review on its own — and decide
+whether a `/refine` (extract a boundary, split a responsibility) is now
+justified by the accumulated evidence, or whether the recurrence is itself
+justified (e.g. a shared reference doc that several independent cross-cutting
+rules legitimately extend) and the churn can be explicitly accepted with a
+reason. This is evidence-based by construction: nothing is restructured until
+the recurrence is observed, never in anticipation of it.
 
 ### Quantitative thresholds: code-quality metrics
 

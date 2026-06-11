@@ -35,7 +35,10 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
   are deduplicated by the originating spec/refinement (the `source:<id>` tag
   on the implementation entry, falling back to the entry's own id), so several
   iterative implementation snapshots of one spec collapse to a single hit
-  instead of inflating the count once per snapshot. The software-architect's
+  instead of inflating the count once per snapshot. `CHANGELOG.md` and the
+  generated `SKILLS.md` / `integrations/**` bundles are excluded from the
+  signal — they are touched by nearly every change and would otherwise
+  dominate the list without indicating anything. The software-architect's
   "Avoiding over-engineering and accidental complexity" practice gains a new
   "Systemic complexity" subsection covering this evidence-based, no-new-gate
   signal, and the architecture review checklist gains item 8.6 to act on it.
