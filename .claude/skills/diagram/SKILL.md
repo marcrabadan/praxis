@@ -1,6 +1,6 @@
 ---
 name: diagram
-description: Generate versioned, text-based diagrams (Mermaid by default, PlantUML on request) from architecture decisions, memory ledger entries, system design, data models, or user/API flows. Produces C4 architecture maps, sequence diagrams, ER diagrams, and flow charts. Use when the user wants a visual representation of the system, a flow, or a data model.
+description: Generate versioned, text-based diagrams (Mermaid by default, PlantUML on request) — C4 architecture maps, sequence diagrams, ER diagrams, flow charts — from architecture decisions, the memory ledger, system design, data models, or user/API flows. Use when the user wants a visual representation of the system, a flow, or a data model.
 tier: 3
 version: 1.0.0
 ---

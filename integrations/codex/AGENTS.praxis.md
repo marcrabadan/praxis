@@ -6,19 +6,19 @@ This repo carries the praxis SDLC expert personas under `.praxis/`. When a task 
 
 | Persona | Consult when… |
 | ------- | ------------- |
-| **Business Analyst** | Write requirements, write user stories, define acceptance criteria, map a process, perform stakeholder analysis, prioritize a backlog, build a traceability matrix, or review wheth… |
-| **Product Owner** | Backlog grooming, story writing, prioritization, sprint planning, Definition of Ready, Definition of Done, roadmapping, release planning, OKRs, stakeholder alignment, scope manage… |
-| **Software Architect** | Design a system, review an architecture, write an ADR, evaluate trade-offs, choose between patterns or technologies, identify architectural risks, document a design, or assess qua… |
-| **Developer** | How to write better code, structure tests, name things well, write a commit message, size a PR, refactor safely, handle errors, validate inputs, avoid secrets leaks, give or recei… |
-| **QA Engineer** | Write test cases, design a test strategy, review test coverage, file a bug report, define done/tested criteria, plan regression testing, assess test readiness, or verify that acce… |
-| **DevOps Engineer** | Pipelines, CI/CD, Terraform, IaC, Docker, Kubernetes, deployments, rollbacks, observability, monitoring, alerting, SLOs, on-call, runbooks, incident response, secrets management,… |
-| **Security Engineer** | Threat-model a feature, find or fix a vulnerability, review code for security bugs, harden authn/authz, handle secrets safely, add SAST/DAST/SCA or dependency scanning to CI, tria… |
-| **Cybersecurity Architect** | Design a security architecture, apply zero trust or defense in depth, design IAM/SSO/identity, plan network segmentation or data protection, define an encryption/key-management st… |
-| **UX/UI Engineer** | Design or audit a design system or component, define design tokens or theming, set a type or spacing scale, check color contrast, design an accessible pattern, design a responsive… |
-| **Frontend Architect** | Choose a frontend framework or meta-framework, pick a rendering strategy, structure a frontend app, decide where state lives, design data fetching or a BFF, plan routing and bundl… |
-| **Frontend Engineer** | How to build a React component, manage client or server state, fetch data in a component, write a form with validation, type props or hooks, fix unnecessary re-renders, memoize co… |
-| **Data Engineer** | Design or review a data pipeline, ETL/ELT, a warehouse or lake schema, a star/dimensional model, dbt models, an Airflow/Dagster DAG, streaming or CDC ingestion, data quality check… |
-| **ML/AI Engineer** | Frame an ML problem, pick a metric, engineer features, prevent leakage or train/serve skew, train or select a model, design an evaluation, set up experiment tracking, serve or dep… |
+| **Business Analyst** | Writing or reviewing requirements, user stories, acceptance criteria, process maps, stakeholder analysis, or requirements readiness |
+| **Product Owner** | Grooming a backlog, prioritizing, sprint or release planning, splitting stories, setting OKRs, or accepting work |
+| **Software Architect** | Designing or reviewing a system, writing an ADR, evaluating trade-offs, or assessing quality attributes |
+| **Developer** | Writing, refactoring, testing, or reviewing code, sizing a PR, writing commit messages, or applying engineering best practices |
+| **QA Engineer** | Writing test cases, designing a test strategy, reviewing coverage, filing a bug report, planning regression, or assessing releasability |
+| **DevOps Engineer** | Designing pipelines, deployments, rollbacks, monitoring, on-call/runbooks, or assessing production readiness |
+| **Security Engineer** | Threat-modeling a feature, finding or fixing a vulnerability, hardening auth, handling secrets, triaging a CVE, or adding security scanning to CI |
+| **Cybersecurity Architect** | Designing or reviewing a security architecture, identity topology, encryption strategy, or compliance posture |
+| **UX/UI Engineer** | Designing or auditing a design system, component, accessible pattern, layout, microcopy, or a built UI |
+| **Frontend Architect** | Choosing or reviewing frontend architecture, picking a rendering strategy, or writing a frontend ADR |
+| **Frontend Engineer** | Building a component, managing state, writing a form, fixing re-renders or hydration, or writing frontend tests |
+| **Data Engineer** | Designing or reviewing a pipeline, warehouse/lake schema, dbt models, a DAG, backfills, data quality checks, or data-product readiness |
+| **ML/AI Engineer** | Framing, building, evaluating, deploying, or monitoring an ML or LLM system |
 
 Reusable slash commands for each persona live in `~/.codex/prompts/` (install them with the prompts in this integration); invoke e.g. `/praxis-architect`, `/praxis-review-changes`.
 

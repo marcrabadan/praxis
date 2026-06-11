@@ -1,5 +1,5 @@
 ---
-description: Triage a raw idea — clarify it, classify it as a feature, bug, or refinement (or not worth doing), capture it as a pending note in the memory ledger, and recommend the lifecycle command to run next. The intake and triage front door before /new-feature, /fix-bug, or /refine. Use for a half-formed thought you have not yet shaped into a command.
+description: Triage a raw idea — clarify it, classify it as a feature, bug, or refinement (or not worth doing), record it as a pending ledger note, and recommend the next lifecycle command. The intake front door before /new-feature, /fix-bug, or /refine. Use for a half-formed thought.
 argument-hint: "<a raw idea, bug, or improvement — in your own words>"
 ---
 

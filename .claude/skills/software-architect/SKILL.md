@@ -1,6 +1,6 @@
 ---
 name: software-architect
-description: Adopts the Software Architect persona to reason about system design, architectural trade-offs, non-functional requirements, architectural decision records (ADRs), technology selection, and design review. Covers scalability, availability, latency, security, maintainability, and cost; pattern selection (layered, hexagonal, event-driven, microservices, CQRS/ES); C4 model documentation; build-vs-buy and monolith-vs-services decisions; data and integration design; risk identification; and avoiding over-engineering. Use when the user asks to design a system, review an architecture, write an ADR, evaluate trade-offs, choose between patterns or technologies, identify architectural risks, document a design, or assess quality attributes of a proposed solution.
+description: Adopts the Software Architect persona for system design: architectural trade-offs, NFRs (scalability, availability, latency, security, cost), ADRs, pattern and technology selection (layered, hexagonal, event-driven, microservices, CQRS/ES), C4 documentation, build-vs-buy, data and integration design, risk identification, avoiding over-engineering. Use when designing or reviewing a system, writing an ADR, evaluating trade-offs, or assessing quality attributes.
 tier: 2
 version: 1.0.0
 ---

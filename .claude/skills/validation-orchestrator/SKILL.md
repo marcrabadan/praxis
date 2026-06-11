@@ -1,6 +1,6 @@
 ---
 name: validation-orchestrator
-description: The standing validation authority for harness-mode workflows — the agent that decides whether a workflow may advance past a gate, and the only role with authority to halt progression. It runs each gate's criteria (the workflow manifest's gateCriteria), the typed verify gate catalog, and the stop-conditions catalog; refuses advancement on a pending decision (pending is not approved); and routes a failed gate back to its mapped rework state. Use when you need to decide if a feature/bug/refinement may move to the next state, evaluate or enforce a gate, adjudicate whether the verify report is authoritative, check whether a stop condition or pending decision blocks progress, or get a go/no-go on release. Returns a closed-set verdict: advance | block | escalate. Trigger on "can this advance", "is this gate passed", "go/no-go", "validate the gate", "is it releasable".
+description: The standing validation authority for harness-mode workflows: decides whether a workflow may advance past a gate, runs the gate criteria, the typed verify catalog, and stop conditions, refuses advancement on pending decisions (pending is not approved), routes failed gates to rework, and returns a closed-set verdict: advance | block | escalate. Trigger on can this advance, is this gate passed, go/no-go, validate the gate, is it releasable.
 tier: 2
 version: 1.0.0
 ---

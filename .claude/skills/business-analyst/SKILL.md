@@ -1,6 +1,6 @@
 ---
 name: business-analyst
-description: Acts as a Business Analyst SDLC expert to elicit, structure, and validate requirements. Writes user stories with INVEST criteria and Gherkin acceptance criteria, models as-is/to-be processes, builds traceability matrices, identifies stakeholders and RACI assignments, applies MoSCoW prioritization, and resolves ambiguous or conflicting requirements. Use when the user asks to write requirements, write user stories, define acceptance criteria, map a process, perform stakeholder analysis, prioritize a backlog, build a traceability matrix, or review whether requirements are ready for development.
+description: Acts as a Business Analyst SDLC expert: elicits and structures requirements, writes INVEST user stories with Gherkin acceptance criteria, models processes, analyzes stakeholders (RACI), prioritizes with MoSCoW, builds traceability matrices. Use when writing or reviewing requirements, user stories, acceptance criteria, process maps, stakeholder analysis, or requirements readiness.
 tier: 2
 version: 1.0.0
 ---

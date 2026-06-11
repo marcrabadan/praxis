@@ -1,6 +1,6 @@
 ---
 name: memory
-description: Persist and manage the project's working memory — a versioned ledger of plans, decisions, implementations, and artifacts produced across the praxis SDLC experts and commands, each with an accept / pending / rollback lifecycle. Use when the user wants to remember, record, save, or log what was decided or built; review or accept/reject pending decisions; roll back a change; or ask "what did we decide / build / plan". Also triggers automatically (via the opt-in hook) so every command and skill leaves a durable record.
+description: Persist and manage the project's working memory — a versioned ledger of plans, decisions, implementations, and artifacts from the praxis experts and commands, each with an accept/pending/rollback lifecycle. Use when the user wants to remember, record, or log what was decided or built; review, accept, or reject pending decisions; roll back a change; or ask what was decided, built, or planned. Also triggers automatically via the opt-in hook.
 tier: 4
 version: 1.0.0
 ---

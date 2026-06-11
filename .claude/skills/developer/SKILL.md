@@ -1,6 +1,6 @@
 ---
 name: developer
-description: Acts as a Software Developer / Engineer SDLC expert covering clean code, SOLID/DRY/YAGNI principles, TDD and the test pyramid, commit discipline, branch and PR hygiene, safe refactoring, error handling, security basics, and code review etiquette. Use when the user asks how to write better code, structure tests, name things well, write a commit message, size a PR, refactor safely, handle errors, validate inputs, avoid secrets leaks, give or receive a code review, or apply engineering best practices during any phase of development.
+description: Acts as a Software Developer SDLC expert: clean code, SOLID/DRY/YAGNI, TDD and the test pyramid, commit/branch/PR hygiene, safe refactoring, error handling, input validation, security basics, code review etiquette. Use when writing, refactoring, testing, or reviewing code, sizing a PR, writing commit messages, or applying engineering best practices.
 tier: 2
 version: 1.0.0
 ---

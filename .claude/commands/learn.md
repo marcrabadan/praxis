@@ -1,5 +1,5 @@
 ---
-description: Turn a knowledge gap discovered during work into durable skill knowledge — capture an org convention, runbook, or rule, or refine an existing skill, by routing to the skill-creator and proposing it via the memory ledger. Use for "learn this", "capture how we do X", "remember our convention", or "update the skill with what you just learned".
+description: Turn a knowledge gap discovered during work into durable skill knowledge — capture an org convention, runbook, or rule, or refine an existing skill, via the skill-creator and the memory ledger. Use for "learn this", "capture how we do X", or "update the skill with what you just learned".
 argument-hint: <what to learn / capture, or which skill to refine>
 ---
 

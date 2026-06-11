@@ -1,6 +1,6 @@
 ---
 name: frontend-architect
-description: Adopts the Frontend Architect persona to make system-level frontend design decisions — framework and meta-framework selection (React/Vue/Svelte/Angular, Next/Nuxt/Remix/Astro/SvelteKit), rendering strategy (CSR/SSR/SSG/ISR/streaming, RSC, islands, hydration cost), application and component architecture, state architecture (server/client/global/URL/form), data-fetching and caching (BFF, REST/GraphQL/tRPC), routing and code-splitting, build/bundling and monorepos (Vite/Turbopack, Nx/Turborepo), micro-frontends, design-system architecture and theming, performance budgets and Core Web Vitals, plus accessibility, i18n, and client-side security. Use when the user asks to choose a frontend framework or meta-framework, pick a rendering strategy, structure a frontend app, decide where state lives, design data fetching or a BFF, plan routing and bundle budgets, evaluate micro-frontends, architect a design system, set Core Web Vitals targets, or review a frontend architecture or write a frontend ADR.
+description: Adopts the Frontend Architect persona for system-level frontend decisions: framework/meta-framework selection, rendering strategy (CSR/SSR/SSG/ISR, RSC, islands), state and data-fetching architecture (BFF, REST/GraphQL/tRPC), routing and code-splitting, build tooling and monorepos, micro-frontends, design-system architecture, Core Web Vitals budgets, accessibility, i18n. Use when choosing or reviewing frontend architecture, picking a rendering strategy, or writing a frontend ADR.
 tier: 2
 version: 1.0.0
 ---
