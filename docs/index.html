@@ -219,8 +219,9 @@
         </div>
 
         <div class="experts-meta">
-          <div class="meta-pill"><strong>/new-feature</strong> orchestrates the core six in order and routes in the specialists a feature warrants.</div>
-          <div class="meta-pill"><strong>/review-changes</strong> sends the current diff to the relevant experts and returns severity-tagged, didactic findings.</div>
+          <div class="meta-pill"><strong>/idea</strong> is the intake front door — <code>/idea translate contracts into real-life consequences</code> gets clarified, classified as a feature, and routed to the right lifecycle command.</div>
+          <div class="meta-pill"><strong>/new-feature</strong> picks that idea up and orchestrates the core six in order — spec, ADR, threat model, rollout — routing in the specialists it warrants.</div>
+          <div class="meta-pill"><strong>/review-changes</strong> closes the loop: it sends the resulting diff to the relevant experts and returns severity-tagged, didactic findings.</div>
         </div>
       </div>
     </section>
@@ -332,11 +333,12 @@ landing-zone convention" — accept to apply.</code></pre>
             </div>
             <div class="code-panel">
               <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/idea</span></div>
-              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/idea</span> add a caching layer to the fetch helper
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/idea</span> translate contracts into real-life consequences
+        — "if X happens, here's your risk", not a summary
 
 <span class="c-muted">Classification</span> feature
-<span class="c-muted">Captured</span>       <span class="c-str">20260609-…-a1b2</span> (pending · intake,feature)
-<span class="c-muted">Next</span>           <span class="c-cmd">/new-feature</span> "cache the fetch helper"
+<span class="c-muted">Captured</span>       <span class="c-str">20260611-…-a1b2</span> (pending · intake,feature)
+<span class="c-muted">Next</span>           <span class="c-cmd">/new-feature</span> "contract-to-consequences translator"
 <span class="c-ok">✓</span> triaged · routed · nothing planned yet</code></pre>
             </div>
           </article>
@@ -350,14 +352,14 @@ landing-zone convention" — accept to apply.</code></pre>
             </div>
             <div class="code-panel">
               <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/new-feature</span></div>
-              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/new-feature</span> add OAuth2 login with Google
+              <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/new-feature</span> contract-to-consequences translator
 
 <span class="c-muted">Discovery</span> ✓ problem, stakeholders, open questions
 <span class="c-muted">Research</span>  ✓ findings + evidence → <span class="c-comment">Gate 1</span>
 <span class="c-muted">Analyst</span>   ✓ spec: requirements + acceptance criteria
 <span class="c-muted">PO</span>        ✓ prioritized increments + sprint goal
-<span class="c-muted">Architect</span> ✓ <span class="c-str">ADR-014-oauth.md</span> + diagram
-<span class="c-muted">Security</span>  ✓ threat model added (auth detected)
+<span class="c-muted">Architect</span> ✓ <span class="c-str">ADR-014-scenario-engine.md</span> + diagram
+<span class="c-muted">Security</span>  ✓ threat model added (PII uploads detected)
 <span class="c-muted">Dev · QA · DevOps</span> ✓ plan · tests · rollout
 <span class="c-muted">Release</span>   ✓ release notes → <span class="c-comment">Gate 4</span>
 <span class="c-ok">✓</span> consolidated plan · logged to ledger as pending</code></pre>
@@ -436,12 +438,12 @@ landing-zone convention" — accept to apply.</code></pre>
               <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/review-changes</span></div>
               <pre class="term-body"><code><span class="c-prompt">&gt;</span> <span class="c-cmd">/review-changes</span> HEAD~3..HEAD
 
-<span class="c-err">🔴 Blocker</span> <span class="c-muted">[Security]</span> token logged in plaintext
-          auth.ts:42 — redact before logging
-<span class="c-warn">🟠 Should-fix</span> <span class="c-muted">[Dev]</span> 180-line function
-          handler.ts:88 — extract validation
+<span class="c-err">🔴 Blocker</span> <span class="c-muted">[Security]</span> uploaded contract stored unencrypted
+          storage.ts:42 — encrypt at rest
+<span class="c-warn">🟠 Should-fix</span> <span class="c-muted">[Dev]</span> 180-line clause parser
+          parser.ts:88 — extract the scenario builder
 <span class="c-ok">🟡 Nit</span> <span class="c-muted">[QA]</span> new branch lacks a test
-          for the expired-token path
+          for the expired-lease path
 
 <span class="c-ok">✓</span> 3 experts routed from the diff</code></pre>
             </div>
