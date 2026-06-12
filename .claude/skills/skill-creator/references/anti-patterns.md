@@ -109,3 +109,15 @@ Common failures when creating skills, and the correct alternatives. If you find 
 **Symptom.** The agent declares the skill done without running `scripts/validate_skill.py`.
 
 **Fix.** Validation is part of the stop condition, not an optional extra. Run it.
+
+## 19. Scripting the model's judgment
+
+**Symptom.** `SKILL.md` enumerates numbered steps for work that requires judgment, not mechanics — "1. Read the file. 2. Identify the three most important functions. 3. Write one sentence per function..." Current Claude models follow such scaffolding literally, and it caps output quality at whatever the step list anticipated.
+
+**Fix.** State the goal, the constraints, and what "done" looks like; let the model choose the path. Keep numbered steps only for genuinely deterministic procedures (run a script, check an exit code) — that is what `workflows/` are for. See [prompting-best-practices.md](prompting-best-practices.md).
+
+## 20. Stale model workarounds
+
+**Symptom.** The body carries scaffolding written to patch an older model's gaps: "after every 3 tool calls, summarize progress", "double-check the output before returning", aggressive `CRITICAL`/`MUST` triggering language.
+
+**Fix.** Current models narrate, verify, and trigger appropriately on their own — these instructions now overtrigger or add noise. Remove them and re-test; if behavior regresses, reinstate the specific instruction with its reason attached. See [prompting-best-practices.md](prompting-best-practices.md) §8.

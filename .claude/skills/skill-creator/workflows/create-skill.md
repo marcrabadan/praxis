@@ -54,6 +54,8 @@ Replace the placeholder description with a final one per [../references/descript
 
 ### 5. Fill the body
 
+Write the body per [../references/prompting-best-practices.md](../references/prompting-best-practices.md) — goal over steps, calibrated language with reasons, trigger conditions on every capability listing, positive examples for shaped outputs.
+
 For each section in the template:
 
 1. Replace placeholders with content derived from the brief.

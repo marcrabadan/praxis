@@ -87,6 +87,7 @@ A Claude Code skill needs no `command.md`: Claude Code discovers a skill from it
 
 - [references/skill-anatomy.md](references/skill-anatomy.md) — what each folder is for.
 - [references/description-writing.md](references/description-writing.md) — how to write trigger-rich descriptions.
+- [references/prompting-best-practices.md](references/prompting-best-practices.md) — how to write the instruction body for current Claude models. Read when authoring or reviewing a skill body.
 - [references/anti-patterns.md](references/anti-patterns.md) — common failures to avoid.
 
 Read only the references relevant to the current task. Do not load all of them up front.

@@ -48,6 +48,7 @@ Look for:
 - Long prose that should be a numbered procedure → move to `workflows/`.
 - Deterministic checks described in prose that should be scripts → propose a script.
 - Hard-coded paths, time-sensitive instructions, ALL-CAPS shouting without explanation → flag per [../references/anti-patterns.md](../references/anti-patterns.md).
+- Prompting fit for current Claude models per [../references/prompting-best-practices.md](../references/prompting-best-practices.md): step-enumeration of judgment work, capability listings without "use when" conditions, negative-instruction stacks where one positive example would do, stale model workarounds (forced progress narration, forced self-checks) → run its self-check and flag failures.
 
 ### 6. Review evals
 
