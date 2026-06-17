@@ -13,7 +13,7 @@
     "verify": ["build", "test-evidence"],
     "release-candidate": ["verify-passed"],
     "release": ["release-candidate-ready", "release-approved"],
-    "deploy": ["release-approved", "deploy-target-configured"]
+    "deploy": ["release-approved"]
   },
   "gateCriteria": {
     "approved-discovery": [
@@ -46,8 +46,8 @@
       "no open high or critical security finding remains"
     ],
     "deploy-target-configured": [
-      "at least one deploy target (k8s/aws/gcp/azure) is declared in .praxis/config.json under deploy.targets (else the optional step is skipped and that skip is recorded — never assume a cloud target)",
-      "the target's environment, Terraform directory, and deployment strategy are resolved, with state isolated per target and per environment",
+      "evaluated inside the step (the step is entered on release-approved, like the optional experience step): if no deploy target is declared in .praxis/config.json under deploy.targets, the step records 'skipped (no deploy target configured)' and advances — a cloud target is never assumed and no-target is a recorded skip, not a blocked gate",
+      "when a target is declared, its environment, Terraform directory, and deployment strategy are resolved, with state isolated per target and per environment",
       "an MCP execution backend is configured and reachable, or the phase falls back to plan-only (no apply)",
       "explicit promotion criteria and a rollback trigger are defined for the target, and any production target requires a manual human promotion decision"
     ],

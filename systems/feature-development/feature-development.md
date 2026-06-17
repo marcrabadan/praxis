@@ -49,12 +49,15 @@ Two states make the front and back halves explicit rather than folded away:
 - **deploy** *(optional, config-gated)* is the terminal step that rolls an
   approved release out to a declared cloud target (Kubernetes, AWS/EKS, GCP/GKE,
   Azure/AKS) with Terraform, driven through an MCP server when one is configured.
-  It runs only when `.praxis/config.json` declares a `deploy` target — otherwise
-  it is skipped and recorded (never assume a cloud). Entering it needs
-  `release-approved` **and** `deploy-target-configured`; a production apply gates
-  on a manual human promotion decision, and a failed `deploy-healthy` check routes
-  back to `build` for a forward fix. Owned by the devops-engineer expert; doctrine
-  in [`deploy.md`](../../.claude/skills/devops-engineer/references/deploy.md).
+  It is **entered on `release-approved`** (exactly like the optional `experience`
+  step enters on `approved-spec`); the target check is evaluated *inside* the
+  step, so a repo with no `deploy` target configured records
+  `skipped (no deploy target configured)` and advances rather than stalling on an
+  unsatisfied gate — never assume a cloud. When a target is configured, a
+  production apply gates on a manual human promotion decision, and a failed
+  `deploy-healthy` check routes back to `build` for a forward fix. Owned by the
+  devops-engineer expert; doctrine in
+  [`deploy.md`](../../.claude/skills/devops-engineer/references/deploy.md).
 
 ### Gates are criteria-checked, not vibes
 

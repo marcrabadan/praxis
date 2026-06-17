@@ -83,7 +83,7 @@ reaching an authorizing status:
 | `build` | code (in the product repo) | `tasks` exist | — |
 | `verify` | `reports/verify/report.md` | build done **and** `test-evidence` present | — |
 | `release` | `reports/release/release-notes.md` | `verify-passed` **and** `release-approved` | **Gate 4** |
-| `deploy` *(optional)* | `reports/release/deploy-report.md` | `release-approved` **and** `deploy-target-configured` | promotion decision (manual for prod) |
+| `deploy` *(optional)* | `reports/release/deploy-report.md` | `release-approved` (enters like `experience`; skips inside when no target is configured) | promotion decision (manual for prod) |
 
 The four HITL gates mirror the operating model: **Gate 1** (Discovery & Research
 approval) opens the spec; **Gate 2** (Specification approval) opens planning;

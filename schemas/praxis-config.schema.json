@@ -82,7 +82,20 @@
               "terraformDir": { "type": "string", "description": "Path to the target's Terraform root, relative to the repo." },
               "strategy": { "type": "string", "enum": ["rolling", "blue-green", "canary"], "description": "Per-target override of defaultStrategy." },
               "promotion": { "type": "string", "enum": ["auto", "manual"], "description": "How promotion happens. Production targets must be 'manual' (explicit human decision)." }
-            }
+            },
+            "allOf": [
+              {
+                "description": "A production target must promote manually — an explicit human decision is mandatory, so 'auto' (or an omitted promotion) is rejected for environment 'production'.",
+                "if": {
+                  "properties": { "environment": { "const": "production" } },
+                  "required": ["environment"]
+                },
+                "then": {
+                  "properties": { "promotion": { "const": "manual" } },
+                  "required": ["promotion"]
+                }
+              }
+            ]
           }
         },
         "mcpServers": {
