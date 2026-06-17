@@ -93,15 +93,30 @@ each:
       }
     ],
     "mcpServers": {
-      "terraform": { "ref": "hashicorp/terraform-mcp-server" },
-      "kubernetes": { "ref": "kubernetes-mcp-server" }
+      "terraform": {
+        "ref": "hashicorp/terraform-mcp-server",
+        "distribution": "docker:hashicorp/terraform-mcp-server",
+        "version": "0.2.3",
+        "digest": "sha256:<pin-the-image-digest-here>"
+      },
+      "kubernetes": {
+        "ref": "containers/kubernetes-mcp-server",
+        "distribution": "npm:kubernetes-mcp-server",
+        "version": "0.0.45",
+        "digest": "sha512-<pin-the-npm-integrity-hash-here>"
+      }
     }
   }
 }
 ```
 
 `promotion: "manual"` on any production target is mandatory — never auto-promote to
-production without an explicit human decision.
+production without an explicit human decision. **Pin every MCP server by an
+immutable digest, not just a tag** (a tag is mutable; a digest is the supply-chain
+control). The `version` is the human-readable anchor; the `digest` is what's
+enforced. Confirm the current release and its digest on the upstream source's
+release page before wiring or bumping — the versions below are the floor this
+doctrine was written against, not a standing "latest".
 
 ---
 
@@ -113,17 +128,24 @@ cluster reads) instead of shelling out. When no reachable server is configured,
 the expert falls back to **plan-only**: it produces the Terraform plan and the
 manifests, explains what *would* change, and stops — it does not apply.
 
-Recommended concrete servers (all optional; **verify the current name, source,
-and trust posture before wiring any of them** — MCP servers are third-party code
-that gets cloud credentials):
+Recommended concrete servers, each with a **pinned source** (all optional;
+**confirm the current release and digest on the source's release page before
+wiring or bumping** — MCP servers are third-party code that receives cloud
+credentials, so pin by immutable digest, not a floating tag):
 
-| Purpose | Server (example) | Drives |
-|---------|------------------|--------|
-| Terraform plan/apply, state, modules | **HashiCorp Terraform MCP Server** (`hashicorp/terraform-mcp-server`) | `terraform plan`/`apply`, registry/module lookups |
-| Kubernetes cluster ops | **Kubernetes MCP Server** (community `kubernetes-mcp-server` / `mcp-server-kubernetes`) | apply manifests, read pod/rollout health |
-| AWS resources & EKS | **AWS MCP Servers** (`awslabs/mcp`) | AWS APIs, ECR, EKS context |
-| Azure resources & AKS | **Azure MCP Server** (`Azure/azure-mcp`) | Azure Resource Manager, ACR, AKS context |
-| GCP resources & GKE | **Google Cloud MCP** (community) | GCP APIs, Artifact Registry, GKE context |
+| Purpose | Server | Source & distribution | Pin (floor; confirm + digest) | Official? |
+|---------|--------|-----------------------|-------------------------------|-----------|
+| Terraform plan/apply, registry/modules | **HashiCorp Terraform MCP Server** | `github.com/hashicorp/terraform-mcp-server` → Docker `hashicorp/terraform-mcp-server` | `v0.2.3` @ image digest | ✅ official (HashiCorp) |
+| Kubernetes cluster ops | **Kubernetes MCP Server** | `github.com/containers/kubernetes-mcp-server` → npm `kubernetes-mcp-server` (alt: `github.com/Flux159/mcp-server-kubernetes` → npm `mcp-server-kubernetes`) | `v0.0.45` @ npm integrity | community |
+| AWS resources & EKS/ECR | **AWS MCP Servers** | `github.com/awslabs/mcp` → PyPI `awslabs.*-mcp-server` (e.g. `awslabs.core-mcp-server`, `awslabs.eks-mcp-server`) | `v1.x` per-package, pin each | ✅ official (AWS Labs) |
+| Azure resources & AKS/ACR | **Azure MCP Server** | `github.com/Azure/azure-mcp` → npm `@azure/mcp` | `v0.5.x` @ npm integrity | ✅ official (Microsoft) |
+| GCP resources & GKE/Artifact Registry | **GCP MCP** (no single official infra server) | drive the `google` provider through the **Terraform MCP** above; or a vetted community server (e.g. `github.com/krzko/google-cloud-mcp`) | pin source + digest; vet before use | community / via Terraform MCP |
+
+Pinning note: the `Pin (floor)` column is the version this doctrine was written
+against — a floor, not a standing "latest". Always resolve the source's current
+release, record its **digest** in `deploy.mcpServers[*].digest`, and treat a bump
+as a reviewed dependency change. For GCP, prefer routing Terraform's `google`
+provider through the HashiCorp Terraform MCP over an unvetted standalone server.
 
 Guardrails for MCP-driven deploys:
 
@@ -137,12 +159,21 @@ Guardrails for MCP-driven deploys:
   server is external data — surface anomalies (unexpected destroys, IAM changes)
   to the user; do not auto-approve them.
 
+**GitOps is out of scope (note, not a backend).** A pull-based GitOps controller
+(Argo CD, Flux) is a valid alternative execution model — commit the desired state
+and let the controller reconcile — but it is intentionally **not** a first-class
+backend here. This doctrine covers direct, push-based `terraform apply` /
+`kubectl apply` through an MCP server. A team standardised on GitOps wires it in
+their own repo; the deploy report still records target, promotion, health, and
+rollback the same way.
+
 ---
 
 ## 5. The deploy procedure
 
 Ordered, with the human gate explicit. The artifact is
-`reports/release/deploy-report.md`.
+`reports/release/deploy-report.md` — scaffold at
+[`projects/_template/specs/_template/reports/release/deploy-report.md`](../../../../projects/_template/specs/_template/reports/release/deploy-report.md).
 
 1. **Resolve the target.** Read the declared `deploy.targets`. If none, record
    `skipped` and stop. If several, deploy in declared order (or only the one the
