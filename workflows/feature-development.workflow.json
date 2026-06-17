@@ -1,7 +1,7 @@
 {
   "id": "feature-development",
   "name": "Feature development",
-  "steps": ["discovery", "research", "product-definition", "spec", "experience", "plan", "tasks", "build", "verify", "release-candidate", "release"],
+  "steps": ["discovery", "research", "product-definition", "spec", "experience", "plan", "tasks", "build", "verify", "release-candidate", "release", "deploy"],
   "gates": {
     "research": ["discovery"],
     "product-definition": ["approved-discovery", "research"],
@@ -12,7 +12,8 @@
     "build": ["tasks"],
     "verify": ["build", "test-evidence"],
     "release-candidate": ["verify-passed"],
-    "release": ["release-candidate-ready", "release-approved"]
+    "release": ["release-candidate-ready", "release-approved"],
+    "deploy": ["release-approved", "deploy-target-configured"]
   },
   "gateCriteria": {
     "approved-discovery": [
@@ -43,6 +44,17 @@
       "the verify report's overall-result is pass with accepted sign-off",
       "release notes or a changelog entry are drafted",
       "no open high or critical security finding remains"
+    ],
+    "deploy-target-configured": [
+      "at least one deploy target (k8s/aws/gcp/azure) is declared in .praxis/config.json under deploy.targets (else the optional step is skipped and that skip is recorded — never assume a cloud target)",
+      "the target's environment, Terraform directory, and deployment strategy are resolved, with state isolated per target and per environment",
+      "an MCP execution backend is configured and reachable, or the phase falls back to plan-only (no apply)",
+      "explicit promotion criteria and a rollback trigger are defined for the target, and any production target requires a manual human promotion decision"
+    ],
+    "deploy-healthy": [
+      "terraform apply and the workload rollout completed atomically (fully succeeded or rolled back)",
+      "post-apply health meets the promotion criteria (readiness green, error rate and latency within budget for the stated window)",
+      "the deploy report records target, image/SHA, plan summary, promotion decision, health evidence, and the verbatim rollback command"
     ]
   },
   "transitions": {
@@ -52,7 +64,8 @@
       "approved-spec": "spec",
       "architecture-validated": "plan",
       "verify-passed": "build",
-      "release-candidate-ready": "verify"
+      "release-candidate-ready": "verify",
+      "deploy-healthy": "build"
     }
   },
   "artifacts": {
@@ -65,7 +78,8 @@
     "tasks": ["tasks/tasks.md"],
     "verify": ["reports/verify/report.md"],
     "release-candidate": ["reports/release/release-candidate.md"],
-    "release": ["reports/release/release-notes.md"]
+    "release": ["reports/release/release-notes.md"],
+    "deploy": ["reports/release/deploy-report.md"]
   },
   "loops": {
     "verify": {
@@ -107,7 +121,9 @@
     "a gate's required decision is still pending (pending is not approved)",
     "a gate fails and work continues without returning to its mapped state for rework (a failed gate must route back via transitions.onGateFailure, never be bypassed)",
     "release is attempted with an unaddressed high or critical security finding and no approved risk-acceptance decision",
-    "release is attempted before the verify report shows acceptance criteria are met"
+    "release is attempted before the verify report shows acceptance criteria are met",
+    "deploy is attempted to a cloud target not declared in .praxis/config.json (never assume a target — the optional deploy step is skipped and recorded when no target is configured)",
+    "deploy applies to a production target without an explicit human promotion decision or a defined rollback trigger"
   ],
   "validation": {
     "verify": "make validate-harness"

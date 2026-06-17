@@ -57,6 +57,47 @@
         }
       }
     },
+    "deploy": {
+      "type": "object",
+      "description": "Optional. Enables the optional, terminal `deploy` step of the feature-development lifecycle: provision/update infrastructure with Terraform and ship to a declared cloud target, driven through an MCP server when configured. Absent or with an empty 'targets' list, the step is skipped and recorded — a cloud target is never assumed. Doctrine: .claude/skills/devops-engineer/references/deploy.md.",
+      "additionalProperties": true,
+      "properties": {
+        "defaultStrategy": {
+          "type": "string",
+          "enum": ["rolling", "blue-green", "canary"],
+          "description": "Default deployment strategy when a target does not override it."
+        },
+        "targets": {
+          "type": "array",
+          "description": "The declared deploy targets. An empty array means the deploy step is skipped.",
+          "items": {
+            "type": "object",
+            "required": ["id", "cloud", "environment"],
+            "additionalProperties": true,
+            "properties": {
+              "id": { "type": "string", "minLength": 1, "description": "Stable id for this target (e.g. prod-eks)." },
+              "cloud": { "type": "string", "enum": ["k8s", "aws", "gcp", "azure"], "description": "Target substrate: generic Kubernetes, AWS/EKS, GCP/GKE, or Azure/AKS." },
+              "environment": { "type": "string", "minLength": 1, "description": "Environment name (e.g. staging, production)." },
+              "mcp": { "type": "string", "description": "Key into deploy.mcpServers naming the MCP server that executes this target. Omit for plan-only." },
+              "terraformDir": { "type": "string", "description": "Path to the target's Terraform root, relative to the repo." },
+              "strategy": { "type": "string", "enum": ["rolling", "blue-green", "canary"], "description": "Per-target override of defaultStrategy." },
+              "promotion": { "type": "string", "enum": ["auto", "manual"], "description": "How promotion happens. Production targets must be 'manual' (explicit human decision)." }
+            }
+          }
+        },
+        "mcpServers": {
+          "type": "object",
+          "description": "Map of MCP server keys to the server backing them. Referenced by each target's 'mcp'. praxis does not host these servers; they are third-party and hold the cloud credentials — scope each to least privilege for one environment.",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "ref": { "type": "string", "description": "Identifier/source of the MCP server (e.g. hashicorp/terraform-mcp-server)." }
+            }
+          }
+        }
+      }
+    },
     "generatedBy": {
       "type": "string",
       "description": "Optional. The runtime/tool that generated this adapter (provenance)."
