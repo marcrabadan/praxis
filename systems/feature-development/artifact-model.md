@@ -27,6 +27,14 @@ see [`../../schemas/experience-contract.schema.json`](../../schemas/experience-c
 that plan, tasks, build, and verify enforce. A pure logic/refactor spec that
 declares no surfaces skips it (record that it was skipped).
 
+The **`deploy` step is also optional** and terminal: after `release` is approved,
+it provisions or updates infrastructure with Terraform and ships to a declared
+cloud target (Kubernetes, AWS/EKS, GCP/GKE, Azure/AKS), driven through an MCP
+server when one is configured. It runs **only when `.praxis/config.json` declares
+a `deploy` target**; with no target it is skipped and that skip is recorded —
+never assume a cloud. It is owned by the **devops-engineer** expert; the doctrine
+is in [`../../.claude/skills/devops-engineer/references/deploy.md`](../../.claude/skills/devops-engineer/references/deploy.md).
+
 ## Where artifacts live
 
 In harness mode, a feature's durable artifacts live under the owning project:
@@ -51,6 +59,7 @@ projects/<project>/specs/<spec>/
   reports/
     verify/report.md            # evidence the work meets the spec
     release/release-notes.md    # what shipped; acceptance met; rollback
+    release/deploy-report.md    # optional: target, plan, promotion, health, rollback
 ```
 
 A scaffold lives at
@@ -74,6 +83,7 @@ reaching an authorizing status:
 | `build` | code (in the product repo) | `tasks` exist | — |
 | `verify` | `reports/verify/report.md` | build done **and** `test-evidence` present | — |
 | `release` | `reports/release/release-notes.md` | `verify-passed` **and** `release-approved` | **Gate 4** |
+| `deploy` *(optional)* | `reports/release/deploy-report.md` | `release-approved` (enters like `experience`; skips inside when no target is configured) | promotion decision (manual for prod) |
 
 The four HITL gates mirror the operating model: **Gate 1** (Discovery & Research
 approval) opens the spec; **Gate 2** (Specification approval) opens planning;
@@ -114,6 +124,9 @@ Every artifact carries a typed id (`DISC-`, `RES-`, `SPEC-`, `ADR-`, `TASK-`,
 - **Required before verify:** `tasks/tasks.md` + test evidence.
 - **Required before release:** a verify report showing acceptance criteria met.
 - **Optional but encouraged:** `decisions/` (one file per significant call).
+- **Optional, config-gated:** `reports/release/deploy-report.md` — only when a
+  `deploy` target is declared in `.praxis/config.json`; skipped and recorded
+  otherwise.
 
 Keep it light. Do not force the full chain on a one-line change — a tiny tweak
 may be a `refinement` or a `bug-fix` instead, or need only a spec note. The chain

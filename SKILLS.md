@@ -10,7 +10,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `cybersecurity-architect` | 1.0.0 | 2 | Adopts the Cybersecurity Architect persona for system-level security architecture: zero trust, defense in depth, IAM/SSO/identity design, network segmentation,… |
 | `data-engineer` | 1.0.0 | 2 | Acts as a Data Engineer SDLC expert: batch/streaming pipelines (ETL/ELT, CDC, Kafka/Spark/Flink), dimensional and lakehouse modeling (star schemas, Data Vault,… |
 | `developer` | 1.0.0 | 2 | Acts as a Software Developer SDLC expert: clean code, SOLID/DRY/YAGNI, TDD and the test pyramid, commit/branch/PR hygiene, safe refactoring, error handling, in… |
-| `devops-engineer` | 1.0.0 | 2 | Acts as a DevOps Engineer SDLC expert: CI/CD pipelines, infrastructure as code (Terraform), containers and Kubernetes, deployment strategies (blue/green, canar… |
+| `devops-engineer` | 1.2.0 | 2 | Acts as a DevOps Engineer SDLC expert: CI/CD pipelines, infrastructure as code (Terraform), containers and Kubernetes, deployment strategies (blue/green, canar… |
 | `diagram` | 1.0.0 | 3 | Generate versioned, text-based diagrams (Mermaid by default, PlantUML on request) — C4 architecture maps, sequence diagrams, ER diagrams, flow charts — from ar… |
 | `docs` | 1.0.0 | 3 | Generate functional and technical manuals by routing each section to the right SDLC expert — BA, Product Owner, and UX for the functional manual; Architect, De… |
 | `frontend-architect` | 1.0.0 | 2 | Adopts the Frontend Architect persona for system-level frontend decisions: framework/meta-framework selection, rendering strategy (CSR/SSR/SSG/ISR, RSC, island… |

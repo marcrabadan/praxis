@@ -11,6 +11,40 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+## [1.15.0] - 2026-06-18
+
+### Added
+
+- **Optional `deploy` phase** for the `feature-development` lifecycle — a
+  terminal, config-gated step that provisions/updates infrastructure with
+  Terraform and ships to a declared cloud target (generic Kubernetes, AWS/EKS,
+  GCP/GKE, Azure/AKS), driven through an **MCP server** when one is configured,
+  with a plan-only fallback otherwise. It mirrors the optional `experience`
+  step: it enters on `release-approved` and, when no `deploy` target is declared
+  in `.praxis/config.json`, records a skip and advances — a cloud target is
+  never assumed. Doctrine in
+  `.claude/skills/devops-engineer/references/deploy.md` (devops-engineer →
+  v1.2.0); wired into `workflows/feature-development.workflow.json` and the
+  `/new-feature` orchestration, with a `reports/release/deploy-report.md`
+  artifact and scaffold template.
+- **Enforceable deploy gates**, each backed by a deterministic tool:
+  `deploy-plan-guardrails` (Infracost cost budget, OPA/Conftest policy-as-code,
+  tfsec/Checkov IaC scan over the terraform plan — fail-closed on production),
+  `deploy-supply-chain` (SBOM via Syft, cosign signature, SLSA provenance,
+  admission control), and `deploy-healthy` (SLO error-budget burn-rate plus
+  DORA capture).
+- **`deploy` config block** in `schemas/praxis-config.schema.json`
+  (`targets`, `mcpServers`, `guardrails`, `supplyChain`, per-target `slo`),
+  including a conditional rule that a `production` target must set
+  `promotion: "manual"`. MCP servers carry pinned sources and a mandatory
+  digest-pinning note (supply-chain control).
+
+### Changed
+
+- README, GitHub Pages (`docs/index.html`), `docs/harness-mode.md`, and the
+  **Software Developer Life Cycle diagram** (`.mmd` + infographic + re-rendered
+  PNG) updated to show the optional deploy phase end to end.
+
 ## [1.13.0] - 2026-06-11
 
 ### Added

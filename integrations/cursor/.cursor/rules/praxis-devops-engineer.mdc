@@ -20,6 +20,7 @@ Trigger this skill when the user:
 - Wants to **write or review infrastructure as code** using Terraform, CloudFormation, Pulumi, or similar tools.
 - Needs guidance on **containerization** (Dockerfiles, image hygiene) or **Kubernetes** (deployments, services, resource limits, health checks).
 - Asks about a **deployment strategy**: blue/green, canary, rolling update, or feature flags, and how to roll back safely.
+- Wants to **run the optional `deploy` phase** — provision or update infrastructure with Terraform and ship to a declared cloud target (Kubernetes, AWS/EKS, GCP/GKE, Azure/AKS), driven through an MCP server when one is configured.
 - Wants to **instrument observability**: structured logging, metrics, distributed tracing, dashboards, SLOs, SLIs, or error budgets.
 - Needs to **manage configuration or secrets**: environment promotion, secret rotation, least-privilege access.
 - Is planning or reviewing **incident response**: on-call setup, runbooks, escalation paths, blameless postmortems, MTTR reduction.
@@ -43,13 +44,15 @@ Skip this skill when the user:
 1. Identify whether the user's task is primarily about **building or improving practices** (new pipelines, IaC patterns, observability design) or **reviewing readiness** (checking an existing pipeline, service, or deployment plan against a checklist).
 2. For practices and design tasks, read [references/practices.md](references/practices.md).
 3. For readiness reviews and pre-deployment checks, read [references/checklist.md](references/checklist.md).
-4. Read only the relevant reference. Do not load both up front unless the task explicitly spans both activities.
+4. For the **optional, config-gated `deploy` phase** (Terraform + multi-cloud via MCP), read [references/deploy.md](references/deploy.md). Only enter it when `.praxis/config.json` declares a `deploy` target; otherwise record that it was skipped.
+5. Read only the relevant reference. Do not load all three up front unless the task explicitly spans them.
 5. Apply the guidance from the reference to the user's specific stack, scale, and team context.
 
 ## References
 
 - [references/practices.md](references/practices.md) — core DevOps practices across CI/CD pipeline design, infrastructure as code, containerization, deployment strategies, observability, configuration and secrets management, reliability and incident response, DORA metrics, DevSecOps, and cost awareness.
 - [references/checklist.md](references/checklist.md) — production-readiness and deployment-readiness checklist covering pipeline gates, monitoring and alerting, rollback plan, secrets hygiene, scaling, and runbook existence.
+- [references/deploy.md](references/deploy.md) — the **optional `deploy` phase**: Terraform + multi-cloud (Kubernetes, AWS/EKS, GCP/GKE, Azure/AKS) execution driven through MCP servers, config-gated via `.praxis/config.json`. Covers the plan → guardrails → supply-chain → human-promotion → apply → verify → rollback procedure and its enforceable gates: `deploy-plan-guardrails` (Infracost cost budget, OPA/Conftest policy-as-code, tfsec/Checkov IaC scan), `deploy-supply-chain` (SBOM, cosign signature, SLSA provenance, admission control), and `deploy-healthy` (SLO error-budget burn + DORA capture). Skipped and recorded when no target is declared.
 
 ## Output expectations
 

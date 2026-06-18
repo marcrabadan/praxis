@@ -68,7 +68,7 @@ Rules for subagents:
 
 Praxis **always runs in harness mode** — it is the default and only operating mode. At the start of the run, **ensure the harness is initialized**: run `python tools/ensure_harness.py` (idempotent — resolve the harness via the config's `harnessRoot`, or the installed plugin). If no `.praxis/config.json` resolves a project, it **auto-bootstraps** one derived from the repo name and continues. There is no non-harness fallback.
 
-In addition to the `docs/` files above, write the feature's durable, typed artifacts under the owning project, following the `feature-development` workflow (`discovery → research → product-definition → spec → experience → plan → tasks → build → verify → release-candidate → release`). The doctrine is in the harness at `systems/feature-development/artifact-model.md`; the gates are in `workflows/feature-development.workflow.json`.
+In addition to the `docs/` files above, write the feature's durable, typed artifacts under the owning project, following the `feature-development` workflow (`discovery → research → product-definition → spec → experience → plan → tasks → build → verify → release-candidate → release → deploy`). The final `deploy` step is **optional and config-gated** (like `experience`): the DevOps expert runs it only when `.praxis/config.json` declares a `deploy` target, shipping the release with Terraform to the configured cloud (Kubernetes/AWS/GCP/Azure) via an MCP server; with no target it records a skip and the run ends at `release`. The doctrine is in the harness at `systems/feature-development/artifact-model.md` (and `.claude/skills/devops-engineer/references/deploy.md` for deploy); the gates are in `workflows/feature-development.workflow.json`.
 
 ```
 projects/<projectId>/specs/<spec-slug>/
@@ -82,6 +82,7 @@ projects/<projectId>/specs/<spec-slug>/
   tasks/tasks.md                # the ordered checklist
   reports/verify/report.md      # verify evidence, once the work is built
   reports/release/release-notes.md # Release: what shipped, acceptance met, rollback (Gate 4)
+  reports/release/deploy-report.md # DevOps: optional deploy phase — Terraform + multi-cloud via MCP; config-gated, skipped & recorded when no target
 ```
 
 - Copy the harness's `projects/_template/specs/_template/` as the starting shape; set `spec.md` frontmatter `id` = the spec folder slug and `project` = the resolved `projectId`. Assign typed ids and link `source:`/`traces:` per [`rules/traceability.md`](../../rules/traceability.md) so the chain `IDEA → DISC → RES → SPEC → … → REL` stays navigable.

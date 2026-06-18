@@ -18,7 +18,8 @@ stop conditions, adapter config, and a deterministic validator — and the
 *delivery lifecycle* on top of it: machine-readable workflows with human-in-the-loop
 gates, durable typed artifacts, bidirectional traceability, and runtime state.
 The feature lifecycle runs `discovery → research → product-definition → spec →
-experience → plan → tasks → build → verify → release-candidate → release`, gated by
+experience → plan → tasks → build → verify → release-candidate → release → deploy`
+(the terminal `deploy` step optional and config-gated), gated by
 a **Validation Orchestrator**; lighter `bug-fix` and `refinement` lifecycles handle
 corrective and quality-only work. None of it is opt-in — it is always on, with a
 missing project auto-bootstrapped rather than treated as "no harness".
@@ -48,7 +49,7 @@ systems/
 
 workflows/
   registry.json          # the workflow registry
-  feature-development.workflow.json   # discovery → research → spec → plan → tasks → build → verify → release
+  feature-development.workflow.json   # discovery → research → spec → plan → tasks → build → verify → release → deploy
   bug-fix.workflow.json               # triage → reproduce → diagnose → fix → verify
   refinement.workflow.json            # assess → plan → change → verify
   *.workflow.json        # machine-readable steps + gates + stop conditions
@@ -206,7 +207,8 @@ validators.
   stop conditions, and validation commands. Each gate is opened by the previous
   artifact reaching an authorizing status, and **pending is not approval**.
   - `feature-development`: `discovery → research → product-definition → spec →
-    experience → plan → tasks → build → verify → release-candidate → release`, with
+    experience → plan → tasks → build → verify → release-candidate → release → deploy`
+    (the terminal `deploy` step optional and config-gated), with
     **five criteria-checked human-in-the-loop gates** — `approved-discovery`,
     `approved-product-definition`, `approved-spec`, `architecture-validated`
     (only when a significant decision exists), and `release-candidate-ready`. Each
@@ -345,7 +347,8 @@ The generated Cursor / Codex / IntelliJ entry docs include the same harness
 The harness conversion is in place: the authority model, project memory, adapter
 config + read-order wiring, the harness validator, the full `feature-development`
 lifecycle (discovery → research → product-definition → spec → experience → plan →
-tasks → build → verify → release-candidate → release) with five criteria-checked
+tasks → build → verify → release-candidate → release → deploy, the last optional)
+with five criteria-checked
 HITL gates and a Validation Orchestrator, a typed verify-gate catalog (mandatory
 `G-security`, conditional `G-performance`) with a failure protocol, the lighter
 `bug-fix` and `refinement` lifecycles (`/fix-bug`, `/refine`), bidirectional

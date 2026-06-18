@@ -1,7 +1,7 @@
 {
   "id": "feature-development",
   "name": "Feature development",
-  "steps": ["discovery", "research", "product-definition", "spec", "experience", "plan", "tasks", "build", "verify", "release-candidate", "release"],
+  "steps": ["discovery", "research", "product-definition", "spec", "experience", "plan", "tasks", "build", "verify", "release-candidate", "release", "deploy"],
   "gates": {
     "research": ["discovery"],
     "product-definition": ["approved-discovery", "research"],
@@ -12,7 +12,8 @@
     "build": ["tasks"],
     "verify": ["build", "test-evidence"],
     "release-candidate": ["verify-passed"],
-    "release": ["release-candidate-ready", "release-approved"]
+    "release": ["release-candidate-ready", "release-approved"],
+    "deploy": ["release-approved"]
   },
   "gateCriteria": {
     "approved-discovery": [
@@ -43,6 +44,31 @@
       "the verify report's overall-result is pass with accepted sign-off",
       "release notes or a changelog entry are drafted",
       "no open high or critical security finding remains"
+    ],
+    "deploy-target-configured": [
+      "evaluated inside the step (the step is entered on release-approved, like the optional experience step): if no deploy target is declared in .praxis/config.json under deploy.targets, the step records 'skipped (no deploy target configured)' and advances — a cloud target is never assumed and no-target is a recorded skip, not a blocked gate",
+      "when a target is declared, its environment, Terraform directory, and deployment strategy are resolved, with state isolated per target and per environment",
+      "an MCP execution backend is configured and reachable, or the phase falls back to plan-only (no apply)",
+      "explicit promotion criteria and a rollback trigger are defined for the target, and any production target requires a manual human promotion decision"
+    ],
+    "deploy-plan-guardrails": [
+      "evaluated on the terraform plan before any promotion; each configured check that fails blocks promotion (fixed or carrying a recorded risk acceptance), and is fail-closed on production (an inconclusive check blocks)",
+      "cost: the plan's projected cost delta is within deploy.guardrails.costBudget (Infracost), when configured",
+      "policy-as-code: OPA/Conftest over the plan and rendered manifests reports no high-severity violation, when deploy.guardrails.policyDir is set",
+      "IaC security scan: tfsec/Checkov reports no unaddressed high-severity finding, when deploy.guardrails.iacScan is enabled",
+      "an unconfigured check is skipped and that skip is recorded — a configured check is never a silent pass"
+    ],
+    "deploy-supply-chain": [
+      "evaluated before apply when deploy.supplyChain is configured; an unsigned or unverifiable image blocks the deploy",
+      "the image signature is verified (cosign) against the expected keyless identity (deploy.supplyChain.cosignIdentity)",
+      "an SBOM is generated (Syft) and attached to the deploy report, and SLSA provenance is verified when requireProvenance is set",
+      "the cluster's admission control would reject an unsigned or unattested image (the gate confirms, it does not bypass)"
+    ],
+    "deploy-healthy": [
+      "terraform apply and the workload rollout completed atomically (fully succeeded or rolled back)",
+      "post-apply health meets the promotion criteria tied to the target's SLO: the error-budget burn over deploy.targets[].slo.burnRateWindow stays within budget (not merely readiness green)",
+      "the four DORA signals for this deploy are captured (deployment-frequency contribution, lead time for change, change-failure outcome, MTTR if it failed)",
+      "the deploy report records target, image/SHA, plan summary, guardrail + cost results, supply-chain attestations, promotion decision, SLO/health evidence, DORA metrics, and the verbatim rollback command"
     ]
   },
   "transitions": {
@@ -52,7 +78,8 @@
       "approved-spec": "spec",
       "architecture-validated": "plan",
       "verify-passed": "build",
-      "release-candidate-ready": "verify"
+      "release-candidate-ready": "verify",
+      "deploy-healthy": "build"
     }
   },
   "artifacts": {
@@ -65,7 +92,8 @@
     "tasks": ["tasks/tasks.md"],
     "verify": ["reports/verify/report.md"],
     "release-candidate": ["reports/release/release-candidate.md"],
-    "release": ["reports/release/release-notes.md"]
+    "release": ["reports/release/release-notes.md"],
+    "deploy": ["reports/release/deploy-report.md"]
   },
   "loops": {
     "verify": {
@@ -107,7 +135,9 @@
     "a gate's required decision is still pending (pending is not approved)",
     "a gate fails and work continues without returning to its mapped state for rework (a failed gate must route back via transitions.onGateFailure, never be bypassed)",
     "release is attempted with an unaddressed high or critical security finding and no approved risk-acceptance decision",
-    "release is attempted before the verify report shows acceptance criteria are met"
+    "release is attempted before the verify report shows acceptance criteria are met",
+    "deploy is attempted to a cloud target not declared in .praxis/config.json (never assume a target — the optional deploy step is skipped and recorded when no target is configured)",
+    "deploy applies to a production target without an explicit human promotion decision or a defined rollback trigger"
   ],
   "validation": {
     "verify": "make validate-harness"
