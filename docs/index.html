@@ -218,7 +218,7 @@
           <article class="expert"><span class="cmd">/architect</span><h3>Software Architect</h3><p>System design, trade-offs, NFRs, ADRs, pattern selection and architecture review.</p></article>
           <article class="expert"><span class="cmd">/developer</span><h3>Developer</h3><p>Clean code, SOLID, TDD, error handling, safe refactoring and PR hygiene.</p></article>
           <article class="expert"><span class="cmd">/qa</span><h3>QA Engineer</h3><p>Test strategy and design, edge cases, bug reports and regression testing.</p></article>
-          <article class="expert"><span class="cmd">/devops</span><h3>DevOps Engineer</h3><p>CI/CD, IaC, containers/Kubernetes, deployments, observability/SLOs and incidents.</p></article>
+          <article class="expert"><span class="cmd">/devops</span><h3>DevOps Engineer</h3><p>CI/CD, IaC, containers/Kubernetes, deployments, observability/SLOs and incidents — plus an optional Terraform multi-cloud deploy phase via MCP.</p></article>
           <article class="expert"><span class="cmd">/security</span><h3>Security Engineer</h3><p>Threat modeling, OWASP Top 10, authn/authz, secrets, crypto and SAST/DAST/SCA gates.</p></article>
           <article class="expert"><span class="cmd">/security-architect</span><h3>Cybersecurity Architect</h3><p>Zero trust, IAM/SSO, segmentation, data protection, NIST/ISO/CIS and compliance.</p></article>
           <article class="expert"><span class="cmd">/ux</span><h3>UX/UI Engineer</h3><p>Design systems, tokens, visual and interaction design, WCAG 2.2 AA accessibility.</p></article>
@@ -358,7 +358,7 @@ landing-zone convention" — accept to apply.</code></pre>
             <div class="example-head">
               <span class="example-tag">End-to-end</span>
               <h3>Kick off a new feature</h3>
-              <p>Run an idea through the full lifecycle — discovery → research → spec → plan → tasks → build → verify → release. Each expert builds on the previous one's output; research precedes the spec and human-in-the-loop gates hold.</p>
+              <p>Run an idea through the full lifecycle — discovery → research → spec → plan → tasks → build → verify → release → deploy (optional). Each expert builds on the previous one's output; research precedes the spec and human-in-the-loop gates hold.</p>
             </div>
             <div class="code-panel">
               <div class="term-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="term-title">/new-feature</span></div>
@@ -781,7 +781,7 @@ landing-zone convention" — accept to apply.</code></pre>
           <ul class="memory-list">
             <li><span class="state accepted">rules/</span> Source-of-truth authority order, stop conditions &amp; traceability.</li>
             <li><span class="state accepted">projects/</span> Per-project memory + durable <code>specs/</code>, <code>bugs/</code> &amp; <code>refinements/</code>.</li>
-            <li><span class="state pending">workflows/</span> Gated lifecycles: feature <code>discovery → research → product-definition → spec → experience → plan → tasks → build → verify → release-candidate → release</code>, plus <code>bug-fix</code> &amp; <code>refinement</code>.</li>
+            <li><span class="state pending">workflows/</span> Gated lifecycles: feature <code>discovery → research → product-definition → spec → experience → plan → tasks → build → verify → release-candidate → release → deploy</code> (deploy optional · config-gated), plus <code>bug-fix</code> &amp; <code>refinement</code>.</li>
             <li><span class="state accepted">validation-orchestrator</span> The standing authority that gates each step — five criteria-checked HITL gates + a typed verify catalog (mandatory <code>G-security</code>, conditional <code>G-performance</code>); verdict is <code>advance | block | escalate</code>.</li>
             <li><span class="state pending">.praxis/config.json</span> A repo points at a harness + project; agents resolve context deterministically.</li>
             <li><span class="state superseded">tools/</span> Mechanical <code>validate_harness.py</code> + <code>validate_traceability.py</code> + <code>install_adapter.py</code> + the <code>/patterns</code> miner — checked in CI.</li>
@@ -819,8 +819,8 @@ landing-zone convention" — accept to apply.</code></pre>
             <figcaption style="margin-top:14px;color:var(--text-muted);font-size:0.9rem;text-align:center;"><strong style="color:var(--text);">Product Developer Life Cycle</strong> — discovery → research → product&nbsp;definition → spec → experience. BA · PO · UX.</figcaption>
           </figure>
           <figure style="margin:0;background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;">
-            <img src="diagrams/software-developer-life-cycle.png" alt="Praxis Software Developer Life Cycle: Plan, Gate 3, Tasks, Build, Verify bounded loop, Release Candidate, Gate 4, Release — owned by Architect, Developer, QA, DevOps and Security." loading="lazy" style="display:block;width:100%;height:auto;" />
-            <figcaption style="margin-top:14px;color:var(--text-muted);font-size:0.9rem;text-align:center;"><strong style="color:var(--text);">Software Developer Life Cycle</strong> — plan → tasks → build → verify&nbsp;loop → release&nbsp;candidate → release. Architect · Dev · QA · DevOps · Security.</figcaption>
+            <img src="diagrams/software-developer-life-cycle.png" alt="Praxis Software Developer Life Cycle: Plan, Gate 3, Tasks, Build, Verify bounded loop, Release Candidate, Gate 4, Release, and an optional config-gated Deploy (Terraform multi-cloud via MCP) — owned by Architect, Developer, QA, DevOps and Security." loading="lazy" style="display:block;width:100%;height:auto;" />
+            <figcaption style="margin-top:14px;color:var(--text-muted);font-size:0.9rem;text-align:center;"><strong style="color:var(--text);">Software Developer Life Cycle</strong> — plan → tasks → build → verify&nbsp;loop → release&nbsp;candidate → release → <em>deploy&nbsp;(optional)</em>. Architect · Dev · QA · DevOps · Security.</figcaption>
           </figure>
         </div>
       </div>

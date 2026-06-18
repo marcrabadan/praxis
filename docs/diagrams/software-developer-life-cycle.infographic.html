@@ -52,14 +52,18 @@
   .node .n{position:absolute;top:-9px;right:-9px;width:24px;height:24px;border-radius:50%;
     background:#0f172a;color:#fff;font-size:12px;display:grid;place-items:center;border:2px solid #fff}
   .node.loop{background:linear-gradient(135deg,#e11d48,#f43f5e);box-shadow:0 10px 22px rgba(225,29,72,.30)}
+  .node.opt{background:linear-gradient(135deg,#0891b2,#06b6d4);box-shadow:0 10px 22px rgba(8,145,178,.28)}
 
   .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
     padding:20px 24px;box-shadow:0 6px 16px rgba(15,23,42,.06)}
   .card.loopcard{border-color:#fecdd3;box-shadow:0 10px 26px rgba(225,29,72,.14)}
+  .card.optcard{border-color:#a5f3fc;border-style:dashed;box-shadow:0 10px 26px rgba(8,145,178,.12)}
   .card h3{font-size:21px;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
   .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
     padding:3px 9px;border-radius:999px;background:var(--c1s);color:var(--c1)}
   .tag.loop{background:var(--roses);color:var(--rose)}
+  .tag.opt{background:#ecfeff;color:#0e7490}
+  .chip.opt{background:#ecfeff;color:#0e7490;border-color:#a5f3fc}
   .card p{margin-top:7px;color:var(--muted);font-size:15px;line-height:1.5}
   .chips{margin-top:13px;display:flex;flex-wrap:wrap;gap:8px}
   .chip{font-size:12.5px;font-weight:600;color:var(--c1d);background:var(--c1s);
@@ -100,8 +104,8 @@
 <body>
   <div class="kicker"><span class="dot"></span> Praxis · Feature Lifecycle — Back Half</div>
   <h1>Software Developer <span class="accent">Life&nbsp;Cycle</span></h1>
-  <p class="sub">The <b>how</b>. Turn an approved spec into shipped software — plan the architecture, decompose into gated tasks, build, then converge in a bounded verify loop before a human-approved release.</p>
-  <div class="phase-of">◆ Phases 6–11 of the praxis <code style="font-family:inherit">discovery → … → release</code> lifecycle</div>
+  <p class="sub">The <b>how</b>. Turn an approved spec into shipped software — plan the architecture, decompose into gated tasks, build, then converge in a bounded verify loop before a human-approved release, with an optional config-gated deploy to the cloud.</p>
+  <div class="phase-of">◆ Phases 6–12 of the praxis <code style="font-family:inherit">discovery → … → release → deploy</code> lifecycle</div>
 
   <div class="intake">
     <span class="ho-ico">📥</span>
@@ -176,17 +180,27 @@
         <div class="chips"><span class="chip"><span class="role">OWNER</span>DevOps Engineer</span><span class="chip">→ release-notes.md</span></div>
       </div>
     </div>
+    <!-- 12 (optional) -->
+    <div class="row">
+      <div class="node opt"><span class="ico">☁️</span><span class="n">12</span></div>
+      <div class="card optcard">
+        <h3>Deploy <span class="tag opt">Optional · config-gated</span></h3>
+        <p>Runs only when <code style="font-family:inherit">.praxis/config.json</code> declares a deploy target (else it records a skip). Provisions infra with Terraform and ships to Kubernetes / AWS / GCP / Azure through an MCP server — with pre-apply guardrails, supply-chain checks and an SLO-gated rollout.</p>
+        <div class="chips"><span class="chip"><span class="role">OWNER</span>DevOps Engineer</span><span class="chip opt">G-plan-guardrails · cost/policy/IaC</span><span class="chip opt">G-supply-chain · SBOM/cosign/SLSA</span><span class="chip opt">G-healthy · SLO + DORA</span><span class="chip">→ deploy-report.md</span></div>
+      </div>
+    </div>
   </div>
 
   <div class="ship">
     <span class="ho-ico">🎉</span>
-    <div><b>Shipped — traceable end to end</b><small>IDEA → DISC → RES → SPEC → … → REL stays navigable both ways.</small></div>
+    <div><b>Shipped / Deployed — traceable end to end</b><small>IDEA → DISC → RES → SPEC → … → REL → DEP stays navigable both ways.</small></div>
   </div>
 
   <div class="footer">
     <div class="legend">
       <i><span class="sw" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6)"></span>Phase (owned by a role)</i>
       <i><span class="sw" style="background:linear-gradient(135deg,#e11d48,#f43f5e)"></span>Bounded verify loop</i>
+      <i><span class="sw" style="background:linear-gradient(135deg,#0891b2,#06b6d4)"></span>Optional · config-gated</i>
       <i><span class="sw" style="background:#d97706"></span>Human-in-the-loop gate</i>
     </div>
     <div class="brand"><span class="px">praxis</span> · a failed gate routes back, never bypasses</div>
