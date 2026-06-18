@@ -25,17 +25,49 @@ Summary of `terraform plan` for the target's `terraformDir`: counts of
 add / change / destroy, and any flagged resource (unexpected destroy, IAM or
 security-group change). An anomaly here is a stop-and-ask, not an auto-approve.
 
+## Plan guardrails (`deploy-plan-guardrails`)
+
+Deterministic checks over the plan, evaluated before promotion. Record each as
+`pass` / `fail` / `skipped (not configured)`:
+
+- **Cost (Infracost):** projected monthly delta vs `guardrails.costBudget`.
+- **Policy-as-code (OPA/Conftest):** high-severity violations over plan + manifests.
+- **IaC scan (tfsec/Checkov):** unaddressed high-severity findings.
+
+A configured check that fails blocks promotion (fixed or carries a recorded risk
+acceptance); on a production target an inconclusive check is fail-closed.
+
+## Supply-chain integrity (`deploy-supply-chain`)
+
+Proven before apply. Record each verdict:
+
+- **SBOM (Syft):** reference/attachment.
+- **Signature (cosign):** verified against `supplyChain.cosignIdentity`.
+- **Provenance (SLSA):** verified when required.
+- **Admission control:** would reject unsigned/unattested images.
+
+An unsigned or unverifiable image blocks the deploy.
+
 ## Promotion decision
 
 Who approved, when, and against which criteria. Production apply requires a
 **manual human promotion decision** — record it explicitly. `auto` (non-prod)
 targets state the green automated checks that authorised the apply.
 
-## Health evidence (`deploy-healthy`)
+## SLO & health (`deploy-healthy`)
 
-Post-apply health against the promotion criteria: readiness green, error rate
-and latency within budget for the stated window. A failed check triggers
-rollback and routes back to `build` for a forward fix.
+Post-apply health tied to the target's SLO, not just "probes green": the
+error-budget burn over `slo.burnRateWindow` must stay within budget. A failed
+check triggers rollback and routes back to `build` for a forward fix.
+
+### DORA metrics
+
+Captured for this deploy:
+
+- **Deployment frequency:** this deploy's contribution.
+- **Lead time for change:** commit → production.
+- **Change failure:** did this deploy cause a failure? (yes/no)
+- **MTTR:** if it failed, time to restore.
 
 ## Rollback
 

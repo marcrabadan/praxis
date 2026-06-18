@@ -48,7 +48,7 @@ Skip this skill when the user:
 
 - [references/practices.md](references/practices.md) — core DevOps practices across CI/CD pipeline design, infrastructure as code, containerization, deployment strategies, observability, configuration and secrets management, reliability and incident response, DORA metrics, DevSecOps, and cost awareness.
 - [references/checklist.md](references/checklist.md) — production-readiness and deployment-readiness checklist covering pipeline gates, monitoring and alerting, rollback plan, secrets hygiene, scaling, and runbook existence.
-- [references/deploy.md](references/deploy.md) — the **optional `deploy` phase**: Terraform + multi-cloud (Kubernetes, AWS/EKS, GCP/GKE, Azure/AKS) execution driven through MCP servers, config-gated via `.praxis/config.json`, with the plan → human-promotion → apply → verify → rollback procedure. Skipped and recorded when no target is declared.
+- [references/deploy.md](references/deploy.md) — the **optional `deploy` phase**: Terraform + multi-cloud (Kubernetes, AWS/EKS, GCP/GKE, Azure/AKS) execution driven through MCP servers, config-gated via `.praxis/config.json`. Covers the plan → guardrails → supply-chain → human-promotion → apply → verify → rollback procedure and its enforceable gates: `deploy-plan-guardrails` (Infracost cost budget, OPA/Conftest policy-as-code, tfsec/Checkov IaC scan), `deploy-supply-chain` (SBOM, cosign signature, SLSA provenance, admission control), and `deploy-healthy` (SLO error-budget burn + DORA capture). Skipped and recorded when no target is declared.
 
 ## Output expectations
 

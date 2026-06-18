@@ -51,10 +51,24 @@
       "an MCP execution backend is configured and reachable, or the phase falls back to plan-only (no apply)",
       "explicit promotion criteria and a rollback trigger are defined for the target, and any production target requires a manual human promotion decision"
     ],
+    "deploy-plan-guardrails": [
+      "evaluated on the terraform plan before any promotion; each configured check that fails blocks promotion (fixed or carrying a recorded risk acceptance), and is fail-closed on production (an inconclusive check blocks)",
+      "cost: the plan's projected cost delta is within deploy.guardrails.costBudget (Infracost), when configured",
+      "policy-as-code: OPA/Conftest over the plan and rendered manifests reports no high-severity violation, when deploy.guardrails.policyDir is set",
+      "IaC security scan: tfsec/Checkov reports no unaddressed high-severity finding, when deploy.guardrails.iacScan is enabled",
+      "an unconfigured check is skipped and that skip is recorded — a configured check is never a silent pass"
+    ],
+    "deploy-supply-chain": [
+      "evaluated before apply when deploy.supplyChain is configured; an unsigned or unverifiable image blocks the deploy",
+      "the image signature is verified (cosign) against the expected keyless identity (deploy.supplyChain.cosignIdentity)",
+      "an SBOM is generated (Syft) and attached to the deploy report, and SLSA provenance is verified when requireProvenance is set",
+      "the cluster's admission control would reject an unsigned or unattested image (the gate confirms, it does not bypass)"
+    ],
     "deploy-healthy": [
       "terraform apply and the workload rollout completed atomically (fully succeeded or rolled back)",
-      "post-apply health meets the promotion criteria (readiness green, error rate and latency within budget for the stated window)",
-      "the deploy report records target, image/SHA, plan summary, promotion decision, health evidence, and the verbatim rollback command"
+      "post-apply health meets the promotion criteria tied to the target's SLO: the error-budget burn over deploy.targets[].slo.burnRateWindow stays within budget (not merely readiness green)",
+      "the four DORA signals for this deploy are captured (deployment-frequency contribution, lead time for change, change-failure outcome, MTTR if it failed)",
+      "the deploy report records target, image/SHA, plan summary, guardrail + cost results, supply-chain attestations, promotion decision, SLO/health evidence, DORA metrics, and the verbatim rollback command"
     ]
   },
   "transitions": {

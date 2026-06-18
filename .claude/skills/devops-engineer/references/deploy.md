@@ -74,6 +74,17 @@ each:
   "projectId": "…",
   "deploy": {
     "defaultStrategy": "rolling",          // rolling | blue-green | canary
+    "guardrails": {                        // gate: deploy-plan-guardrails
+      "costBudget": { "currency": "USD", "monthlyDelta": 200 },  // Infracost diff ceiling
+      "policyDir": "policy/opa",           // OPA/Conftest policies over plan + manifests
+      "iacScan": true                      // tfsec/Checkov on the plan
+    },
+    "supplyChain": {                       // gate: deploy-supply-chain
+      "requireSignedImages": true,         // cosign verify against identity below
+      "cosignIdentity": "https://github.com/acme/app/.github/workflows/release.yml@refs/tags/*",
+      "sbom": "syft",                      // SBOM generator; attached to the report
+      "requireProvenance": true            // SLSA provenance attestation
+    },
     "targets": [
       {
         "id": "staging-k8s",
@@ -81,7 +92,8 @@ each:
         "environment": "staging",
         "mcp": "kubernetes",               // → mcpServers key below
         "terraformDir": "infra/k8s",
-        "promotion": "auto"                // auto | manual
+        "promotion": "auto",               // auto | manual
+        "slo": { "errorBudgetTarget": 99.5, "burnRateWindow": "30m" }
       },
       {
         "id": "prod-eks",
@@ -89,7 +101,8 @@ each:
         "environment": "production",
         "mcp": "terraform",
         "terraformDir": "infra/aws",
-        "promotion": "manual"              // production always gates on a human
+        "promotion": "manual",             // production always gates on a human
+        "slo": { "errorBudgetTarget": 99.9, "burnRateWindow": "1h" }
       }
     ],
     "mcpServers": {
@@ -181,36 +194,75 @@ Ordered, with the human gate explicit. The artifact is
 2. **Plan.** Run `terraform plan` for the target's `terraformDir` (via the MCP
    server or plan-only). Capture the plan: resources to add/change/destroy. A plan
    showing an unexpected destroy or IAM/security-group change is a stop-and-ask.
-3. **Promotion gate.** For `promotion: manual` (always true for production),
-   present Recommendation, the plan summary, the promotion criteria, and the
-   rollback trigger, then pause for `ACCEPT | REFINE | REJECT`. `auto` targets
-   (non-prod) may proceed on green automated checks.
-4. **Apply.** Run `terraform apply` against the approved plan, then apply the
+3. **Plan guardrails** *(gate `deploy-plan-guardrails`)*. Run deterministic checks
+   over the plan *before* any promotion (see [§6](#6-gate-reference)):
+   **cost** (Infracost diff vs the target's budget), **policy-as-code**
+   (OPA/Conftest over the plan + manifests), and **IaC security scan**
+   (tfsec/Checkov). A budget breach or a high-severity policy/scan finding blocks
+   promotion — it is fixed or carries an explicit, recorded risk acceptance.
+4. **Supply-chain integrity** *(gate `deploy-supply-chain`)*. Before apply, prove
+   the artifact is trustworthy: generate/attach an **SBOM** (Syft), **verify the
+   image signature** (cosign) and **provenance** (SLSA) against the expected
+   identity, and confirm the cluster's **admission control** rejects unsigned or
+   unattested images. An unsigned/unverifiable image blocks the deploy.
+5. **Promotion gate.** For `promotion: manual` (always true for production),
+   present Recommendation plus the evidence pack — plan summary, guardrail
+   results, supply-chain attestations, promotion criteria, rollback trigger — then
+   pause for `ACCEPT | REFINE | REJECT`. `auto` targets (non-prod) may proceed only
+   when every preceding gate is green.
+6. **Apply.** Run `terraform apply` against the approved plan, then apply the
    (cloud-neutral) Kubernetes manifests, using the target's deployment strategy
    (`rolling` / `blue-green` / `canary` from [practices.md §4](practices.md)).
    Apply atomically — fully succeed or roll back.
-5. **Verify health.** Confirm rollout health against the promotion criteria
-   (readiness probes green, error rate / p99 within budget for the defined
-   window). This is the `deploy-healthy` gate.
-6. **Record.** Write the deploy report: target, environment, strategy, image/SHA,
-   plan summary, promotion decision, health evidence, and the exact rollback
-   command. Log the deploy decision to the memory ledger.
-7. **Rollback on failure.** If health fails, execute the predefined rollback
-   (blue/green switch-back, `kubectl rollout undo`, or `terraform apply` of the
-   previous pinned artifact) and route back to `build` for a forward fix — a
-   failed `deploy-healthy` gate is the failure protocol, never a bypass.
+7. **Verify health & SLO** *(gate `deploy-healthy`)*. Confirm rollout health
+   against the promotion criteria, tied to the target's **SLO / error-budget
+   burn-rate** (not just "probes green"): the error-budget burn over the defined
+   window must stay within budget. Capture the four **DORA** signals for this
+   deploy (deployment frequency contribution, lead time for change, change-failure
+   outcome, and — if it failed — MTTR).
+8. **Record.** Write the deploy report: target, environment, strategy, image/SHA,
+   plan summary, guardrail + cost results, supply-chain attestations, promotion
+   decision, SLO/health evidence, DORA metrics, and the exact rollback command.
+   Log the deploy decision to the memory ledger.
+9. **Rollback on failure.** If a gate fails after apply, execute the predefined
+   rollback (blue/green switch-back, `kubectl rollout undo`, or `terraform apply`
+   of the previous pinned artifact) and route back to `build` for a forward fix —
+   a failed `deploy-healthy` gate is the failure protocol, never a bypass.
 
 ---
 
-## 6. Output expectations
+## 6. Gate reference
+
+The deploy step's in-step gates, each backed by a deterministic tool so the
+promotion decision is a checklist, not a vibe. All are **opt-in**: a target that
+does not configure a check skips it and records that it was skipped (a check that
+is *configured* and fails is a blocker, never a silent pass). Config lives under
+`deploy.guardrails`, `deploy.supplyChain`, and each target's `slo`.
+
+| Gate | Proves | Tools (examples) | Blocks promotion when |
+|------|--------|------------------|-----------------------|
+| `deploy-plan-guardrails` | the plan is affordable, compliant, and free of known IaC vulns | Infracost · OPA/Conftest · tfsec/Checkov | cost delta > `guardrails.costBudget`, or a high-severity policy/scan finding with no recorded risk acceptance |
+| `deploy-supply-chain` | the artifact is signed, attested, and SBOM'd | Syft (SBOM) · cosign (signature) · SLSA provenance · admission control | image is unsigned/unverifiable, provenance fails, or admission control would reject it |
+| `deploy-healthy` | the rollout meets its SLO and is recorded | error-budget burn-rate · DORA capture | error-budget burn over the window exceeds budget, or rollout health fails |
+
+Guardrails are **fail-closed for production**: on a production target a configured
+guardrail that errors out (tool unavailable, inconclusive) is treated as a block,
+not a skip — you do not ship to prod on an unknown.
+
+---
+
+## 7. Output expectations
 
 - **Deploy report:** target id + cloud + environment, the resolved Terraform plan
-  summary (add/change/destroy counts and any flagged resource), the deployment
-  strategy and traffic plan, the promotion decision and who made it, post-apply
-  health evidence against the stated criteria, and the verbatim rollback
-  procedure. A skipped phase records the one-line reason instead.
-- **Plan-only result** (no MCP/credentials): the same report with the plan and
-  manifests attached and an explicit "not applied — no execution backend
-  configured" status.
+  summary (add/change/destroy counts and any flagged resource), the guardrail
+  results (cost delta vs budget, policy + IaC-scan verdicts), the supply-chain
+  attestations (SBOM ref, signature + provenance verdict), the deployment strategy
+  and traffic plan, the promotion decision and who made it, post-apply SLO/health
+  evidence against the stated criteria, the captured DORA metrics, and the verbatim
+  rollback procedure. A skipped phase records the one-line reason instead.
+- **Plan-only result** (no MCP/credentials): the same report with the plan,
+  manifests, guardrail, and supply-chain results attached and an explicit "not
+  applied — no execution backend configured" status.
 - **Tone:** every irreversible action (apply to prod, destroy, IAM change) is
-  named before it happens, with its rollback. No silent applies.
+  named before it happens, with its rollback. No silent applies, no skipped gate
+  left unrecorded.
