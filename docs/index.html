@@ -15,7 +15,7 @@
   </script>
 
   <meta name="color-scheme" content="dark light" />
-  <meta name="theme-color" id="theme-color-meta" content="#0d0f14" />
+  <meta name="theme-color" id="theme-color-meta" content="#0a0f1a" />
 
   <!-- Theme bootstrap: set data-theme before paint to avoid a flash of the wrong theme -->
   <script>
@@ -26,7 +26,7 @@
         var theme = stored || (prefersLight ? 'light' : 'dark');
         document.documentElement.setAttribute('data-theme', theme);
         var meta = document.getElementById('theme-color-meta');
-        if (meta) { meta.setAttribute('content', theme === 'light' ? '#ffffff' : '#0d0f14'); }
+        if (meta) { meta.setAttribute('content', theme === 'light' ? '#ffffff' : '#0a0f1a'); }
       } catch (e) { /* keep the dark default from the markup */ }
     })();
   </script>
@@ -96,7 +96,7 @@
   <header class="site-header" id="top">
     <div class="container nav">
       <a class="brand" href="#top" aria-label="praxis — home">
-        <span class="brand-mark" aria-hidden="true">⌘</span>
+        <span class="brand-mark" aria-hidden="true">π</span>
         <span class="brand-name">praxis</span>
       </a>
       <nav class="nav-links" aria-label="Primary">
@@ -899,7 +899,7 @@ cp integrations/codex/prompts/*.md ~/.codex/prompts/</code></pre>
   <footer class="site-footer">
     <div class="container footer-grid">
       <div>
-        <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">⌘</span><span class="brand-name">praxis</span></a>
+        <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">π</span><span class="brand-name">praxis</span></a>
         <p class="footer-tag">A shared library of Claude Code skills for the software delivery lifecycle.</p>
       </div>
       <nav aria-label="Project links">
