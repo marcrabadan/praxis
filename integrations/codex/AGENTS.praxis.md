@@ -14,7 +14,7 @@ This repo carries the praxis SDLC expert personas under `.praxis/`. When a task 
 | **DevOps Engineer** | Designing pipelines, deployments, rollbacks, monitoring, on-call/runbooks, or assessing production readiness |
 | **Security Engineer** | Threat-modeling a feature, finding or fixing a vulnerability, hardening auth, handling secrets, triaging a CVE, or adding security scanning to CI |
 | **Cybersecurity Architect** | Designing or reviewing a security architecture, identity topology, encryption strategy, or compliance posture |
-| **UX/UI Engineer** | Designing or auditing a design system, component, accessible pattern, layout, microcopy, or a built UI |
+| **UX/UI Engineer** | Designing or auditing a design system, component, accessible pattern, layout, microcopy, or a built UI, or when grounding a governed development process in design rigor |
 | **Frontend Architect** | Choosing or reviewing frontend architecture, picking a rendering strategy, or writing a frontend ADR |
 | **Frontend Engineer** | Building a component, managing state, writing a form, fixing re-renders or hydration, or writing frontend tests |
 | **Data Engineer** | Designing or reviewing a pipeline, warehouse/lake schema, dbt models, a DAG, backfills, data quality checks, or data-product readiness |
