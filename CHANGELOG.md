@@ -11,6 +11,28 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+## [1.16.0] - 2026-06-24
+
+### Added
+
+- **Spec-driven experience-grounding workflows** in the `ux-ui-engineer` skill
+  (now tier 3, v1.1.0) — a non-owning layer that injects UX, UI, accessibility,
+  and design-system discipline into any spec-driven / SDD / PRD-to-build
+  process without owning its specs, plans, tasks, or code. Five workflows under
+  `.claude/skills/ux-ui-engineer/workflows/`: `experience-grounding` (guided
+  run: process detection, artifact map, upfront idea interview, per-phase
+  routing), `experience-governance-seed`, `experience-phase-contributions`,
+  `experience-design-system-grounding`, and `experience-design-checklist`.
+- **New UX references** backing the grounding gates: `ux-comprehension-and-friction`
+  (`G-ux`), `imagery-visuals-and-taste` (`G-imagery`), `landing-conversion`
+  (`G-landing`), plus `gate-phase-map`, `interview-protocol`,
+  `implementation-guardrails`, `governance-design-articles`, and
+  `design-rationale-snippet`. Duplicate gate references were dropped and their
+  gates repointed to the existing `practices.md` and `checklist.md`.
+- **Portable experience-grounding guide** in the generated Cursor/Codex/IntelliJ
+  integrations, so the grounding workflow set and its references travel to other
+  IDEs as a self-contained doc rather than dangling links.
+
 ## [1.15.0] - 2026-06-18
 
 ### Added
