@@ -1,8 +1,8 @@
 ---
 name: ux-ui-engineer
-description: Acts as a UX/UI Engineer SDLC expert bridging design and code: design systems and component libraries, design tokens and theming, visual design (type scale, color, spacing, grid), interaction and motion, accessibility as design (WCAG 2.2 AA, contrast, focus), responsive layout, usability heuristics, forms UX, empty/loading/error states, UX writing, design-to-dev handoff. Use when designing or auditing a design system, component, accessible pattern, layout, microcopy, or a built UI.
-tier: 2
-version: 1.0.0
+description: Acts as a UX/UI Engineer SDLC expert bridging design and code: design systems and component libraries, design tokens and theming, visual design (type scale, color, spacing, grid), interaction and motion, accessibility as design (WCAG 2.2 AA, contrast, focus), responsive layout, usability heuristics, forms UX, empty/loading/error states, UX writing, design-to-dev handoff. Also grounds a spec-driven / SDD / PRD-to-build process in durable UX, UI, accessibility, and design-system discipline via the experience-grounding workflows. Use when designing or auditing a design system, component, accessible pattern, layout, microcopy, or a built UI, or when grounding a governed development process in design rigor.
+tier: 3
+version: 1.1.0
 ---
 
 # UX/UI Engineer
@@ -27,6 +27,7 @@ Trigger this skill when the user:
 - Needs to design **forms, or empty / loading / error / success states**.
 - Wants **UX writing and content design** — microcopy, labels, error messages, tone — including inclusive and internationalized design (RTL, text expansion).
 - Asks about **prototyping or the design-to-development handoff** — Figma specs, redlines, design QA, visual-fidelity review, or the design–dev contract.
+- Wants to **ground a spec-driven, SDD, PRD-driven, or otherwise governed development process** in UX/UI/accessibility discipline — an upfront idea interview, design principles seeded into a governance artifact, per-phase design contributions, a design checklist, or per-screen design rationale. Use the **experience-grounding workflows** (see Workflows).
 
 ## When not to use
 
@@ -45,10 +46,28 @@ Skip this skill when the user:
 4. Read only the relevant reference. Do not load both up front unless the task explicitly spans both activities.
 5. Apply the principles or checklist items to the user's specific product, brand, platform, and constraints — citing the relevant WCAG criterion or heuristic by name where it applies.
 
+## Workflows
+
+For a one-off design or review question, use the references directly (above). For grounding a **governed, spec-driven development process** in design discipline, run the experience-grounding workflow set. These workflows are **non-owning**: they inject UX/UI/accessibility judgment into the host workflow's phases without authoring its specs, plans, tasks, or code.
+
+- [workflows/experience-grounding.md](workflows/experience-grounding.md) — the entry workflow: detect the host process, build an artifact map, run an upfront idea interview, and route to the right grounding step per phase.
+- [workflows/experience-governance-seed.md](workflows/experience-governance-seed.md) — translate the always-on gates (accessibility, usability, tokens, IA, content) into testable design principles and merge them into the host process's governance artifact.
+- [workflows/experience-phase-contributions.md](workflows/experience-phase-contributions.md) — per-phase (spec, clarify, plan, tasks, implement) design contributions, loading only the reference each phase needs.
+- [workflows/experience-design-system-grounding.md](workflows/experience-design-system-grounding.md) — fix the component, token, aesthetics, and Figma source of truth before code is planned or written.
+- [workflows/experience-design-checklist.md](workflows/experience-design-checklist.md) — express the design gates as a pass/fail checklist for analysis, review, or quality-gate phases.
+
 ## References
 
 - [references/practices.md](references/practices.md) — core UX/UI engineering practices: design systems and component libraries, design tokens and theming, typography, color and contrast, spacing and grid, elevation, interaction and motion, accessibility (WCAG 2.2), responsive and adaptive design, usability heuristics and patterns, forms and state design, UX writing, inclusive/internationalized design, and the design-to-development handoff.
 - [references/checklist.md](references/checklist.md) — design-review checklist a UX/UI engineer runs when reviewing a design or a built UI for design quality and fidelity.
+- [references/ux-comprehension-and-friction.md](references/ux-comprehension-and-friction.md) — discovery line (user, job, failure cost, smallest useful surface) plus the UX lenses: comprehension, intent-stage fit, forms and friction, objection/trust/proof, and navigation (`G-ux`).
+- [references/imagery-visuals-and-taste.md](references/imagery-visuals-and-taste.md) — surface expression budget, real-images strategy, and the anti-AI-tell catalogue for marketing/expressive surfaces (`G-imagery`).
+- [references/landing-conversion.md](references/landing-conversion.md) — landing/marketing pages as conversion products: page job, hero clarity, proof and trust, CTA strategy, objections, pricing, and forms (`G-landing`).
+- [references/gate-phase-map.md](references/gate-phase-map.md) — maps each design gate to the generic spec-driven phase it feeds and the reference that backs it.
+- [references/interview-protocol.md](references/interview-protocol.md) — the bundled, adaptive one-question-at-a-time interview protocol used to gather missing context during grounding.
+- [references/implementation-guardrails.md](references/implementation-guardrails.md) — guardrails for implementation phases: think before coding, simplicity first, surgical changes, goal-driven verification.
+- [references/governance-design-articles.md](references/governance-design-articles.md) — seed block of testable design articles to merge into a host process's governance artifact.
+- [references/design-rationale-snippet.md](references/design-rationale-snippet.md) — embeddable per-screen design-rationale block recording each gate's verdict and why.
 
 ## Output expectations
 

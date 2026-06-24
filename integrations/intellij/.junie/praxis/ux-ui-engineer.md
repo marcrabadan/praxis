@@ -22,6 +22,7 @@ Trigger this skill when the user:
 - Needs to design **forms, or empty / loading / error / success states**.
 - Wants **UX writing and content design** — microcopy, labels, error messages, tone — including inclusive and internationalized design (RTL, text expansion).
 - Asks about **prototyping or the design-to-development handoff** — Figma specs, redlines, design QA, visual-fidelity review, or the design–dev contract.
+- Wants to **ground a spec-driven, SDD, PRD-driven, or otherwise governed development process** in UX/UI/accessibility discipline — an upfront idea interview, design principles seeded into a governance artifact, per-phase design contributions, a design checklist, or per-screen design rationale. Use the **experience-grounding workflows** (see Workflows).
 
 ## When not to use
 
@@ -39,6 +40,10 @@ Skip this skill when the user:
 3. For review and design-QA tasks, read [references/checklist.md](references/checklist.md).
 4. Read only the relevant reference. Do not load both up front unless the task explicitly spans both activities.
 5. Apply the principles or checklist items to the user's specific product, brand, platform, and constraints — citing the relevant WCAG criterion or heuristic by name where it applies.
+
+## Workflows
+
+The spec-driven **experience-grounding** workflow set — guided run, governance seed, phase contributions, design-system grounding, and the design checklist — plus its supporting references are bundled, self-contained, in `.junie/praxis/ux-ui-engineer-experience-grounding.md`. Open that guide to ground a governed, spec-driven development process in this persona's design discipline.
 
 ## References
 

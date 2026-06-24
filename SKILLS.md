@@ -23,7 +23,7 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `skill-creator` | 1.0.0 | 5 | Create new Claude Code skills, improve or review existing SKILL.md files, validate skill structure, classify a skill into the right tier, and run guided interv… |
 | `skill-learner` | 1.0.0 | 3 | Turns a knowledge gap a praxis expert hits mid-task — a missing team convention, runbook, or domain rule — into durable skill knowledge via the skill-creator,… |
 | `software-architect` | 1.0.0 | 2 | Adopts the Software Architect persona for system design: architectural trade-offs, NFRs (scalability, availability, latency, security, cost), ADRs, pattern and… |
-| `ux-ui-engineer` | 1.0.0 | 2 | Acts as a UX/UI Engineer SDLC expert bridging design and code: design systems and component libraries, design tokens and theming, visual design (type scale, co… |
+| `ux-ui-engineer` | 1.1.0 | 3 | Acts as a UX/UI Engineer SDLC expert bridging design and code: design systems and component libraries, design tokens and theming, visual design (type scale, co… |
 | `validation-orchestrator` | 1.0.0 | 2 | The standing validation authority for harness-mode workflows: decides whether a workflow may advance past a gate, runs the gate criteria, the typed verify cata… |
 
 ## Commands

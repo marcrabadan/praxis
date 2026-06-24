@@ -122,14 +122,100 @@ def _body(md_path: Path) -> str:
     return text.strip("\n")
 
 
-def _persona_guide(skill: str) -> str:
+# references every persona guide bundles inline; anything else a skill ships
+# is a "grounding" extra, ported into a separate self-contained guide.
+_CORE_REFS = {"practices.md", "checklist.md"}
+
+
+def _has_grounding(skill: str) -> bool:
+    """A skill ships a grounding bundle when it has workflows/ (tier 3+)."""
+    return (SKILLS_DIR / skill / "workflows").is_dir()
+
+
+def _workflow_files(skill: str) -> list[Path]:
+    wdir = SKILLS_DIR / skill / "workflows"
+    if not wdir.is_dir():
+        return []
+    files = sorted(wdir.glob("*.md"))
+    # the entry workflow leads; the rest follow alphabetically
+    files.sort(key=lambda p: (p.name != "experience-grounding.md", p.name))
+    return files
+
+
+def _extra_refs(skill: str) -> list[Path]:
+    rdir = SKILLS_DIR / skill / "references"
+    if not rdir.is_dir():
+        return []
+    return sorted(p for p in rdir.glob("*.md") if p.name not in _CORE_REFS)
+
+
+def _persona_guide(skill: str, *, grounding_ref: str | None = None) -> str:
     """Bundle a skill's SKILL.md body + practices + checklist into one
-    self-contained persona guide (no skill loader required)."""
+    self-contained persona guide (no skill loader required). When the skill
+    ships a grounding bundle, `grounding_ref` redirects the body's workflow and
+    extra-reference links to the separate, self-contained grounding guide so the
+    persona guide carries no links to files absent from the integration."""
     sdir = SKILLS_DIR / skill
     body = _body(sdir / "SKILL.md")
+    if grounding_ref and _has_grounding(skill):
+        body = _redirect_grounding_links(body, grounding_ref)
     practices = (sdir / "references" / "practices.md").read_text(encoding="utf-8").strip("\n")
     checklist = (sdir / "references" / "checklist.md").read_text(encoding="utf-8").strip("\n")
     return f"{BANNER}\n\n{body}\n\n---\n\n{practices}\n\n---\n\n{checklist}\n"
+
+
+def _redirect_grounding_links(body: str, grounding_ref: str) -> str:
+    """Collapse the SKILL.md "## Workflows" section to a single pointer at the
+    bundled grounding guide, and drop the extra-reference bullets whose content
+    lives in that guide rather than in this persona guide."""
+    body = re.sub(
+        r"## Workflows\n.*?(?=\n## References)",
+        "## Workflows\n\n"
+        "The spec-driven **experience-grounding** workflow set — guided run, "
+        "governance seed, phase contributions, design-system grounding, and the "
+        f"design checklist — plus its supporting references are bundled, "
+        f"self-contained, in {grounding_ref}. Open that guide to ground a "
+        "governed, spec-driven development process in this persona's design "
+        "discipline.\n",
+        body,
+        flags=re.DOTALL,
+    )
+    # drop reference bullets pointing at the bundled extras (kept: practices, checklist)
+    body = re.sub(
+        r"^- \[references/(?!practices\.md\b|checklist\.md\b)[^\]]+\]\([^)]+\)[^\n]*\n",
+        "",
+        body,
+        flags=re.MULTILINE,
+    )
+    return body
+
+
+def _grounding_doc(skill: str) -> str:
+    """A self-contained port of a skill's grounding bundle: every workflow body
+    plus every extra reference, inlined in order. The persona's core practices
+    and review checklist stay in the main persona guide; the workflows below
+    reference them by name."""
+    title = EXPERTS[skill]
+    parts = [
+        BANNER,
+        f"# {title} — Experience Grounding (spec-driven)",
+        (
+            "Self-contained bundle of the spec-driven **experience-grounding** "
+            "workflow set and its supporting references, ported from the "
+            f"{title} skill. Use it to inject UX, UI, accessibility, and "
+            "design-system discipline into a governed, spec-driven development "
+            "process (SDD, PRD-to-build, or similar). It is **non-owning**: it "
+            "adds design judgment to a host workflow's phases without authoring "
+            "its specs, plans, tasks, or code.\n\n"
+            f"The persona's core practices and review checklist live in the main "
+            f"{title} guide. Every workflow and reference is inlined below in "
+            "order; relative links between them are kept for provenance, but "
+            "everything needed is in this document."
+        ),
+    ]
+    parts.extend(_body(wf) for wf in _workflow_files(skill))
+    parts.extend(_body(ref) for ref in _extra_refs(skill))
+    return "\n\n---\n\n".join(parts) + "\n"
 
 
 def _skill_description(skill: str) -> str:
@@ -303,11 +389,25 @@ def _cursor() -> dict[str, str]:
 
     # persona rules (Agent Requested: description-gated auto-attach)
     for skill, title in EXPERTS.items():
+        gref = f"the `praxis-{skill}-experience-grounding` rule" if _has_grounding(skill) else None
         out[f"cursor/.cursor/rules/praxis-{skill}.mdc"] = (
             "---\n"
             f"description: {_skill_description(skill)}\n"
-            "---\n\n" + _persona_guide(skill)
+            "---\n\n" + _persona_guide(skill, grounding_ref=gref)
         )
+        # grounding bundle as its own description-gated rule (attaches only when
+        # the task is about grounding a spec-driven process — not always-on)
+        if _has_grounding(skill):
+            out[f"cursor/.cursor/rules/praxis-{skill}-experience-grounding.mdc"] = (
+                "---\n"
+                f"description: Spec-driven experience grounding for the {title} "
+                "persona — inject UX, UI, accessibility, and design-system "
+                "discipline into a governed SDD / PRD-to-build process (upfront "
+                "interview, governance seeding, per-phase design contributions, "
+                "design-system grounding, design checklist). Use when grounding a "
+                "spec-driven development process in design rigor.\n"
+                "---\n\n" + _grounding_doc(skill)
+            )
 
     # slash commands
     for name in list(COMMAND_PERSONA) + list(ORCHESTRATION):
@@ -327,7 +427,10 @@ def _codex() -> dict[str, str]:
 
     # persona guides shipped in-repo so Codex can open them on demand
     for skill in EXPERTS:
-        out[f"codex/.praxis/{skill}.md"] = _persona_guide(skill)
+        gref = f"`.praxis/{skill}-experience-grounding.md`" if _has_grounding(skill) else None
+        out[f"codex/.praxis/{skill}.md"] = _persona_guide(skill, grounding_ref=gref)
+        if _has_grounding(skill):
+            out[f"codex/.praxis/{skill}-experience-grounding.md"] = _grounding_doc(skill)
 
     # roster snippet to merge into the consuming repo's AGENTS.md
     out["codex/AGENTS.praxis.md"] = (
@@ -360,9 +463,16 @@ def _intellij() -> dict[str, str]:
     personas_label = "in `.junie/praxis/`"
 
     # Junie guidelines = doctrine bridge + persona index
-    index = "\n".join(
+    index_lines = [
         f"- **{title}** — `.junie/praxis/{skill}.md`" for skill, title in EXPERTS.items()
-    )
+    ]
+    for skill, title in EXPERTS.items():
+        if _has_grounding(skill):
+            index_lines.append(
+                f"- **{title} — Experience Grounding (spec-driven)** — "
+                f"`.junie/praxis/{skill}-experience-grounding.md`"
+            )
+    index = "\n".join(index_lines)
     out["intellij/.junie/guidelines.md"] = (
         f"{BANNER}\n\n"
         "# Project guidelines — praxis SDLC experts\n\n"
@@ -380,7 +490,10 @@ def _intellij() -> dict[str, str]:
     )
 
     for skill in EXPERTS:
-        out[f"intellij/.junie/praxis/{skill}.md"] = _persona_guide(skill)
+        gref = f"`.junie/praxis/{skill}-experience-grounding.md`" if _has_grounding(skill) else None
+        out[f"intellij/.junie/praxis/{skill}.md"] = _persona_guide(skill, grounding_ref=gref)
+        if _has_grounding(skill):
+            out[f"intellij/.junie/praxis/{skill}-experience-grounding.md"] = _grounding_doc(skill)
 
     for name in list(COMMAND_PERSONA) + list(ORCHESTRATION):
         out[f"intellij/prompts/{name}.md"] = (
