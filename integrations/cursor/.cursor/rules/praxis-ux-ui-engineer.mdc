@@ -47,26 +47,12 @@ Skip this skill when the user:
 
 ## Workflows
 
-For a one-off design or review question, use the references directly (above). For grounding a **governed, spec-driven development process** in design discipline, run the experience-grounding workflow set. These workflows are **non-owning**: they inject UX/UI/accessibility judgment into the host workflow's phases without authoring its specs, plans, tasks, or code.
-
-- [workflows/experience-grounding.md](workflows/experience-grounding.md) — the entry workflow: detect the host process, build an artifact map, run an upfront idea interview, and route to the right grounding step per phase.
-- [workflows/experience-governance-seed.md](workflows/experience-governance-seed.md) — translate the always-on gates (accessibility, usability, tokens, IA, content) into testable design principles and merge them into the host process's governance artifact.
-- [workflows/experience-phase-contributions.md](workflows/experience-phase-contributions.md) — per-phase (spec, clarify, plan, tasks, implement) design contributions, loading only the reference each phase needs.
-- [workflows/experience-design-system-grounding.md](workflows/experience-design-system-grounding.md) — fix the component, token, aesthetics, and Figma source of truth before code is planned or written.
-- [workflows/experience-design-checklist.md](workflows/experience-design-checklist.md) — express the design gates as a pass/fail checklist for analysis, review, or quality-gate phases.
+The spec-driven **experience-grounding** workflow set — guided run, governance seed, phase contributions, design-system grounding, and the design checklist — plus its supporting references are bundled, self-contained, in the `praxis-ux-ui-engineer-experience-grounding` rule. Open that guide to ground a governed, spec-driven development process in this persona's design discipline.
 
 ## References
 
 - [references/practices.md](references/practices.md) — core UX/UI engineering practices: design systems and component libraries, design tokens and theming, typography, color and contrast, spacing and grid, elevation, interaction and motion, accessibility (WCAG 2.2), responsive and adaptive design, usability heuristics and patterns, forms and state design, UX writing, inclusive/internationalized design, and the design-to-development handoff.
 - [references/checklist.md](references/checklist.md) — design-review checklist a UX/UI engineer runs when reviewing a design or a built UI for design quality and fidelity.
-- [references/ux-comprehension-and-friction.md](references/ux-comprehension-and-friction.md) — discovery line (user, job, failure cost, smallest useful surface) plus the UX lenses: comprehension, intent-stage fit, forms and friction, objection/trust/proof, and navigation (`G-ux`).
-- [references/imagery-visuals-and-taste.md](references/imagery-visuals-and-taste.md) — surface expression budget, real-images strategy, and the anti-AI-tell catalogue for marketing/expressive surfaces (`G-imagery`).
-- [references/landing-conversion.md](references/landing-conversion.md) — landing/marketing pages as conversion products: page job, hero clarity, proof and trust, CTA strategy, objections, pricing, and forms (`G-landing`).
-- [references/gate-phase-map.md](references/gate-phase-map.md) — maps each design gate to the generic spec-driven phase it feeds and the reference that backs it.
-- [references/interview-protocol.md](references/interview-protocol.md) — the bundled, adaptive one-question-at-a-time interview protocol used to gather missing context during grounding.
-- [references/implementation-guardrails.md](references/implementation-guardrails.md) — guardrails for implementation phases: think before coding, simplicity first, surgical changes, goal-driven verification.
-- [references/governance-design-articles.md](references/governance-design-articles.md) — seed block of testable design articles to merge into a host process's governance artifact.
-- [references/design-rationale-snippet.md](references/design-rationale-snippet.md) — embeddable per-screen design-rationale block recording each gate's verdict and why.
 
 ## Output expectations
 

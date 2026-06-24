@@ -35,6 +35,7 @@ Read `AGENTS.md` for full repo doctrine (JetBrains AI Assistant reads it nativel
 - **Frontend Engineer** — `.junie/praxis/frontend-engineer.md`
 - **Data Engineer** — `.junie/praxis/data-engineer.md`
 - **ML/AI Engineer** — `.junie/praxis/ml-ai-engineer.md`
+- **UX/UI Engineer — Experience Grounding (spec-driven)** — `.junie/praxis/ux-ui-engineer-experience-grounding.md`
 
 Ready-made prompts for each persona and for the new-feature / review-changes workflows live in `prompts/` — save them to the AI Assistant prompt library.
 
