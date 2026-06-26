@@ -55,7 +55,7 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 
   <!-- Structured data for richer search/social discovery -->
@@ -142,6 +142,17 @@
     <!-- ===================== HERO ===================== -->
     <section class="hero">
       <div class="hero-glow" aria-hidden="true"></div>
+      <div class="hero-aurora" aria-hidden="true"></div>
+      <svg class="hero-compass" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+        <circle cx="100" cy="100" r="96" fill="none" />
+        <circle cx="100" cy="100" r="74" fill="none" />
+        <circle cx="100" cy="100" r="40" fill="none" stroke-dasharray="3 6" />
+        <line x1="100" y1="4" x2="100" y2="196" />
+        <line x1="4" y1="100" x2="196" y2="100" />
+        <line x1="29" y1="29" x2="171" y2="171" />
+        <line x1="171" y1="29" x2="29" y2="171" />
+        <circle cx="100" cy="100" r="5" class="hero-compass-hub" />
+      </svg>
       <div class="container hero-grid">
         <div class="hero-copy">
           <p class="eyebrow">Plugin for Claude Code · Cursor · IntelliJ · Codex</p>
@@ -178,8 +189,49 @@
 <span class="c-comment"># Run a feature through the whole lifecycle</span>
 <span class="c-prompt">&gt;</span> <span class="c-cmd">/new-feature</span> one-click checkout
 <span class="c-muted">Analyst → PO → Architect → Dev → QA → DevOps</span>
-<span class="c-ok">✓</span> consolidated plan + decisions in the ledger</code></pre>
+<span class="c-ok">✓</span> consolidated plan + decisions in the ledger
+<span class="c-prompt">&gt;</span> <span class="term-caret" aria-hidden="true">&nbsp;</span></code></pre>
         </div>
+      </div>
+    </section>
+
+    <!-- ===================== STATS / PROOF BAND ===================== -->
+    <section class="stats-band" aria-label="praxis at a glance">
+      <div class="container stats-grid">
+        <div class="stat">
+          <span class="stat-num" data-count="13">13</span>
+          <span class="stat-label">SDLC experts</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-count="5">5</span>
+          <span class="stat-label">human-in-the-loop gates</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-count="4">4</span>
+          <span class="stat-label">tools: Claude · Cursor · IntelliJ · Codex</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-count="0">0</span>
+          <span class="stat-label">dependencies · no build step</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== COMMAND RAIL ===================== -->
+    <section class="rail" aria-label="Commands available in praxis">
+      <div class="rail-track" aria-hidden="true">
+        <ul class="rail-set">
+          <li>/idea</li><li>/new-feature</li><li>/fix-bug</li><li>/refine</li><li>/architect</li>
+          <li>/security</li><li>/qa</li><li>/devops</li><li>/frontend</li><li>/data</li>
+          <li>/ml</li><li>/ux</li><li>/docs</li><li>/diagram</li><li>/memory</li>
+          <li>/learn</li><li>/review-changes</li><li>/patterns</li>
+        </ul>
+        <ul class="rail-set">
+          <li>/idea</li><li>/new-feature</li><li>/fix-bug</li><li>/refine</li><li>/architect</li>
+          <li>/security</li><li>/qa</li><li>/devops</li><li>/frontend</li><li>/data</li>
+          <li>/ml</li><li>/ux</li><li>/docs</li><li>/diagram</li><li>/memory</li>
+          <li>/learn</li><li>/review-changes</li><li>/patterns</li>
+        </ul>
       </div>
     </section>
 
