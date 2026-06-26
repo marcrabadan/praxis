@@ -22,6 +22,29 @@ This repo carries the praxis SDLC expert personas under `.praxis/`. When a task 
 
 Reusable slash commands for each persona live in `~/.codex/prompts/` (install them with the prompts in this integration); invoke e.g. `/praxis-architect`, `/praxis-review-changes`.
 
+## StartupOS — pre-build module (optional)
+
+StartupOS is the optional **pre-build** module: it discovers, validates, and designs a business idea *before* Praxis builds it, ending in a human-approved handoff. Praxis answers *how to build it correctly*; StartupOS answers *what to build, why, for whom, and how to turn it into a company*. The lifecycle runs discover → research → validate → challenge → rank → **select ✋** → business-case → prd → architecture → roadmap → **export-praxis ✋** (✋ = mandatory human gate).
+
+Its agent personas live under `.praxis/startupos-*.md`; open the matching one and adopt that agent. Lifecycle prompts live in `~/.codex/prompts/` as `/praxis-startupos-<stage>` (e.g. `/praxis-startupos-discover`).
+
+| StartupOS agent | Consult when… |
+| --------------- | ------------- |
+| **CEO Agent** | Running StartupOS discovery, ranking, selection, roadmap, or handoff, or whenever a command needs the CEO lens. Trigger on StartupOS framing, selection facilitation, or the consol… |
+| **VC Partner Agent** | Challenging, ranking, or scoring a StartupOS idea, or whenever a command needs hard pushback. Trigger on red-team, would-an-investor-fund-this, or risk scoring |
+| **Market Analyst** | Researching or clustering a StartupOS opportunity, sizing a market, or building the market thesis. Trigger on market sizing, TAM, trends, or demand evidence |
+| **Customer Researcher** | Researching customers, defining an ICP, or designing/synthesizing validation interviews for a StartupOS idea. Trigger on customer segments, JTBD, ICP, or interview synthesis |
+| **Business Designer** | Building the business case or designing the model/pricing logic for a StartupOS idea. Trigger on business model, value proposition, wedge, or packaging |
+| **Product Strategist** | Defining product requirements or MVP scope for a StartupOS idea. Trigger on MVP scope, PRD, product requirements, or success metrics |
+| **Financial Analyst** | Modeling unit economics or financials for a StartupOS idea, or sanity-checking the numbers in a challenge. Trigger on unit economics, CAC, LTV, financial model, or runway |
+| **GTM Strategist** | Designing go-to-market for a StartupOS idea. Trigger on go-to-market, beachhead, channels, positioning, or first customers |
+| **CTO Agent** | Shaping the high-level architecture of a StartupOS idea. Trigger on feasibility, system shape, build-vs-buy, or technical risk at startup altitude |
+| **AI Architect** | Shaping the AI strategy of a StartupOS idea. Trigger on AI strategy, model approach, RAG, evals, guardrails, or AI cost/latency |
+| **Security Officer** | Assessing security risk for a StartupOS idea or architecture. Trigger on trust boundaries, data exposure, abuse surface, or security posture |
+| **Legal/Compliance Reviewer** | Assessing legal/compliance risk for a StartupOS idea. Trigger on compliance, GDPR, licensing, regulated industry, IP, or non-compete |
+
+StartupOS guardrails: never invent market data (label fact/assumption/estimate/hypothesis), reject weak ideas, validate before building, always include risks, and require human approval before selecting the idea and before exporting to Praxis.
+
 ## Harness mode (if `.praxis/config.json` exists)
 
 If this repo has a `.praxis/config.json`, it is in **harness mode** — read these first, in order, before editing:

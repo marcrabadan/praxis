@@ -23,6 +23,18 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `skill-creator` | 1.0.0 | 5 | Create new Claude Code skills, improve or review existing SKILL.md files, validate skill structure, classify a skill into the right tier, and run guided interv… |
 | `skill-learner` | 1.0.0 | 3 | Turns a knowledge gap a praxis expert hits mid-task — a missing team convention, runbook, or domain rule — into durable skill knowledge via the skill-creator,… |
 | `software-architect` | 1.0.0 | 2 | Adopts the Software Architect persona for system design: architectural trade-offs, NFRs (scalability, availability, latency, security, cost), ADRs, pattern and… |
+| `startupos-ai-architect` | 1.0.0 | 2 | Adopts the StartupOS AI Architect persona — designs the AI-native strategy: where AI creates real leverage, the model approach (LLM/RAG/fine-tune/classic ML),… |
+| `startupos-business-designer` | 1.0.0 | 2 | Adopts the StartupOS Business Designer persona — designs how the company creates and captures value: the value proposition, business model, wedge, and packagin… |
+| `startupos-ceo` | 1.0.0 | 2 | Adopts the StartupOS CEO Agent persona — frames the opportunity, balances optimism against evidence, facilitates the human-in-the-loop gates (idea selection, P… |
+| `startupos-cto` | 1.0.0 | 2 | Adopts the StartupOS CTO Agent persona — owns technical feasibility at startup altitude: the high-level system shape (C4 L1/L2), build-vs-buy, top technical ri… |
+| `startupos-customer-researcher` | 1.0.0 | 2 | Adopts the StartupOS Customer Researcher persona — understands the buyer and user, defines segments and the ICP, captures jobs-to-be-done, pains, and current s… |
+| `startupos-financial-analyst` | 1.0.0 | 2 | Adopts the StartupOS Financial Analyst persona — models the economics: CAC, LTV, payback, margin, a 3-scenario model and sensitivity, with every input labeled… |
+| `startupos-gtm-strategist` | 1.0.0 | 2 | Adopts the StartupOS GTM Strategist persona — plans the path to customers: the beachhead, positioning, motion (PLG/sales-led/community), channels with CAC hypo… |
+| `startupos-legal-compliance` | 1.0.0 | 2 | Adopts the StartupOS Legal/Compliance Reviewer persona — flags regulatory and compliance exposure: data protection (GDPR/PII), licensing, regulated-industry co… |
+| `startupos-market-analyst` | 1.0.0 | 2 | Adopts the StartupOS Market Analyst persona — sizes and characterizes the market (TAM/SAM/SOM as derived ranges), maps trends and the why-now, and gathers dema… |
+| `startupos-product-strategist` | 1.0.0 | 2 | Adopts the StartupOS Product Strategist persona — decides what to build first: the MVP scope, the wedge feature set, INVEST user stories, and success metrics t… |
+| `startupos-security-officer` | 1.0.0 | 2 | Adopts the StartupOS Security Officer persona — surfaces security and abuse risk early at startup altitude: trust boundaries, data exposure, the abuse surface,… |
+| `startupos-vc-partner` | 1.0.0 | 2 | Adopts the StartupOS VC Partner persona — the skeptical investor who attacks the thesis, demands evidence, exposes hidden assumptions and failure modes, scores… |
 | `ux-ui-engineer` | 1.1.0 | 3 | Acts as a UX/UI Engineer SDLC expert bridging design and code: design systems and component libraries, design tokens and theming, visual design (type scale, co… |
 | `validation-orchestrator` | 1.0.0 | 2 | The standing validation authority for harness-mode workflows: decides whether a workflow may advance past a gate, runs the gate criteria, the typed verify cata… |
 
@@ -52,6 +64,17 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `/review-changes` | Review the current changes (diff) by routing to the right SDLC experts and returning didactic, severity-tagged findings. Use to catch bad practices before a PR… |
 | `/security-architect` | Consult the Cybersecurity Architect — security architecture, zero trust, defense in depth, IAM/SSO design, segmentation, data protection, encryption/key strate… |
 | `/security` | Consult the Security Engineer — threat modeling, finding/fixing vulnerabilities, secure coding (OWASP Top 10), authn/authz hardening, secrets, crypto usage, SA… |
+| `/startupos-architecture` | StartupOS — produce a high-level, AI-native solution architecture for the selected product: system shape, AI/data strategy, build-vs-buy, and the key technical… |
+| `/startupos-business-case` | StartupOS — build the business case for the selected idea: value proposition, business model, pricing, unit economics, financials, and go-to-market — with ever… |
+| `/startupos-challenge` | StartupOS — red-team a candidate idea: attack the thesis, expose hidden assumptions and failure modes, then propose concrete improvements. The adversarial coun… |
+| `/startupos-discover` | StartupOS — discover and frame candidate startup/business opportunities from observed pains, trends, and signals, separating facts from assumptions. The intake… |
+| `/startupos-export-praxis` | StartupOS — package the validated, selected idea into a Praxis-ready project (a complete docs/ bundle + recommended Praxis commands) and hand it off. The final… |
+| `/startupos-prd` | StartupOS — translate the validated business case into product requirements: the MVP scope, the wedge feature set, user stories, and success metrics — the brid… |
+| `/startupos-rank` | StartupOS — score and rank the candidate ideas on a transparent rubric (pain, spend, recurring revenue, AI leverage, defensibility, feasibility, evidence) to p… |
+| `/startupos-research` | StartupOS — research a candidate opportunity (market, customers, competitors, willingness to pay) and cluster findings into a defensible market thesis, marking… |
+| `/startupos-roadmap` | StartupOS — phase the journey from validated idea to launched company: milestones, the MVP-first sequence, validation gates, hiring/resourcing, and the metrics… |
+| `/startupos-select` | StartupOS — record the human's selection of the single idea to take forward into business design. A mandatory human-in-the-loop approval gate. |
+| `/startupos-validate` | StartupOS — turn a candidate's riskiest assumptions into cheap, falsifiable validation experiments with success criteria, before any building is considered. |
 | `/ux` | Consult the UX/UI Engineer — design systems and tokens, visual design (type/color/spacing/grid), interaction and motion, accessibility (WCAG 2.2 AA), responsiv… |
 | `/validate-skills` | Validate every skill in the repo — runs the deterministic validator across .claude/skills/ and dist/. Use to check skill structure and frontmatter before commi… |
 | `/validation-orchestrator` | Consult the Validation Orchestrator — the standing authority that decides whether a harness workflow may advance past a gate, runs the gate's criteria and the… |

@@ -11,6 +11,65 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+## [1.17.0] - 2026-06-26
+
+### Added
+
+- **StartupOS module** — an optional, AI-native front door layered on top of
+  Praxis that answers *what to build, why, for whom, and how to turn it into a
+  company* before Praxis answers *how to build it correctly*. It discovers,
+  validates, and designs startup/business ideas, then hands a Praxis-ready
+  project to the existing lifecycle. Nothing in existing Praxis behavior changes.
+  - **Commands** as flat files `.claude/commands/startupos-<name>.md` (invoked
+    `/startupos-<name>` — Claude Code names a command by its file name, so a flat
+    `startupos-` prefix keeps the grouping and registers on CLI/desktop/web alike):
+    `discover`, `research`, `validate`, `challenge`, `rank`, `select`,
+    `business-case`, `prd`, `architecture`, `roadmap`, `export-praxis`. Each
+    documents purpose, input, output, workflow, guardrails, approval gates, and
+    expected generated files. Symlinked into `plugin-praxis/commands/` like the
+    other commands.
+  - **Agent skills** under `.claude/skills/startupos-*` (12, Tier 2, each with
+    `references/practices.md` + `references/checklist.md`): `startupos-ceo`,
+    `startupos-vc-partner`, `startupos-market-analyst`,
+    `startupos-customer-researcher`, `startupos-business-designer`,
+    `startupos-product-strategist`, `startupos-financial-analyst`,
+    `startupos-gtm-strategist`, `startupos-cto`, `startupos-ai-architect`,
+    `startupos-security-officer`, `startupos-legal-compliance`. Each agent
+    persona is a real, validated Claude Code skill (like the SDLC experts);
+    every `/startupos-*` command loads the relevant agent skill(s) and reasons
+    in-persona. Symlinked into `plugin-praxis/skills/` and catalogued in
+    `SKILLS.md` (now 31 skills).
+  - **Documentation** under `docs/startupos/`: `README`, `vision`, `lifecycle`
+    (15 stages), `commands`, `templates`, `agents` (12 personas), `memory`,
+    `guardrails`, `praxis-integration`, and `integrations` (Cursor / Claude Code
+    / Codex).
+  - **Templates** under `docs/startupos/templates/` (13): vision, market-research,
+    business-case, competitive-analysis, pricing, financials,
+    product-requirements, architecture, roadmap, validation-plan, gtm,
+    risk-analysis, praxis-handoff.
+  - **Memory model** under `memory/startupos/` (ideas, markets, competitors,
+    customers, interviews, pricing, financials, hypotheses, experiments,
+    decisions, risks, lessons, praxis-handoffs, observations) with a README and
+    the *never invent facts* labeling discipline.
+  - **Guardrails**: never invent market data; separate facts/assumptions/
+    estimates/hypotheses; mandatory human approval before selecting the idea and
+    before exporting to Praxis; reject weak ideas; always include risks and
+    validation experiments.
+  - **Cursor / Codex / IntelliJ integrations** now include StartupOS, generated
+    by `build_integrations.py` as a parallel, namespaced set (the SDLC-expert
+    outputs are unchanged): twelve `praxis-startupos-*` persona guides per tool,
+    the eleven lifecycle commands as `/startupos-*` (Cursor) and
+    `/praxis-startupos-*` (Codex) prompts, plus a StartupOS roster per tool (the
+    `praxis-startupos` Cursor rule, a StartupOS section of Codex's
+    `AGENTS.praxis.md`, and IntelliJ's `.junie/praxis-startupos.md`). For Codex
+    the roster is merged into `AGENTS.praxis.md` so the single documented append
+    wires it (no separate file to forget). Each tool's always-read entry doc —
+    Cursor's always-on `praxis` rule, Codex's `AGENTS.praxis.md`, IntelliJ's
+    `guidelines.md` — points to StartupOS so it is discoverable, not merely
+    description-gated. Integration file count: 99 → 170.
+  - **README and GitHub Pages** updated with a StartupOS section (without
+    overstating it as the purpose of Praxis).
+
 ## [1.16.0] - 2026-06-24
 
 ### Added

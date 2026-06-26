@@ -15,6 +15,8 @@ On top of these, **[harness mode](#harness-mode-always-on)** gives agents a reli
 
 **Just want to use it?** Jump to [Install & integrate](#install--integrate) for Claude Code, Cursor, IntelliJ, and Codex. **Want to see the output first?** Browse [`examples/`](examples/README.md) for sample transcripts. Otherwise: **PMs, designers, stakeholders** read from the top; **developers writing or shipping a skill** skip to the [Developer guide](#developer-guide).
 
+Optionally, the **[StartupOS](docs/startupos/README.md)** module sits *in front of* all this: an AI-native front door for discovering, validating, and designing a business idea *before* Praxis builds it — ending in a human-approved handoff to the Praxis lifecycle. It's one optional intake, not the point of the repo. See [StartupOS — the pre-build front door](#startupos--the-pre-build-front-door-optional-module).
+
 ---
 
 ## What is this repo?
@@ -321,6 +323,31 @@ make validate-traceability            # advisory: checks source:/traces: ids res
 To try it **without a separate repo**, scaffold a project under `projects/` as in step 1, add a `.praxis/config.json` at the repo root pointing `harnessRoot` at `.` with `projectId: checkout`, then run `/new-feature` — it will write artifacts under `projects/checkout/specs/`.
 
 Still deliberately out of scope (add on evidence, not anticipation): a full SDD Kit, central-mode sync tooling, and extending the mandatory security/performance gates to the lighter `bug-fix` and `refinement` lifecycles.
+
+---
+
+## StartupOS — the pre-build front door (optional module)
+
+Praxis answers **"how do we build the product correctly?"**. **[StartupOS](docs/startupos/README.md)** is an optional module that answers the question *before* it: **"what should we build, why, for whom, and how do we turn it into a real company?"**
+
+StartupOS is an AI-native operating system for **discovering, validating, designing, and preparing** startup/business ideas — and then handing a validated, **Praxis-ready project** to the existing Praxis lifecycle. It is layered *on top of* Praxis, reuses the same conventions (Claude Code-native commands, markdown templates, a memory model, human-in-the-loop gates), and **never builds product** — its terminal action is the handoff. Praxis is the engine; StartupOS is one optional intake on the front of it, not its main purpose.
+
+Its 15-stage lifecycle runs `Observe → Discover → Research → Cluster → Score → Validate → Challenge → Improve → Rank → [Select ✋] → Business Case → Product Requirements → Architecture → Roadmap → [Export to Praxis ✋]`, with two **mandatory human gates** (selecting the idea, and exporting to Praxis).
+
+```text
+/startupos-discover "<a domain or observed pain>"
+/startupos-research <slug>   /startupos-validate <slug>   /startupos-challenge <slug>
+/startupos-rank   /startupos-select <slug>            # ✋ human selects
+/startupos-business-case <slug>   /startupos-prd <slug>
+/startupos-architecture <slug>    /startupos-roadmap <slug>
+/startupos-export-praxis <slug>                       # ✋ human-approved handoff
+# → ownership passes to Praxis:
+/praxis:idea ...   /praxis:new-feature ...
+```
+
+Like the SDLC experts, StartupOS ships its **12 agent personas as real Claude Code skills** (`.claude/skills/startupos-*` — CEO, VC Partner, Market Analyst, Customer Researcher, Business Designer, Product Strategist, Financial Analyst, GTM Strategist, CTO, AI Architect, Security Officer, Legal/Compliance Reviewer), each Tier 2 with `practices.md` + `checklist.md`, validated and catalogued in [`SKILLS.md`](SKILLS.md). Each `/startupos-*` command loads the relevant agent skill(s) and reasons in-persona.
+
+Core guardrails: **never invent market data** (every claim is labeled fact / assumption / estimate / hypothesis), **reject weak ideas** (prefer real pain, existing spend, recurring revenue, AI leverage, defensibility), **validate before building**, and **always include risks**. Full docs in [`docs/startupos/`](docs/startupos/README.md) — [vision](docs/startupos/vision.md) · [lifecycle](docs/startupos/lifecycle.md) · [commands](docs/startupos/commands.md) · [templates](docs/startupos/templates.md) · [agents](docs/startupos/agents.md) · [memory](docs/startupos/memory.md) · [guardrails](docs/startupos/guardrails.md) · [Praxis integration](docs/startupos/praxis-integration.md). Commands are flat [`.claude/commands/startupos-*.md`](.claude/commands/) files (`/startupos-discover`, …); agent skills under [`.claude/skills/startupos-*`](.claude/skills/); working memory under [`memory/startupos/`](memory/startupos/).
 
 ---
 

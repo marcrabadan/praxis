@@ -1,0 +1,69 @@
+---
+description: StartupOS — package the validated, selected idea into a Praxis-ready project (a complete docs/ bundle + recommended Praxis commands) and hand it off. The final, human-approved gate of the StartupOS lifecycle.
+argument-hint: <the selected idea slug> [target path]
+---
+
+Adopt the **StartupOS** handoff posture: load the `startupos-ceo` and `startupos-cto` skills to assemble the package; **the human approves the export** (draw on each skill's `references/practices.md` and `references/checklist.md`). This is **Export to Praxis** — the **final hard human gate** in the lifecycle. The agent roster is indexed in [docs/startupos/agents.md](../../docs/startupos/agents.md); the handoff detail is in [docs/startupos/praxis-integration.md](../../docs/startupos/praxis-integration.md).
+
+The idea to export:
+
+$ARGUMENTS
+
+## Purpose
+
+Cross the boundary from *"what/why/for-whom"* (StartupOS) to *"how do we build it correctly"* (Praxis). Produce a **self-contained, Praxis-ready project** so Praxis's harness lifecycle can pick it up with zero re-discovery.
+
+## Input
+
+- The full memory trail for the selected idea (research, validation, challenge, financials, pricing, PRD, architecture, roadmap, risks).
+
+## Workflow
+
+1. **Completeness check.** Verify each required artifact exists and is not a stub. Anything still `ASSUMPTION`-heavy or missing is reported — do not paper over gaps.
+2. **Assemble the bundle.** Generate the Praxis-ready `docs/` set (below) from the StartupOS memory, using the [praxis-handoff template](../../docs/startupos/templates/praxis-handoff.md) as the manifest. Carry the fact/assumption/estimate labels through — Praxis must know what is proven vs assumed.
+3. **Write the handoff manifest** (`docs/praxis-handoff.md`): what was validated, what remains assumption, the open questions Praxis should resolve first, and the recommended command sequence.
+4. **Require human approval.** Use `AskUserQuestion` to ask `EXPORT | REVISE | HOLD`. **Do not export without explicit human approval** (guardrail). Pending is not approval.
+5. **On EXPORT:** write the bundle to the target path (default: a new `projects/<slug>/` or a user-specified repo path) and record the handoff.
+
+## Output / expected generated files
+
+A Praxis-ready project containing:
+
+```
+docs/
+  vision.md                 market-research.md       business-case.md
+  competitive-analysis.md   pricing.md               financials.md
+  product-requirements.md   architecture.md          roadmap.md
+  validation-plan.md        gtm.md                   risk-analysis.md
+  praxis-handoff.md
+```
+
+Plus the **recommended Praxis command sequence** (written into `praxis-handoff.md`):
+
+```
+/praxis:idea            # triage the handed-off product idea into the harness
+/praxis:new-feature     # run the MVP wedge through the full SDLC
+/praxis:analyst         # refine requirements / user stories
+/praxis:product         # backlog, prioritization, sprint goal
+/praxis:architect       # detailed design / ADRs (StartupOS arch is the L1/L2 input)
+/praxis:security        # threat model the MVP
+/praxis:ml              # if the product is AI/ML-native
+/praxis:review-changes  # review the diff before merge
+```
+
+Also record `memory/startupos/praxis-handoffs/<slug>.md` — the export record (date, approver, target, what was/ wasn't validated).
+
+## Guardrails
+
+- **Require human approval before exporting to Praxis** — this command never self-approves.
+- **Carry fact/assumption/estimate labels across the boundary** — never launder StartupOS assumptions into Praxis "requirements".
+- The bundle **must include risks, failure modes, and the validation plan** — Praxis builds on validated demand, not hope.
+- Do not invent missing artifacts to complete the bundle; report the gap instead.
+
+## Approval gates
+
+**This is the final gate.** Export is blocked until the human explicitly approves. After export, ownership passes to Praxis — StartupOS's job is done.
+
+## Next (in Praxis)
+
+Run the recommended command sequence above, starting with `/praxis:idea` then `/praxis:new-feature`.

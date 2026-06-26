@@ -19,3 +19,4 @@ Junie reads `.junie/guidelines.md`; the persona guides it references live in `.j
 
 - Ask Junie or the AI Assistant to *act as the praxis Software Architect* (or any role) — it follows `guidelines.md` and the matching persona guide.
 - IntelliJ has no repo-level slash commands, so the files in `prompts/` are **ready-to-paste prompt snippets** (one per persona, plus the new-feature and review-changes workflows). Save them to the AI Assistant prompt library for one-click reuse.
+- **StartupOS (pre-build module):** agent guides under `.junie/praxis/startupos-*.md` (index `.junie/praxis-startupos.md`) and prompts under `prompts/startupos-*.md` — discover, validate, and design a business idea before building it.
