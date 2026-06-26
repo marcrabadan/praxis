@@ -95,6 +95,13 @@ tool's native format and location:
 | **OpenAI Codex** | [`codex/`](codex/) | `AGENTS.praxis.md` (roster for `AGENTS.md`), `.praxis/*.md` (in-repo persona guides) and `prompts/*.md` for `~/.codex/prompts/` (`/praxis-architect`, …) |
 | **IntelliJ** (JetBrains AI Assistant & Junie) | [`intellij/`](intellij/) | `.junie/guidelines.md` + `.junie/praxis/*.md` (persona guides) and `prompts/*.md` (ready-to-paste prompt snippets) |
 
+The optional **[StartupOS](../docs/startupos/README.md)** pre-build module rides along in
+the same three folders, namespaced so it never mixes with the SDLC experts: its twelve agent
+personas ship as `praxis-startupos-*` Cursor rules / `.praxis/startupos-*.md` Codex guides /
+`.junie/praxis/startupos-*.md` Junie guides, and its lifecycle commands as `/startupos-*`
+(Cursor) and `/praxis-startupos-*` (Codex) prompts, each with its own roster doc
+(`praxis-startupos` rule, `AGENTS.startupos.md`, `.junie/praxis-startupos.md`).
+
 Each folder has its own `README.md` with copy-and-go install steps. All three rely on
 `AGENTS.md`, which every one of these tools reads natively, for repo-wide doctrine.
 

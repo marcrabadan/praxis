@@ -18,3 +18,4 @@ cp AGENTS.md <your-repo>/      # optional: Cursor reads AGENTS.md natively
 - **Personas auto-attach.** Each expert is a description-gated rule (`praxis-business-analyst`, …); Cursor pulls in the relevant one when your request matches it. `praxis.mdc` is always applied and tells the agent when to reach for each persona.
 - **Invoke explicitly** with a command: `/architect`, `/developer`, `/qa`, `/analyst`, `/product`, `/devops`, `/security`, `/security-architect`, `/ux`, `/frontend-architect`, `/frontend`.
 - **Workflows:** `/new-feature` runs the core six in order; `/review-changes` reviews the current diff.
+- **StartupOS (pre-build module):** the `praxis-startupos-*` rules and `/startupos-*` commands discover, validate, and design a business idea before building it; see the `praxis-startupos` rule.

@@ -51,6 +51,12 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
     estimates/hypotheses; mandatory human approval before selecting the idea and
     before exporting to Praxis; reject weak ideas; always include risks and
     validation experiments.
+  - **Cursor / Codex / IntelliJ integrations** now include StartupOS, generated
+    by `build_integrations.py` as a parallel, namespaced set (the SDLC-expert
+    outputs are unchanged): twelve `praxis-startupos-*` persona guides per tool,
+    the eleven lifecycle commands as `/startupos-*` (Cursor) and
+    `/praxis-startupos-*` (Codex) prompts, plus a StartupOS roster doc per tool.
+    Integration file count: 99 → 171.
   - **README and GitHub Pages** updated with a StartupOS section (without
     overstating it as the purpose of Praxis).
 

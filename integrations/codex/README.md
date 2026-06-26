@@ -23,3 +23,4 @@ cp integrations/codex/prompts/*.md ~/.codex/prompts/
 
 - Type `/praxis-architect`, `/praxis-developer`, `/praxis-qa`, `/praxis-analyst`, `/praxis-product`, `/praxis-devops`, `/praxis-security`, `/praxis-security-architect`, `/praxis-ux`, `/praxis-frontend-architect`, `/praxis-frontend`. Each adopts the persona from `.praxis/<role>.md` and uses `$ARGUMENTS` as the request.
 - Workflows: `/praxis-new-feature`, `/praxis-review-changes`.
+- StartupOS (pre-build module): append `AGENTS.startupos.md`, ship `.praxis/startupos-*.md`, and install the `/praxis-startupos-*` prompts to discover, validate, and design a business idea before building it.

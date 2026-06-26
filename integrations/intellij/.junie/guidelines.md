@@ -39,6 +39,10 @@ Read `AGENTS.md` for full repo doctrine (JetBrains AI Assistant reads it nativel
 
 Ready-made prompts for each persona and for the new-feature / review-changes workflows live in `prompts/` — save them to the AI Assistant prompt library.
 
+## StartupOS (optional pre-build module)
+
+Discover, validate, and design a business idea *before* building it. Its agent guides live under `.junie/praxis/startupos-*.md` (index: `.junie/praxis-startupos.md`) and its lifecycle prompts under `prompts/startupos-*.md`.
+
 ## Harness mode (if `.praxis/config.json` exists)
 
 If this repo has a `.praxis/config.json`, it is in **harness mode** — read these first, in order, before editing:
