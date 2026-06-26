@@ -1,0 +1,54 @@
+---
+description: StartupOS — score and rank the candidate ideas on a transparent rubric (pain, spend, recurring revenue, AI leverage, defensibility, feasibility, evidence) to produce an ordered shortlist.
+argument-hint: <optional: scope, e.g. a market or list of slugs; empty = all candidates>
+---
+
+Adopt the **StartupOS** ranking posture — reason as the **VC Partner Agent** and **CEO Agent**, advised by the **Financial Analyst** and **Product Strategist** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is the **Score → Rank** stage of the lifecycle.
+
+The ranking scope:
+
+$ARGUMENTS
+
+## Purpose
+
+Convert a pool of researched, challenged candidates into a **transparent, ordered shortlist** so the human can make an informed selection. Ranking is advisory — the human selects.
+
+## Input
+
+- The candidate set in `memory/startupos/ideas/` (filtered by `$ARGUMENTS` if given).
+- Their research, validation plans, and challenge verdicts.
+
+## Workflow
+
+1. **Confirm the rubric.** Default weighted criteria (state weights, let the human adjust):
+   - Real pain (intensity × frequency)
+   - Existing spend / budget that already exists
+   - Recurring-revenue potential
+   - AI leverage (does AI make this newly possible or 10× better?)
+   - Defensibility / moat
+   - Feasibility (can a small team build the wedge?)
+   - **Evidence strength** (how much is FACT vs ASSUMPTION) — penalize thin evidence
+2. **Score each candidate** 1–5 per criterion, with a one-line justification per score citing the memory it rests on. Mark any score driven by `ASSUMPTION`/`ESTIMATE`.
+3. **Compute** the weighted total; show the math.
+4. **Sanity-check** the top of the list against the challenge verdicts — a `KILL`'d idea cannot rank.
+5. **Present** the ranked table with confidence flags (high/medium/low based on evidence coverage).
+
+## Output / expected generated files
+
+- `memory/startupos/decisions/ranking-<date>.md` — the rubric, weights, full scoring matrix, and ordered shortlist.
+- A chat summary: the ranked table, the top 3 with rationale, and the evidence-confidence of each.
+
+## Guardrails
+
+- The rubric and weights are **explicit and visible** — no black-box ranking.
+- **Reject weak ideas:** anything failing the floor on pain or evidence is marked *not rankable*, not silently buried.
+- Distinguish a high score driven by evidence from one driven by assumption (confidence flag).
+- Ranking does **not** select — it informs the human gate.
+
+## Approval gates
+
+None here — but ranking is the input to the **mandatory human selection gate** at `/startupos:select`.
+
+## Next
+
+`/startupos:select <slug>` — the human chooses the idea to take forward.

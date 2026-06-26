@@ -11,6 +11,38 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+### Added
+
+- **StartupOS module** — an optional, AI-native front door layered on top of
+  Praxis that answers *what to build, why, for whom, and how to turn it into a
+  company* before Praxis answers *how to build it correctly*. It discovers,
+  validates, and designs startup/business ideas, then hands a Praxis-ready
+  project to the existing lifecycle. Nothing in existing Praxis behavior changes.
+  - **Commands** under `.claude/commands/startupos/` (namespaced `/startupos:*`):
+    `discover`, `research`, `validate`, `challenge`, `rank`, `select`,
+    `business-case`, `prd`, `architecture`, `roadmap`, `export-praxis`. Each
+    documents purpose, input, output, workflow, guardrails, approval gates, and
+    expected generated files. Symlinked into `plugin-praxis/commands/` like the
+    other commands.
+  - **Documentation** under `docs/startupos/`: `README`, `vision`, `lifecycle`
+    (15 stages), `commands`, `templates`, `agents` (12 personas), `memory`,
+    `guardrails`, `praxis-integration`, and `integrations` (Cursor / Claude Code
+    / Codex).
+  - **Templates** under `docs/startupos/templates/` (13): vision, market-research,
+    business-case, competitive-analysis, pricing, financials,
+    product-requirements, architecture, roadmap, validation-plan, gtm,
+    risk-analysis, praxis-handoff.
+  - **Memory model** under `memory/startupos/` (ideas, markets, competitors,
+    customers, interviews, pricing, financials, hypotheses, experiments,
+    decisions, risks, lessons, praxis-handoffs, observations) with a README and
+    the *never invent facts* labeling discipline.
+  - **Guardrails**: never invent market data; separate facts/assumptions/
+    estimates/hypotheses; mandatory human approval before selecting the idea and
+    before exporting to Praxis; reject weak ideas; always include risks and
+    validation experiments.
+  - **README and GitHub Pages** updated with a StartupOS section (without
+    overstating it as the purpose of Praxis).
+
 ## [1.16.0] - 2026-06-24
 
 ### Added

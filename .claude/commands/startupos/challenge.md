@@ -1,0 +1,49 @@
+---
+description: StartupOS — red-team a candidate idea: attack the thesis, expose hidden assumptions and failure modes, then propose concrete improvements. The adversarial counterweight to discovery optimism.
+argument-hint: <a candidate idea slug or description>
+---
+
+Adopt the **StartupOS** adversarial posture — reason as the **VC Partner Agent** (skeptical investor) backed by the **Financial Analyst** and **Security Officer** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is the **Challenge → Improve** stage of the lifecycle.
+
+The candidate to challenge:
+
+$ARGUMENTS
+
+## Purpose
+
+Try to **kill the idea on paper** before the market kills it with money. Surface every weak joint — then convert the survivable critiques into concrete improvements.
+
+## Input
+
+- A candidate slug with research and (ideally) a validation plan.
+- The idea's current vision/business-case material.
+
+## Workflow
+
+1. **Attack the thesis.** Why might this fail? Walk: no real pain, pain not worth paying for, no reachable channel, incumbents crush it, no defensibility/moat, AI premise is commoditized, regulatory/legal blockers, unit economics never close.
+2. **Expose hidden assumptions.** Name the optimistic leaps the founder is making unconsciously; promote them to the hypothesis log if missing.
+3. **Stress the numbers.** With the Financial Analyst, sanity-check that any revenue/cost claims are labeled `ESTIMATE` with a derivation; flag fantasy math.
+4. **Name failure modes.** Enumerate the top ways this dies, each with an early-warning signal.
+5. **Improve.** For each *survivable* weakness, propose a concrete change: a sharper wedge, a different segment, a pricing change, a moat to build, a de-risking experiment to add.
+6. **Verdict.** `STRENGTHEN` (fixable), `PIVOT` (idea good, framing wrong), or `KILL` (reject weak idea — guardrail).
+
+## Output / expected generated files
+
+- `memory/startupos/risks/<slug>.md` — failure modes + early-warning signals, seeded from the [risk-analysis template](../../../docs/startupos/templates/risk-analysis.md).
+- Updated `memory/startupos/decisions/<slug>.md` with the challenge verdict and rationale.
+- New rows appended to `memory/startupos/hypotheses/<slug>.md` for newly exposed assumptions.
+- A chat summary: top 5 risks, the verdict, and the concrete improvements.
+
+## Guardrails
+
+- **Reject weak ideas** explicitly — a `KILL` verdict is a success, not a failure.
+- **Always include risks and failure modes**; an idea with none listed has not been challenged.
+- Keep facts/assumptions/estimates separated; do not invent disconfirming "data" either.
+
+## Approval gates
+
+None block, but a `KILL` verdict should remove the idea from the ranking pool unless the human overrides.
+
+## Next
+
+Loop back to `/startupos:research` or `/startupos:validate` to address gaps, or `/startupos:rank` when the pool is ready.
