@@ -1,6 +1,6 @@
 <!--
 StartupOS template — product-requirements.md
-Filled by /startupos:prd. The bridge artifact Praxis consumes (/praxis:idea, /praxis:new-feature).
+Filled by /startupos-prd. The bridge artifact Praxis consumes (/praxis:idea, /praxis:new-feature).
 Mirror Praxis BA conventions: INVEST stories + Gherkin acceptance criteria.
 -->
 

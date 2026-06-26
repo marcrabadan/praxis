@@ -1,6 +1,6 @@
 <!--
 StartupOS template — roadmap.md
-Filled by /startupos:roadmap. Each phase names the validation gate it depends on. No building before validation.
+Filled by /startupos-roadmap. Each phase names the validation gate it depends on. No building before validation.
 Timelines and costs are [ESTIMATE]s, never commitments.
 -->
 

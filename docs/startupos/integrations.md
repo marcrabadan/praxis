@@ -8,13 +8,13 @@ StartupOS is Claude Code-native (same as Praxis), but the three tools play diffe
 
 - Recommended for creating and evolving the StartupOS structure, docs, commands, templates, and refactors.
 - Use it when context across many files is needed — discovery and research touch the whole `memory/startupos/` tree.
-- Run the `/startupos:*` commands here. When this repo is the workspace they are discovered automatically; installed as a plugin they are namespaced under the plugin.
+- Run the `/startupos-*` commands here. When this repo is the workspace they are discovered automatically; installed as a plugin they are namespaced under the plugin.
 
 ```text
-/startupos:discover "<domain or observed pain>"
-/startupos:research <slug>
+/startupos-discover "<domain or observed pain>"
+/startupos-research <slug>
 ...
-/startupos:export-praxis <slug>
+/startupos-export-praxis <slug>
 ```
 
 ## Cursor — review & manual refinement
@@ -42,7 +42,7 @@ StartupOS is Claude Code-native (same as Praxis), but the three tools play diffe
 | Phase | Tool | Why |
 | ----- | ---- | --- |
 | Create StartupOS structure / docs / commands | **Claude Code** | Repo-wide context |
-| Run the lifecycle (`/startupos:*`) | **Claude Code** | Reads/writes across `memory/startupos/` |
+| Run the lifecycle (`/startupos-*`) | **Claude Code** | Reads/writes across `memory/startupos/` |
 | Review & refine generated docs | **Cursor** | Fast editing & navigation, human judgment |
 | Tests, scripts, validators, CI, command fixes | **Codex** | Focused, isolated changes |
 | Build the product after handoff | **Praxis** (in Claude Code) | `/praxis:new-feature` → release |
@@ -50,11 +50,11 @@ StartupOS is Claude Code-native (same as Praxis), but the three tools play diffe
 ## A full round-trip
 
 ```text
-Claude Code:  /startupos:discover … → /startupos:research … → /startupos:validate …
+Claude Code:  /startupos-discover … → /startupos-research … → /startupos-validate …
 Cursor:       review & refine memory/startupos/* and the rendered templates
-Claude Code:  /startupos:challenge … → /startupos:rank → /startupos:select  (✋)
-Claude Code:  /startupos:business-case … → /startupos:prd … → /startupos:architecture … → /startupos:roadmap …
+Claude Code:  /startupos-challenge … → /startupos-rank → /startupos-select  (✋)
+Claude Code:  /startupos-business-case … → /startupos-prd … → /startupos-architecture … → /startupos-roadmap …
 Cursor:       final human polish of the docs/ bundle
-Claude Code:  /startupos:export-praxis …  (✋)  → /praxis:idea → /praxis:new-feature
+Claude Code:  /startupos-export-praxis …  (✋)  → /praxis:idea → /praxis:new-feature
 Codex:        write the validators/tests/scripts the build needs
 ```

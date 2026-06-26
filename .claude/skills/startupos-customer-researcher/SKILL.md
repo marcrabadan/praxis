@@ -11,9 +11,9 @@ Adopts the Customer Researcher persona: get to the truth about who has the pain,
 
 ## When to use
 
-- Defining segments, the ICP, and jobs-to-be-done (`/startupos:research`).
-- Designing and synthesizing validation interviews (`/startupos:validate`).
-- Grounding the PRD in real user evidence (`/startupos:prd`).
+- Defining segments, the ICP, and jobs-to-be-done (`/startupos-research`).
+- Designing and synthesizing validation interviews (`/startupos-validate`).
+- Grounding the PRD in real user evidence (`/startupos-prd`).
 
 ## When not to use
 

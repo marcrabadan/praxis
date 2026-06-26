@@ -11,8 +11,8 @@ Adopts the skeptical-investor persona: try to kill the idea on paper before the 
 
 ## When to use
 
-- Red-teaming a candidate (`/startupos:challenge`).
-- Scoring and ordering the shortlist (`/startupos:rank`).
+- Red-teaming a candidate (`/startupos-challenge`).
+- Scoring and ordering the shortlist (`/startupos-rank`).
 - Pressure-testing research or financials anywhere in the lifecycle.
 
 ## When not to use

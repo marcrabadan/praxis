@@ -3,7 +3,7 @@ description: StartupOS — research a candidate opportunity (market, customers, 
 argument-hint: <a candidate idea slug or description>
 ---
 
-Adopt the **StartupOS** research posture: load the `startupos-market-analyst` and `startupos-customer-researcher` skills (reviewed by `startupos-vc-partner`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is the **Research → Cluster** stage of the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
+Adopt the **StartupOS** research posture: load the `startupos-market-analyst` and `startupos-customer-researcher` skills (reviewed by `startupos-vc-partner`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is the **Research → Cluster** stage of the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../docs/startupos/agents.md).
 
 The candidate to research:
 
@@ -29,9 +29,9 @@ Replace assumptions with evidence. Produce a market-research dossier for a candi
 ## Output / expected generated files
 
 - `memory/startupos/markets/<slug>.md` — market thesis, sizing (ranges + derivation), trends, why-now.
-- `memory/startupos/competitors/<slug>.md` — competitive map (incumbents, substitutes, gaps), seeded from the [competitive-analysis template](../../../docs/startupos/templates/competitive-analysis.md).
+- `memory/startupos/competitors/<slug>.md` — competitive map (incumbents, substitutes, gaps), seeded from the [competitive-analysis template](../../docs/startupos/templates/competitive-analysis.md).
 - `memory/startupos/customers/<slug>.md` — segments, ICP, pains, current spend.
-- Updated `memory/startupos/ideas/<slug>.md` with the market-research section ([market-research template](../../../docs/startupos/templates/market-research.md)).
+- Updated `memory/startupos/ideas/<slug>.md` with the market-research section ([market-research template](../../docs/startupos/templates/market-research.md)).
 - A chat summary: thesis, top 3 evidenced facts, top 3 open assumptions, biggest unknown.
 
 ## Guardrails
@@ -42,8 +42,8 @@ Replace assumptions with evidence. Produce a market-research dossier for a candi
 
 ## Approval gates
 
-None block here, but research quality gates the later **idea selection** gate. Thin research → the idea cannot pass `/startupos:select`.
+None block here, but research quality gates the later **idea selection** gate. Thin research → the idea cannot pass `/startupos-select`.
 
 ## Next
 
-`/startupos:validate <slug>` to design experiments, or `/startupos:challenge <slug>` for a red-team pass.
+`/startupos-validate <slug>` to design experiments, or `/startupos-challenge <slug>` for a red-team pass.

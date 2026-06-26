@@ -1,6 +1,6 @@
 <!--
 StartupOS template — competitive-analysis.md
-Filled by /startupos:research and /startupos:challenge. Be honest about strong incumbents.
+Filled by /startupos-research and /startupos-challenge. Be honest about strong incumbents.
 -->
 
 # Competitive analysis — <Idea name>

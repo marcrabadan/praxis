@@ -3,7 +3,7 @@ description: StartupOS — package the validated, selected idea into a Praxis-re
 argument-hint: <the selected idea slug> [target path]
 ---
 
-Adopt the **StartupOS** handoff posture: load the `startupos-ceo` and `startupos-cto` skills to assemble the package; **the human approves the export** (draw on each skill's `references/practices.md` and `references/checklist.md`). This is **Export to Praxis** — the **final hard human gate** in the lifecycle. The agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md); the handoff detail is in [docs/startupos/praxis-integration.md](../../../docs/startupos/praxis-integration.md).
+Adopt the **StartupOS** handoff posture: load the `startupos-ceo` and `startupos-cto` skills to assemble the package; **the human approves the export** (draw on each skill's `references/practices.md` and `references/checklist.md`). This is **Export to Praxis** — the **final hard human gate** in the lifecycle. The agent roster is indexed in [docs/startupos/agents.md](../../docs/startupos/agents.md); the handoff detail is in [docs/startupos/praxis-integration.md](../../docs/startupos/praxis-integration.md).
 
 The idea to export:
 
@@ -20,7 +20,7 @@ Cross the boundary from *"what/why/for-whom"* (StartupOS) to *"how do we build i
 ## Workflow
 
 1. **Completeness check.** Verify each required artifact exists and is not a stub. Anything still `ASSUMPTION`-heavy or missing is reported — do not paper over gaps.
-2. **Assemble the bundle.** Generate the Praxis-ready `docs/` set (below) from the StartupOS memory, using the [praxis-handoff template](../../../docs/startupos/templates/praxis-handoff.md) as the manifest. Carry the fact/assumption/estimate labels through — Praxis must know what is proven vs assumed.
+2. **Assemble the bundle.** Generate the Praxis-ready `docs/` set (below) from the StartupOS memory, using the [praxis-handoff template](../../docs/startupos/templates/praxis-handoff.md) as the manifest. Carry the fact/assumption/estimate labels through — Praxis must know what is proven vs assumed.
 3. **Write the handoff manifest** (`docs/praxis-handoff.md`): what was validated, what remains assumption, the open questions Praxis should resolve first, and the recommended command sequence.
 4. **Require human approval.** Use `AskUserQuestion` to ask `EXPORT | REVISE | HOLD`. **Do not export without explicit human approval** (guardrail). Pending is not approval.
 5. **On EXPORT:** write the bundle to the target path (default: a new `projects/<slug>/` or a user-specified repo path) and record the handoff.

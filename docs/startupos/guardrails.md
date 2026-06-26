@@ -1,6 +1,6 @@
 # StartupOS — Guardrails
 
-These rules are binding on every `/startupos:*` command. They are what separate StartupOS from a confident idea-fabrication machine. Each command restates the guardrails relevant to its stage; this is the canonical list.
+These rules are binding on every `/startupos-*` command. They are what separate StartupOS from a confident idea-fabrication machine. Each command restates the guardrails relevant to its stage; this is the canonical list.
 
 ## 1. Never invent market data
 
@@ -21,11 +21,11 @@ Blurring these is the single most common failure mode this module exists to prev
 
 ## 3. Require human approval before selecting the final idea
 
-`/startupos:select` is a **hard human gate**. Ranking is advisory; the agent never self-selects. Selecting a never-validated or `KILL`'d idea requires an explicit, recorded human override.
+`/startupos-select` is a **hard human gate**. Ranking is advisory; the agent never self-selects. Selecting a never-validated or `KILL`'d idea requires an explicit, recorded human override.
 
 ## 4. Require human approval before exporting to Praxis
 
-`/startupos:export-praxis` is a **hard human gate**. The agent never self-exports. Crossing into engineering spend is a human decision.
+`/startupos-export-praxis` is a **hard human gate**. The agent never self-exports. Crossing into engineering spend is a human decision.
 
 > **Pending is not approval.** A recorded recommendation is a proposal. Both gates require an explicit human *accept*.
 
@@ -39,7 +39,7 @@ Killing ideas is the goal of the divergence phase, not a failure. An idea is wea
 - Genuine **AI leverage** (newly possible or 10× better), or
 - Any **defensibility** (a credible moat thesis).
 
-A `KILL` verdict in `/startupos:challenge` is a successful outcome.
+A `KILL` verdict in `/startupos-challenge` is a successful outcome.
 
 ## 6. Prefer strong business opportunities
 
@@ -51,7 +51,7 @@ No artifact is complete without its risks. An idea with an empty risk register h
 
 ## 8. Always include validation experiments before implementation
 
-Demand is validated before supply is built. `/startupos:validate` is mandatory before `/startupos:select`, and the validation plan travels with the idea into the Praxis handoff so engineering builds on evidence, not hope.
+Demand is validated before supply is built. `/startupos-validate` is mandatory before `/startupos-select`, and the validation plan travels with the idea into the Praxis handoff so engineering builds on evidence, not hope.
 
 ## 9. Carry labels across the Praxis boundary
 

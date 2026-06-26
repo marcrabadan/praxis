@@ -24,7 +24,7 @@ Lay out a **realistic, milestone-driven path** from today to a launched, learnin
 
 ## Output / expected generated files
 
-- Roadmap doc seeded from the [roadmap template](../../../docs/startupos/templates/roadmap.md).
+- Roadmap doc seeded from the [roadmap template](../../docs/startupos/templates/roadmap.md).
 - A chat summary: the phases, each unlock-metric, and the nearest validation gate.
 
 ## Guardrails
@@ -40,4 +40,4 @@ No new hard gate; the roadmap is part of the export bundle reviewed at the **exp
 
 ## Next
 
-`/startupos:export-praxis <slug>` to package the Praxis-ready handoff.
+`/startupos-export-praxis <slug>` to package the Praxis-ready handoff.

@@ -408,7 +408,7 @@ def _port_startupos_command(name: str, *, tool: str, personas_label: str) -> str
     """Port a StartupOS lifecycle command to a tool-native prompt: rewrite skill
     loads into persona-guide references, neutralize Claude-only mechanics, and
     point at the bundled StartupOS persona guides."""
-    body = _body(COMMANDS_DIR / "startupos" / f"{name}.md")
+    body = _body(COMMANDS_DIR / f"startupos-{name}.md")
 
     # full-phrase practices/checklist rewrites (before the generic catch-all)
     body = body.replace(
@@ -449,12 +449,12 @@ def _port_startupos_command(name: str, *, tool: str, personas_label: str) -> str
     # "…roster is indexed in [agents.md]" -> "…indexed in <location>" (avoid "in in")
     index_phrase = personas_label if personas_label.startswith("in ") else "in " + personas_label
     body = body.replace(
-        "indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md)",
+        "indexed in [docs/startupos/agents.md](../../docs/startupos/agents.md)",
         "indexed " + index_phrase,
     )
     # any remaining agents.md links -> the persona set
     body = body.replace(
-        "[docs/startupos/agents.md](../../../docs/startupos/agents.md)", personas_label
+        "[docs/startupos/agents.md](../../docs/startupos/agents.md)", personas_label
     )
 
     # safety-net ref mentions

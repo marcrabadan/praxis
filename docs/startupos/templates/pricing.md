@@ -1,6 +1,6 @@
 <!--
 StartupOS template — pricing.md
-Filled by /startupos:business-case. Tie every price to willingness-to-pay evidence; label evidence vs assumption.
+Filled by /startupos-business-case. Tie every price to willingness-to-pay evidence; label evidence vs assumption.
 -->
 
 # Pricing & packaging — <Idea name>
@@ -42,4 +42,4 @@ Land-and-expand motion, annual vs monthly, volume discounts, the expansion path 
 
 ## Open assumptions
 
-What must be tested with real pricing experiments (`/startupos:validate`).
+What must be tested with real pricing experiments (`/startupos-validate`).

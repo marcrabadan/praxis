@@ -1,6 +1,6 @@
 # StartupOS memory
 
-This is the working knowledge store for [StartupOS](../../docs/startupos/README.md) — the structured evidence and decisions the `/startupos:*` commands read from and write to as an idea moves through the lifecycle.
+This is the working knowledge store for [StartupOS](../../docs/startupos/README.md) — the structured evidence and decisions the `/startupos-*` commands read from and write to as an idea moves through the lifecycle.
 
 Full documentation: [docs/startupos/memory.md](../../docs/startupos/memory.md).
 

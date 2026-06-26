@@ -3,7 +3,7 @@ description: StartupOS — produce a high-level, AI-native solution architecture
 argument-hint: <the selected idea slug>
 ---
 
-Adopt the **StartupOS** architecture posture: load the `startupos-cto` and `startupos-ai-architect` skills (reviewed by `startupos-security-officer` and `startupos-legal-compliance`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Architecture** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
+Adopt the **StartupOS** architecture posture: load the `startupos-cto` and `startupos-ai-architect` skills (reviewed by `startupos-security-officer` and `startupos-legal-compliance`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Architecture** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../docs/startupos/agents.md).
 
 The product to shape:
 
@@ -28,7 +28,7 @@ Sketch a **credible, AI-native high-level architecture** that makes the MVP buil
 
 ## Output / expected generated files
 
-- Architecture doc seeded from the [architecture template](../../../docs/startupos/templates/architecture.md).
+- Architecture doc seeded from the [architecture template](../../docs/startupos/templates/architecture.md).
 - Optional `memory/startupos/decisions/<slug>-arch.md` capturing the build-vs-buy and AI-strategy calls.
 - A chat summary: the system shape, AI strategy, top technical risk, and feasibility verdict.
 
@@ -45,4 +45,4 @@ No new hard gate; the architecture is part of the export bundle reviewed at the 
 
 ## Next
 
-`/startupos:roadmap <slug>` to phase the build, then `/startupos:export-praxis <slug>`.
+`/startupos-roadmap <slug>` to phase the build, then `/startupos-export-praxis <slug>`.

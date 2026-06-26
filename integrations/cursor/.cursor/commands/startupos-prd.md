@@ -25,7 +25,7 @@ Define **what to build first** — the smallest product that tests the core valu
 
 ## Output / expected generated files
 
-- Product-requirements doc seeded from the [product-requirements template](../../../docs/startupos/templates/product-requirements.md).
+- Product-requirements doc seeded from the [product-requirements template](../../docs/startupos/templates/product-requirements.md).
 - A chat summary: vision, MVP scope (in/out), top user stories, and success metrics.
 
 ## Guardrails
@@ -41,4 +41,4 @@ No new hard gate; the PRD is part of the export bundle reviewed at the **export 
 
 ## Next
 
-`/startupos:architecture <slug>` for the high-level technical shape, then `/startupos:roadmap <slug>`.
+`/startupos-architecture <slug>` for the high-level technical shape, then `/startupos-roadmap <slug>`.

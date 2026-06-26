@@ -1,6 +1,6 @@
 <!--
 StartupOS template — market-research.md
-Filled by /startupos:research. Every number is [FACT] (with source), [ESTIMATE] (with method), or [ASSUMPTION].
+Filled by /startupos-research. Every number is [FACT] (with source), [ESTIMATE] (with method), or [ASSUMPTION].
 Never present an unsourced number as a fact.
 -->
 

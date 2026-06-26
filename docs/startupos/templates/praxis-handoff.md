@@ -1,6 +1,6 @@
 <!--
 StartupOS template — praxis-handoff.md
-Filled by /startupos:export-praxis. The manifest that crosses the StartupOS → Praxis boundary.
+Filled by /startupos-export-praxis. The manifest that crosses the StartupOS → Praxis boundary.
 Carry fact/assumption/estimate labels across — never launder a StartupOS assumption into a Praxis "requirement".
 -->
 
@@ -20,19 +20,19 @@ The export generates a Praxis-ready `docs/` set. Each row links the source Start
 
 | File | Source command | Evidence status |
 | ---- | -------------- | --------------- |
-| `docs/vision.md` | `/startupos:discover` | <validated/assumption-heavy> |
-| `docs/market-research.md` | `/startupos:research` | <…> |
-| `docs/business-case.md` | `/startupos:business-case` | <…> |
-| `docs/competitive-analysis.md` | `/startupos:research` `/startupos:challenge` | <…> |
-| `docs/pricing.md` | `/startupos:business-case` | <…> |
-| `docs/financials.md` | `/startupos:business-case` | <…> |
-| `docs/product-requirements.md` | `/startupos:prd` | <…> |
-| `docs/architecture.md` | `/startupos:architecture` | <…> |
-| `docs/roadmap.md` | `/startupos:roadmap` | <…> |
-| `docs/validation-plan.md` | `/startupos:validate` | <…> |
-| `docs/gtm.md` | `/startupos:business-case` | <…> |
-| `docs/risk-analysis.md` | `/startupos:challenge` | <…> |
-| `docs/praxis-handoff.md` | `/startupos:export-praxis` | this file |
+| `docs/vision.md` | `/startupos-discover` | <validated/assumption-heavy> |
+| `docs/market-research.md` | `/startupos-research` | <…> |
+| `docs/business-case.md` | `/startupos-business-case` | <…> |
+| `docs/competitive-analysis.md` | `/startupos-research` `/startupos-challenge` | <…> |
+| `docs/pricing.md` | `/startupos-business-case` | <…> |
+| `docs/financials.md` | `/startupos-business-case` | <…> |
+| `docs/product-requirements.md` | `/startupos-prd` | <…> |
+| `docs/architecture.md` | `/startupos-architecture` | <…> |
+| `docs/roadmap.md` | `/startupos-roadmap` | <…> |
+| `docs/validation-plan.md` | `/startupos-validate` | <…> |
+| `docs/gtm.md` | `/startupos-business-case` | <…> |
+| `docs/risk-analysis.md` | `/startupos-challenge` | <…> |
+| `docs/praxis-handoff.md` | `/startupos-export-praxis` | this file |
 
 ## What was validated
 

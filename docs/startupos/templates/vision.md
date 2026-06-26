@@ -1,6 +1,6 @@
 <!--
 StartupOS template — vision.md
-Filled by /startupos:discover (skeleton) and refined through the lifecycle.
+Filled by /startupos-discover (skeleton) and refined through the lifecycle.
 Label every claim: [FACT] (sourced) · [ASSUMPTION] · [ESTIMATE] (with derivation) · [HYPOTHESIS] (testable).
 Delete this comment when the file is real.
 -->
@@ -54,4 +54,4 @@ What this explicitly is **not** — to keep scope honest.
 
 ## Open assumptions to validate
 
-The leaps of faith this vision rests on (feeds `/startupos:validate`).
+The leaps of faith this vision rests on (feeds `/startupos-validate`).

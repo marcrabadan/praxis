@@ -3,7 +3,7 @@ description: StartupOS — score and rank the candidate ideas on a transparent r
 argument-hint: <optional: scope, e.g. a market or list of slugs; empty = all candidates>
 ---
 
-Adopt the **StartupOS** ranking posture: load the `startupos-vc-partner` and `startupos-ceo` skills (advised by `startupos-financial-analyst` and `startupos-product-strategist`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is the **Score → Rank** stage of the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
+Adopt the **StartupOS** ranking posture: load the `startupos-vc-partner` and `startupos-ceo` skills (advised by `startupos-financial-analyst` and `startupos-product-strategist`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is the **Score → Rank** stage of the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../docs/startupos/agents.md).
 
 The ranking scope:
 
@@ -47,8 +47,8 @@ Convert a pool of researched, challenged candidates into a **transparent, ordere
 
 ## Approval gates
 
-None here — but ranking is the input to the **mandatory human selection gate** at `/startupos:select`.
+None here — but ranking is the input to the **mandatory human selection gate** at `/startupos-select`.
 
 ## Next
 
-`/startupos:select <slug>` — the human chooses the idea to take forward.
+`/startupos-select <slug>` — the human chooses the idea to take forward.

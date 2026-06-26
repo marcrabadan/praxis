@@ -1,7 +1,7 @@
 <!--
 StartupOS template — validation-plan.md
-Filled by /startupos:validate. Every experiment is falsifiable with a pre-committed kill/continue threshold.
-Mandatory before /startupos:select.
+Filled by /startupos-validate. Every experiment is falsifiable with a pre-committed kill/continue threshold.
+Mandatory before /startupos-select.
 -->
 
 # Validation plan — <Idea name>
@@ -31,7 +31,7 @@ For each top assumption:
 
 ## Definition of "validated enough to select"
 
-The evidence bar the idea must clear to pass `/startupos:select`.
+The evidence bar the idea must clear to pass `/startupos-select`.
 
 ## Definition of "kill"
 

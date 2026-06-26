@@ -3,7 +3,7 @@ description: StartupOS — red-team a candidate idea: attack the thesis, expose 
 argument-hint: <a candidate idea slug or description>
 ---
 
-Adopt the **StartupOS** adversarial posture: load the `startupos-vc-partner` skill (skeptical investor) backed by `startupos-financial-analyst` and `startupos-security-officer`, and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is the **Challenge → Improve** stage of the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
+Adopt the **StartupOS** adversarial posture: load the `startupos-vc-partner` skill (skeptical investor) backed by `startupos-financial-analyst` and `startupos-security-officer`, and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is the **Challenge → Improve** stage of the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../docs/startupos/agents.md).
 
 The candidate to challenge:
 
@@ -29,7 +29,7 @@ Try to **kill the idea on paper** before the market kills it with money. Surface
 
 ## Output / expected generated files
 
-- `memory/startupos/risks/<slug>.md` — failure modes + early-warning signals, seeded from the [risk-analysis template](../../../docs/startupos/templates/risk-analysis.md).
+- `memory/startupos/risks/<slug>.md` — failure modes + early-warning signals, seeded from the [risk-analysis template](../../docs/startupos/templates/risk-analysis.md).
 - Updated `memory/startupos/decisions/<slug>.md` with the challenge verdict and rationale.
 - New rows appended to `memory/startupos/hypotheses/<slug>.md` for newly exposed assumptions.
 - A chat summary: top 5 risks, the verdict, and the concrete improvements.
@@ -46,4 +46,4 @@ None block, but a `KILL` verdict should remove the idea from the ranking pool un
 
 ## Next
 
-Loop back to `/startupos:research` or `/startupos:validate` to address gaps, or `/startupos:rank` when the pool is ready.
+Loop back to `/startupos-research` or `/startupos-validate` to address gaps, or `/startupos-rank` when the pool is ready.

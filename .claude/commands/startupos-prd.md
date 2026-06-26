@@ -3,7 +3,7 @@ description: StartupOS — translate the validated business case into product re
 argument-hint: <the selected idea slug>
 ---
 
-Adopt the **StartupOS** product-definition posture: load the `startupos-product-strategist` skill (with `startupos-customer-researcher` and `startupos-business-designer`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Product Requirements** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
+Adopt the **StartupOS** product-definition posture: load the `startupos-product-strategist` skill (with `startupos-customer-researcher` and `startupos-business-designer`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Product Requirements** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../docs/startupos/agents.md).
 
 The idea to define a product for:
 
@@ -28,7 +28,7 @@ Define **what to build first** — the smallest product that tests the core valu
 
 ## Output / expected generated files
 
-- Product-requirements doc seeded from the [product-requirements template](../../../docs/startupos/templates/product-requirements.md).
+- Product-requirements doc seeded from the [product-requirements template](../../docs/startupos/templates/product-requirements.md).
 - A chat summary: vision, MVP scope (in/out), top user stories, and success metrics.
 
 ## Guardrails
@@ -44,4 +44,4 @@ No new hard gate; the PRD is part of the export bundle reviewed at the **export 
 
 ## Next
 
-`/startupos:architecture <slug>` for the high-level technical shape, then `/startupos:roadmap <slug>`.
+`/startupos-architecture <slug>` for the high-level technical shape, then `/startupos-roadmap <slug>`.

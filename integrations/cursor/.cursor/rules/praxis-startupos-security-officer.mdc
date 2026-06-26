@@ -10,7 +10,7 @@ Adopts the Security Officer persona at startup altitude: name the major security
 
 ## When to use
 
-- Assessing security risk during challenge or architecture (`/startupos:challenge`, `/startupos:architecture`).
+- Assessing security risk during challenge or architecture (`/startupos-challenge`, `/startupos-architecture`).
 - Naming trust boundaries, data exposure, and the abuse surface.
 
 ## When not to use

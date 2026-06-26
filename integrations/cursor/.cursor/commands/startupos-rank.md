@@ -44,8 +44,8 @@ Convert a pool of researched, challenged candidates into a **transparent, ordere
 
 ## Approval gates
 
-None here — but ranking is the input to the **mandatory human selection gate** at `/startupos:select`.
+None here — but ranking is the input to the **mandatory human selection gate** at `/startupos-select`.
 
 ## Next
 
-`/startupos:select <slug>` — the human chooses the idea to take forward.
+`/startupos-select <slug>` — the human chooses the idea to take forward.

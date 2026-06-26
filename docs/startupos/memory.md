@@ -30,7 +30,7 @@ Each subdirectory carries a `.gitkeep` so the structure exists in a fresh clone.
 1. **Read before deriving.** Every command checks the relevant subdirectory first — *reuse > extend > build*. Research already done is not redone.
 2. **Write working artifacts.** Commands persist evidence and decisions as they go, so the next stage has context and the chain stays traceable.
 3. **Render templates from memory.** The `docs/startupos/templates/` documents are rendered/updated from what's in memory.
-4. **Assemble at export.** `/startupos:export-praxis` reads the full trail to build the Praxis-ready bundle and writes a record to `praxis-handoffs/`.
+4. **Assemble at export.** `/startupos-export-praxis` reads the full trail to build the Praxis-ready bundle and writes a record to `praxis-handoffs/`.
 
 ## Rules for using memory (do not invent facts)
 

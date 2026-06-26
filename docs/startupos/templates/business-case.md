@@ -1,6 +1,6 @@
 <!--
 StartupOS template — business-case.md
-Filled by /startupos:business-case. The commercial backbone the PRD and architecture serve.
+Filled by /startupos-business-case. The commercial backbone the PRD and architecture serve.
 Label every financial claim: [FACT] · [ESTIMATE] (with derivation) · [ASSUMPTION].
 -->
 

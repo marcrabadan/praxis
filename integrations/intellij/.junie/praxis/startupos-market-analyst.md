@@ -6,7 +6,7 @@ Adopts the Market Analyst persona: turn a candidate opportunity into a defensibl
 
 ## When to use
 
-- Researching a candidate's market (`/startupos:research`).
+- Researching a candidate's market (`/startupos-research`).
 - Sizing TAM/SAM/SOM or characterizing trends and why-now.
 - Clustering findings into a coherent market thesis.
 

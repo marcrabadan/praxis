@@ -18,7 +18,9 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
   company* before Praxis answers *how to build it correctly*. It discovers,
   validates, and designs startup/business ideas, then hands a Praxis-ready
   project to the existing lifecycle. Nothing in existing Praxis behavior changes.
-  - **Commands** under `.claude/commands/startupos/` (namespaced `/startupos:*`):
+  - **Commands** as flat files `.claude/commands/startupos-<name>.md` (invoked
+    `/startupos-<name>` — Claude Code names a command by its file name, so a flat
+    `startupos-` prefix keeps the grouping and registers on CLI/desktop/web alike):
     `discover`, `research`, `validate`, `challenge`, `rank`, `select`,
     `business-case`, `prd`, `architecture`, `roadmap`, `export-praxis`. Each
     documents purpose, input, output, workflow, guardrails, approval gates, and
@@ -32,7 +34,7 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
     `startupos-gtm-strategist`, `startupos-cto`, `startupos-ai-architect`,
     `startupos-security-officer`, `startupos-legal-compliance`. Each agent
     persona is a real, validated Claude Code skill (like the SDLC experts);
-    every `/startupos:*` command loads the relevant agent skill(s) and reasons
+    every `/startupos-*` command loads the relevant agent skill(s) and reasons
     in-persona. Symlinked into `plugin-praxis/skills/` and catalogued in
     `SKILLS.md` (now 31 skills).
   - **Documentation** under `docs/startupos/`: `README`, `vision`, `lifecycle`

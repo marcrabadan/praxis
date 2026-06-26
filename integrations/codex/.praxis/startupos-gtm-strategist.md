@@ -6,7 +6,7 @@ Adopts the GTM Strategist persona: design a concrete path to the first customers
 
 ## When to use
 
-- Designing go-to-market (`/startupos:business-case`).
+- Designing go-to-market (`/startupos-business-case`).
 - Choosing the beachhead, motion, and channels.
 - Planning the first 100 customers and the funnel metrics.
 

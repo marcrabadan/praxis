@@ -13,11 +13,11 @@ StartupOS and Praxis are two halves of one delivery lifecycle:
               Praxis-ready project ┘
 ```
 
-StartupOS's **terminal action** is `/startupos:export-praxis`. It never builds product; it hands Praxis a validated, self-contained project so engineering starts with full context instead of a blank page.
+StartupOS's **terminal action** is `/startupos-export-praxis`. It never builds product; it hands Praxis a validated, self-contained project so engineering starts with full context instead of a blank page.
 
 ## The handoff gate
 
-`/startupos:export-praxis` is a **mandatory human-in-the-loop gate**. It will not export without explicit human approval. Before exporting it runs a completeness check (no stub artifacts) and reports anything still assumption-heavy — it does **not** fabricate missing pieces to complete the bundle.
+`/startupos-export-praxis` is a **mandatory human-in-the-loop gate**. It will not export without explicit human approval. Before exporting it runs a completeness check (no stub artifacts) and reports anything still assumption-heavy — it does **not** fabricate missing pieces to complete the bundle.
 
 ## What the handoff generates
 

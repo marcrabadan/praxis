@@ -1,6 +1,6 @@
 # StartupOS — Agents
 
-StartupOS reasons through **12 agent personas**, each shipped as a real Claude Code skill under [`.claude/skills/startupos-*`](../../.claude/skills/) — exactly like the Praxis SDLC experts. Every `/startupos:*` command **loads** the relevant agent skill(s) and reasons in those personas (the same way `/architect` loads `software-architect`). Each skill is Tier 2: a `SKILL.md` plus `references/practices.md` and `references/checklist.md`, validated by `validate_skill.py` and listed in [`SKILLS.md`](../../SKILLS.md).
+StartupOS reasons through **12 agent personas**, each shipped as a real Claude Code skill under [`.claude/skills/startupos-*`](../../.claude/skills/) — exactly like the Praxis SDLC experts. Every `/startupos-*` command **loads** the relevant agent skill(s) and reasons in those personas (the same way `/architect` loads `software-architect`). Each skill is Tier 2: a `SKILL.md` plus `references/practices.md` and `references/checklist.md`, validated by `validate_skill.py` and listed in [`SKILLS.md`](../../SKILLS.md).
 
 This page is the **index**; the skill files are the source of truth. For each agent: **skill · role · responsibilities · inputs · outputs · review criteria.**
 
@@ -123,17 +123,17 @@ This page is the **index**; the skill files are the source of truth. For each ag
 
 | Command | Lead agents | Reviewing agents |
 | ------- | ----------- | ---------------- |
-| `/startupos:discover` | CEO, Market Analyst, Customer Researcher | — |
-| `/startupos:research` | Market Analyst, Customer Researcher | VC Partner |
-| `/startupos:validate` | Customer Researcher, Business Designer | VC Partner |
-| `/startupos:challenge` | VC Partner | Financial Analyst, Security Officer |
-| `/startupos:rank` | VC Partner, CEO | Financial Analyst, Product Strategist |
-| `/startupos:select` | **Human** | CEO (facilitates) |
-| `/startupos:business-case` | Business Designer, Financial Analyst, GTM Strategist | VC Partner, Legal/Compliance |
-| `/startupos:prd` | Product Strategist | Customer Researcher, Business Designer |
-| `/startupos:architecture` | CTO, AI Architect | Security Officer, Legal/Compliance |
-| `/startupos:roadmap` | CEO, Product Strategist | Financial Analyst, GTM Strategist |
-| `/startupos:export-praxis` | **Human** | CEO, CTO (assemble) |
+| `/startupos-discover` | CEO, Market Analyst, Customer Researcher | — |
+| `/startupos-research` | Market Analyst, Customer Researcher | VC Partner |
+| `/startupos-validate` | Customer Researcher, Business Designer | VC Partner |
+| `/startupos-challenge` | VC Partner | Financial Analyst, Security Officer |
+| `/startupos-rank` | VC Partner, CEO | Financial Analyst, Product Strategist |
+| `/startupos-select` | **Human** | CEO (facilitates) |
+| `/startupos-business-case` | Business Designer, Financial Analyst, GTM Strategist | VC Partner, Legal/Compliance |
+| `/startupos-prd` | Product Strategist | Customer Researcher, Business Designer |
+| `/startupos-architecture` | CTO, AI Architect | Security Officer, Legal/Compliance |
+| `/startupos-roadmap` | CEO, Product Strategist | Financial Analyst, GTM Strategist |
+| `/startupos-export-praxis` | **Human** | CEO, CTO (assemble) |
 
 ## Relationship to Praxis experts
 
@@ -144,4 +144,4 @@ StartupOS agents operate at **business/market altitude**; Praxis's SDLC experts 
 | Product Strategist | `business-analyst`, `product-owner` |
 | CTO / AI Architect | `software-architect`, `ml-ai-engineer`, `frontend-architect` |
 | Security Officer | `security-engineer`, `cybersecurity-architect` |
-| (all) | via `/startupos:export-praxis` → `/praxis:new-feature` |
+| (all) | via `/startupos-export-praxis` → `/praxis:new-feature` |

@@ -1,6 +1,6 @@
 <!--
 StartupOS template — financials.md
-Filled by /startupos:business-case. EVERY number is [FACT], [ESTIMATE] (show the derivation), or [ASSUMPTION].
+Filled by /startupos-business-case. EVERY number is [FACT], [ESTIMATE] (show the derivation), or [ASSUMPTION].
 Never present a projection as a fact. Show your formulas.
 -->
 

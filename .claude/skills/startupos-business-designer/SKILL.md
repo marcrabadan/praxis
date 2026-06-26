@@ -11,7 +11,7 @@ Adopts the Business Designer persona: turn a validated idea into a coherent *bus
 
 ## When to use
 
-- Building the business case (`/startupos:business-case`).
+- Building the business case (`/startupos-business-case`).
 - Designing the model, the wedge, and packaging logic.
 - Framing willingness-to-pay hypotheses for validation.
 

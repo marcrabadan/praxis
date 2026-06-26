@@ -3,7 +3,7 @@ description: StartupOS — build the business case for the selected idea: value 
 argument-hint: <the selected idea slug>
 ---
 
-Adopt the **StartupOS** business-design posture: load the `startupos-business-designer`, `startupos-financial-analyst`, and `startupos-gtm-strategist` skills (reviewed by `startupos-vc-partner` and `startupos-legal-compliance`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Business Case** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
+Adopt the **StartupOS** business-design posture: load the `startupos-business-designer`, `startupos-financial-analyst`, and `startupos-gtm-strategist` skills (reviewed by `startupos-vc-partner` and `startupos-legal-compliance`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Business Case** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../docs/startupos/agents.md).
 
 The selected idea:
 
@@ -20,9 +20,9 @@ Turn a selected idea into a coherent **business**: how it creates value, who pay
 ## Workflow
 
 1. **Value proposition & business model.** Job-to-be-done, the wedge, the model (SaaS, marketplace, usage-based, etc.), and why it is defensible.
-2. **Pricing.** Packaging, price metric, tiers, and the willingness-to-pay evidence behind them (label evidence vs assumption). Use the [pricing template](../../../docs/startupos/templates/pricing.md).
-3. **Unit economics & financials.** CAC, LTV, gross margin, payback, and a simple 3-scenario (low/base/high) model. **Every figure is `FACT`, `ESTIMATE` (with derivation), or `ASSUMPTION`.** Use the [financials template](../../../docs/startupos/templates/financials.md).
-4. **Go-to-market.** Beachhead segment, channels, motion (PLG/sales-led), and the first-100-customers plan. Use the [gtm template](../../../docs/startupos/templates/gtm.md).
+2. **Pricing.** Packaging, price metric, tiers, and the willingness-to-pay evidence behind them (label evidence vs assumption). Use the [pricing template](../../docs/startupos/templates/pricing.md).
+3. **Unit economics & financials.** CAC, LTV, gross margin, payback, and a simple 3-scenario (low/base/high) model. **Every figure is `FACT`, `ESTIMATE` (with derivation), or `ASSUMPTION`.** Use the [financials template](../../docs/startupos/templates/financials.md).
+4. **Go-to-market.** Beachhead segment, channels, motion (PLG/sales-led), and the first-100-customers plan. Use the [gtm template](../../docs/startupos/templates/gtm.md).
 5. **Risks.** Pull forward the challenge risks; tie each to a mitigation or a validation experiment.
 6. **Assemble** the business case and confirm it stays consistent with the recorded evidence.
 
@@ -30,7 +30,7 @@ Turn a selected idea into a coherent **business**: how it creates value, who pay
 
 - `memory/startupos/financials/<slug>.md` — the unit-economics model and scenarios.
 - `memory/startupos/pricing/<slug>.md` — pricing & packaging.
-- Business-case doc seeded from the [business-case template](../../../docs/startupos/templates/business-case.md), plus `gtm.md` from the [gtm template](../../../docs/startupos/templates/gtm.md).
+- Business-case doc seeded from the [business-case template](../../docs/startupos/templates/business-case.md), plus `gtm.md` from the [gtm template](../../docs/startupos/templates/gtm.md).
 - A chat summary: model, price metric, key unit economics (labeled), and the make-or-break assumption.
 
 ## Guardrails
@@ -46,4 +46,4 @@ No new hard gate, but the business case is reviewed at the **export gate**. A bu
 
 ## Next
 
-`/startupos:prd <slug>` to define the product, or `/startupos:architecture <slug>`.
+`/startupos-prd <slug>` to define the product, or `/startupos-architecture <slug>`.

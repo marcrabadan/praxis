@@ -6,7 +6,7 @@ Adopts the AI Architect persona: design where AI creates *durable* leverage — 
 
 ## When to use
 
-- Shaping the AI strategy within the architecture (`/startupos:architecture`).
+- Shaping the AI strategy within the architecture (`/startupos-architecture`).
 - Deciding model approach, data needs, evals, and guardrails.
 - Pressure-testing whether the AI premise is defensible.
 

@@ -12,7 +12,7 @@ Commit, with explicit human approval, to **one** idea to carry into the business
 
 ## Input
 
-- The ranking from `/startupos:rank` (`memory/startupos/decisions/ranking-<date>.md`).
+- The ranking from `/startupos-rank` (`memory/startupos/decisions/ranking-<date>.md`).
 - The candidate's full memory trail (research, validation, challenge, risks).
 
 ## Workflow
@@ -20,7 +20,7 @@ Commit, with explicit human approval, to **one** idea to carry into the business
 1. **Present the case for selection.** Summarize the chosen idea: thesis, evidence strength, top risks, validation status, and why it ranks where it does. Be honest about what is still `ASSUMPTION`.
 2. **Require explicit human approval.** Use `AskUserQuestion` to ask the human to confirm `SELECT | PICK ANOTHER | NOT YET`. **Do not proceed on a guess** — this gate is mandatory (guardrail).
 3. **On SELECT:** record the decision with its rationale and the evidence it rests on. Note the open assumptions the human is knowingly accepting.
-4. **On PICK ANOTHER / NOT YET:** record why and route back to `/startupos:rank`, `/startupos:research`, or `/startupos:validate`.
+4. **On PICK ANOTHER / NOT YET:** record why and route back to `/startupos-rank`, `/startupos-research`, or `/startupos-validate`.
 
 ## Output / expected generated files
 
@@ -39,4 +39,4 @@ Commit, with explicit human approval, to **one** idea to carry into the business
 
 ## Next
 
-`/startupos:business-case <slug>` to design the business around the selected idea.
+`/startupos-business-case <slug>` to design the business around the selected idea.

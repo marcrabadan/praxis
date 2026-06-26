@@ -1,6 +1,6 @@
 <!--
 StartupOS template — gtm.md
-Filled by /startupos:business-case. The path to the first 100 customers, not a generic marketing plan.
+Filled by /startupos-business-case. The path to the first 100 customers, not a generic marketing plan.
 -->
 
 # Go-to-market — <Idea name>

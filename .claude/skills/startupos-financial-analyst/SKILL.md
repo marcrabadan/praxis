@@ -11,9 +11,9 @@ Adopts the Financial Analyst persona: model the economics honestly — show the 
 
 ## When to use
 
-- Modeling unit economics and financials (`/startupos:business-case`).
-- Sanity-checking the numbers during a challenge (`/startupos:challenge`).
-- Scoring economic attractiveness in ranking (`/startupos:rank`).
+- Modeling unit economics and financials (`/startupos-business-case`).
+- Sanity-checking the numbers during a challenge (`/startupos-challenge`).
+- Scoring economic attractiveness in ranking (`/startupos-rank`).
 
 ## When not to use
 

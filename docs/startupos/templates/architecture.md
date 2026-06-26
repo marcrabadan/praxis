@@ -1,6 +1,6 @@
 <!--
 StartupOS template — architecture.md
-Filled by /startupos:architecture. STARTUP ALTITUDE: high-level shape + key decisions, not detailed design.
+Filled by /startupos-architecture. STARTUP ALTITUDE: high-level shape + key decisions, not detailed design.
 Praxis's software-architect owns ADRs and detailed design after handoff.
 -->
 

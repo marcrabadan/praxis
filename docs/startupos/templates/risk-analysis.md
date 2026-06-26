@@ -1,6 +1,6 @@
 <!--
 StartupOS template — risk-analysis.md
-Filled by /startupos:challenge. An idea with no risks listed has not been challenged.
+Filled by /startupos-challenge. An idea with no risks listed has not been challenged.
 -->
 
 # Risk analysis — <Idea name>

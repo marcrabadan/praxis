@@ -64,6 +64,17 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `/review-changes` | Review the current changes (diff) by routing to the right SDLC experts and returning didactic, severity-tagged findings. Use to catch bad practices before a PR… |
 | `/security-architect` | Consult the Cybersecurity Architect — security architecture, zero trust, defense in depth, IAM/SSO design, segmentation, data protection, encryption/key strate… |
 | `/security` | Consult the Security Engineer — threat modeling, finding/fixing vulnerabilities, secure coding (OWASP Top 10), authn/authz hardening, secrets, crypto usage, SA… |
+| `/startupos-architecture` | StartupOS — produce a high-level, AI-native solution architecture for the selected product: system shape, AI/data strategy, build-vs-buy, and the key technical… |
+| `/startupos-business-case` | StartupOS — build the business case for the selected idea: value proposition, business model, pricing, unit economics, financials, and go-to-market — with ever… |
+| `/startupos-challenge` | StartupOS — red-team a candidate idea: attack the thesis, expose hidden assumptions and failure modes, then propose concrete improvements. The adversarial coun… |
+| `/startupos-discover` | StartupOS — discover and frame candidate startup/business opportunities from observed pains, trends, and signals, separating facts from assumptions. The intake… |
+| `/startupos-export-praxis` | StartupOS — package the validated, selected idea into a Praxis-ready project (a complete docs/ bundle + recommended Praxis commands) and hand it off. The final… |
+| `/startupos-prd` | StartupOS — translate the validated business case into product requirements: the MVP scope, the wedge feature set, user stories, and success metrics — the brid… |
+| `/startupos-rank` | StartupOS — score and rank the candidate ideas on a transparent rubric (pain, spend, recurring revenue, AI leverage, defensibility, feasibility, evidence) to p… |
+| `/startupos-research` | StartupOS — research a candidate opportunity (market, customers, competitors, willingness to pay) and cluster findings into a defensible market thesis, marking… |
+| `/startupos-roadmap` | StartupOS — phase the journey from validated idea to launched company: milestones, the MVP-first sequence, validation gates, hiring/resourcing, and the metrics… |
+| `/startupos-select` | StartupOS — record the human's selection of the single idea to take forward into business design. A mandatory human-in-the-loop approval gate. |
+| `/startupos-validate` | StartupOS — turn a candidate's riskiest assumptions into cheap, falsifiable validation experiments with success criteria, before any building is considered. |
 | `/ux` | Consult the UX/UI Engineer — design systems and tokens, visual design (type/color/spacing/grid), interaction and motion, accessibility (WCAG 2.2 AA), responsiv… |
 | `/validate-skills` | Validate every skill in the repo — runs the deterministic validator across .claude/skills/ and dist/. Use to check skill structure and frontmatter before commi… |
 | `/validation-orchestrator` | Consult the Validation Orchestrator — the standing authority that decides whether a harness workflow may advance past a gate, runs the gate's criteria and the… |

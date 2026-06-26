@@ -19,7 +19,7 @@ Praxis is excellent at turning a *defined* idea into a well-built product. But m
 | Question | What/why/for-whom + how to make it a company | How to build it correctly |
 | Output | A validated, Praxis-ready project bundle | Shipped, tested software |
 | Altitude | Market, business, product, high-level architecture | Detailed design, code, delivery |
-| Ends at | `/startupos:export-praxis` (human-approved gate) | `/praxis:new-feature` → release |
+| Ends at | `/startupos-export-praxis` (human-approved gate) | `/praxis:new-feature` → release |
 
 StartupOS **never builds product**. Its terminal action is the handoff. See [praxis-integration.md](praxis-integration.md).
 
@@ -29,7 +29,7 @@ StartupOS **never builds product**. Its terminal action is the handoff. See [pra
 | --- | --- |
 | [vision.md](vision.md) | Vision and purpose of StartupOS |
 | [lifecycle.md](lifecycle.md) | The 15-stage lifecycle (Observe → … → Export to Praxis) |
-| [commands.md](commands.md) | The `/startupos:*` commands |
+| [commands.md](commands.md) | The `/startupos-*` commands |
 | [templates.md](templates.md) | The 13 templates and where they're filled |
 | [agents.md](agents.md) | The 12 StartupOS agent personas |
 | [memory.md](memory.md) | The `memory/startupos/` model and rules |
@@ -50,17 +50,17 @@ Observe → Discover → Research → Cluster → Score → Validate → Challen
 ## Commands
 
 ```
-/startupos:discover        find & frame candidate opportunities
-/startupos:research        market / customer / competitor research
-/startupos:validate        design falsifiable validation experiments
-/startupos:challenge       red-team the idea, expose failure modes
-/startupos:rank            score & order the candidate shortlist
-/startupos:select          ✋ human selects the idea to take forward
-/startupos:business-case   model, pricing, unit economics, GTM
-/startupos:prd             product requirements / MVP scope
-/startupos:architecture    high-level AI-native architecture
-/startupos:roadmap         phased path to launch
-/startupos:export-praxis   ✋ human-approved handoff to Praxis
+/startupos-discover        find & frame candidate opportunities
+/startupos-research        market / customer / competitor research
+/startupos-validate        design falsifiable validation experiments
+/startupos-challenge       red-team the idea, expose failure modes
+/startupos-rank            score & order the candidate shortlist
+/startupos-select          ✋ human selects the idea to take forward
+/startupos-business-case   model, pricing, unit economics, GTM
+/startupos-prd             product requirements / MVP scope
+/startupos-architecture    high-level AI-native architecture
+/startupos-roadmap         phased path to launch
+/startupos-export-praxis   ✋ human-approved handoff to Praxis
 ```
 
 Full reference in [commands.md](commands.md).
@@ -69,25 +69,25 @@ Full reference in [commands.md](commands.md).
 
 ```text
 # 1. Discover candidates in a domain you understand
-/startupos:discover "ops teams drowning in manual vendor-security reviews"
+/startupos-discover "ops teams drowning in manual vendor-security reviews"
 
 # 2. Research, validate, and challenge the strongest candidates
-/startupos:research <slug>
-/startupos:validate <slug>
-/startupos:challenge <slug>
+/startupos-research <slug>
+/startupos-validate <slug>
+/startupos-challenge <slug>
 
 # 3. Rank, then YOU select (human gate)
-/startupos:rank
-/startupos:select <slug>
+/startupos-rank
+/startupos-select <slug>
 
 # 4. Design the business and the product
-/startupos:business-case <slug>
-/startupos:prd <slug>
-/startupos:architecture <slug>
-/startupos:roadmap <slug>
+/startupos-business-case <slug>
+/startupos-prd <slug>
+/startupos-architecture <slug>
+/startupos-roadmap <slug>
 
 # 5. Export to Praxis (human gate), then build with Praxis
-/startupos:export-praxis <slug>
+/startupos-export-praxis <slug>
 /praxis:idea ...        # ownership passes to Praxis
 /praxis:new-feature ...
 ```

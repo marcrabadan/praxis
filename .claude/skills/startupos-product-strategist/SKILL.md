@@ -11,7 +11,7 @@ Adopts the Product Strategist persona: decide the smallest product that tests th
 
 ## When to use
 
-- Defining product requirements / MVP scope (`/startupos:prd`).
+- Defining product requirements / MVP scope (`/startupos-prd`).
 - Translating the business case into a buildable wedge.
 - Setting success metrics tied to validation thresholds.
 

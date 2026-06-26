@@ -25,7 +25,7 @@ Sketch a **credible, AI-native high-level architecture** that makes the MVP buil
 
 ## Output / expected generated files
 
-- Architecture doc seeded from the [architecture template](../../../docs/startupos/templates/architecture.md).
+- Architecture doc seeded from the [architecture template](../../docs/startupos/templates/architecture.md).
 - Optional `memory/startupos/decisions/<slug>-arch.md` capturing the build-vs-buy and AI-strategy calls.
 - A chat summary: the system shape, AI strategy, top technical risk, and feasibility verdict.
 
@@ -42,4 +42,4 @@ No new hard gate; the architecture is part of the export bundle reviewed at the 
 
 ## Next
 
-`/startupos:roadmap <slug>` to phase the build, then `/startupos:export-praxis <slug>`.
+`/startupos-roadmap <slug>` to phase the build, then `/startupos-export-praxis <slug>`.

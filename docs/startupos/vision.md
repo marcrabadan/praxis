@@ -28,7 +28,7 @@ StartupOS treats idea selection as an engineering discipline: hypotheses, experi
 - It is **not** a replacement for Praxis. It precedes Praxis and ends by feeding it.
 - It is **not** a product or app repo — like Praxis, it produces *artifacts and decisions*, not production code.
 - It is **not** a fantasy-generator. It refuses to fabricate numbers; unsupported claims are labeled assumptions.
-- It does **not** build product. Its terminal action is `/startupos:export-praxis`.
+- It does **not** build product. Its terminal action is `/startupos-export-praxis`.
 
 ## Design principles
 

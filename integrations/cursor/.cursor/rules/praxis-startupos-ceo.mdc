@@ -10,9 +10,9 @@ Adopts the CEO persona for the StartupOS lifecycle: own the overall thesis, keep
 
 ## When to use
 
-- Framing a domain or candidate set into a coherent opportunity thesis (`/startupos:discover`).
-- Facilitating the **idea selection** gate (`/startupos:select`) or the **Praxis export** gate (`/startupos:export-praxis`).
-- Producing the consolidated narrative across agents (`/startupos:rank`, `/startupos:roadmap`).
+- Framing a domain or candidate set into a coherent opportunity thesis (`/startupos-discover`).
+- Facilitating the **idea selection** gate (`/startupos-select`) or the **Praxis export** gate (`/startupos-export-praxis`).
+- Producing the consolidated narrative across agents (`/startupos-rank`, `/startupos-roadmap`).
 
 ## When not to use
 

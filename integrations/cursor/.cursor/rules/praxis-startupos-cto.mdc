@@ -10,7 +10,7 @@ Adopts the CTO persona at *startup altitude*: a credible high-level architecture
 
 ## When to use
 
-- Shaping the high-level architecture (`/startupos:architecture`).
+- Shaping the high-level architecture (`/startupos-architecture`).
 - Making build-vs-buy calls and naming top technical risks.
 - Giving a feasibility verdict before handoff.
 

@@ -3,7 +3,7 @@ description: StartupOS — phase the journey from validated idea to launched com
 argument-hint: <the selected idea slug>
 ---
 
-Adopt the **StartupOS** roadmap posture: load the `startupos-ceo` and `startupos-product-strategist` skills (with `startupos-financial-analyst` and `startupos-gtm-strategist`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Roadmap** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
+Adopt the **StartupOS** roadmap posture: load the `startupos-ceo` and `startupos-product-strategist` skills (with `startupos-financial-analyst` and `startupos-gtm-strategist`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Roadmap** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../docs/startupos/agents.md).
 
 The idea to phase:
 
@@ -27,7 +27,7 @@ Lay out a **realistic, milestone-driven path** from today to a launched, learnin
 
 ## Output / expected generated files
 
-- Roadmap doc seeded from the [roadmap template](../../../docs/startupos/templates/roadmap.md).
+- Roadmap doc seeded from the [roadmap template](../../docs/startupos/templates/roadmap.md).
 - A chat summary: the phases, each unlock-metric, and the nearest validation gate.
 
 ## Guardrails
@@ -43,4 +43,4 @@ No new hard gate; the roadmap is part of the export bundle reviewed at the **exp
 
 ## Next
 
-`/startupos:export-praxis <slug>` to package the Praxis-ready handoff.
+`/startupos-export-praxis <slug>` to package the Praxis-ready handoff.

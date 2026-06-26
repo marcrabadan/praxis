@@ -27,12 +27,12 @@ Identify the assumptions that, if false, kill the business — and design the **
 
 - `memory/startupos/hypotheses/<slug>.md` — one row per leap-of-faith assumption, risk-ranked.
 - `memory/startupos/experiments/<slug>.md` — the experiment designs with thresholds.
-- A `validation-plan.md` section on the idea, seeded from the [validation-plan template](../../../docs/startupos/templates/validation-plan.md).
+- A `validation-plan.md` section on the idea, seeded from the [validation-plan template](../../docs/startupos/templates/validation-plan.md).
 - A chat summary: top 3 experiments, cost/time, and the pass bar.
 
 ## Guardrails
 
-- **Always include validation experiments before implementation** — this stage is mandatory before `/startupos:select`.
+- **Always include validation experiments before implementation** — this stage is mandatory before `/startupos-select`.
 - Each experiment must be **falsifiable** with a pre-committed threshold; no "we'll know it when we see it".
 - Mark which results are real (run) vs. projected (`ASSUMPTION`/`ESTIMATE`).
 - Always include the failure modes the experiments are meant to catch.
@@ -43,4 +43,4 @@ None block, but **selection requires a validation plan to exist** for the idea. 
 
 ## Next
 
-`/startupos:challenge <slug>` to red-team, then `/startupos:rank` once several ideas have plans.
+`/startupos-challenge <slug>` to red-team, then `/startupos-rank` once several ideas have plans.
