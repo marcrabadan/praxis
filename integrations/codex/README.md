@@ -6,14 +6,14 @@ The praxis SDLC experts and their workflows, re-expressed for Codex (`AGENTS.md`
 
 ## Install
 
-1. Codex reads `AGENTS.md` natively. Append `AGENTS.praxis.md` to your repo's `AGENTS.md` (or copy praxis's `AGENTS.md`).
-2. Ship the persona guides with your code:
+1. Codex reads `AGENTS.md` natively. Append `AGENTS.praxis.md` to your repo's `AGENTS.md` (or copy praxis's `AGENTS.md`). This one file carries both the SDLC experts and the optional StartupOS module roster.
+2. Ship the persona guides with your code (includes the `startupos-*` guides):
 
 ```bash
 cp -R integrations/codex/.praxis <your-repo>/
 ```
 
-3. Install the slash commands into your Codex prompts dir:
+3. Install the slash commands into your Codex prompts dir (includes the `/praxis-startupos-*` lifecycle prompts):
 
 ```bash
 cp integrations/codex/prompts/*.md ~/.codex/prompts/
@@ -23,4 +23,4 @@ cp integrations/codex/prompts/*.md ~/.codex/prompts/
 
 - Type `/praxis-architect`, `/praxis-developer`, `/praxis-qa`, `/praxis-analyst`, `/praxis-product`, `/praxis-devops`, `/praxis-security`, `/praxis-security-architect`, `/praxis-ux`, `/praxis-frontend-architect`, `/praxis-frontend`. Each adopts the persona from `.praxis/<role>.md` and uses `$ARGUMENTS` as the request.
 - Workflows: `/praxis-new-feature`, `/praxis-review-changes`.
-- StartupOS (pre-build module): append `AGENTS.startupos.md`, ship `.praxis/startupos-*.md`, and install the `/praxis-startupos-*` prompts to discover, validate, and design a business idea before building it.
+- **StartupOS (pre-build module):** the install above wires it — `AGENTS.praxis.md` carries the StartupOS roster, `.praxis/startupos-*.md` ships the agent guides, and the `/praxis-startupos-*` prompts run the lifecycle (`discover → research → validate → challenge → rank → select → business-case → prd → architecture → roadmap → export-praxis`). Each adopts its agent from `.praxis/startupos-<agent>.md` and uses `$ARGUMENTS`.

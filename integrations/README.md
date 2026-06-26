@@ -99,8 +99,9 @@ The optional **[StartupOS](../docs/startupos/README.md)** pre-build module rides
 the same three folders, namespaced so it never mixes with the SDLC experts: its twelve agent
 personas ship as `praxis-startupos-*` Cursor rules / `.praxis/startupos-*.md` Codex guides /
 `.junie/praxis/startupos-*.md` Junie guides, and its lifecycle commands as `/startupos-*`
-(Cursor) and `/praxis-startupos-*` (Codex) prompts, each with its own roster doc
-(`praxis-startupos` rule, `AGENTS.startupos.md`, `.junie/praxis-startupos.md`).
+(Cursor) and `/praxis-startupos-*` (Codex) prompts. The StartupOS roster lives in the
+`praxis-startupos` Cursor rule, a StartupOS section of Codex's `AGENTS.praxis.md`, and
+IntelliJ's `.junie/praxis-startupos.md`.
 
 Each folder has its own `README.md` with copy-and-go install steps. All three rely on
 `AGENTS.md`, which every one of these tools reads natively, for repo-wide doctrine.

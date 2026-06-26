@@ -55,8 +55,11 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
     by `build_integrations.py` as a parallel, namespaced set (the SDLC-expert
     outputs are unchanged): twelve `praxis-startupos-*` persona guides per tool,
     the eleven lifecycle commands as `/startupos-*` (Cursor) and
-    `/praxis-startupos-*` (Codex) prompts, plus a StartupOS roster doc per tool.
-    Integration file count: 99 → 171.
+    `/praxis-startupos-*` (Codex) prompts, plus a StartupOS roster per tool (the
+    `praxis-startupos` Cursor rule, a StartupOS section of Codex's
+    `AGENTS.praxis.md`, and IntelliJ's `.junie/praxis-startupos.md`). For Codex
+    the roster is merged into `AGENTS.praxis.md` so the single documented append
+    wires it (no separate file to forget). Integration file count: 99 → 170.
   - **README and GitHub Pages** updated with a StartupOS section (without
     overstating it as the purpose of Praxis).
 

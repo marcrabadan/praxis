@@ -581,7 +581,9 @@ def _codex() -> dict[str, str]:
         if _has_grounding(skill):
             out[f"codex/.praxis/{skill}-experience-grounding.md"] = _grounding_doc(skill)
 
-    # roster snippet to merge into the consuming repo's AGENTS.md
+    # roster snippet to merge into the consuming repo's AGENTS.md — carries both
+    # the SDLC experts and the optional StartupOS module, so a single append
+    # (install step 1) wires the whole roster (no separate file to forget).
     out["codex/AGENTS.praxis.md"] = (
         f"{BANNER}\n\n"
         "# praxis SDLC experts\n\n"
@@ -592,6 +594,16 @@ def _codex() -> dict[str, str]:
         "Reusable slash commands for each persona live in `~/.codex/prompts/` "
         "(install them with the prompts in this integration); invoke e.g. "
         "`/praxis-architect`, `/praxis-review-changes`.\n\n"
+        "## StartupOS — pre-build module (optional)\n\n"
+        f"{STARTUPOS_INTRO}\n\n"
+        "Its agent personas live under `.praxis/startupos-*.md`; open the matching "
+        "one and adopt that agent. Lifecycle prompts live in `~/.codex/prompts/` as "
+        "`/praxis-startupos-<stage>` (e.g. `/praxis-startupos-discover`).\n\n"
+        f"{_startupos_roster_table()}\n\n"
+        "StartupOS guardrails: never invent market data (label "
+        "fact/assumption/estimate/hypothesis), reject weak ideas, validate before "
+        "building, always include risks, and require human approval before selecting "
+        "the idea and before exporting to Praxis.\n\n"
         f"{HARNESS_NOTE}"
     )
 
@@ -602,23 +614,10 @@ def _codex() -> dict[str, str]:
             + _port_command(name, tool="codex", persona_ref=ref, personas_label=personas_label)
         )
 
-    # StartupOS module — persona guides + roster snippet + lifecycle prompts
+    # StartupOS module — persona guides (the roster is merged into AGENTS.praxis.md
+    # above) + lifecycle prompts
     for skill in STARTUPOS_AGENTS:
         out[f"codex/.praxis/{skill}.md"] = _persona_guide(skill)
-    out["codex/AGENTS.startupos.md"] = (
-        f"{BANNER}\n\n"
-        "# StartupOS — pre-build module\n\n"
-        f"{STARTUPOS_INTRO}\n\n"
-        "Persona guides live under `.praxis/startupos-*.md`; open the matching one and "
-        "adopt that agent. Lifecycle prompts live in `~/.codex/prompts/` as "
-        "`/praxis-startupos-<stage>`.\n\n"
-        f"{_startupos_roster_table()}\n\n"
-        "Guardrails: never invent market data (label fact/assumption/estimate/"
-        "hypothesis), reject weak ideas, validate before building, always include "
-        "risks, and require human approval before selecting the idea and before "
-        "exporting to Praxis.\n\n"
-        f"{HARNESS_NOTE}"
-    )
     for name in STARTUPOS_COMMANDS:
         out[f"codex/prompts/praxis-startupos-{name}.md"] = (
             f"{BANNER}\n\n"
@@ -747,12 +746,15 @@ def _codex_readme() -> str:
         "(`AGENTS.md` + in-repo persona guides + `~/.codex/prompts`).\n\n"
         "## Install\n\n"
         "1. Codex reads `AGENTS.md` natively. Append `AGENTS.praxis.md` to your "
-        "repo's `AGENTS.md` (or copy praxis's `AGENTS.md`).\n"
-        "2. Ship the persona guides with your code:\n\n"
+        "repo's `AGENTS.md` (or copy praxis's `AGENTS.md`). This one file carries "
+        "both the SDLC experts and the optional StartupOS module roster.\n"
+        "2. Ship the persona guides with your code (includes the `startupos-*` "
+        "guides):\n\n"
         "```bash\n"
         "cp -R integrations/codex/.praxis <your-repo>/\n"
         "```\n\n"
-        "3. Install the slash commands into your Codex prompts dir:\n\n"
+        "3. Install the slash commands into your Codex prompts dir (includes the "
+        "`/praxis-startupos-*` lifecycle prompts):\n\n"
         "```bash\n"
         "cp integrations/codex/prompts/*.md ~/.codex/prompts/\n"
         "```\n\n"
@@ -763,9 +765,12 @@ def _codex_readme() -> str:
         "`/praxis-frontend-architect`, `/praxis-frontend`. Each adopts the "
         "persona from `.praxis/<role>.md` and uses `$ARGUMENTS` as the request.\n"
         "- Workflows: `/praxis-new-feature`, `/praxis-review-changes`.\n"
-        "- StartupOS (pre-build module): append `AGENTS.startupos.md`, ship "
-        "`.praxis/startupos-*.md`, and install the `/praxis-startupos-*` prompts to "
-        "discover, validate, and design a business idea before building it.\n"
+        "- **StartupOS (pre-build module):** the install above wires it — "
+        "`AGENTS.praxis.md` carries the StartupOS roster, `.praxis/startupos-*.md` "
+        "ships the agent guides, and the `/praxis-startupos-*` prompts run the "
+        "lifecycle (`discover → research → validate → challenge → rank → select → "
+        "business-case → prd → architecture → roadmap → export-praxis`). Each adopts "
+        "its agent from `.praxis/startupos-<agent>.md` and uses `$ARGUMENTS`.\n"
     )
 
 
