@@ -27,6 +27,8 @@ This project carries the praxis SDLC experts. Read `AGENTS.md` for repo doctrine
 
 `/new-feature` runs the core six (BA → PO → Architect → Developer → QA → DevOps) in lifecycle order; `/review-changes` routes the current diff to the relevant personas (including the security experts) with severity-tagged findings.
 
+Beyond the build experts, the optional **StartupOS** pre-build module — discover, validate, and design a business idea *before* building it — ships as the description-gated `praxis-startupos` rule plus `praxis-startupos-*` persona rules and `/startupos-*` commands. Reach for it when the task is opportunity discovery, market or customer research, validation experiments, the business case, or the Praxis handoff.
+
 ## Harness mode (if `.praxis/config.json` exists)
 
 If this repo has a `.praxis/config.json`, it is in **harness mode** — read these first, in order, before editing:

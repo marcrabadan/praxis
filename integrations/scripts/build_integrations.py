@@ -500,6 +500,12 @@ def _cursor() -> dict[str, str]:
         "→ DevOps) in lifecycle order; `/review-changes` routes the current diff "
         "to the relevant personas (including the security experts) with "
         "severity-tagged findings.\n\n"
+        "Beyond the build experts, the optional **StartupOS** pre-build module — "
+        "discover, validate, and design a business idea *before* building it — ships "
+        "as the description-gated `praxis-startupos` rule plus `praxis-startupos-*` "
+        "persona rules and `/startupos-*` commands. Reach for it when the task is "
+        "opportunity discovery, market or customer research, validation experiments, "
+        "the business case, or the Praxis handoff.\n\n"
         f"{HARNESS_NOTE}"
     )
 

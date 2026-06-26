@@ -59,7 +59,10 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
     `praxis-startupos` Cursor rule, a StartupOS section of Codex's
     `AGENTS.praxis.md`, and IntelliJ's `.junie/praxis-startupos.md`). For Codex
     the roster is merged into `AGENTS.praxis.md` so the single documented append
-    wires it (no separate file to forget). Integration file count: 99 → 170.
+    wires it (no separate file to forget). Each tool's always-read entry doc —
+    Cursor's always-on `praxis` rule, Codex's `AGENTS.praxis.md`, IntelliJ's
+    `guidelines.md` — points to StartupOS so it is discoverable, not merely
+    description-gated. Integration file count: 99 → 170.
   - **README and GitHub Pages** updated with a StartupOS section (without
     overstating it as the purpose of Praxis).
 
