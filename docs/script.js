@@ -127,6 +127,53 @@
     });
   }
 
+  /* ---------- Section rule + stat count-up (reveal on view) ---------- */
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function animateCount(el) {
+    var target = parseInt(el.getAttribute('data-count'), 10);
+    if (isNaN(target)) { return; }
+    if (reduceMotion || target === 0) { el.textContent = String(target); return; }
+    var start = null, dur = 1100;
+    function tick(ts) {
+      if (start === null) { start = ts; }
+      var p = Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3); /* easeOutCubic */
+      el.textContent = String(Math.round(target * eased));
+      if (p < 1) { requestAnimationFrame(tick); }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  if ('IntersectionObserver' in window) {
+    var titleObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) { entry.target.classList.add('in'); titleObs.unobserve(entry.target); }
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.section-title').forEach(function (el) { titleObs.observe(el); });
+
+    var statObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) { animateCount(entry.target); statObs.unobserve(entry.target); }
+      });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('.stat-num[data-count]').forEach(function (el) { statObs.observe(el); });
+  } else {
+    document.querySelectorAll('.section-title').forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* ---------- Spotlight: a soft glow tracks the cursor over cards ---------- */
+  if (window.matchMedia('(pointer: fine)').matches) {
+    document.querySelectorAll('.card, .expert, .example-card').forEach(function (el) {
+      el.addEventListener('pointermove', function (e) {
+        var r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+  }
+
   /* ---------- Active-section nav (scrollspy) ---------- */
   if ('IntersectionObserver' in window) {
     /* Map each section id to every nav link that targets it (desktop + mobile). */
