@@ -1,7 +1,7 @@
 {
   "name": "praxis",
   "description": "An on-demand team of SDLC experts for Claude Code — the core six (business analyst, product owner, software architect, developer, QA, DevOps) plus specialists for security, frontend, data, ML/AI, and UX — with lifecycle orchestrators (/new-feature, /fix-bug, /refine), a gating Validation Orchestrator, a versioned memory ledger, and a skill factory (/learn, /validate-skills) to capture team conventions as skills. Use to consult one expert, run a feature end to end, or codify how your team works.",
-  "version": "1.16.0",
+  "version": "1.17.0",
   "author": {
     "name": "praxis maintainers",
     "email": "marcrabadan@gmail.com",
@@ -19,6 +19,7 @@
     "security",
     "product",
     "agents",
-    "skills"
+    "skills",
+    "startupos"
   ]
 }

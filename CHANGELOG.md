@@ -11,6 +11,8 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
 
 ## [Unreleased]
 
+## [1.17.0] - 2026-06-26
+
 ### Added
 
 - **StartupOS module** — an optional, AI-native front door layered on top of
