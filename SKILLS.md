@@ -23,6 +23,18 @@ Generated index of every skill and command in this repo. Do not edit by hand —
 | `skill-creator` | 1.0.0 | 5 | Create new Claude Code skills, improve or review existing SKILL.md files, validate skill structure, classify a skill into the right tier, and run guided interv… |
 | `skill-learner` | 1.0.0 | 3 | Turns a knowledge gap a praxis expert hits mid-task — a missing team convention, runbook, or domain rule — into durable skill knowledge via the skill-creator,… |
 | `software-architect` | 1.0.0 | 2 | Adopts the Software Architect persona for system design: architectural trade-offs, NFRs (scalability, availability, latency, security, cost), ADRs, pattern and… |
+| `startupos-ai-architect` | 1.0.0 | 2 | Adopts the StartupOS AI Architect persona — designs the AI-native strategy: where AI creates real leverage, the model approach (LLM/RAG/fine-tune/classic ML),… |
+| `startupos-business-designer` | 1.0.0 | 2 | Adopts the StartupOS Business Designer persona — designs how the company creates and captures value: the value proposition, business model, wedge, and packagin… |
+| `startupos-ceo` | 1.0.0 | 2 | Adopts the StartupOS CEO Agent persona — frames the opportunity, balances optimism against evidence, facilitates the human-in-the-loop gates (idea selection, P… |
+| `startupos-cto` | 1.0.0 | 2 | Adopts the StartupOS CTO Agent persona — owns technical feasibility at startup altitude: the high-level system shape (C4 L1/L2), build-vs-buy, top technical ri… |
+| `startupos-customer-researcher` | 1.0.0 | 2 | Adopts the StartupOS Customer Researcher persona — understands the buyer and user, defines segments and the ICP, captures jobs-to-be-done, pains, and current s… |
+| `startupos-financial-analyst` | 1.0.0 | 2 | Adopts the StartupOS Financial Analyst persona — models the economics: CAC, LTV, payback, margin, a 3-scenario model and sensitivity, with every input labeled… |
+| `startupos-gtm-strategist` | 1.0.0 | 2 | Adopts the StartupOS GTM Strategist persona — plans the path to customers: the beachhead, positioning, motion (PLG/sales-led/community), channels with CAC hypo… |
+| `startupos-legal-compliance` | 1.0.0 | 2 | Adopts the StartupOS Legal/Compliance Reviewer persona — flags regulatory and compliance exposure: data protection (GDPR/PII), licensing, regulated-industry co… |
+| `startupos-market-analyst` | 1.0.0 | 2 | Adopts the StartupOS Market Analyst persona — sizes and characterizes the market (TAM/SAM/SOM as derived ranges), maps trends and the why-now, and gathers dema… |
+| `startupos-product-strategist` | 1.0.0 | 2 | Adopts the StartupOS Product Strategist persona — decides what to build first: the MVP scope, the wedge feature set, INVEST user stories, and success metrics t… |
+| `startupos-security-officer` | 1.0.0 | 2 | Adopts the StartupOS Security Officer persona — surfaces security and abuse risk early at startup altitude: trust boundaries, data exposure, the abuse surface,… |
+| `startupos-vc-partner` | 1.0.0 | 2 | Adopts the StartupOS VC Partner persona — the skeptical investor who attacks the thesis, demands evidence, exposes hidden assumptions and failure modes, scores… |
 | `ux-ui-engineer` | 1.1.0 | 3 | Acts as a UX/UI Engineer SDLC expert bridging design and code: design systems and component libraries, design tokens and theming, visual design (type scale, co… |
 | `validation-orchestrator` | 1.0.0 | 2 | The standing validation authority for harness-mode workflows: decides whether a workflow may advance past a gate, runs the gate criteria, the typed verify cata… |
 

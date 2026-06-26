@@ -24,6 +24,17 @@ release tag (`vX.Y.Z`) marks the state of the whole library at a point in time.
     documents purpose, input, output, workflow, guardrails, approval gates, and
     expected generated files. Symlinked into `plugin-praxis/commands/` like the
     other commands.
+  - **Agent skills** under `.claude/skills/startupos-*` (12, Tier 2, each with
+    `references/practices.md` + `references/checklist.md`): `startupos-ceo`,
+    `startupos-vc-partner`, `startupos-market-analyst`,
+    `startupos-customer-researcher`, `startupos-business-designer`,
+    `startupos-product-strategist`, `startupos-financial-analyst`,
+    `startupos-gtm-strategist`, `startupos-cto`, `startupos-ai-architect`,
+    `startupos-security-officer`, `startupos-legal-compliance`. Each agent
+    persona is a real, validated Claude Code skill (like the SDLC experts);
+    every `/startupos:*` command loads the relevant agent skill(s) and reasons
+    in-persona. Symlinked into `plugin-praxis/skills/` and catalogued in
+    `SKILLS.md` (now 31 skills).
   - **Documentation** under `docs/startupos/`: `README`, `vision`, `lifecycle`
     (15 stages), `commands`, `templates`, `agents` (12 personas), `memory`,
     `guardrails`, `praxis-integration`, and `integrations` (Cursor / Claude Code

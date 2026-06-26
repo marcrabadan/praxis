@@ -3,7 +3,7 @@ description: StartupOS — turn a candidate's riskiest assumptions into cheap, f
 argument-hint: <a candidate idea slug or description>
 ---
 
-Adopt the **StartupOS** validation posture — reason as the **Customer Researcher** and **Business Designer**, with the **VC Partner Agent** pressure-testing (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is the **Validate** stage of the lifecycle.
+Adopt the **StartupOS** validation posture: load the `startupos-customer-researcher` and `startupos-business-designer` skills (with `startupos-vc-partner` pressure-testing) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is the **Validate** stage of the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
 
 The candidate to validate:
 

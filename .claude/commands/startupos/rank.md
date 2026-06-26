@@ -3,7 +3,7 @@ description: StartupOS — score and rank the candidate ideas on a transparent r
 argument-hint: <optional: scope, e.g. a market or list of slugs; empty = all candidates>
 ---
 
-Adopt the **StartupOS** ranking posture — reason as the **VC Partner Agent** and **CEO Agent**, advised by the **Financial Analyst** and **Product Strategist** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is the **Score → Rank** stage of the lifecycle.
+Adopt the **StartupOS** ranking posture: load the `startupos-vc-partner` and `startupos-ceo` skills (advised by `startupos-financial-analyst` and `startupos-product-strategist`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is the **Score → Rank** stage of the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
 
 The ranking scope:
 

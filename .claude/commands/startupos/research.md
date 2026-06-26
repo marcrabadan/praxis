@@ -3,7 +3,7 @@ description: StartupOS — research a candidate opportunity (market, customers, 
 argument-hint: <a candidate idea slug or description>
 ---
 
-Adopt the **StartupOS** research posture — reason as the **Market Analyst** and **Customer Researcher**, reviewed by the **VC Partner Agent** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is the **Research → Cluster** stage of the lifecycle.
+Adopt the **StartupOS** research posture: load the `startupos-market-analyst` and `startupos-customer-researcher` skills (reviewed by `startupos-vc-partner`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is the **Research → Cluster** stage of the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
 
 The candidate to research:
 

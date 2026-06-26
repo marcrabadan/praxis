@@ -3,7 +3,7 @@ description: StartupOS — record the human's selection of the single idea to ta
 argument-hint: <the idea slug to select>
 ---
 
-Adopt the **StartupOS** selection posture — the **CEO Agent** facilitates, but **the human decides** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is the **Select** stage — the **first hard human gate** in the lifecycle.
+Adopt the **StartupOS** selection posture: load the `startupos-ceo` skill to facilitate, but **the human decides** (draw on the skill's `references/practices.md` and `references/checklist.md`). This is the **Select** stage — the **first hard human gate** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
 
 The idea proposed for selection:
 

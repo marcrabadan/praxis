@@ -3,7 +3,7 @@ description: StartupOS — produce a high-level, AI-native solution architecture
 argument-hint: <the selected idea slug>
 ---
 
-Adopt the **StartupOS** architecture posture — reason as the **CTO Agent** and **AI Architect**, reviewed by the **Security Officer** and **Legal/Compliance Reviewer** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is **Generate Architecture** in the lifecycle.
+Adopt the **StartupOS** architecture posture: load the `startupos-cto` and `startupos-ai-architect` skills (reviewed by `startupos-security-officer` and `startupos-legal-compliance`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Architecture** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
 
 The product to shape:
 

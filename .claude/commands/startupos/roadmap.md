@@ -3,7 +3,7 @@ description: StartupOS — phase the journey from validated idea to launched com
 argument-hint: <the selected idea slug>
 ---
 
-Adopt the **StartupOS** roadmap posture — reason as the **CEO Agent** and **Product Strategist**, with the **Financial Analyst** and **GTM Strategist** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is **Generate Roadmap** in the lifecycle.
+Adopt the **StartupOS** roadmap posture: load the `startupos-ceo` and `startupos-product-strategist` skills (with `startupos-financial-analyst` and `startupos-gtm-strategist`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Roadmap** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
 
 The idea to phase:
 

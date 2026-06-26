@@ -1,8 +1,23 @@
 # StartupOS — Agents
 
-StartupOS reasons through **12 agent personas**. They are not separate skill folders (the commands are self-contained); they are the **lenses** each command adopts — analogous to how Praxis's persona commands adopt an SDLC expert skill. Each command names the agents it reasons as.
+StartupOS reasons through **12 agent personas**, each shipped as a real Claude Code skill under [`.claude/skills/startupos-*`](../../.claude/skills/) — exactly like the Praxis SDLC experts. Every `/startupos:*` command **loads** the relevant agent skill(s) and reasons in those personas (the same way `/architect` loads `software-architect`). Each skill is Tier 2: a `SKILL.md` plus `references/practices.md` and `references/checklist.md`, validated by `validate_skill.py` and listed in [`SKILLS.md`](../../SKILLS.md).
 
-For each agent: **role · responsibilities · inputs · outputs · review criteria.**
+This page is the **index**; the skill files are the source of truth. For each agent: **skill · role · responsibilities · inputs · outputs · review criteria.**
+
+| Agent | Skill |
+| ----- | ----- |
+| CEO Agent | [`startupos-ceo`](../../.claude/skills/startupos-ceo/SKILL.md) |
+| VC Partner Agent | [`startupos-vc-partner`](../../.claude/skills/startupos-vc-partner/SKILL.md) |
+| Market Analyst | [`startupos-market-analyst`](../../.claude/skills/startupos-market-analyst/SKILL.md) |
+| Customer Researcher | [`startupos-customer-researcher`](../../.claude/skills/startupos-customer-researcher/SKILL.md) |
+| Business Designer | [`startupos-business-designer`](../../.claude/skills/startupos-business-designer/SKILL.md) |
+| Product Strategist | [`startupos-product-strategist`](../../.claude/skills/startupos-product-strategist/SKILL.md) |
+| Financial Analyst | [`startupos-financial-analyst`](../../.claude/skills/startupos-financial-analyst/SKILL.md) |
+| GTM Strategist | [`startupos-gtm-strategist`](../../.claude/skills/startupos-gtm-strategist/SKILL.md) |
+| CTO Agent | [`startupos-cto`](../../.claude/skills/startupos-cto/SKILL.md) |
+| AI Architect | [`startupos-ai-architect`](../../.claude/skills/startupos-ai-architect/SKILL.md) |
+| Security Officer | [`startupos-security-officer`](../../.claude/skills/startupos-security-officer/SKILL.md) |
+| Legal/Compliance Reviewer | [`startupos-legal-compliance`](../../.claude/skills/startupos-legal-compliance/SKILL.md) |
 
 ---
 

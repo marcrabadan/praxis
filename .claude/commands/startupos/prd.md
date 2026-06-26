@@ -3,7 +3,7 @@ description: StartupOS — translate the validated business case into product re
 argument-hint: <the selected idea slug>
 ---
 
-Adopt the **StartupOS** product-definition posture — reason as the **Product Strategist** with the **Customer Researcher** and **Business Designer** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is **Generate Product Requirements** in the lifecycle.
+Adopt the **StartupOS** product-definition posture: load the `startupos-product-strategist` skill (with `startupos-customer-researcher` and `startupos-business-designer`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Product Requirements** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
 
 The idea to define a product for:
 

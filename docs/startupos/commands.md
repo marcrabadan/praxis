@@ -34,7 +34,7 @@ description: <one-line, used by Claude Code discovery>
 argument-hint: <what to pass>
 ---
 
-Adopt the StartupOS <stage> posture — reason as <agents>.
+Adopt the StartupOS <stage> posture: load the `startupos-<agent>` skill(s) and reason as those agents.
 
 $ARGUMENTS
 
@@ -47,7 +47,7 @@ $ARGUMENTS
 ## Next
 ```
 
-This mirrors how Praxis's persona commands (`/architect`, `/analyst`, …) adopt a skill and answer in-persona — except StartupOS commands are **self-contained** (the workflow lives in the command), and the "personas" are the StartupOS [agents](agents.md). This keeps the module a small, clean extension that adds no new skill folders to the factory while still being fully documented.
+Like Praxis's persona commands (`/architect`, `/analyst`, …), each StartupOS command **loads a skill and answers in-persona**: the agent doctrine lives in the [StartupOS agent skills](agents.md) (`.claude/skills/startupos-*`), and the command holds the per-stage *workflow* that orchestrates those agents (much as `/new-feature` orchestrates the SDLC experts). The 12 agent skills are real, validated Tier 2 skills listed in [`SKILLS.md`](../../SKILLS.md).
 
 ## Typical sequence
 

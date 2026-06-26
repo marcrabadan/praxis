@@ -3,7 +3,7 @@ description: StartupOS — red-team a candidate idea: attack the thesis, expose 
 argument-hint: <a candidate idea slug or description>
 ---
 
-Adopt the **StartupOS** adversarial posture — reason as the **VC Partner Agent** (skeptical investor) backed by the **Financial Analyst** and **Security Officer** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is the **Challenge → Improve** stage of the lifecycle.
+Adopt the **StartupOS** adversarial posture: load the `startupos-vc-partner` skill (skeptical investor) backed by `startupos-financial-analyst` and `startupos-security-officer`, and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is the **Challenge → Improve** stage of the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
 
 The candidate to challenge:
 

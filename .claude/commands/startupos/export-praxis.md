@@ -3,7 +3,7 @@ description: StartupOS — package the validated, selected idea into a Praxis-re
 argument-hint: <the selected idea slug> [target path]
 ---
 
-Adopt the **StartupOS** handoff posture — the **CEO Agent** and **CTO Agent** assemble the package; **the human approves the export** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is **Export to Praxis** — the **final hard human gate** in the lifecycle. See [docs/startupos/praxis-integration.md](../../../docs/startupos/praxis-integration.md).
+Adopt the **StartupOS** handoff posture: load the `startupos-ceo` and `startupos-cto` skills to assemble the package; **the human approves the export** (draw on each skill's `references/practices.md` and `references/checklist.md`). This is **Export to Praxis** — the **final hard human gate** in the lifecycle. The agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md); the handoff detail is in [docs/startupos/praxis-integration.md](../../../docs/startupos/praxis-integration.md).
 
 The idea to export:
 

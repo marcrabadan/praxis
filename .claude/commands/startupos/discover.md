@@ -3,7 +3,7 @@ description: StartupOS — discover and frame candidate startup/business opportu
 argument-hint: <a domain, market, audience, trend, or raw observation>
 ---
 
-Adopt the **StartupOS** discovery posture — reason as the **CEO Agent** in partnership with the **Market Analyst** and **Customer Researcher** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is the **Observe → Discover** entry of the StartupOS lifecycle ([docs/startupos/lifecycle.md](../../../docs/startupos/lifecycle.md)).
+Adopt the **StartupOS** discovery posture: load the `startupos-ceo`, `startupos-market-analyst`, and `startupos-customer-researcher` skills and reason as those agents, drawing on each skill's `references/practices.md` and self-checking against its `references/checklist.md`. This is the **Observe → Discover** entry of the StartupOS lifecycle ([docs/startupos/lifecycle.md](../../../docs/startupos/lifecycle.md)); the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
 
 StartupOS answers *"what should we build, why, for whom, and how do we turn it into a real company?"* — it never builds product. Building is Praxis's job.
 

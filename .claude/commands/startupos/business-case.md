@@ -3,7 +3,7 @@ description: StartupOS — build the business case for the selected idea: value 
 argument-hint: <the selected idea slug>
 ---
 
-Adopt the **StartupOS** business-design posture — reason as the **Business Designer**, **Financial Analyst**, and **GTM Strategist**, reviewed by the **VC Partner Agent** and **Legal/Compliance Reviewer** (see [docs/startupos/agents.md](../../../docs/startupos/agents.md)). This is **Generate Business Case** in the lifecycle.
+Adopt the **StartupOS** business-design posture: load the `startupos-business-designer`, `startupos-financial-analyst`, and `startupos-gtm-strategist` skills (reviewed by `startupos-vc-partner` and `startupos-legal-compliance`) and reason as those agents, drawing on each skill's `references/practices.md` and `references/checklist.md`. This is **Generate Business Case** in the lifecycle; the agent roster is indexed in [docs/startupos/agents.md](../../../docs/startupos/agents.md).
 
 The selected idea:
 
